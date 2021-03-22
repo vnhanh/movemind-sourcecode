@@ -9,6 +9,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import kotlinx.android.synthetic.main.merge_now_playing_coming_up_next.view.*
 import player.wellnesssolutions.com.R
+import player.wellnesssolutions.com.base.utils.convertToStrDateFormat12hrs
 import player.wellnesssolutions.com.base.utils.search_util.SearchCollectionUtil
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.customize_views.MMTextView
@@ -45,7 +46,8 @@ object GCUDisplayHelper {
             return
         }
 
-        tv.text = StringBuilder(convertDateStrToAMPMFormat(playTime).toUpperCase()).append(Constant.WHITE_SPACE).toString()
+//        tv.text = StringBuilder(convertDateStrToAMPMFormat(playTime).toUpperCase()).append(Constant.WHITE_SPACE).toString()
+        tv.text = StringBuilder(playTime.convertToStrDateFormat12hrs().toUpperCase()).append(Constant.WHITE_SPACE).toString()
 
         if (tv.visibility != View.VISIBLE)
             tv.visibility = View.VISIBLE

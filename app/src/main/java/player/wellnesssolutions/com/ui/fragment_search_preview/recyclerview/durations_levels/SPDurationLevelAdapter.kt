@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.base.uis.BaseClickableAdapter
+import player.wellnesssolutions.com.base.view.BaseClickableAdapter
 import player.wellnesssolutions.com.ui.fragment_search_preview.ISearchPreviewContract
 
 class SPDurationLevelAdapter(list: ArrayList<SearchedOption>, presenter: ISearchPreviewContract.Presenter?) :

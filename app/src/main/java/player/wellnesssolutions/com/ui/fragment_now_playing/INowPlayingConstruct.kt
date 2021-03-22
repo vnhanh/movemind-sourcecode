@@ -5,9 +5,9 @@ import com.google.android.exoplayer2.Player
 import player.wellnesssolutions.com.base.common.load_scheduled_videos.IScheduleContract
 import player.wellnesssolutions.com.base.common.play_video.ClosedCaptionController
 import player.wellnesssolutions.com.base.common.play_video.IPlayVideoContract
-import player.wellnesssolutions.com.base.uis.ILifeCycle
-import player.wellnesssolutions.com.base.uis.IProgressView
-import player.wellnesssolutions.com.base.uis.IShowMessageView
+import player.wellnesssolutions.com.base.view.ILifeCycle
+import player.wellnesssolutions.com.base.view.IProgressView
+import player.wellnesssolutions.com.base.view.IShowMessageView
 import player.wellnesssolutions.com.custom_exoplayer.PlayerState
 import player.wellnesssolutions.com.network.models.config.MMConfigData
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo

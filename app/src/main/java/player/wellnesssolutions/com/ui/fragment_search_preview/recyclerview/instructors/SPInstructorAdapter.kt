@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.vh_sp_presenter.view.*
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.base.uis.BaseClickableAdapter
+import player.wellnesssolutions.com.base.view.BaseClickableAdapter
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.network.models.screen_search.MMInstructor
 import player.wellnesssolutions.com.ui.fragment_search_preview.ISearchPreviewContract

@@ -2,7 +2,7 @@ package player.wellnesssolutions.com.ui.fragment_help_me_choose.recyclerview
 
 import android.view.View
 import kotlinx.android.synthetic.main.viewholder_selectable_option_text.view.*
-import player.wellnesssolutions.com.base.uis.BaseVH
+import player.wellnesssolutions.com.base.view.BaseVH
 import player.wellnesssolutions.com.network.models.help_me_choose.MMHelpMeChooseAnswer
 import player.wellnesssolutions.com.ui.fragment_help_me_choose.IHelpMeChooseContract
 import java.lang.ref.WeakReference

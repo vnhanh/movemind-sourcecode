@@ -1,4 +1,4 @@
-package player.wellnesssolutions.com.base.uis
+package player.wellnesssolutions.com.base.view
 
 import android.content.Context
 import androidx.fragment.app.Fragment

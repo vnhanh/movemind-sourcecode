@@ -12,7 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_search_brands.*
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.base.uis.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseFragment
 import player.wellnesssolutions.com.base.utils.search_util.SearchUIHelper
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.utils.MessageUtils

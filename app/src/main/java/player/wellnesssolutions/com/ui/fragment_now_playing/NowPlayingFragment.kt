@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -29,7 +30,7 @@ import player.wellnesssolutions.com.base.common.load_scheduled_videos.IScheduleC
 import player.wellnesssolutions.com.base.common.load_scheduled_videos.ScheduledVideosPresenter
 import player.wellnesssolutions.com.base.common.play_video.ClosedCaptionController
 import player.wellnesssolutions.com.base.common.play_video.PlayVideoDisplayHelper
-import player.wellnesssolutions.com.base.uis.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseFragment
 import player.wellnesssolutions.com.base.utils.FragmentUtil
 import player.wellnesssolutions.com.base.utils.ParameterUtils.mCountDownNumber
 import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
@@ -256,12 +257,12 @@ class NowPlayingFragment : BaseFragment(), INowPlayingConstruct.View, IRouterCha
     }
 
     private fun setupBtnPrevious() {
-        btnPrevious.visibility = View.VISIBLE
-        btnPrevious.setOnClickListener {
-            context?.let {
-                SharedPreferencesCustomized.getInstance(context = it).delete(SPrefConstant.LAST_PLAYED_VIDEO_POSITION)
+        btnPrevious?.also { button ->
+            button.visibility = View.VISIBLE
+            button.setOnClickListener {
+                SharedPreferencesCustomized.getInstance(context = button.context).delete(SPrefConstant.LAST_PLAYED_VIDEO_POSITION)
+                onBackPressed(button)
             }
-            onBackPressed(btnPrevious)
         }
     }
 
@@ -292,9 +293,9 @@ class NowPlayingFragment : BaseFragment(), INowPlayingConstruct.View, IRouterCha
             mPresenter?.getPlayMode()?.also { mode ->
                 when (mode) {
                     PlayMode.SCHEDULE -> {
-                        videoPlayer.exo_play.setOnClickListener(null)
-                        videoPlayer.exo_pause.setOnClickListener(null)
-                        videoPlayer.exo_progress.wasEnable = false
+                        videoPlayer.exo_play?.setOnClickListener(null)
+                        videoPlayer.exo_pause?.setOnClickListener(null)
+                        videoPlayer.exo_progress?.wasEnable = false
                     }
 
                     PlayMode.ON_DEMAND -> {
@@ -312,7 +313,7 @@ class NowPlayingFragment : BaseFragment(), INowPlayingConstruct.View, IRouterCha
                             mCheckVideoPositionRunnable?.stopTask()
                         }
 
-                        videoPlayer.exo_progress.wasEnable = true
+                        videoPlayer.exo_progress?.wasEnable = true
                     }
                 }
             }
@@ -320,33 +321,37 @@ class NowPlayingFragment : BaseFragment(), INowPlayingConstruct.View, IRouterCha
     }
 
     private fun setupButtonLogo() {
-        btnLogoBottom.setOnClickListener {
-            btnLogoBottom.isEnabled = false
+        btnLogoBottom?.setOnClickListener {
+            it.isEnabled = false
             onClickedButtonLogo()
-            btnLogoBottom.isEnabled = true
+            it.isEnabled = true
         }
     }
 
     private fun onClickedButtonLogo() {
-        when (mPresenter?.getPlayMode()) {
-            // show dialog "Do you want to reloead schedule ?"
-            PlayMode.SCHEDULE -> {
-                videoPlayer?.context?.also { context ->
-                    val message = context.getString(R.string.do_you_wan_to_reload_schedule)
-                    val okButtonListener = DialogInterface.OnClickListener { _, _ ->
-                        mPresenter?.stopCountdown()
-                        loadSchedule(true)
-                        SearchResultFragment.mVideosToPlay.clear()
-                    }
+        mPresenter?.getPlayMode()?.also { playMode ->
 
-                    DialogUtil.createDialogTwoButtons(context = context, message = message, titleLeftButton = R.string.btn_no,
-                            leftButtonClickListener = null, titleRightButton = R.string.btn_yes, rightButtonClickListener = okButtonListener).show()
+            when {
+                // show dialog "Do you want to reloead schedule ?"
+                playMode == PlayMode.SCHEDULE -> {
+                    videoPlayer?.context?.also { context ->
+                        val message = context.getString(R.string.do_you_wan_to_reload_schedule)
+                        val okButtonListener = DialogInterface.OnClickListener { _, _ ->
+                            mPresenter?.stopCountdown()
+                            loadSchedule(true)
+                            SearchResultFragment.mVideosToPlay.clear()
+                        }
+
+                        DialogUtil.createDialogTwoButtons(context = context, message = message, titleLeftButton = R.string.btn_no,
+                                leftButtonClickListener = null, titleRightButton = R.string.btn_yes, rightButtonClickListener = okButtonListener).show()
+                    }
                 }
-            }
-            PlayMode.ON_DEMAND -> {
-                mPresenter?.stopCountdown()
-                loadSchedule(true)
-                SearchResultFragment.mVideosToPlay.clear()
+
+                playMode == PlayMode.ON_DEMAND -> {
+                    mPresenter?.stopCountdown()
+                    loadSchedule(true)
+                    SearchResultFragment.mVideosToPlay.clear()
+                }
             }
         }
     }
@@ -499,12 +504,12 @@ class NowPlayingFragment : BaseFragment(), INowPlayingConstruct.View, IRouterCha
         postDelayCheckVideoPosition()
     }
 
-    override fun onPlayerInitialized(players: SimpleExoPlayer, isReload: Boolean) {
+    override fun onPlayerInitialized(player: SimpleExoPlayer, isReload: Boolean) {
         parentView?.also { rootView ->
 
-            NowPlayingVideoInfoDisplayHelper.setupVideo(rootView, players)
-            seekbarVolume.progress = (players.volume * 100).toInt()
-            if (players.volume == 0f) exo_volume.setImageResource(R.drawable.ic_volume_mute_white_28dp)
+            NowPlayingVideoInfoDisplayHelper.setupVideo(rootView, player)
+            seekbarVolume.progress = (player.volume * 100).toInt()
+            if (player.volume == 0f) exo_volume.setImageResource(R.drawable.ic_volume_mute_white_28dp)
 
             if (mPresenter?.isPlayingCC() == true) {
                 postDelayCheckVideoPosition()

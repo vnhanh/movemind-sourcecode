@@ -1,7 +1,7 @@
 package player.wellnesssolutions.com.ui.fragment_time_table
 
-import player.wellnesssolutions.com.base.uis.ILifeCycle
-import player.wellnesssolutions.com.base.uis.IProgressView
+import player.wellnesssolutions.com.base.view.ILifeCycle
+import player.wellnesssolutions.com.base.view.IProgressView
 import player.wellnesssolutions.com.network.models.response.SessionVideo
 
 interface ITimeTableContract {

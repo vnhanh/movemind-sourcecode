@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import kotlinx.android.synthetic.main.fragment_no_class_search.*
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.base.uis.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseFragment
 import player.wellnesssolutions.com.base.utils.FragmentUtil
 import player.wellnesssolutions.com.base.utils.StringUtil
 import player.wellnesssolutions.com.base.utils.search_util.SearchCollectionUtil

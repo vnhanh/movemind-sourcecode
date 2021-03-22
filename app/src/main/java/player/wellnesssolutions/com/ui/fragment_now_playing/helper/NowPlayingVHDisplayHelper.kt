@@ -1,6 +1,7 @@
 package player.wellnesssolutions.com.ui.fragment_now_playing.helper
 
 import android.content.res.Resources
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import com.bumptech.glide.Glide
@@ -8,6 +9,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import player.wellnesssolutions.com.R
+import player.wellnesssolutions.com.base.utils.convertToStrDateFormat12hrs
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.customize_views.MMTextView
 
@@ -18,7 +20,7 @@ object NowPlayingVHDisplayHelper {
 
     fun displayTimeStart(tvTimeStart: MMTextView, playTime: String) {
         tvTimeStart.visibility = View.VISIBLE
-        val timeStr = GCUDisplayHelper.convertDateStrToAMPMFormat(playTime).toUpperCase()
+        val timeStr = playTime.convertToStrDateFormat12hrs().toUpperCase()
         tvTimeStart.text = StringBuilder(timeStr).append(Constant.WHITE_SPACE).toString()
     }
 

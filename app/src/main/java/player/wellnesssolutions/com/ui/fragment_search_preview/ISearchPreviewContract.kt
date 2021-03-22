@@ -1,9 +1,9 @@
 package player.wellnesssolutions.com.ui.fragment_search_preview
 
-import player.wellnesssolutions.com.base.uis.BaseClickableAdapter
-import player.wellnesssolutions.com.base.uis.ILifeCycle
-import player.wellnesssolutions.com.base.uis.IProgressView
-import player.wellnesssolutions.com.base.uis.IShowMessageView
+import player.wellnesssolutions.com.base.view.BaseClickableAdapter
+import player.wellnesssolutions.com.base.view.ILifeCycle
+import player.wellnesssolutions.com.base.view.IProgressView
+import player.wellnesssolutions.com.base.view.IShowMessageView
 import player.wellnesssolutions.com.network.models.screen_search.MMBrand
 import player.wellnesssolutions.com.ui.fragment_search_preview.recyclerview.SPShowedUIData
 import player.wellnesssolutions.com.ui.fragment_search_preview.recyclerview.durations_levels.SPSearchedOption

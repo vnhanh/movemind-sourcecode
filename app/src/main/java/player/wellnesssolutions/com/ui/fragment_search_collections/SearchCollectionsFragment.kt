@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.fragment_search_collections.*
 import kotlinx.android.synthetic.main.merge_layout_group_top_search_screen.*
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.customs.views.RecyclerViewCustom
-import player.wellnesssolutions.com.base.uis.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseFragment
 import player.wellnesssolutions.com.base.utils.FragmentUtil
 import player.wellnesssolutions.com.base.utils.ViewUtil
 import player.wellnesssolutions.com.base.utils.search_util.SearchUIHelper

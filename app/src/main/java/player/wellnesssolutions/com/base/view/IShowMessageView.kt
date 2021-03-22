@@ -1,4 +1,4 @@
-package player.wellnesssolutions.com.base.uis
+package player.wellnesssolutions.com.base.view
 
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes

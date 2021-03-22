@@ -3,8 +3,8 @@ package player.wellnesssolutions.com.ui.fragment_time_table
 import androidx.core.content.ContextCompat
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import player.wellnesssolutions.com.base.uis.BaseFragment
-import player.wellnesssolutions.com.base.uis.BaseResponseObserver
+import player.wellnesssolutions.com.base.view.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
 import player.wellnesssolutions.com.common.R
 import player.wellnesssolutions.com.common.constant.Constant

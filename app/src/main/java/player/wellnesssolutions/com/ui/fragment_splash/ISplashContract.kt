@@ -1,6 +1,6 @@
 package player.wellnesssolutions.com.ui.fragment_splash
 
-import player.wellnesssolutions.com.base.uis.ILifeCycle
+import player.wellnesssolutions.com.base.view.ILifeCycle
 
 interface ISplashContract {
     interface View : ILifeCycle.View {

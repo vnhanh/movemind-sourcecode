@@ -1,8 +1,8 @@
 package player.wellnesssolutions.com.ui.fragment_search_collections
 
-import player.wellnesssolutions.com.base.uis.ILifeCycle
-import player.wellnesssolutions.com.base.uis.IProgressView
-import player.wellnesssolutions.com.base.uis.IShowMessageView
+import player.wellnesssolutions.com.base.view.ILifeCycle
+import player.wellnesssolutions.com.base.view.IProgressView
+import player.wellnesssolutions.com.base.view.IShowMessageView
 import player.wellnesssolutions.com.network.models.screen_search.MMBrand
 import player.wellnesssolutions.com.network.models.screen_search.MMCollection
 

@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.customs.views.RecyclerViewCustom
-import player.wellnesssolutions.com.base.uis.BaseClickableAdapter
+import player.wellnesssolutions.com.base.view.BaseClickableAdapter
 import player.wellnesssolutions.com.base.utils.FragmentUtil
 import player.wellnesssolutions.com.network.models.screen_search.MMBrand
 import player.wellnesssolutions.com.ui.fragment_control.ControlFragment

@@ -380,7 +380,7 @@ object NowPlayingVideoSetupHelper {
                         true -> NowPlayingFragment.updateAlreadyInstance(fragment, videos)
                         false -> NowPlayingFragment.getInstancePlaySchedule(videos)
                     }
-            FragmentUtil.replaceFragment(fm = _fm, newFragment = fragment, newFragmentTag = tag, frameId = R.id.frameLayoutHome, isAddToBackStack = false, isRemoveOlds = true)
+            FragmentUtil.replaceFragment(fm = _fm, newFragment = fragment, newFragmentTag = tag, frameId = R.id.frameLayoutHome, isAddToBackStack = true, isRemoveOlds = true)
         }
     }
 

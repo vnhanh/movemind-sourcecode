@@ -1,5 +1,6 @@
-package player.wellnesssolutions.com.base.uis
+package player.wellnesssolutions.com.base.view
 
+import android.util.Log
 import io.reactivex.Observer
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -51,6 +52,7 @@ abstract class BaseResponseObserver<T> : Observer<Response<ResponseValue<T>>> {
     }
 
     override fun onError(e: Throwable) {
+//        Log.d("LOG", this.javaClass.simpleName + " onError() | message: ${e.message}")
         this.requestError = e
         when (e.message?.toLowerCase()?.contains("failed to connect to")) {
             true -> {

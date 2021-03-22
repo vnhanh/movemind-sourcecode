@@ -3,8 +3,8 @@ package player.wellnesssolutions.com.base.utils.search_util
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.GridLayoutManager
-import player.wellnesssolutions.com.base.uis.BaseClickableAdapter
-import player.wellnesssolutions.com.base.uis.BaseVH
+import player.wellnesssolutions.com.base.view.BaseClickableAdapter
+import player.wellnesssolutions.com.base.view.BaseVH
 
 abstract class BaseSearchVideosAdapter<VH : BaseVH<M>, T : Any, M : Any>(listener: T?, list: ArrayList<M>) : BaseClickableAdapter<VH, T, M>(listener, list) {
     var itemHeight = 0

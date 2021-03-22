@@ -5,7 +5,7 @@ import android.view.View
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import kotlinx.android.synthetic.main.vh_search_brand_less_4_items.view.*
-import player.wellnesssolutions.com.base.uis.BaseVH
+import player.wellnesssolutions.com.base.view.BaseVH
 import player.wellnesssolutions.com.base.utils.StringUtil
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.customize_views.MMOptionTextView.Companion.colorBand

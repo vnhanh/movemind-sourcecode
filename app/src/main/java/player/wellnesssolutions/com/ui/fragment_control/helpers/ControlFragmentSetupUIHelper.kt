@@ -8,7 +8,7 @@ import player.wellnesssolutions.com.ui.fragment_now_playing.NowPlayingFragment
 
 object ControlFragmentSetupUIHelper {
 
-    fun passScheduleAndOpenScreenPlay(activity: FragmentActivity, scheduleVideos: ArrayList<MMVideo>) {
+    fun playNewScheduleOnNewScreen(activity: FragmentActivity, scheduleVideos: ArrayList<MMVideo>) {
         val fm = activity.supportFragmentManager
         val newFragment = NowPlayingFragment.getInstancePlaySchedule(scheduleVideos)
         val newTag = NowPlayingFragment.TAG

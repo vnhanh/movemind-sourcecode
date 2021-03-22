@@ -25,7 +25,7 @@ import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.common.download.DownloadVideoHelper
 import player.wellnesssolutions.com.base.common.load_scheduled_videos.IScheduleContract
 import player.wellnesssolutions.com.base.common.load_scheduled_videos.ScheduledVideosPresenter
-import player.wellnesssolutions.com.base.uis.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseFragment
 import player.wellnesssolutions.com.base.utils.FragmentUtil
 import player.wellnesssolutions.com.base.utils.ParameterUtils
 import player.wellnesssolutions.com.base.utils.ViewUtil
@@ -191,18 +191,18 @@ class ControlFragment : BaseFragment(), IControlContract.View, IScheduleContract
     override fun onHaveClassVideos(scheduledVideos: ArrayList<MMVideo>, isClickedFromBtnBottom: Boolean) {
         activity?.also { act ->
             if (act is MainActivity && act.isPresentationAvailable()) {
-                MessageUtils.showSnackBar(snackView = btnLogoBottom, message = getString(player.wellnesssolutions.com.R.string.now_playing_class),
+                MessageUtils.showSnackBar(snackView = btnLogoBottom, message = getString(R.string.now_playing_class),
                         colorRes = R.color.white)
                 act.playVideo(PlayMode.SCHEDULE, scheduledVideos)
 
             } else {
-                ControlFragmentSetupUIHelper.passScheduleAndOpenScreenPlay(act, scheduledVideos)
+                ControlFragmentSetupUIHelper.playNewScheduleOnNewScreen(act, scheduledVideos)
             }
         }
     }
 
     override fun onReceivePlayVideoScheduleFromUI() {
-        AlarmManagerSchedule.cancelAlarmScheduleTime()
+//        AlarmManagerSchedule.cancelAlarmScheduleTime()
         mSchedulePresenter?.onLoadSchedule(this, false)
     }
 

@@ -3,7 +3,7 @@ package player.wellnesssolutions.com.base.utils.check_header_api_util
 import android.content.Context
 import androidx.fragment.app.Fragment
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.base.uis.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseFragment
 import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
 import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
 

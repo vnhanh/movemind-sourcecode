@@ -1,6 +1,6 @@
 package player.wellnesssolutions.com.ui.activity_scan_barcode
 
-import player.wellnesssolutions.com.base.uis.ILifeCycle
+import player.wellnesssolutions.com.base.view.ILifeCycle
 
 interface ScanBarCodeContract {
     interface View : ILifeCycle.View {

@@ -10,6 +10,7 @@ import player.wellnesssolutions.com.base.common.play_video.PlayerManager
 import player.wellnesssolutions.com.base.utils.ParameterUtils.countTime
 import player.wellnesssolutions.com.base.utils.ParameterUtils.isPlayNewList
 import player.wellnesssolutions.com.base.utils.ParameterUtils.mCountDownNumber
+import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
 import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized

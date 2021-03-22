@@ -3,9 +3,9 @@ package player.wellnesssolutions.com.ui.fragment_splash
 import androidx.appcompat.app.AlertDialog
 import com.google.gson.Gson
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.base.uis.BaseFragment
-import player.wellnesssolutions.com.base.uis.BaseResponseObserver
-import player.wellnesssolutions.com.base.uis.IGetNewToken
+import player.wellnesssolutions.com.base.view.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseResponseObserver
+import player.wellnesssolutions.com.base.view.IGetNewToken
 import player.wellnesssolutions.com.base.utils.ParameterUtils
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
 import player.wellnesssolutions.com.base.utils.check_header_api_util.HeaderData

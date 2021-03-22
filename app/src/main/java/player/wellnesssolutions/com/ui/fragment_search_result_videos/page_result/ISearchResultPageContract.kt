@@ -1,7 +1,7 @@
 package player.wellnesssolutions.com.ui.fragment_search_result_videos.page_result
 
-import player.wellnesssolutions.com.base.uis.ILifeCycle
-import player.wellnesssolutions.com.base.uis.IShowMessageView
+import player.wellnesssolutions.com.base.view.ILifeCycle
+import player.wellnesssolutions.com.base.view.IShowMessageView
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.com.ui.fragment_search_result_videos.ISearchResultContract
 import player.wellnesssolutions.com.ui.fragment_search_result_videos.page_result.recyclerview.ISearchResultItemListener

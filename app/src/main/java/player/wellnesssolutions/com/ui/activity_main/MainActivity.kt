@@ -30,8 +30,8 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.base.uis.BaseResponseObserver
-import player.wellnesssolutions.com.base.uis.IGetNewToken
+import player.wellnesssolutions.com.base.view.BaseResponseObserver
+import player.wellnesssolutions.com.base.view.IGetNewToken
 import player.wellnesssolutions.com.base.utils.FragmentUtil
 import player.wellnesssolutions.com.base.utils.ParameterUtils
 import player.wellnesssolutions.com.base.utils.ParameterUtils.mCountDownNumber

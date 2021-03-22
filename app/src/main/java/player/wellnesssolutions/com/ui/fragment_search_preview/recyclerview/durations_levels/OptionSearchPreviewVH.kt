@@ -2,7 +2,7 @@ package player.wellnesssolutions.com.ui.fragment_search_preview.recyclerview.dur
 
 import android.view.View
 import kotlinx.android.synthetic.main.viewholder_selectable_option_text.view.*
-import player.wellnesssolutions.com.base.uis.BaseVH
+import player.wellnesssolutions.com.base.view.BaseVH
 
 class OptionSearchPreviewVH(view: View) : BaseVH<SearchedOption>(view) {
 

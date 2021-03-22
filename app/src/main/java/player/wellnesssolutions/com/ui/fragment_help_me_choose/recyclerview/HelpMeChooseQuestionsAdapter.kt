@@ -3,7 +3,7 @@ package player.wellnesssolutions.com.ui.fragment_help_me_choose.recyclerview
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.base.uis.BaseClickableAdapter
+import player.wellnesssolutions.com.base.view.BaseClickableAdapter
 import player.wellnesssolutions.com.network.models.help_me_choose.MMHelpMeChooseAnswer
 import player.wellnesssolutions.com.ui.fragment_help_me_choose.IHelpMeChooseContract
 

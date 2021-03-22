@@ -6,7 +6,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.vh_sp_collection.view.*
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.base.uis.BaseVH
+import player.wellnesssolutions.com.base.view.BaseVH
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.customize_views.MMCircleImageView
 import player.wellnesssolutions.com.network.models.screen_search.MMCollection

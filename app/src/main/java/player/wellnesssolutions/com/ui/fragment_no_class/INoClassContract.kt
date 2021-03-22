@@ -1,8 +1,8 @@
 package player.wellnesssolutions.com.ui.fragment_no_class
 
-import player.wellnesssolutions.com.base.uis.ILifeCycle
-import player.wellnesssolutions.com.base.uis.IProgressView
-import player.wellnesssolutions.com.base.uis.IShowMessageView
+import player.wellnesssolutions.com.base.view.ILifeCycle
+import player.wellnesssolutions.com.base.view.IProgressView
+import player.wellnesssolutions.com.base.view.IShowMessageView
 import player.wellnesssolutions.com.network.models.config.MMConfigData
 import player.wellnesssolutions.com.ui.fragment_search_brands.module.ILoadBrandHandler
 

@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_time_table.*
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.customs.views.ItemDecorationGridHorizontalLayout
-import player.wellnesssolutions.com.base.uis.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseFragment
 import player.wellnesssolutions.com.base.utils.ViewUtil
 import player.wellnesssolutions.com.common.customize_views.MMTabBar
 import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant

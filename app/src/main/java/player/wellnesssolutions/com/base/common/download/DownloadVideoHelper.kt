@@ -2,7 +2,7 @@ package player.wellnesssolutions.com.base.common.download
 
 import android.content.Context
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.base.uis.BaseResponseObserver
+import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
 import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized

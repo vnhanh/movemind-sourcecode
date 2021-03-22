@@ -1,4 +1,4 @@
-package player.wellnesssolutions.com.base.uis
+package player.wellnesssolutions.com.base.view
 
 import java.lang.ref.WeakReference
 

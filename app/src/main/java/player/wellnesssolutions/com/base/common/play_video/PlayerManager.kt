@@ -9,7 +9,7 @@ import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.FileDataSource
 import com.google.android.exoplayer2.upstream.HttpDataSource
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.base.uis.BaseResponseObserver
+import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
 import player.wellnesssolutions.com.base.utils.check_header_api_util.HeaderData
 import player.wellnesssolutions.com.base.utils.video.VideoDBUtil

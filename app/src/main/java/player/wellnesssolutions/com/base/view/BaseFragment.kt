@@ -1,7 +1,8 @@
-package player.wellnesssolutions.com.base.uis
+package player.wellnesssolutions.com.base.view
 
 import android.content.Context
 import android.content.DialogInterface
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import player.wellnesssolutions.com.R

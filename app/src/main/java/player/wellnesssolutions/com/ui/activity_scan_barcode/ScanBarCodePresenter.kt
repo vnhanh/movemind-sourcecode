@@ -6,7 +6,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.application.MyApplication
-import player.wellnesssolutions.com.base.uis.BaseResponseObserver
+import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.base.utils.CommonUtility
 import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
 import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
