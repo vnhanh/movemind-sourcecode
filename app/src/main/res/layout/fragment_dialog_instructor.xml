@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/viewWrapper"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/bg_white_rectangle_border_white_corner"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/line_border_top_wrapper" />
+
+    <ImageView
+        android:id="@+id/btnCloseDialog"
+        android:layout_width="@dimen/dialog_presenter_button_close_size"
+        android:layout_height="@dimen/dialog_presenter_button_close_size"
+        android:layout_marginTop="@dimen/dialog_presenter_button_close_margin_top"
+        android:layout_marginEnd="@dimen/dialog_presenter_button_close_margin_end"
+        android:contentDescription="@string/button_close"
+        android:padding="@dimen/margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/viewWrapper" />
+
+    <View
+        android:id="@+id/line_border_top_wrapper"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/height_border_line_top_wrapper_in_dialog"
+        android:layout_marginBottom="@dimen/padding_top_wrapper_to_tv_name_in_dialog"
+        android:background="#d2d2d2"
+        app:layout_constraintBottom_toTopOf="@+id/tvName"
+        app:layout_constraintEnd_toEndOf="@+id/viewWrapper"
+        app:layout_constraintStart_toStartOf="@+id/viewWrapper" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMCircleImageView
+        android:id="@+id/avatar"
+        android:layout_width="@dimen/dialog_presenter_avatar_size_default"
+        android:layout_height="@dimen/dialog_presenter_avatar_size_default"
+        android:layout_marginTop="@dimen/margin"
+        android:contentDescription="@string/content_desc_avatar_presenter"
+        android:padding="@dimen/padding_for_small_size_wrapper_item_search"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMTextView
+        android:id="@+id/tvName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/padding_horizontal_wrapper_in_dialog"
+        android:layout_marginTop="@dimen/marginx2"
+        android:layout_marginRight="@dimen/padding_horizontal_wrapper_in_dialog"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:textAllCaps="true"
+        android:textColor="@color/mainBrandingColor"
+        android:textSize="@dimen/dialog_instructor_info_tv_name_text_size"
+        android:textStyle="bold|italic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/avatar"
+        app:style="btnColor" />
+
+    <TextView
+        android:id="@+id/tvDescription"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/padding_horizontal_wrapper_in_dialog"
+        android:layout_marginTop="@dimen/margin_top_description_to_presenter_name_dialog"
+        android:layout_marginRight="@dimen/padding_horizontal_wrapper_in_dialog"
+        android:layout_marginBottom="@dimen/margin_bottom_description_to_btn_in_dialog"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/text_size_description_instructor_in_dialog"
+        app:layout_constraintBottom_toTopOf="@+id/btnShowVideosByPresenter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvName" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMButton
+        android:id="@+id/btnShowVideosByPresenter"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/height_btn_show_videos_by_instructor_in_dialog"
+        android:layout_marginBottom="@dimen/padding_bottom_wrapper_to_btn_show_videos_in_dialog"
+        android:background="@drawable/bg_rectangle_blue_corner_24dp"
+        android:gravity="center"
+        android:paddingLeft="@dimen/marginx3"
+        android:paddingRight="@dimen/marginx3"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/text_size_btn_show_videos_by_instructor"
+        android:textStyle="bold"
+        app:border="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

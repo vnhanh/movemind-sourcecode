@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="player.wellnesssolutions.com.ui.fragment_control.ControlFragment">
+
+    <FrameLayout
+        android:id="@+id/frameLayoutControl"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/lineBreak"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMBottomBar
+        android:id="@+id/viewBgGroupControllers"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/bg_rectangle_gradient_group_bottom_now_playing"
+        android:contentDescription="@string/bottom_bar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/lineBreak" />
+
+    <View
+        android:id="@+id/lineBreak"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginBottom="@dimen/margin"
+        android:background="@android:color/black"
+        app:layout_constraintBottom_toTopOf="@+id/btnLogoBottom"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <View
+        android:id="@+id/view_pivot_above_menu"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:layout_marginBottom="@dimen/margin"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@id/btnMenuFloat"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMImageView
+        android:id="@+id/btnMenuFloat"
+        android:layout_width="@dimen/width_btn_menu_float"
+        android:layout_height="@dimen/height_btn_menu_float"
+        android:layout_marginEnd="@dimen/margin_right_btn_float_menu"
+        android:contentDescription="@string/content_desc_menu_icon"
+        android:src="@drawable/ic_menu_float"
+        app:layout_constraintBottom_toBottomOf="@id/btnLogoBottom"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btnLogoBottom" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMImageView
+        android:id="@+id/btnCloseMenuFloat"
+        android:layout_width="@dimen/width_btn_menu_float"
+        android:layout_height="@dimen/height_btn_menu_float"
+        android:contentDescription="@string/content_desc_menu_icon"
+        android:padding="4dp"
+        android:src="@drawable/ic_close_menu_float"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@id/btnMenuFloat"
+        app:layout_constraintEnd_toEndOf="@id/btnMenuFloat"
+        app:layout_constraintStart_toStartOf="@+id/btnMenuFloat"
+        app:layout_constraintTop_toTopOf="@+id/btnMenuFloat" />
+
+    <View
+        android:id="@+id/wrapperMenuFloat"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/margin"
+        android:layout_marginTop="@dimen/margin"
+        android:layout_marginBottom="@dimen/margin"
+        app:layout_constraintBottom_toBottomOf="@+id/btnMenuFloat"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/btnMenuFloat"
+        app:layout_constraintTop_toTopOf="@+id/btnMenuFloat" />
+
+    <TextView
+        android:id="@+id/tvNoticePresentation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/marginx2"
+        android:layout_marginEnd="@dimen/marginx2"
+        android:text="@string/presentating_video"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/btnLogoBottom"
+        app:layout_constraintEnd_toEndOf="@+id/btnLogoBottom"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btnLogoBottom" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMLogoView
+        android:id="@+id/btnLogoBottom"
+        android:layout_width="@dimen/width_bottom_logo"
+        android:layout_height="@dimen/height_bottom_logo"
+        android:layout_marginBottom="@dimen/margin"
+        android:src="@drawable/bottom_logo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <include
+        layout="@layout/merge_loading_screen"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <player.wellnesssolutions.com.common.customize_views.MMTextView
+        android:id="@+id/btnPlaylistPresentation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/screen_search_tv_title_margin_start"
+        android:text="@string/playlist"
+        android:textSize="@dimen/screen_search_tv_title1_text_size"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/viewBgGroupControllers" />
+        />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintArrowUp"
+        android:visibility="invisible"
+        android:layout_marginTop="@dimen/margin_14dp"
+        app:layout_constraintRight_toRightOf="@id/btnPlaylistPresentation"
+        app:layout_constraintTop_toTopOf="@id/viewBgGroupControllers"
+        app:layout_constraintStart_toEndOf="@id/btnPlaylistPresentation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <player.wellnesssolutions.com.common.customize_views.MMImageView
+            android:id="@+id/imgArrowUp1"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/ic_nowplaying_arrow_up_24dp"
+            tools:ignore="MissingConstraints" />
+        <player.wellnesssolutions.com.common.customize_views.MMImageView
+            android:id="@+id/imgArrowUp2"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/ic_nowplaying_arrow_up_24dp"
+            app:layout_constraintBottom_toBottomOf="@id/imgArrowUp1"
+            app:layout_constraintTop_toBottomOf="@id/imgArrowUp1"
+            tools:ignore="MissingConstraints" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintArrowDown"
+        android:visibility="invisible"
+        android:layout_marginTop="@dimen/margin_14dp"
+        app:layout_constraintRight_toRightOf="@id/btnPlaylistPresentation"
+        app:layout_constraintTop_toTopOf="@id/viewBgGroupControllers"
+        app:layout_constraintStart_toEndOf="@id/btnPlaylistPresentation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <player.wellnesssolutions.com.common.customize_views.MMImageView
+            android:id="@+id/imgArrowDown1"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/ic_nowplaying_arrow_down_24dp"
+            tools:ignore="MissingConstraints" />
+        <player.wellnesssolutions.com.common.customize_views.MMImageView
+            android:id="@+id/imgArrowDown2"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/ic_nowplaying_arrow_down_24dp"
+            app:layout_constraintBottom_toBottomOf="@id/imgArrowDown1"
+            app:layout_constraintTop_toBottomOf="@id/imgArrowDown1"
+            tools:ignore="MissingConstraints" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <include
+        layout="@layout/merge_now_playing_coming_up_next"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/group_coming_up_next_height"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/viewBgGroupControllers"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <View
+        android:id="@+id/viewPlayList"
+        android:background="@drawable/bg_rectangle_white_corner_lt_rt"
+        android:layout_width="@dimen/view_playlist_width"
+        android:layout_height="@dimen/view_playlist_height"
+        android:visibility="gone"
+        android:layout_marginStart="@dimen/view_playlist_margin_start"
+        app:layout_constraintBottom_toTopOf="@+id/groupViewsComingUpNext"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMTextView
+        android:id="@+id/tvSharingOnTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sharing_on_tv"
+        android:textSize="@dimen/btn_previous_text_size"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/viewPlayList"
+        app:layout_constraintEnd_toEndOf="@+id/viewPlayList"
+        app:layout_constraintStart_toStartOf="@+id/viewPlayList"
+        app:layout_constraintTop_toTopOf="@+id/viewPlayList" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/frameOverlay"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/viewBgGroupControllers"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <include
+            android:id="@+id/menuFloat"
+            layout="@layout/layout_float_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <include layout="@layout/merge_load_brand"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

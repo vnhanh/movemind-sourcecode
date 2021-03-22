@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="player.wellnesssolutions.com">
+
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:node="replace" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+    <application
+        android:name="player.wellnesssolutions.com.base.application.MyApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+        <activity
+            android:name="player.wellnesssolutions.com.ui.activity_scan_barcode.ScanBarCodeActivity"
+            android:screenOrientation="landscape">
+            <!--<intent-filter>-->
+            <!--<action android:name="android.intent.action.MAIN" />-->
+
+            <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        </activity>
+
+        <activity
+            android:name="player.wellnesssolutions.com.ui.activity_main.MainActivity"
+            android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <receiver android:name=".network.network_connect.NetworkReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name="player.wellnesssolutions.com.ui.activity_main.CastingBroadcastReceiver">
+            <intent-filter>
+                <action android:name="com.tma.movemind.TV_STATUS_CHANGE" />
+                <action android:name="com.tma.movemind.UI_COMMAND" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name="player.wellnesssolutions.com.ui.activity_main.ClosingService"
+            android:stopWithTask="false" />
+
+        <service android:name=".services.DownloadService"
+            android:enabled="true"
+            android:exported="true"
+            android:stopWithTask="false"/>
+        <!--CASTING-->
+        <meta-data
+            android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
+            android:value="com.tma.movemind.ui.main_screen.CastOptionsProvider" />
+
+        <service
+            android:name="player.wellnesssolutions.com.services.MMPresentationService"
+            android:enabled="true"
+            android:exported="false" />
+        <service
+            android:name=".services.FCMService"
+            android:enabled="true"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service android:name=".services.ScheduleVideosService"/>
+        <!--Android O not working when we use intent-filter and action at here-->
+        <receiver android:name="player.wellnesssolutions.com.ui.fragment_presentation.services.NotificationButtonListener" />
+
+        <receiver android:name="player.wellnesssolutions.com.services.notification.DownloadNotiReceiver" />
+
+    </application>
+
+</manifest>

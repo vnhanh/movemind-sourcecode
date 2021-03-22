@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/parentView"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/margin"
+    android:paddingRight="@dimen/margin">
+
+    <ImageView
+        android:id="@+id/thumbnailVideo"
+        android:layout_width="@dimen/width_thumbnail_vh_now_playing_coming_up_next"
+        android:layout_height="@dimen/height_thumbnail_vh_now_playing_coming_up_next"
+        android:background="@drawable/bg_rectangle_ltgray_corner_4dp"
+        android:contentDescription="@string/thumbnail_video"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMTextView
+        android:id="@+id/tvTimeStart"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/height_tv_time_start_vh_now_playing_coming_up_next"
+        android:layout_marginTop="@dimen/margin"
+        android:gravity="center"
+        android:paddingBottom="2dp"
+        android:textSize="@dimen/text_size_time_start_item_scheduler_screen_time_table"
+        android:textStyle="bold|italic"
+        android:visibility="gone"
+        app:cornerRadius="@dimen/corner_24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:padLR="@dimen/margin"
+        app:padTB="@dimen/text_size_padding_se_scheduler_item"
+        app:style="borderHalf" />
+
+    <!--TIME DURATION - USE SAME BACKGROUND XML WITH GROUP COMING UP NEXT-->
+    <player.wellnesssolutions.com.common.customize_views.MMTextView
+        android:id="@+id/tvTimeDuration"
+        android:layout_width="@dimen/vh_search_result_item_tv_duration_size"
+        android:layout_height="@dimen/vh_search_result_item_tv_duration_size"
+        android:layout_marginEnd="@dimen/item_now_playing_icons_margin_right"
+        android:layout_marginBottom="@dimen/vh_search_result_item_tv_duration_margin_bottom"
+        android:alpha="0.8"
+        android:background="@drawable/bg_circle_duration"
+        android:gravity="center"
+        android:paddingTop="2dp"
+        android:textSize="@dimen/vh_now_playing_coming_up_next_tv_duration_text_size_small"
+        android:textStyle="italic"
+        app:customFont="@string/font_liberator_heavy"
+        app:layout_constraintBottom_toBottomOf="@+id/thumbnailVideo"
+        app:layout_constraintEnd_toEndOf="@+id/thumbnailVideo"
+        app:style="btnColor" />
+
+    <!--BUTTON DOWNLOAD-->
+    <player.wellnesssolutions.com.common.customize_views.MMImageView
+        android:id="@+id/btnDownload"
+        android:visibility="invisible"
+        android:layout_width="@dimen/size_btn_download_vh_now_playing_coming_up_next"
+        android:layout_height="@dimen/size_btn_download_vh_now_playing_coming_up_next"
+        android:layout_marginTop="@dimen/margin_top_btn_download_vh_now_playing_coming_up_next"
+        android:layout_marginEnd="@dimen/item_now_playing_icons_margin_right"
+        android:background="@drawable/bg_circle_blue"
+        android:contentDescription="@string/content_desc_button_download"
+        android:padding="@dimen/padding_btn_download_vh_now_playing_coming_up_next"
+        android:src="@drawable/ic_download"
+        app:layout_constraintEnd_toEndOf="@+id/thumbnailVideo"
+        app:layout_constraintTop_toTopOf="@+id/thumbnailVideo"
+        app:tintBackground="true" />
+
+    <!--TITLE VIDEO-->
+    <TextView
+        android:id="@+id/tvTitleVideo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_top_title_video_group_coming_up_next"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/text_size_title_video_group_coming_up_next"
+        android:textStyle="normal|italic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/thumbnailVideo" />
+
+    <LinearLayout
+        android:id="@+id/lineCollections"
+        android:orientation="horizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvTitleVideo"
+        android:layout_marginTop="@dimen/margin">
+
+        <ImageView
+            android:id="@+id/icTypeLogoGCU"
+            android:contentDescription="@string/icon_type_logo"
+            android:layout_marginBottom="4dp"
+            android:layout_gravity="bottom"
+            android:layout_width="@dimen/vh_search_result_ic_type_logo_width"
+            android:layout_height="@dimen/vh_search_result_ic_type_logo_height"/>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="lightGray">#C5C5C5</color>
+    <color name="colorWhite">#ffffff</color>
+
+    <color name="unActivedColor">#e6e6e6</color>
+
+    <color name="defSecondaryColor">#00c3b3</color>
+    <color name="bgVideoPlayer">#041e41</color>
+    <color name="mainBlueTextColor">#00c3b3</color>
+    <color name="bgSplashScreen">#024942</color>
+    <color name="mainBrandingColor">#041e41</color>
+    <color name="title2TextColor">#979797</color>
+    <color name="instructorStroke">#ffe5e5e5</color>
+
+    <color name="textColorItemOptionSearchPreview">#041e41</color>
+
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="red">#FA584C</color>
+    <color name="yellow">#FFEB3B</color>
+
+    <color name="title_notification">#444444</color>
+
+    <!--EXO PLAYER-->
+    <color name="bgColorTimebarExoController">#000f23</color>
+    <color name="textColorDurationExoController">#908f8f</color>
+
+    <!--FRAGMENT NORMAL RESULT-->
+    <color name="colorTextGuideSwipeRightMoreVideos">#d7d7d7</color>
+    <color name="textColorVideoTitle">#000000</color>
+    <color name="durationBgColorInItemVideoResultSearch">#000000</color>
+    <color name="bgColorTvDurationItemVideoSearchResult">#000000</color>
+
+    <!--FRAGMENT HOME-->
+    <color name="textColorHelperTextScreeenHome">#7C7C7C</color>
+
+    <!--FRAGMENT HELP ME CHOOSE-->
+    <color name="textColorBtnHelpMeChoose">#fefeff</color>
+
+    <!--FRAGMENT NOW PLAYING-->
+    <color name="colorBorderTvTitleCollectionScreenNowPlaying">#908f8f</color>
+    <color name="textColorCollectionNowPlaying">#a3a3a3</color>
+    <color name="bgColorTvDurationVideoNowPlayingGroupComingUpNext">#0a1729</color>
+    <color name="color_d7">#979797</color>
+
+</resources>

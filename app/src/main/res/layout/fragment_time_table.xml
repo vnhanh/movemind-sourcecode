@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="player.wellnesssolutions.com.ui.fragment_time_table.TimeTableFragment">
+
+    <player.wellnesssolutions.com.common.customize_views.MMBackGroundView
+        android:id="@+id/imgBgSearchScreen"
+        android:contentDescription="@string/background_image"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:dimBackground="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMTabBar
+        android:id="@+id/tabBarToday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/marginx3"
+        android:layout_marginTop="@dimen/marginx3"
+        app:focus_main="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:string_padding="0dp"
+        app:strings="@array/days"
+        app:text_size="@dimen/screen_time_table_tab_today_textsize" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMButton
+        android:id="@+id/btnPrevious"
+        style="@style/TextStyle_Button_Previous_SearchScreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/back_to_now_playing"
+        android:visibility="invisible"
+        app:border="true"
+        app:layout_constraintBottom_toBottomOf="@id/tabBarToday"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tabBarToday" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMTabBar
+        android:id="@+id/tabsSession"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/screen_time_table_tab_session_margin_top"
+        app:focus_main="true"
+        app:textStyle="bold_italic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tabBarToday"
+        app:string_padding="14dp"
+        app:strings="@array/session"
+        app:text_size="@dimen/screen_time_table_tab_session_textsize" />
+
+    <View
+        android:id="@+id/line_break_left"
+        android:layout_width="0dp"
+        android:layout_height="5dp"
+        android:layout_marginStart="@dimen/marginx2"
+        android:layout_marginEnd="@dimen/marginx2"
+        android:alpha="0.1"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintBottom_toBottomOf="@+id/tabsSession"
+        app:layout_constraintEnd_toStartOf="@id/tabsSession"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tabsSession" />
+
+    <View
+        android:id="@+id/line_break_right"
+        android:layout_width="0dp"
+        android:layout_height="5dp"
+        android:layout_marginStart="@dimen/marginx2"
+        android:layout_marginEnd="@dimen/marginx2"
+        android:alpha="0.1"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintBottom_toBottomOf="@+id/tabsSession"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tabsSession"
+        app:layout_constraintTop_toTopOf="@id/tabsSession" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/reViewVideos"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginLeft="@dimen/marginx2"
+        android:layout_marginTop="@dimen/marginx3"
+        android:layout_marginRight="@dimen/marginx2"
+        android:layout_marginBottom="@dimen/margin"
+        android:overScrollMode="never"
+        app:layout_constraintBottom_toTopOf="@+id/btnSwipeRight"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tabsSession" />
+
+    <TextView
+        android:id="@+id/btnSwipeRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin"
+        android:text="@string/title_btn_swipe_right_more_options"
+        android:textColor="@color/lightGray"
+        android:textSize="@dimen/time_table_text_size_normal_title"
+        android:textStyle="bold|italic"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clProgressBar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:alpha="0.5"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/tabsSession"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <player.wellnesssolutions.com.common.customize_views.MMProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/icRefresh"
+        android:layout_width="@dimen/ic_refresh_size"
+        android:layout_height="@dimen/ic_refresh_size"
+        android:contentDescription="@string/icon_refresh"
+        android:src="@drawable/ic_refresh_56dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/clProgressBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/clProgressBar" />
+
+    <TextView
+        android:id="@+id/tvRetry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin"
+        android:textSize="14sp"
+        android:text="@string/retry"
+        android:textColor="@color/title2TextColor"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/icRefresh" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

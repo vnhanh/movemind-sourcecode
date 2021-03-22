@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="id" name="btnHelpMeChoose"/>
+    <item type="id" name="closedCaptionController"/>
+    <item type="id" name="icTypeLogo"/>
+    <item name="txtSwipeMoreOption" type="id" />
+</resources>

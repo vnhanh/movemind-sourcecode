@@ -1,0 +1,79 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_centerVertical="true"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <player.wellnesssolutions.com.common.customize_views.MMTextView
+        android:layout_marginTop="@dimen/dip_10"
+        android:layout_gravity="center"
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="2dp"
+        android:visibility="visible"
+        android:text="Please Wait"
+        android:textSize="@dimen/box_loading_textsize"
+        android:layout_marginStart="@dimen/marginx2"
+        android:layout_marginEnd="@dimen/margin"
+     />
+    <LinearLayout
+        android:layout_marginTop="@dimen/dip_10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/dip_10">
+        <player.wellnesssolutions.com.common.customize_views.MMProgressBar
+            android:id="@+id/progressDownload"
+            android:elevation="2dp"
+            android:theme="@style/AppTheme.WhiteAccent"
+            android:orientation="vertical"
+            android:layout_width="@dimen/size_progress_circle_in_now_playing"
+            android:layout_height="@dimen/size_progress_circle_in_now_playing"
+            android:visibility="visible"
+            android:layout_marginStart="@dimen/margin" />
+        <player.wellnesssolutions.com.common.customize_views.MMTextView
+            android:layout_gravity="center_vertical"
+            android:id="@+id/tvNumberDownload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="2dp"
+            android:visibility="visible"
+            android:text="Downloading 1/10 video..."
+            android:textSize="@dimen/box_loading_textsize"
+            android:layout_marginStart="@dimen/marginx2"
+            android:layout_marginEnd="@dimen/margin"
+            app:layout_constraintStart_toEndOf="@+id/progressDownload" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_marginTop="@dimen/dip_10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/dip_10">
+        <player.wellnesssolutions.com.common.customize_views.MMTextView
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="2dp"
+            android:visibility="visible"
+            android:text="@string/please_wait_until_download"
+            android:textSize="@dimen/box_loading_textsize"
+            android:layout_marginStart="@dimen/marginx2"
+            android:layout_marginEnd="@dimen/margin"
+            app:layout_constraintStart_toEndOf="@+id/progressDownload" />
+        <player.wellnesssolutions.com.common.customize_views.MMTextView
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="2dp"
+            android:visibility="visible"
+            android:text="@string/process_has_completed"
+            android:textSize="@dimen/box_loading_textsize"
+            android:layout_marginStart="@dimen/marginx2"
+            android:layout_marginEnd="@dimen/margin"
+            app:layout_constraintStart_toEndOf="@+id/progressDownload" />
+    </LinearLayout>
+</LinearLayout>

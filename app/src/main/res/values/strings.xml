@@ -1,0 +1,286 @@
+<resources>
+    <!--COMMON-->
+    <string name="app_id">4F8B3483</string>
+    <string name="app_name">Wellness Solutions</string>
+
+    <string name="font_made_evolve_sans_bold">fonts/made_evolve_sans_bold.ttf</string>
+    <string name="font_made_evolve_sans">fonts/made_evolve_sans.ttf</string>
+    <string name="font_liberator_heavy">fonts/Liberator-Heavy.ttf</string>
+
+    <!--SNACKBAR-->
+    <string name="warning">Warning</string>
+    <string name="btn_yes">YES</string>
+    <string name="btn_no">NO</string>
+    <string name="btn_ok">OK</string>
+
+    <string name="msg_network_connected">Network connected !</string>
+    <string name="msg_network_disconnected">Network disconnected !</string>
+
+    <!--HEADER DATA ERRORS-->
+    <string name="no_device_id">No device id ! Return Screen Scan Bar Code !</string>
+    <string name="error_no_token">Error ! No token ! Return to Screen Scan Bar Code !</string>
+
+    <!--MESSAGES AND ERROS OF LOAD API-->
+    <string name="msg_scan_fail">Scan Barcode Fail. Please try again!</string>
+    <string name="msg_load_empty_data">Loaded empty data !</string>
+    <string name="error_can_not_display_data">Can not display data !</string>
+    <string name="error_data">Error no data !</string>
+    <string name="loaded_no_data">Loaded no data !</string>
+
+    <string name="btn_title_skip_search">Skip &amp; Search</string>
+    <string name="btn_title_help_me_choose">Help Me Choose</string>
+
+    <!--SCAN BARCODE SCREEN-->
+    <string name="barcode_exit">Exit</string>
+    <string name="barcode_request">Please scan the barcode your received via email to activate your player</string>
+    <string name="confirm_want_to_return_screen_scan_bar_code">The token has been expired. Please scan the QR code again to login</string>
+    <string name="confirm_want_to_return_home_screen">The token has been expired. We will get it again, you will back to home screen.</string>
+
+    <!--FRAGMENT HOME-->
+    <string name="btn_title_get_started">GET\nSTARTED</string>
+    <string name="tv_helper_text_primary_button_screen_home">Start your today training</string>
+    <string name="no_class_now">No class now !</string>
+
+    <!--FRAGMENT CONTROL-->
+    <string name="btn_menu_title_find_class">Find a class</string>
+    <string name="btn_menu_title_collection">Collection</string>
+    <string name="menu_title_collection">COLLECTION</string>
+    <string name="btn_menu_title_level">Level</string>
+    <string name="btn_menu_title_presenter">Presenter</string>
+    <string name="btn_menu_title_time_table">Timetable</string>
+    <string name="msg_not_got_user_config_data">Not got user config data !</string>
+
+    <!--FRAGMENT TIME TABLE-->
+    <string name="title_today">TODAY</string>
+    <string name="title_tomorrow">TOMORROW</string>
+    <string name="no_scheduler_for_today">There is no class today !</string>
+
+    <!--FRAGMENT NORMAL VIDEOS-->
+    <string name="screen_search_videos_by_tv_title">SEARCH VIDEO BY /</string>
+    <string name="btn_title_search_by_presenter">PRESENTER</string>
+    <string name="btn_title_search_by_time">TIME</string>
+    <string name="btn_title_search_by_level">LEVEL</string>
+    <string name="btn_title_search_by_collection">COLLECTION</string>
+    <string name="btn_title_back">PREVIOUS</string>
+    <string name="screen_collection_tv_title">COLLECTION /</string>
+    <string name="tv_choose_a_brand">Choose a brand</string>
+    <string name="tv_choose_a_time">Please choose a time</string>
+    <string name="content_desc_exo_play">This is a play video button</string>
+    <string name="content_desc_exo_pause">This is a pause video button</string>
+    <string name="content_desc_avatar_presenter">This is an avatar instructor</string>
+    <string name="content_desc_menu_icon">This is a menu button</string>
+    <string name="content_desc_volume_button">This is a volume button</string>
+    <string name="content_desc_thumbnail_video_now_playing">This is a thumbnail for now playing video</string>
+    <string name="content_desc_thumbnail_video_upcoming">This is a thumbnail upcoming video</string>
+    <string name="content_desc_thumbnail_video_scheduler">This is a thumbnail for class video from timetable</string>
+    <string name="content_desc_button_show_info_presenter">This is a button showing information of a instructor</string>
+    <string name="screen_presenter_tv_title">PRESENTER /</string>
+    <string name="btn_title_back_to_search">BACK TO SEARCH</string>
+    <string name="screen_time_tv_title">TIME /</string>
+    <string name="screen_level_tv_title">LEVEL /</string>
+
+    <!--FRAGMENT NORMAL PRESENTER-->
+    <string name="not_get_presenter_data">Not get instructor search preview response data !</string>
+    <string name="this_brand_has_no_presenter">This %1$s Brand has no instructors</string>
+    <string name="no_presenter">No instructor</string>
+
+    <!--FRAGMENT COLLECTION-->
+    <string name="no_collection">No collection</string>
+    <string name="this_brand_has_no_collection">This %1$s Brand has no collection</string>
+
+    <!--FRAGMENT DURATION-->
+    <string name="this_brand_has_no_time">This %1$s Brand has no Times</string>
+    <string name="no_time">No Time</string>
+
+    <!--FRAGMENT LEVEL-->
+    <string name="this_brand_has_no_levels">This %1$s Brand has no levels</string>
+
+    <!--FRAGMENT RESULTS NORMAL VIDEOS-->
+    <string name="minutes">Minutes</string>
+    <string name="content_desc_image_preview_video">This is a preview video</string>
+    <string name="content_desc_icon_checked">This is a checked icon</string>
+    <string name="screen_brand_tv_title">BRAND /</string> <!--PREVIEW RESULT-->
+    <string name="tv_label_presenter">PRESENTERS /</string>
+    <string name="tv_label_collection">COLLECTIONS /</string>
+    <string name="btn_label_time">Time</string>
+    <string name="tv_label_time">Time</string>
+    <string name="tv_level">LEVEL</string>
+    <string name="screen_level_choose_a_level">Please choose a level</string>
+    <string name="screen_level_tv_title2_no_item">No level</string>
+    <string name="screen_collection_tv_title_choose_a_collection">Please choose a collection</string>
+    <string name="screen_presenter_choose_a_presenter">Please choose a presenter</string>
+    <string name="screen_time_tv_title_choose_a_time">Choose a Time</string>
+    <string name="error_cannot_play_video">Can\'t play this video !</string>
+
+    <!--FRAGMENT HELP ME CHOOSE-->
+    <string name="title_help_me_choose">HELP ME CHOOSE</string>
+    <string name="btn_title_back_to_skip_search">Skip &amp; Search</string>
+    <string name="title_today_i_feel_like">TODAY I FEEL LIKE…</string>
+    <string name="title_i_wanna_focus_on_my_">I WANNA FOCUS ON MY&#8230;</string>
+    <string name="title_i_am_a_level">I THINK I AM A&#8230;</string>
+    <string name="title_today_i_have_minutes">TODAY I HAVE…</string>
+    <string name="title_stop_download">Stop download</string>
+
+    <string name="btn_label_download">DOWNLOAD</string>
+    <string name="btn_label_stop_download">STOP</string>
+
+    <string name="content_desc_button_download">Image for the download button</string>
+    <string name="tv_title_coming_up_next">COMING UP NEXT</string>
+    <string name="title_btn_swipe_right_more_options">Swipe right for more options >></string>
+    <string name="menu_title_help_me_choose">Help me choose</string>
+    <string name="title_btn_previous">PREVIOUS</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="error_not_get_chosen_brand">You havn\'t chosen any brand</string>
+    <string name="error_not_known_previous_screen">Previous screen unknown</string>
+    <string name="login_success">Login successfully !</string>
+    <string name="login_failed_wrong_password">Login failed ! Wrong password</string>
+    <string name="login_failed_user_not_exist">Login failed ! User not exist</string>
+    <string name="login_failed">Login failed !</string>
+    <string name="request_failed">Request failed !</string>
+    <string name="request_false">Request false !</string>
+    <string name="error_loggout">Loggout !</string>
+    <string name="title_activity_scan_bar_code">ScanBarCodeActivity</string>
+    <string name="title_btn_show_videos_by_presenter_dialog">VIEW %1$s VIDEO\'S</string>
+
+    <!--FRAGMENT NORMAL PREVIEW-->
+    <string name="error_not_get_chosen_search_option">Not get chosen search option data !</string>
+    <string name="error_not_get_correct_data">Can\'t load data because not get correct input !</string>
+    <string name="error_not_get_chosen_options">Not get value of chosen search options !</string>
+    <string name="error_must_choose_search_option">Must choose search option !</string>
+    <string name="screen_search_preview_tv_label_presenter">Presenter  &#8230;</string>
+    <string name="screen_search_preview_tv_label_collection">Collection  &#8230;</string>
+    <string name="screen_search_preview_tv_label_time">Time  &#8230;</string>
+    <string name="screen_search_preview_tv_label_level">I think I am &#8230;</string>
+    <string name="title_search_preview">SEARCH PREVIEW</string>
+    <string name="search_preview_has_no_videos">No videos for preview !</string>
+    <string name="btn_show_all_videos">SHOW ALL VIDEOS</string> <!-- frame preview result -->
+    <string name="btn_show_my_options">SHOW MY OPTIONS</string>
+
+    <!--FRAGMENT NORMAL  RESULT-->
+    <string name="screen_search_result_tv_title">VIDEO</string>
+    <string name="screen_search_result_tv_title_video_number">VIDEO (%1$d)</string>
+    <string name="btn_label_play">PLAY</string>
+    <string name="desc_swipe_right_more_videos">Swipe right for more videos&#032;</string>
+    <!--<string name="error_on_show_videos_result">Cannot receive search result video searchPreviewResponse !</string>-->
+    <string name="error_can_not_get_video_data">Could not pass video data !</string>
+    <string name="err_not_get_presenter">Not get presenter info !</string>
+    <string name="cant_load_videos_cause_no_data">Can not load videos because no data !</string>
+
+    <!--FRAGMENT HELP ME CHOOSE-->
+    <string name="title_screen_help_me_choose">HELP ME CHOOSE</string>
+    <string name="btn_help_me_choose">HELP ME CHOOSE</string>
+    <string name="not_get_videos_data">Not get videos list data !</string>
+
+    <!--FRAGMENT NOW PLAYING-->
+    <string name="confirm_want_to_stop_video_play_and_back_to_HMC">Stop this video and back to Screen Home ?</string>
+    <string name="tv_title_now_playing">NOW PLAYING</string>
+    <string name="error_passed_data">Error pass data !</string>
+    <string name="err_not_get_anwers">Pass answers failed !</string>
+    <string name="cant_load_videos_cause_wrong_data">Can not load videos because wrong data !</string>
+    <!--<string name="confirm_want_to_turn_back_screen_no_class_search">Do you wan to turn back Screen Home ?</string>-->
+    <string name="not_get_playing_videos">Not got playing videos !</string>
+    <string name="not_get_scheduling_videos">Not got scheduling videos !</string>
+    <string name="msg_request_scheduler_failed">Requesting class failed !</string>
+    <string name="confirm_stop_video_and_navigate_to_screen_get_started">Do you want to stop this video and navigate to the get started screen ?</string>
+    <string name="confirm_stop_video_and_open_current_class">Do you want to stop this video and watch the current class?</string>
+    <string name="screen_search_videos_by_choose_a_filter">Please choose from below</string>
+    <string name="screen_svb_item_time">Time</string>
+    <string name="screen_svb_item_level">Level</string>
+    <string name="screen_svb_item_presenter">Presenter</string>
+    <string name="screen_svb_item_collection">Collection</string>
+    <string name="collection">Collection</string>
+    <string name="instructor">Presenter</string>
+    <string name="level">Level</string>
+    <string name="time">Time</string>
+    <string name="this_item_has_not_video_of_this_brand">This %1$s %2$s has no videos in this %3$s Brand</string>
+    <string name="erro_no_trailer_url">No trailer url !</string>
+    <string name="erro_no_video_url">No video url !</string>
+    <string name="msg_loading_scheduler">Loading class &#8230;</string>
+    <string name="content_desc_no_class">The background image of No Class Search</string>
+    <string name="content_desc_search_videos_by">The Search Videos By background image</string>
+    <string name="content_desc_search_brands">The background image of search brands screen</string>
+    <string name="error_no_data_for_request">No data for requesting !</string>
+    <string name="no_brand_id">No brand id !</string>
+
+    <string name="draw_over_other">Please accept the draw over other apps permission !</string>
+
+    <string name="msg_this_video_downloaded">This video has been downloaded !</string>
+    <string name="msg_downloading_video">Downloading video ....</string>
+    <string name="no_download_video_url">No downloaded video link !</string>
+    <string name="download_temp_file_no_longer">Tempt downloaded file no longer exist !</string>
+    <string name="write_download_file_failed">Copying tempt download file failed !</string>
+    <string name="title_dialog_download">DOWNLOAD</string>
+    <string name="confirm_overwrite_downloaded_file">\nThe %1$s file existed ! \n\nDo you want to overwrite it ?</string>
+    <string name="no_permissions_needed_for_download">No permissions for downloading !</string>
+    <string name="msg_rationale_no_download_permission">\nNo permissions for downloading.\n\nTo grant download permission, please:\n\nSelect PERMISSIONS \-\-> STORAGE !</string>
+    <string name="press_download_button_more_to_download">Press download button to start downloading video !</string>
+    <string name="download_task_exist">Download task has been added !</string>
+    <string name="network_disconnect_for_downloading">Network disconnected ! Please connect to download vidoes !</string>
+
+    <string name="cookie_expired">The cookie has been expired. Please scan the QR code again to login !</string>
+    <string name="qr_expired">The QR code has been expired. Please contact your admin to generate the code again !</string>
+    <string name="not_download_video_m3u8">Download failed ! The app doesn\'t download m3u8 video</string>
+    <string name="now_playing_class">Now playing class</string>
+    <string name="final_video">The final video</string>
+    <string name="class_video_cant_skip">The class video cannot be skipped!</string>
+    <string name="class_video_cant_paused">The class videos cannot be paused !</string>
+    <string name="can_not_show_video">Can\'t show video !</string>
+    <string name="download_failed_video_id_empty">Download failed ! The video Id or video url is invalid !</string>
+    <string name="error_disconnected_video">Can\'t play video because of losing connection !</string>
+    <string name="icon_type_logo">The type logo</string>
+    <string name="icon_refresh">Icon refresh</string>
+    <string name="videos_will_be_showned_in_tv_screen">The videos will be shown on Share Screen!</string>
+    <string name="detect_connecting_to_tv">Connected to TV screen !</string>
+    <string name="retry">Retry</string>
+    <string name="background_image">The background image</string><!-- content description -->
+    <string name="request_class_video_failed">Request class videos failed !</string>
+    <string name="bottom_bar">The bottom bar</string>
+    <string name="float_menu_background_image">The float menu background image</string>
+    <string name="cant_open_search_preview_because_no_presenter_id">Can\'t navigate to Search Preview screen ! There is no presenter id !</string>
+    <string name="cant_open_search_preview_because_no_collection_id">Can\'t navigate to Search Preview screen because no collection id !</string>
+    <string name="cant_open_search_preview_because_no_time_id">Can\'t navigate to Search Preview screen because no Time id !</string>
+    <string name="cant_open_search_preview_because_no_brand_or_level_id">Can\'t navigate to Search Preview screen because no brand id or level id !</string>
+    <string name="cant_load_videos_cause_no_answers_data">Can\'t load videos because no answers !</string>
+    <string name="cant_load_videos_cause_no_search_data">Can\'t load videos because no searched options !</string>
+    <string name="device_not_store_authenticated_data">This device has not stored authenticated data longer ! Please return Scan bar code screen !</string>
+    <string name="thumbnail_video">The video thumbnail</string>
+    <string name="collection_logo">The collection logo</string>
+    <string name="icon_fullscreen">The fullscreen icon</string>
+    <string name="icon_subtitle">The subtitle icon</string>
+    <string name="btn_play_video">The playing video button</string>
+    <string name="icon_no_cc">The no cc icon</string>
+    <string name="btn_pause_video">The pause video button</string>
+    <string name="icon_app">The app icon</string>
+    <string name="no_data_response">No response data !</string>
+    <string name="do_you_wan_to_reload_schedule">Do you want to reload class ?</string>
+    <string name="request_user_config_data_failed">Request user config data failed !</string>
+    <string name="button_close">The close button</string>
+    <string name="image_avatar">The presenter avatar</string>
+    <string name="do_you_want_stop_video_and_play_searched_videos">Do you want to stop this video and play the searched videos ?</string>
+    <string name="presentating_video">Sharing on TV</string>
+    <string name="please_select_videos_to_play">Please tap the video name to select and play the videos !</string>
+    <string name="please_select_searched_option">Please select one or more searched options !</string>
+    <string name="download">&#160;Download&#160;</string>
+    <string name="select_all">&#160;Select All&#160;</string> <!-- add 2 white spaces add 2 tails -->
+    <string name="deselect_all">&#160;Deselect All&#160;</string>
+    <string name="playlist">PLAYLIST</string>
+    <string name="sharing_on_tv">SHARING ON TV</string>
+    <string name="cant_show_coming_up_videos_because_no_videos">Can\'t show the coming up videos because of no videos !</string>
+    <string name="cant_download_because_not_select_any_video">Can\'t download because you didn\'t select any video !</string>
+    <string name="download_cant_start_because_error">Can\'t start download %1$s because of processing error !</string>
+    <string name="download_cant_start_because_insufficient_space">Can\'t start download %1$s because of insufficient space !\n\nAvailable space: %2$d MB. File size: %3$d MB</string>
+    <string name="cant_open_app_information_screen">Can\'t open the Application Information Screen !</string>
+    <string name="response_false">Response false !</string>
+    <string name="load_brands_failed">Load brands failed !</string>
+    <string name="load_no_brands">No brands !</string>
+    <string name="loading">Loading &#8230;</string>
+    <string name="text_button_search">Search</string>
+    <string name="back_to_now_playing">BACK TO NOW PLAYING</string>
+    <string name="no_change_screen">No change screen</string> <!-- add 2 white spaces add 2 tails -->
+
+    <string name="swipe_right_for_more_options">Swipe right for more options >></string>
+    <string name="please_wait_until_download">Please wait until download</string>
+    <string name="process_has_completed">process has completed to continue using this device</string>
+
+</resources>

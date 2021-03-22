@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="player.wellnesssolutions.com.ui.fragment_home.HomeFragment">
+
+    <player.wellnesssolutions.com.common.customize_views.MMBackGroundView
+        android:id="@+id/imageBgHomeScreen"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:opacity="0.6"
+        android:contentDescription="@string/background_image"
+        app:dimBackground="#000311"
+        app:drawableFixed="@drawable/bg_get_started"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvHelperText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_top_tv_helper_screen_home"
+        android:text="@string/tv_helper_text_primary_button_screen_home"
+        android:textColor="@color/textColorHelperTextScreeenHome"
+        android:textSize="@dimen/screen_home_tv_helper_textsize"
+        android:textStyle="normal"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnGetStarted" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMLogoView
+        android:id="@+id/btnLogoBottom"
+        android:layout_width="@dimen/width_bottom_logo"
+        android:layout_height="@dimen/height_bottom_logo"
+        android:layout_marginBottom="@dimen/margin"
+        android:src="@drawable/bottom_logo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMView
+        android:id="@+id/viewGlounding"
+        android:layout_width="@dimen/size_bg_btn_get_started"
+        android:layout_height="@dimen/size_bg_btn_get_started"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMButton
+        android:id="@+id/btnGetStarted"
+        android:layout_width="@dimen/size_btn_get_started"
+        android:layout_height="@dimen/size_btn_get_started"
+        android:gravity="center"
+        android:text="@string/btn_title_get_started"
+        android:textColor="@color/mainBrandingColor"
+        android:textSize="@dimen/text_size_btn_get_started"
+        android:textStyle="bold"
+        app:border="true"
+        app:circle="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/viewCoverGetStarted"
+        android:background="@drawable/bg_circle_white"
+        android:alpha="0.1"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="@+id/btnGetStarted"
+        app:layout_constraintEnd_toEndOf="@+id/btnGetStarted"
+        app:layout_constraintTop_toTopOf="@+id/btnGetStarted"
+        app:layout_constraintBottom_toBottomOf="@+id/btnGetStarted"
+        android:layout_width="@dimen/size_btn_get_started"
+        android:layout_height="@dimen/size_btn_get_started"/>
+
+    <player.wellnesssolutions.com.common.customize_views.MMProgressBar
+        android:id="@+id/progressLoading"
+        android:layout_width="@dimen/size_progress_circle"
+        android:layout_height="@dimen/size_progress_circle"
+        android:orientation="vertical"
+        android:theme="@style/AppTheme.BlueAccent"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/btnGetStarted"
+        app:layout_constraintEnd_toEndOf="@+id/btnGetStarted"
+        app:layout_constraintStart_toStartOf="@+id/btnGetStarted"
+        app:layout_constraintTop_toTopOf="@+id/btnGetStarted" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

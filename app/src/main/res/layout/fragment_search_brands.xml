@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="player.wellnesssolutions.com.ui.fragment_search_brands.SearchBrandsFragment">
+
+    <player.wellnesssolutions.com.common.customize_views.MMBackGroundView
+        android:id="@+id/imgBgSearchScreen"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:contentDescription="@string/content_desc_search_brands"
+        app:dimBackground="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        style="@style/TextStyle_TvTitle.ScreenSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/screen_brand_tv_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvTitle2"
+        style="@style/TextStyle_Title2.ScreenSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tv_choose_a_brand"
+        app:layout_constraintBottom_toBottomOf="@+id/tvTitle"
+        app:layout_constraintStart_toEndOf="@+id/tvTitle"
+        app:layout_constraintTop_toTopOf="@+id/tvTitle" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMButton
+        android:id="@+id/btnPrevious"
+        style="@style/TextStyle_Button_Previous_SearchScreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/btn_title_back"
+        app:border="true"
+        app:layout_constraintBottom_toBottomOf="@id/tvTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvTitle" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMProgressBar
+        android:id="@+id/progressLoading"
+        android:layout_width="@dimen/size_progress_circle"
+        android:layout_height="@dimen/size_progress_circle"
+        android:orientation="vertical"
+        android:theme="@style/AppTheme.BlueAccent"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle2"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <player.wellnesssolutions.com.base.customs.views.RecyclerViewCustom
+        android:id="@+id/rvBrands"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/margin"
+        android:overScrollMode="never"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

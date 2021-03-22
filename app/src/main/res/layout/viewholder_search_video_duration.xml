@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <player.wellnesssolutions.com.common.customize_views.MMOptionTextView
+        android:id="@+id/viewWrapper"
+        android:layout_width="@dimen/vh_search_item_circle_item_size_large"
+        android:layout_height="@dimen/vh_search_item_circle_item_size_large"
+        android:layout_marginLeft="@dimen/vh_search_item_circle_item_margin_lagre"
+        android:layout_marginRight="@dimen/vh_search_item_circle_item_margin_lagre"
+        app:layout_constraintBottom_toTopOf="@+id/tvTimeUnit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:selectType="selected"
+        app:shapeType="circle" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMTextView
+        android:id="@+id/tvTimeNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/vh_search_item_text_circle_item_text_size"
+        app:customFont="@string/font_liberator_heavy"
+        app:layout_constraintBottom_toBottomOf="@id/viewWrapper"
+        app:layout_constraintEnd_toEndOf="@id/viewWrapper"
+        app:layout_constraintStart_toStartOf="@id/viewWrapper"
+        app:layout_constraintTop_toTopOf="@id/viewWrapper"
+        android:layout_marginTop="@dimen/margin"
+        app:style="btnColor" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMTextView
+        android:id="@+id/tvTimeUnit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/vh_svb_tv_name_margin_top"
+        android:gravity="center"
+        android:text="@string/minutes"
+        android:textSize="@dimen/vh_search_item_tv_title_text_size"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/viewWrapper"
+        app:layout_constraintStart_toStartOf="@id/viewWrapper"
+        app:layout_constraintTop_toBottomOf="@id/viewWrapper"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:style="btnColor" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

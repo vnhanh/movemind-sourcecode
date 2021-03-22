@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">network</string>
+    <string name="text_download_complete">Download complete</string>
+    <string name="msg_download_video_success">%1$s has been downloaded successfully !</string>
+    <string name="msg_download_video_success_no_file_name">There is a video has been downloaded successfully !</string>
+    <string name="msg_download_video_failed">%1$s has been download failed !</string>
+    <string name="msg_download_video_failed_with_reason">%1$s has been download failed ! %2$s</string>
+    <string name="download_failed_no_file_name">The file has been download failed !</string>
+    <string name="this_video_has_been_added_downloading_queue">This video has been added the downloading queue !</string>
+    <string name="error_temp_file_exist_and_cant_delete_tempt_file">Tempt file %1$s has existed and could not delete it !</string>
+    <string name="error_video_data_null">Download failed ! The url or file name is invalid !</string>
+    <string name="file_already_existed">%1$s already exists !</string>
+    <string name="file_already_existed_no_file_name">The file already exists !</string>
+    <string name="download_task_already_exists">%1$s has been already enqueued for downloading !</string>
+    <string name="this_video_has_been_downloaded">This video has been downloaded !</string>
+    <string name="press_download_button_more_to_download">Press download button to start downloading video !</string>
+    <string name="btn_ok">OK</string>
+    <string name="error_wrong_url">Wrong url !</string>
+    <string name="not_found_video">Not found video !</string>
+    <string name="video_has_been_forbidden">The video has been forbidden !</string>
+    <string name="file_exist">The file is exist</string>
+    <string name="file_error">File error !</string>
+    <string name="device_not_found">Not found device ! The SD card could be not mounted !</string>
+    <string name="error_insufficient_space">The sd card is not enough space !</string>
+    <string name="error_http_connect">Connected failed !</string>
+    <string name="error_unknown">Error unknown</string>
+    <string name="error_url_illegal">The url is illegal !</string>
+    <string name="error_enqueue_task_failed">Enqueue download task failed !</string>
+    <string name="download_failed_format">Download %1$s failed. %2$s</string>
+    <string name="downloaded_file_exists">The downloaded file already exists in the app folder !</string>
+    <string name="channel_download_name">Download channel</string>
+    <string name="channel_description">Download video</string>
+    <string name="cancel">Cancel</string>
+    <string name="progress">progress: %1$d\%%</string>
+</resources>

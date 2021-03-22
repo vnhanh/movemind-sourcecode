@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/wrapperView"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingLeft="@dimen/screen_hmc_item_answer_margin"
+    android:paddingRight="@dimen/screen_hmc_item_answer_margin">
+
+    <player.wellnesssolutions.com.common.customize_views.MMOptionTextView
+        android:id="@+id/tvOptionTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/vh_hmc_option_height"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:minWidth="@dimen/mind_width_item_search_videos_option"
+        android:paddingLeft="@dimen/screen_hmc_item_answer_padding"
+        android:paddingRight="@dimen/screen_hmc_item_answer_padding"
+        android:textSize="@dimen/screen_hmc_rv_item_tv_name_text_size"
+        android:textStyle="normal"
+        app:stroke="@dimen/vh_hmc_tv_answer_stroke_width"
+        app:selectType="unselected"
+        app:unselectedColor="@android:color/white"
+        app:cornerRad="@dimen/tv_item_option_corner_radius"
+        app:shapeType="rectangle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

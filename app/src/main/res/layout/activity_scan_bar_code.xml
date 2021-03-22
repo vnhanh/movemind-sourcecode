@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_barcode_gradient"
+    tools:context="player.wellnesssolutions.com.ui.activity_scan_barcode.ScanBarCodeActivity">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gl_logo"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <ImageView
+        android:id="@+id/imvLogo"
+        android:layout_width="@dimen/barcode_logo_width"
+        android:layout_height="@dimen/barcode_logo_height"
+        android:src="@drawable/logo_large"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/gl_logo"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/tvDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/barcode_title_margin_bottom"
+        android:gravity="center"
+        android:text="@string/barcode_request"
+        android:textColor="@color/white"
+        android:textSize="@dimen/barcode_title_ts"
+        app:layout_constraintBottom_toTopOf="@id/zxingBarcodeScanner" />
+
+    <!--Bar code Scanner window-->
+    <com.journeyapps.barcodescanner.DecoratedBarcodeView
+        android:id="@+id/zxingBarcodeScanner"
+        android:layout_width="@dimen/barcode_scanner_size"
+        android:layout_height="@dimen/barcode_scanner_size"
+        android:layout_marginTop="@dimen/barcode_scanner_margin_top"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:zxing_scanner_layout="@layout/content_scan_bar_code" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_border_top_left"
+        app:layout_constraintStart_toStartOf="@+id/zxingBarcodeScanner"
+        app:layout_constraintTop_toTopOf="@+id/zxingBarcodeScanner"
+        tools:ignore="ContentDescription" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_border_top_right"
+        app:layout_constraintEnd_toEndOf="@+id/zxingBarcodeScanner"
+        app:layout_constraintTop_toTopOf="@+id/zxingBarcodeScanner"
+        tools:ignore="ContentDescription" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_border_bottom_left"
+        app:layout_constraintBottom_toBottomOf="@+id/zxingBarcodeScanner"
+        app:layout_constraintStart_toStartOf="@+id/zxingBarcodeScanner"
+        tools:ignore="ContentDescription" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_border_bottom_right"
+        app:layout_constraintBottom_toBottomOf="@+id/zxingBarcodeScanner"
+        app:layout_constraintEnd_toEndOf="@+id/zxingBarcodeScanner"
+        tools:ignore="ContentDescription" />
+
+    <Button
+        android:id="@+id/btnExit"
+        android:layout_width="@dimen/barcode_btn_exit_size"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/barcode_btn_exit_margin_top"
+        android:background="@drawable/bg_btn_previous"
+        android:text="@string/barcode_exit"
+        android:textColor="@color/defSecondaryColor"
+        android:textSize="@dimen/barcode_btn_exit_ts"
+        android:textStyle="bold|italic"
+        app:layout_constraintTop_toBottomOf="@+id/zxingBarcodeScanner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

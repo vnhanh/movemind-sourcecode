@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/playerControllerView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/groupMainCollections"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/height_custom_controller_exo_page_preview_video"
+        android:alpha="0.7"
+        android:background="@color/bgVideoPlayer"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <View
+        android:id="@+id/viewLeftEdge"
+        android:layout_width="@dimen/screen_search_result_dialog_playing_video_controller_edge_width"
+        android:layout_height="@dimen/height_custom_controller_exo_page_preview_video"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <View
+        android:id="@+id/viewBufferPlayPause"
+        android:layout_width="@dimen/dialog_search_result_player_controller_icon_button_size"
+        android:layout_height="@dimen/dialog_search_result_player_controller_icon_button_size"
+        app:layout_constraintBottom_toBottomOf="@+id/viewLeftEdge"
+        app:layout_constraintStart_toEndOf="@+id/viewLeftEdge"
+        app:layout_constraintTop_toTopOf="@+id/viewLeftEdge" />
+
+    <ImageView
+        android:id="@+id/exo_play"
+        android:layout_width="@dimen/dialog_search_result_player_controller_icon_button_size"
+        android:layout_height="@dimen/dialog_search_result_player_controller_icon_button_size"
+        android:contentDescription="@string/content_desc_exo_play"
+        android:padding="@dimen/dialog_search_result_player_controller_icon_padding"
+        app:layout_constraintBottom_toBottomOf="@+id/viewLeftEdge"
+        app:layout_constraintStart_toEndOf="@+id/viewLeftEdge"
+        app:layout_constraintTop_toTopOf="@+id/viewLeftEdge"
+        app:srcCompat="@drawable/ic_play_white_24dp" />
+
+    <ImageView
+        android:id="@id/exo_pause"
+        android:layout_width="@dimen/dialog_search_result_player_controller_icon_button_size"
+        android:layout_height="@dimen/dialog_search_result_player_controller_icon_button_size"
+        android:contentDescription="@string/content_desc_exo_pause"
+        android:padding="@dimen/dialog_search_result_player_controller_icon_padding_large"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/viewLeftEdge"
+        app:layout_constraintStart_toEndOf="@+id/viewLeftEdge"
+        app:layout_constraintTop_toTopOf="@+id/viewLeftEdge"
+        app:srcCompat="@drawable/ic_pause_white_24dp" />
+
+    <TextView
+        android:id="@+id/exo_position"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_left_exo_position_page_preview_video"
+        android:gravity="center_vertical"
+        android:includeFontPadding="false"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/text_size_exo_controller_page_preview_video"
+        app:layout_constraintBottom_toBottomOf="@+id/viewLeftEdge"
+        app:layout_constraintStart_toEndOf="@+id/viewBufferPlayPause"
+        app:layout_constraintTop_toTopOf="@+id/viewLeftEdge" />
+
+    <View
+        android:id="@+id/viewBetweenPositionAndTimebar"
+        android:layout_width="@dimen/marginx2"
+        android:layout_height="@dimen/height_custom_controller_exo_page_preview_video"
+        app:layout_constraintBottom_toBottomOf="@+id/viewLeftEdge"
+        app:layout_constraintStart_toEndOf="@+id/exo_position"
+        app:layout_constraintTop_toTopOf="@+id/viewLeftEdge" />
+
+    <com.google.android.exoplayer2.ui.DefaultTimeBar
+        android:id="@id/exo_progress"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/height_custom_controller_exo_page_preview_video"
+        app:bar_height="@dimen/screen_search_result_video_player_controller_timebar_height"
+        app:buffered_color="@color/bgColorTimebarExoController"
+        app:layout_constraintBottom_toBottomOf="@+id/viewLeftEdge"
+        app:layout_constraintEnd_toStartOf="@+id/viewBetweenTimebarAndDuration"
+        app:layout_constraintStart_toEndOf="@+id/viewBetweenPositionAndTimebar"
+        app:layout_constraintTop_toTopOf="@+id/viewLeftEdge"
+        app:played_color="@color/defSecondaryColor"
+        app:scrubber_drawable="@drawable/bg_scrubber_timebar_controller"
+        app:unplayed_color="@color/bgColorTimebarExoController" />
+
+    <View
+        android:id="@+id/viewBetweenTimebarAndDuration"
+        android:layout_width="@dimen/marginx2"
+        android:layout_height="@dimen/height_custom_controller_exo_page_preview_video"
+        app:layout_constraintBottom_toBottomOf="@+id/viewLeftEdge"
+        app:layout_constraintEnd_toStartOf="@+id/exo_duration"
+        app:layout_constraintTop_toTopOf="@+id/viewLeftEdge" />
+
+    <TextView
+        android:id="@id/exo_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/height_custom_controller_exo_page_preview_video"
+        android:gravity="center_vertical"
+        android:textColor="@color/textColorDurationExoController"
+        android:textSize="@dimen/text_size_exo_controller_page_preview_video"
+        app:layout_constraintBottom_toBottomOf="@+id/viewPivotRightEdge"
+        app:layout_constraintEnd_toStartOf="@+id/exo_volume"
+        app:layout_constraintTop_toTopOf="@+id/viewPivotRightEdge" />
+
+    <ImageView
+        android:id="@+id/exo_volume"
+        android:layout_width="@dimen/dialog_search_result_player_controller_icon_button_size"
+        android:layout_height="@dimen/dialog_search_result_player_controller_icon_button_size"
+        android:contentDescription="@string/content_desc_volume_button"
+        android:padding="@dimen/dialog_search_result_player_controller_icon_padding_large"
+        app:layout_constraintBottom_toBottomOf="@+id/viewPivotRightEdge"
+        app:layout_constraintEnd_toStartOf="@+id/exo_fullscreen"
+        app:layout_constraintTop_toTopOf="@+id/viewPivotRightEdge"
+        app:srcCompat="@drawable/ic_volume_up_white_24dp" />
+
+    <FrameLayout
+        android:id="@+id/frameExoVoumeSeebar"
+        android:layout_width="@dimen/height_exo_volume_seekbar_page_preview_video"
+        android:layout_height="@dimen/width_exo_volume_seebar_page_preview_video"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/exo_volume"
+        app:layout_constraintEnd_toStartOf="@+id/exo_volume"
+        app:layout_constraintStart_toEndOf="@+id/exo_volume">
+
+        <SeekBar
+            android:id="@+id/exoVolumeSeekbar"
+            style="@style/MySeekBar.PagePreviewVideo"
+            android:layout_width="@dimen/width_exo_volume_seebar_page_preview_video"
+            android:layout_height="@dimen/height_exo_volume_seekbar_page_preview_video"
+            android:layout_gravity="center"
+            android:max="100"
+            android:progressDrawable="@drawable/seekbar_progress"
+            android:rotation="270"
+            android:splitTrack="false"
+            android:thumb="@drawable/seekbar_thumb" />
+
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/exo_fullscreen"
+        android:layout_width="@dimen/dialog_search_result_player_controller_icon_button_size"
+        android:layout_height="@dimen/dialog_search_result_player_controller_icon_button_size"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/icon_fullscreen"
+        android:padding="@dimen/dialog_search_result_player_controller_icon_padding"
+        app:layout_constraintBottom_toBottomOf="@+id/viewPivotRightEdge"
+        app:layout_constraintEnd_toStartOf="@+id/viewPivotRightEdge"
+        app:layout_constraintTop_toTopOf="@+id/viewPivotRightEdge"
+        app:srcCompat="@drawable/ic_fullscreen_white_24dp" />
+
+    <View
+        android:id="@+id/viewPivotRightEdge"
+        android:layout_width="@dimen/screen_search_result_dialog_playing_video_controller_edge_width"
+        android:layout_height="@dimen/height_custom_controller_exo_page_preview_video"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="radius_button">28dp</dimen>
+    <dimen name="radius_button_tab_session">32dp</dimen>
+    <dimen name="width_stroke_button">3dp</dimen>
+
+
+    <dimen name="sr_radius_button">5dp</dimen>
+    <dimen name="sr_width_stroke_button">5dp</dimen>
+
+    <dimen name="extra_width_for_changable_dimens_textview">2dp</dimen>
+
+    <dimen name="screen_time_table_tab_session_textsize">12sp</dimen>
+    <dimen name="screen_time_table_tab_today_textsize">25sp</dimen>
+    <dimen name="tab_bar_text_padding">20dp</dimen>
+    <dimen name="width_bottom_logo">140dp</dimen>
+    <dimen name="height_bottom_logo">47dp</dimen>
+    <dimen name="corner_4dp">4dp</dimen>
+    <dimen name="stroke_1dp">1dp</dimen>
+    <dimen name="margin">8dp</dimen>
+    <dimen name="playlist_video_timebar_height">30dp</dimen>
+</resources>

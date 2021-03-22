@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="player.wellnesssolutions.com.ui.fragment_search_result_videos.dialogs.PlayTrailerVideoDialogFragment">
+
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/videoPlayer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        app:controller_layout_id="@layout/custom_controller_player_dialog_search_result"
+        app:resize_mode="fill" />
+
+    <ImageView
+        android:id="@+id/btnPlayVideoSR"
+        android:contentDescription="@string/btn_play_video"
+        android:visibility="gone"
+        android:layout_width="@dimen/dialog_search_result_player_button_size"
+        android:layout_height="@dimen/dialog_search_result_player_button_size"
+        android:layout_centerInParent="true"
+        android:background="@drawable/ic_play_circle_white_100dp" />
+
+    <ImageView
+        android:id="@+id/btnPauseVideoSR"
+        android:contentDescription="@string/btn_pause_video"
+        android:layout_width="@dimen/dialog_search_result_player_button_size"
+        android:layout_height="@dimen/dialog_search_result_player_button_size"
+        android:layout_centerInParent="true"
+        android:src="@drawable/ic_pause_circle_white_100dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/tvTitleVideo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/text_size_video_name_dialog_playing_video_search_result"
+        android:textStyle="bold|italic"/>
+
+    <player.wellnesssolutions.com.common.customize_views.MMProgressBar
+        android:id="@+id/progressLoading"
+        android:layout_width="@dimen/size_progress_circle_in_now_playing"
+        android:layout_height="@dimen/size_progress_circle_in_now_playing"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:visibility="gone" />
+
+</RelativeLayout>

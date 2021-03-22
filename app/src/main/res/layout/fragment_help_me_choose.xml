@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parent_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="player.wellnesssolutions.com.ui.fragment_help_me_choose.HelpMeChooseFragment">
+
+    <player.wellnesssolutions.com.common.customize_views.MMBackGroundView
+        android:id="@+id/imgBgSearchScreen"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:dimBackground="@color/white"
+        android:contentDescription="@string/background_image"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvTitleHMC"
+        style="@style/TextStyle_TvTitle.ScreenSearch"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/title_screen_help_me_choose"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMButton
+        android:id="@+id/btnPrevious"
+        style="@style/TextStyle_Button_Previous_SearchScreen"
+        android:text="@string/btn_title_back"
+        app:border="true"
+        app:layout_constraintBottom_toBottomOf="@+id/tvTitleHMC"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tvTitleHMC" />
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/screen_hmc_scrollview_margin_top"
+        android:layout_marginBottom="@dimen/screen_hmc_scrollview_margin_bottom"
+        android:overScrollMode="never"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/btnPrevious"
+        app:layout_constraintStart_toStartOf="@id/tvTitleHMC"
+        app:layout_constraintTop_toBottomOf="@+id/tvTitleHMC">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/questionsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </ScrollView>
+
+    <player.wellnesssolutions.com.common.customize_views.MMProgressBar
+        android:id="@+id/progressLoading"
+        android:layout_width="@dimen/size_progress_circle_in_now_playing"
+        android:layout_height="@dimen/size_progress_circle_in_now_playing"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvTitleHMC" />
+
+    <ImageView
+        android:id="@+id/icRefresh"
+        android:layout_width="@dimen/ic_refresh_size"
+        android:layout_height="@dimen/ic_refresh_size"
+        android:contentDescription="@string/icon_refresh"
+        android:src="@drawable/ic_refresh_56dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/progressLoading"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/progressLoading" />
+
+    <TextView
+        android:id="@+id/tvRetry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin"
+        android:textSize="14sp"
+        android:text="@string/retry"
+        android:textColor="@color/title2TextColor"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/icRefresh" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

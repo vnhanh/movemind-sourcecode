@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <com.google.android.exoplayer2.ui.AspectRatioFrameLayout android:id="@id/exo_content_frame"
+        android:background="@color/bgVideoPlayer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="fill">
+
+        <!-- MMVideo surface will be inserted as the first child of the content frame. -->
+
+        <View android:id="@id/exo_shutter"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/bgVideoPlayer"/>
+
+        <ImageView android:id="@id/exo_artwork"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"/>
+
+        <com.google.android.exoplayer2.ui.SubtitleView
+            android:id="@id/exo_subtitles"
+            android:alpha="0.68"
+            android:layout_gravity="top"
+            android:layout_width="match_parent"
+            android:layout_height="84dp"/>
+
+    </com.google.android.exoplayer2.ui.AspectRatioFrameLayout>
+
+    <View android:id="@id/exo_controller_placeholder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <FrameLayout android:id="@id/exo_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</merge>

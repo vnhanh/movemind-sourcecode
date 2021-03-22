@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    use for:
+        1. Button "GET START" in Home Screen
+-->
+<!--<layer-list xmlns:android="http://schemas.android.com/apk/res/android">-->
+    <!--<item>-->
+        <!--<shape android:shape="oval">-->
+            <!--<gradient android:startColor="#60E2D9" android:centerColor="#00AB97"-->
+                <!--android:endColor="#00A894" android:angle="-90"/>-->
+        <!--</shape>-->
+    <!--</item>-->
+    <!--<item>-->
+        <!--<shape android:shape="oval">-->
+            <!--<solid android:color="@color/mainButtonColor"/>-->
+        <!--</shape>-->
+    <!--</item>-->
+<!--</layer-list>-->
+
+<shape android:shape="oval" xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/defSecondaryColor"/>
+</shape>

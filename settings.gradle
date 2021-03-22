@@ -1,0 +1,2 @@
+include ':app', ':network', ':custom_exoplayer', ':common', ':fontsizelibrary', ':database'
+

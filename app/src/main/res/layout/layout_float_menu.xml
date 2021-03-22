@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<player.wellnesssolutions.com.common.customize_views.MMBackGroundView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bgFloatMenu"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:contentDescription="@string/float_menu_background_image"
+    android:paddingTop="@dimen/float_menu_padding_top"
+    android:paddingBottom="@dimen/float_menu_padding_top"
+    app:style="border">
+
+    <player.wellnesssolutions.com.common.customize_views.MMTextView
+        android:id="@+id/menuItemHelpMeChoose"
+        style="@style/FloatMenuItem"
+        android:layout_width="@dimen/width_float_menu_item"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/float_menu_padding_left"
+        android:paddingEnd="@dimen/marginx5"
+        android:text="@string/menu_title_help_me_choose"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:style="btnColor" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMTextView
+        android:id="@+id/menuItemFindClass"
+        style="@style/FloatMenuItem"
+        android:layout_width="@dimen/width_float_menu_item"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/marginx3"
+        android:paddingStart="@dimen/float_menu_padding_left"
+        android:paddingEnd="@dimen/marginx5"
+        android:text="@string/btn_menu_title_find_class"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/menuItemHelpMeChoose"
+        app:layout_goneMarginTop="0dp"
+        app:style="btnColor" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMTextView
+        android:id="@+id/menuItemSearchByInstructor"
+        style="@style/FloatMenuItem"
+        android:layout_width="@dimen/width_float_menu_item"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/marginx3"
+        android:paddingStart="@dimen/float_menu_padding_left"
+        android:paddingEnd="@dimen/marginx5"
+        android:text="@string/btn_menu_title_presenter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/menuItemFindClass"
+        app:style="btnColor" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMTextView
+        android:id="@+id/menuItemSearchByCollection"
+        style="@style/FloatMenuItem"
+        android:layout_width="@dimen/width_float_menu_item"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/float_menu_padding_left"
+        android:paddingEnd="@dimen/marginx5"
+        android:layout_marginTop="@dimen/marginx3"
+        android:text="@string/btn_menu_title_collection"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/menuItemSearchByInstructor"
+        app:style="btnColor" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMTextView
+        android:id="@+id/menuItemSearchByLevel"
+        style="@style/FloatMenuItem"
+        android:layout_width="@dimen/width_float_menu_item"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/marginx3"
+        android:paddingStart="@dimen/float_menu_padding_left"
+        android:paddingEnd="@dimen/marginx5"
+        android:text="@string/btn_menu_title_level"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/menuItemSearchByCollection"
+        app:style="btnColor" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMTextView
+        android:id="@+id/menuItemSearchByDuration"
+        style="@style/FloatMenuItem"
+        android:layout_width="@dimen/width_float_menu_item"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/marginx3"
+        android:paddingStart="@dimen/float_menu_padding_left"
+        android:paddingEnd="@dimen/marginx5"
+        android:text="@string/btn_label_time"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/menuItemSearchByLevel"
+        app:style="btnColor" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMTextView
+        android:id="@+id/menuItemTimeTable"
+        style="@style/FloatMenuItem"
+        android:layout_width="@dimen/width_float_menu_item"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/marginx3"
+        android:paddingStart="@dimen/float_menu_padding_left"
+        android:paddingEnd="@dimen/marginx5"
+        android:text="@string/btn_menu_title_time_table"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/menuItemSearchByDuration"
+        app:style="btnColor" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMLogoView
+        android:layout_width="@dimen/width_bottom_logo"
+        android:layout_height="@dimen/height_bottom_logo"
+        android:layout_marginTop="@dimen/marginx3"
+        android:paddingStart="@dimen/float_menu_padding_left"
+        android:paddingEnd="@dimen/marginx5"
+        android:src="@drawable/bottom_logo"
+        app:layout_constraintStart_toStartOf="@id/menuItemTimeTable"
+        app:layout_constraintTop_toBottomOf="@id/menuItemTimeTable"
+        tools:ignore="ContentDescription" />
+
+</player.wellnesssolutions.com.common.customize_views.MMBackGroundView>

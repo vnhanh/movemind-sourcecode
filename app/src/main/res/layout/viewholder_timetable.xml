@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parentViewSchedulerItem"
+    android:layout_width="@dimen/width_viewHolder_timetable"
+    android:layout_height="wrap_content">
+
+    <!--THUMBNAIL VIDEO-->
+    <ImageView
+        android:id="@+id/thumbVideo"
+        android:layout_width="@dimen/width_thumbnail_video_time_table"
+        android:layout_height="@dimen/height_thumbnail_video_time_table"
+        android:background="@drawable/bg_rectangle_ltgray_corner_4dp"
+        android:contentDescription="@string/content_desc_thumbnail_video_scheduler"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!--TIME START-->
+    <player.wellnesssolutions.com.common.customize_views.MMTextView
+        android:id="@+id/tvSchedulerStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin"
+        app:cornerRadius="@dimen/vh_timetable_tv_time_start_corner"
+        app:padLR="@dimen/vh_timetable_tv_time_start_padding_lr"
+        app:padTB="@dimen/vh_timetable_tv_time_start_padding_tb"
+        android:textSize="@dimen/text_size_time_start_item_scheduler_screen_time_table"
+        app:layout_constraintStart_toStartOf="@id/thumbVideo"
+        app:layout_constraintTop_toTopOf="@id/thumbVideo"
+        app:style="borderHalf" />
+
+    <!--TITLE VIDEO-->
+    <TextView
+        android:id="@+id/tvVideoTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textColor="@color/black"
+        android:textSize="@dimen/item_timetable_title_video_textsize"
+        android:textStyle="italic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/thumbVideo"
+        app:layout_constraintTop_toTopOf="@id/thumbVideo" />
+
+    <!--DURATION-->
+    <player.wellnesssolutions.com.common.customize_views.MMTextView
+        android:id="@+id/tvVideoDuration"
+        android:layout_width="@dimen/item_timetable_duration_size"
+        android:layout_height="@dimen/item_timetable_duration_size"
+        android:layout_marginEnd="@dimen/margin_tv_duration_item_scheduler_screen_time_table"
+        android:layout_marginBottom="@dimen/margin_tv_duration_item_scheduler_screen_time_table"
+        android:background="@drawable/bg_circle_duration"
+        android:gravity="center"
+        android:padding="@dimen/text_size_padding_se_scheduler_item"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/text_size_duration_scheduler_item"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/thumbVideo"
+        app:layout_constraintEnd_toEndOf="@id/thumbVideo"
+        app:style="btnColor" />
+
+    <LinearLayout
+        android:id="@+id/groupIconBrandAndCollections"
+        android:orientation="horizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@+id/tvVideoTitle"
+        app:layout_constraintTop_toBottomOf="@+id/tvVideoTitle"
+        android:layout_marginTop="@dimen/margin">
+
+        <ImageView
+            android:id="@+id/icTypeBrand"
+            android:contentDescription="@string/icon_type_logo"
+            android:layout_marginBottom="4dp"
+            android:layout_gravity="bottom"
+            android:layout_width="@dimen/vh_search_result_ic_type_logo_width"
+            android:layout_height="@dimen/vh_search_result_ic_type_logo_height"/>
+
+    </LinearLayout>
+
+    <!--INSTRUCTOR-->
+    <ImageView
+        android:id="@+id/icInstructor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_top_ic_instructor_item_scheduler_screen_time_table"
+        android:src="@drawable/ic_time_table_instructor"
+        app:layout_constraintStart_toStartOf="@id/tvVideoTitle"
+        app:layout_constraintTop_toBottomOf="@id/groupIconBrandAndCollections"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/tvVideoInstructor"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/text_size_margin_start_scheduler_item"
+        android:lines="1"
+        android:textColor="@color/title2TextColor"
+        android:textSize="@dimen/text_size_title_small_scheduler_item"
+        android:textStyle="italic"
+        app:layout_constraintBottom_toBottomOf="@+id/icInstructor"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/icInstructor"
+        app:layout_constraintTop_toTopOf="@id/icInstructor" />
+
+    <!--LEVEL-->
+    <ImageView
+        android:id="@+id/icLevel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_top_ic_level_item_scheduler_screen_time_table"
+        android:src="@drawable/ic_time_table_level"
+        app:layout_constraintStart_toStartOf="@id/tvVideoTitle"
+        app:layout_constraintTop_toBottomOf="@id/icInstructor"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/tvVideoLevel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/text_size_margin_start_scheduler_item"
+        android:textColor="@color/title2TextColor"
+        android:textSize="@dimen/text_size_title_small_scheduler_item"
+        android:textStyle="italic"
+        app:layout_constraintBottom_toBottomOf="@+id/icLevel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/icLevel"
+        app:layout_constraintTop_toTopOf="@id/icLevel" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

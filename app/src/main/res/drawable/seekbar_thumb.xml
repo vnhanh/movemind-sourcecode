@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item>
+        <shape android:shape="oval">
+            <size android:width="@dimen/height_exo_volume_seekbar_page_preview_video"
+                android:height="@dimen/height_exo_volume_seekbar_page_preview_video"/>
+
+            <solid android:color="@color/defSecondaryColor"/>
+        </shape>
+    </item>
+
+</layer-list>

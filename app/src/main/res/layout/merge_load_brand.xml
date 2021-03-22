@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <View
+        android:id="@+id/dimBgScreen"
+        android:background="@android:color/black"
+        android:alpha="0.5"
+        android:elevation="2dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <View
+        android:id="@+id/boxLoading"
+        android:layout_width="@dimen/box_loading_width"
+        android:layout_height="@dimen/box_loading_height"
+        android:elevation="2dp"
+        android:background="@drawable/bg_rectangle_white_corner_4dp"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <player.wellnesssolutions.com.common.customize_views.MMProgressBar
+        android:id="@+id/progressLoadBrand"
+        android:elevation="2dp"
+        android:theme="@style/AppTheme.WhiteAccent"
+        android:orientation="vertical"
+        android:layout_width="@dimen/size_progress_circle_in_now_playing"
+        android:layout_height="@dimen/size_progress_circle_in_now_playing"
+        android:visibility="invisible"
+        android:layout_marginStart="@dimen/margin"
+        app:layout_constraintStart_toStartOf="@id/boxLoading"
+        app:layout_constraintTop_toTopOf="@id/boxLoading"
+        app:layout_constraintBottom_toBottomOf="@id/boxLoading"/>
+
+    <player.wellnesssolutions.com.common.customize_views.MMTextView
+        android:id="@+id/tvLoading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="2dp"
+        android:visibility="invisible"
+        android:text="@string/loading"
+        android:textSize="@dimen/box_loading_textsize"
+        android:layout_marginStart="@dimen/marginx2"
+        android:layout_marginEnd="@dimen/margin"
+        app:layout_constraintStart_toEndOf="@+id/progressLoadBrand"
+        app:layout_constraintEnd_toEndOf="@+id/boxLoading"
+        app:layout_constraintTop_toTopOf="@id/boxLoading"
+        app:layout_constraintBottom_toBottomOf="@id/boxLoading"/>
+
+</merge>

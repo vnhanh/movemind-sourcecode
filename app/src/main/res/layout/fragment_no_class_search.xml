@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="player.wellnesssolutions.com.ui.fragment_no_class.NoClassFragment"
+    android:id="@+id/rootCollection"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <player.wellnesssolutions.com.common.customize_views.MMBackGroundView
+        android:id="@+id/imageBgScreenNoClass"
+        android:contentDescription="@string/content_desc_no_class"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMButton
+        android:id="@+id/btnHelpMeChoose"
+        android:layout_width="@dimen/screen_no_class_btn_hmc_size"
+        android:layout_height="@dimen/screen_no_class_btn_hmc_size"
+        android:layout_marginTop="@dimen/margin_top_btn_help_me_choose_screen_no_class"
+        android:background="@drawable/bg_circle_main_blue"
+        android:gravity="center"
+        android:text="@string/btn_title_help_me_choose"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/screen_no_class_btn_help_me_choose_textsize"
+        android:textStyle="bold"
+        android:visibility="invisible"
+        app:circle="true"
+        app:border="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvHelperHelpMeChoose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_top_tv_helper_screen_no_class"
+        android:textColor="@color/title2TextColor"
+        android:textSize="@dimen/screen_no_class_tv_helper_textsize"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnHelpMeChoose" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMTextView
+        android:id="@+id/btnSkipSearch"
+        android:layout_width="@dimen/width_btn_skip_search"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_top_btn_skip_search_to_btn_help_choose"
+        android:gravity="center"
+        android:text="@string/btn_title_skip_search"
+        android:textSize="@dimen/screen_no_class_btn_skip_and_search_textsize"
+        android:textStyle="bold|italic"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvHelperHelpMeChoose" />
+
+    <TextView
+        android:id="@+id/tvHelperSkipSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/screen_no_class_tv_helper_btn_skip_search_margin_top"
+        android:textColor="@color/title2TextColor"
+        android:textSize="@dimen/screen_no_class_tv_helper_textsize"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnSkipSearch" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMProgressBar
+        android:id="@+id/progressBar"
+        android:elevation="2dp"
+        android:theme="@style/AppTheme.WhiteAccent"
+        android:orientation="vertical"
+        android:layout_width="@dimen/size_progress_circle_in_now_playing"
+        android:layout_height="@dimen/size_progress_circle_in_now_playing"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

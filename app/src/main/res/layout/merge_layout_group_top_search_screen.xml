@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <player.wellnesssolutions.com.common.customize_views.MMBackGroundView
+        android:id="@+id/imgBgSearchScreen"
+        android:contentDescription="@string/background_image"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:dimBackground="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        style="@style/TextStyle_TvTitle.ScreenSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvTitle2"
+        style="@style/TextStyle_Title2.ScreenSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@+id/tvTitle"
+        app:layout_constraintTop_toTopOf="@+id/tvTitle"
+        app:layout_constraintBottom_toBottomOf="@+id/tvTitle"/>
+
+    <player.wellnesssolutions.com.common.customize_views.MMButton
+        android:id="@+id/btnPrevious"
+        style="@style/TextStyle_Button_Previous_SearchScreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/btn_title_back"
+        app:border="true"
+        app:layout_constraintBottom_toBottomOf="@id/tvTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvTitle" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMProgressBar
+        android:id="@+id/progressLoading"
+        android:layout_width="@dimen/size_progress_circle"
+        android:layout_height="@dimen/size_progress_circle"
+        android:orientation="vertical"
+        android:theme="@style/AppTheme.BlueAccent"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle2"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</merge>

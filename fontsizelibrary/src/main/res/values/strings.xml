@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">FontSize Library</string>
+    <string name="font">fonts/josefin_sans_regular.ttf</string>
+    <string name="font_made_evolve_sans_bold">fonts/made_evolve_sans_bold.ttf</string>
+    <string name="font_made_evolve_sans">fonts/made_evolve_sans.ttf</string>
+    <string name="liberator_heavy">fonts/Liberator-Heavy.ttf</string>
+</resources>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MMAttributes">
+        <attr name="tintBackground" format="boolean"/>
+        <attr name="deactiveBackground" format="color"/>
+        <attr name="dimBackground" format="color"/>
+        <attr name="border" format="boolean"/>
+        <attr name="circle" format="boolean"/>
+        <attr name="strings" format="reference"/>
+        <attr name="string_padding" format="dimension"/>
+        <attr name="text_size" format="dimension"/>
+        <attr name="focus_main" format="boolean"/>
+        <attr name="textStyle" format="enum">
+            <enum name="bold" value="1"/>
+            <enum name="bold_italic" value="3"/>
+        </attr>
+        <attr name="style" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="border" value="1"/>
+            <enum name="background" value="2"/>
+            <enum name="btnColor" value="3"/>
+            <enum name="borderHalf" value="4"/>
+            <enum name="borderActived" value="5"/>
+        </attr>
+        <attr name="customFont" format="string"/>
+        <attr name="cornerRadius" format="dimension"/>
+        <attr name="padTB" format="dimension"/>
+        <attr name="padLR" format="dimension"/>
+        <attr name="isEnable" format="boolean"/>
+        <attr name="strokeWidth" format="dimension"/>
+        <attr name="unactivedColor" format="color"/>
+        <attr name="isProgressCircle" format="boolean"/>
+        <attr name="scaleY" format="float"/>
+        <attr name="opacity" format="float"/>
+        <attr name="drawableFixed" format="reference"/>
+        <attr name="isChangeBackGround" format="boolean"/>
+        <attr name="backGroundColorChange" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="MMOptionView">
+        <attr name="unselectedColor" format="color"/>
+        <attr name="bgColor" format="color"/>
+        <attr name="stroke" format="integer"/>
+        <attr name="cornerRad" format="dimension"/>
+
+        <attr name="shapeType" format="enum">
+            <enum name="rectangle" value="0"/>
+            <enum name="circle" value="1"/>
+        </attr>
+
+        <attr name="selectType" format="enum">
+            <enum name="unselected" value="0"/>
+            <enum name="selected" value="1"/>
+        </attr>
+
+        <attr name="innerType" format="enum">
+            <enum name="circle_fit_inner" value="0"/>
+            <enum name="square_inner_circle" value="1"/>
+        </attr>
+        <attr name="cusFont" format="string"/>
+    </declare-styleable>
+</resources>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/rootSearchDuration"
+    tools:context="player.wellnesssolutions.com.ui.fragment_search_durations.SearchDurationsFragment">
+
+    <include layout="@layout/merge_layout_group_top_search_screen" />
+
+    <player.wellnesssolutions.com.base.customs.views.RecyclerViewCustom
+        android:id="@+id/rvDuration"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/screen_search_rv_margin_top"
+        android:scrollbarFadeDuration="0"
+        android:fadeScrollbars="false"
+        android:overScrollMode="never"
+        android:background="@android:color/transparent"
+        android:scrollbarThumbHorizontal="@android:color/darker_gray"
+        android:scrollbars="none"
+        android:scrollbarSize="@dimen/margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvTitle2"
+        app:layout_goneMarginTop="@dimen/margin" />
+
+    <TextView
+        android:id="@+id/txtSwipeRightForMoreOptions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dip_10"
+        android:text="@string/swipe_right_for_more_options"
+        android:textColor="@color/color_d7"
+        android:textSize="18dp"
+        android:textStyle="italic"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/icRefresh"
+        android:layout_width="@dimen/ic_refresh_size"
+        android:layout_height="@dimen/ic_refresh_size"
+        android:contentDescription="@string/icon_refresh"
+        android:src="@drawable/ic_refresh_56dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/progressLoading"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/progressLoading" />
+
+    <TextView
+        android:id="@+id/tvRetry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin"
+        android:textSize="14sp"
+        android:text="@string/retry"
+        android:textColor="@color/title2TextColor"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/icRefresh" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

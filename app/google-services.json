@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "80836231778",
+    "firebase_url": "https://wellness-solutions-d1618.firebaseio.com",
+    "project_id": "wellness-solutions-d1618",
+    "storage_bucket": "wellness-solutions-d1618.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:80836231778:android:84539936aefe3f2736873b",
+        "android_client_info": {
+          "package_name": "player.wellnesssolutions.com.au"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "80836231778-nmjh0f8rejcnp66vkjrvehfe79989m0f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "player.wellnesssolutions.com.au",
+            "certificate_hash": "0c8d96ea81f78c3f5a358ee087126df078adacaf"
+          }
+        },
+        {
+          "client_id": "80836231778-na9gchhcvkjqpnns6plbl33llp5mm0jp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5adxF3qfOCO0xeAOfrzyEbjA1nZaDycQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "80836231778-na9gchhcvkjqpnns6plbl33llp5mm0jp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:paddingStart="@dimen/vh_search_result_padding"
+    android:paddingEnd="@dimen/vh_search_result_padding"
+    android:paddingBottom="@dimen/marginx2">
+
+    <ImageView
+        android:id="@+id/videoThumbnail"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:contentDescription="@string/thumbnail_video"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/thumbnailSelectedView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/videoThumbnail"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <View
+        android:id="@+id/blurThumbnail"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:alpha="0.8"
+        android:background="@drawable/bg_rectangle_ltgray_corner_4dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/videoThumbnail"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvVideoTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/vh_search_result_tv_title_video_margin_top"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/textColorVideoTitle"
+        android:textSize="@dimen/text_size_video_title_item_video_result_search"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/videoThumbnail" />
+
+    <LinearLayout
+        android:id="@+id/groupCollections"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/vh_search_result_icon_type_logo_margin_top"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvVideoTitle">
+
+        <ImageView
+            android:id="@+id/icTypeLogo"
+            android:layout_width="@dimen/vh_search_result_ic_type_logo_width"
+            android:layout_height="@dimen/vh_search_result_ic_type_logo_height"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="4dp"
+            android:contentDescription="@string/icon_type_logo" />
+
+    </LinearLayout>
+
+    <player.wellnesssolutions.com.common.customize_views.MMTextView
+        android:id="@+id/tvVideoDuration"
+        android:layout_width="@dimen/vh_search_result_item_tv_duration_size"
+        android:layout_height="@dimen/vh_search_result_item_tv_duration_size"
+        android:layout_marginEnd="@dimen/margin_right_duration_video_in_item_video_result_search"
+        android:layout_marginTop="@dimen/margin_bottom_duration_video_in_item_video_result_search"
+        android:background="@drawable/bg_circle_duration"
+        android:gravity="center"
+        android:paddingTop="4dp"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/text_size_duration_scheduler_item"
+        android:textStyle="bold"
+        app:customFont="@string/font_liberator_heavy"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:style="btnColor" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMImageView
+        android:id="@+id/btnDownload"
+        android:visibility="invisible"
+        android:layout_width="@dimen/size_btn_download_item_video_result_search"
+        android:layout_height="@dimen/size_btn_download_item_video_result_search"
+        android:layout_marginBottom="@dimen/vh_search_result_btn_download_margin_bottom"
+        android:layout_marginEnd="@dimen/vh_search_result_btn_download_margin_end"
+        android:background="@drawable/bg_circle_blue"
+        android:contentDescription="@string/content_desc_button_download"
+        android:padding="@dimen/padding_btn_download_item_video_result_search"
+        app:layout_constraintEnd_toStartOf="@+id/btnPreview"
+        app:layout_constraintTop_toTopOf="@id/btnPreview"
+        app:layout_constraintBottom_toBottomOf="@+id/btnPreview"
+        app:tintBackground="true" />
+
+    <player.wellnesssolutions.com.common.customize_views.MMImageView
+        android:id="@+id/btnPreview"
+        android:layout_width="@dimen/size_btn_download_item_video_result_search"
+        android:layout_height="@dimen/size_btn_download_item_video_result_search"
+        android:layout_marginBottom="@dimen/vh_search_result_btn_download_margin_bottom"
+        android:layout_marginEnd="@dimen/vh_search_result_btn_download_margin_end"
+        android:background="@drawable/bg_circle_blue"
+        android:contentDescription="@string/content_desc_button_download"
+        android:padding="@dimen/padding_btn_download_item_video_result_search"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/videoThumbnail"
+        app:tintBackground="true" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

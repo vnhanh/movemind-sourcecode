@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    use for:
+        1. button PREVIOUS in @layout/fragment_search_videos
+-->
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <stroke android:width="@dimen/width_stroke_btn_previous" android:color="@color/defSecondaryColor"/>
+    <corners android:radius="@dimen/corner_radius_btn_previous"/>
+</shape>
