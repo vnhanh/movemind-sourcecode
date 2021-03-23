@@ -226,7 +226,7 @@ class HomeFragment : BaseFragment(), IHomeContract.View, ScheduleBroadcastReceiv
     }
 
     private fun setupUI() {
-        btnGetStarted.setOnClickListener { onClickedButtonGetStarted() }
+        btnGetStarted?.setOnClickListener { onClickedButtonGetStarted() }
     }
 
     override fun openNowPlayingScreen(videos: ArrayList<MMVideo>) {
@@ -294,6 +294,7 @@ class HomeFragment : BaseFragment(), IHomeContract.View, ScheduleBroadcastReceiv
         SPDBUtil.deleteAllFromTag(SearchResultFragment.getTagOfChosen())
         HMCDataHelper.deleteALlFromTag(SearchResultFragment.getTagOfHMCForDB())
         viewCoverGetStarted?.visibility = View.VISIBLE
+
         loadNoClassScreen()
     }
 
