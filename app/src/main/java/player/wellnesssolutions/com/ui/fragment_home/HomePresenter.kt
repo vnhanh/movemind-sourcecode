@@ -2,11 +2,11 @@ package player.wellnesssolutions.com.ui.fragment_home
 
 import android.content.Context
 import com.google.gson.Gson
-import player.wellnesssolutions.com.base.view.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.network.datasource.home.HomeApi
 import player.wellnesssolutions.com.network.models.config.MMConfigData
 import player.wellnesssolutions.com.network.models.login.MMBranding
@@ -22,7 +22,7 @@ class HomePresenter(context: Context) : BaseResponseObserver<MMConfigData>(), IH
     private var schedule = arrayListOf<MMVideo>()
 
     init {
-        SharedPreferencesCustomized.getInstance(context).delete(SPrefConstant.TIME_DIFFS)
+        PreferenceHelper.getInstance(context).delete(ConstantPreference.TIME_DIFFS)
     }
 
     override fun onAttach(view: IHomeContract.View) {
@@ -30,7 +30,7 @@ class HomePresenter(context: Context) : BaseResponseObserver<MMConfigData>(), IH
 
         view.getViewContext()?.also {
             val headerData = CheckHeaderApiUtil.checkData(
-                    SharedPreferencesCustomized.getInstance(it), view.getFragment())
+                    PreferenceHelper.getInstance(it), view.getFragment())
 
 //            if (headerData != null && mLoadedConfig == null) {
 //                mHomeApi.getConfigData(headerData.token, headerData.deviceId).subscribe(this)
@@ -41,7 +41,7 @@ class HomePresenter(context: Context) : BaseResponseObserver<MMConfigData>(), IH
         }
     }
 
-    override fun setScheduleRemain(videos: ArrayList<MMVideo>) {
+    override fun setScheduleCurrent(videos: ArrayList<MMVideo>) {
         schedule.clear()
         schedule.addAll(videos)
     }
@@ -53,7 +53,7 @@ class HomePresenter(context: Context) : BaseResponseObserver<MMConfigData>(), IH
     private fun readConfigData() {
         mView?.getViewContext()?.also { context ->
             val gson = Gson()
-            val str = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.SS_CONFIG, "")
+            val str = PreferenceHelper.getInstance(context).getString(ConstantPreference.SS_CONFIG, "")
             val data: MMConfigData? = gson.fromJson<MMConfigData>(str, MMConfigData::class.java)
             mView?.showUI(data)
         }
@@ -82,15 +82,15 @@ class HomePresenter(context: Context) : BaseResponseObserver<MMConfigData>(), IH
     private fun storeBranding(branding: MMBranding?) {
         if (branding == null) return
         mView?.getViewContext()?.also { context ->
-            SharedPreferencesCustomized.getInstance(context = context).putString(SPrefConstant.SS_BOTTOM_BAR_COLOR, branding.bottomBarColor
+            PreferenceHelper.getInstance(context = context).putString(ConstantPreference.SS_BOTTOM_BAR_COLOR, branding.bottomBarColor
                     ?: "")
-            SharedPreferencesCustomized.getInstance(context = context).putString(SPrefConstant.PRIMARY_COLOR, branding.primaryColor
+            PreferenceHelper.getInstance(context = context).putString(ConstantPreference.PRIMARY_COLOR, branding.primaryColor
                     ?: "")
-            SharedPreferencesCustomized.getInstance(context = context).putString(SPrefConstant.SECONDARY_COLOR, branding.textColor
+            PreferenceHelper.getInstance(context = context).putString(ConstantPreference.SECONDARY_COLOR, branding.textColor
                     ?: "")
-            SharedPreferencesCustomized.getInstance(context = context).putString(SPrefConstant.SS_COMPANY_LOGO, branding.companyLogo
+            PreferenceHelper.getInstance(context = context).putString(ConstantPreference.SS_COMPANY_LOGO, branding.companyLogo
                     ?: "")
-            SharedPreferencesCustomized.getInstance(context = context).putStrings(SPrefConstant.SS_BACKGROUND_PICTURES, branding.backgroundPictures)
+            PreferenceHelper.getInstance(context = context).putStrings(ConstantPreference.SS_BACKGROUND_PICTURES, branding.backgroundPictures)
         }
     }
 
@@ -98,7 +98,7 @@ class HomePresenter(context: Context) : BaseResponseObserver<MMConfigData>(), IH
         mView?.getViewContext()?.also {
             val gson = Gson()
             val json = gson.toJson(data)
-            SharedPreferencesCustomized.getInstance(it).putString(SPrefConstant.SS_CONFIG, json)
+            PreferenceHelper.getInstance(it).putString(ConstantPreference.SS_CONFIG, json)
         }
     }
 
@@ -119,7 +119,7 @@ class HomePresenter(context: Context) : BaseResponseObserver<MMConfigData>(), IH
 
     override fun onExpired(error: String) {
         mView?.getFragment()?.also {
-            if (it is BaseFragment) {
+            if (it is BaseScheduleFragment) {
                 it.onExpired(error)
             }
         }

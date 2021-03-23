@@ -2,12 +2,13 @@ package player.wellnesssolutions.com.base.common.load_scheduled_videos
 
 import android.content.Context
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.base.view.BaseFragment
+import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
+import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
+import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.base.view.IGetNewToken
-import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
 import player.wellnesssolutions.com.common.constant.Constant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.common.utils.MessageUtils
 import player.wellnesssolutions.com.network.datasource.now_playing.NowPlayingApi
 import player.wellnesssolutions.com.network.datasource.videos.PlayMode
@@ -15,13 +16,13 @@ import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.com.network.models.response.ResponseValue
 import player.wellnesssolutions.com.ui.activity_main.MainActivity
 import player.wellnesssolutions.com.ui.fragment_help_me_choose.helpers.HMCDataHelper
-import player.wellnesssolutions.com.ui.fragment_home.helper.IProcessTimeNowPlayingVideoListener
-import player.wellnesssolutions.com.ui.fragment_home.helper.ScheduledTimeProcessor
+import player.wellnesssolutions.com.ui.fragment_home.helper.IListenerHandleScheduleTime
+import player.wellnesssolutions.com.ui.fragment_home.helper.HandlerScheduleTime
 import player.wellnesssolutions.com.ui.fragment_search_preview.helpers.SPDBUtil
 import player.wellnesssolutions.com.ui.fragment_search_result_videos.SearchResultFragment
 
-class ScheduledVideosPresenter(context: Context) : BaseResponseObserver<ArrayList<MMVideo>>(), IScheduleContract.Presenter,
-        IProcessTimeNowPlayingVideoListener {
+class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVideo>>(), IScheduleContract.Presenter,
+        IListenerHandleScheduleTime {
     companion object {
         const val MSG_REQUEST_FAILED = "Request class videos failed !"
     }
@@ -29,8 +30,8 @@ class ScheduledVideosPresenter(context: Context) : BaseResponseObserver<ArrayLis
     // vars
     private var mView: IScheduleContract.View? = null
     private var scheduleApi = NowPlayingApi()
-    private var mScheduledTimeProcessor: ScheduledTimeProcessor? = ScheduledTimeProcessor(context, this)
-    private var mLoadedVideos: ArrayList<MMVideo>? = null
+    private var handlerScheduleTime: HandlerScheduleTime? = HandlerScheduleTime(context, this)
+    private var scheduleVideos: ArrayList<MMVideo>? = null
     private var isClickedFromBtnBottom = false
 
     // flag
@@ -61,7 +62,7 @@ class ScheduledVideosPresenter(context: Context) : BaseResponseObserver<ArrayLis
         this.mView = view
 
         view.getViewContext()?.also { context ->
-            val headerData = CheckHeaderApiUtil.checkData(SharedPreferencesCustomized.getInstance(context), view.getFragment())
+            val headerData = CheckHeaderApiUtil.checkData(PreferenceHelper.getInstance(context), view.getFragment())
                     ?: return
 
             view.showLoadingProgress()
@@ -79,7 +80,7 @@ class ScheduledVideosPresenter(context: Context) : BaseResponseObserver<ArrayLis
         //save all videos to database
         //VideoDBUtil.saveVideosScheduleToDB(loadedVideos, Constant.SCHEDULE_TAG)
 //        val video = loadedVideos[0]
-        mScheduledTimeProcessor?.processScheduledVideo(loadedVideos, this.isClickedFromBtnBottom)
+        handlerScheduleTime?.setupScheduleForNowVideo(loadedVideos, this.isClickedFromBtnBottom)
 //        mScheduledTimeProcessor?.progressSetTimeToPlaySchedule(loadedVideos)
     }
 
@@ -96,7 +97,7 @@ class ScheduledVideosPresenter(context: Context) : BaseResponseObserver<ArrayLis
 
         // filter today scheduler
         LoadSchedulingVideosHelper.filterTodaySchedulingVideos(loadedVideos)
-        mLoadedVideos = loadedVideos
+        scheduleVideos = loadedVideos
         mIsLoading = false
 //        val video = FakeDataHelper.getNowPlayingVideo()
         processLoadedVideos(loadedVideos)
@@ -131,11 +132,11 @@ class ScheduledVideosPresenter(context: Context) : BaseResponseObserver<ArrayLis
     }
 
     /**
-     * implementing @interface IProcessingTimeNowPlayingVideoListener
+     * implementing @interface IListenerHandleScheduleTime
      */
     override fun onHaveNowPlayingVideo(playedPosition: Long) {
         mView?.hideLoadingProgress()
-        val loadedVideos: ArrayList<MMVideo>? = mLoadedVideos
+        val loadedVideos: ArrayList<MMVideo>? = scheduleVideos
         if (loadedVideos != null && loadedVideos.size > 0) {
             mView?.onHaveClassVideos(loadedVideos, this.isClickedFromBtnBottom)
         } else {
@@ -150,7 +151,7 @@ class ScheduledVideosPresenter(context: Context) : BaseResponseObserver<ArrayLis
     override fun onDontHaveNowPlayingVideo(isClickedButtonHome: Boolean?) {
         val activity: MainActivity? = mView?.getFragment()?.activity as? MainActivity
         if (activity?.isPresentationAvailable() == true) {
-            activity.playVideo(PlayMode.SCHEDULE, mLoadedVideos!!)
+            activity.playVideo(PlayMode.SCHEDULE, scheduleVideos!!)
         }
 
         val message: String = mView?.getViewContext()?.getString(R.string.no_class_now)
@@ -163,9 +164,12 @@ class ScheduledVideosPresenter(context: Context) : BaseResponseObserver<ArrayLis
     override fun onHaveVideoAfter(playedPosition: Long) {
         super.onHaveVideoAfter(playedPosition)
         mView?.hideLoadingProgress()
-        mLoadedVideos?.also { videos ->
-            mView?.onHaveClassVideosWithTimeWaiting(videos)
-        }
+        // do nothing more
+    }
+
+    override fun onProcessVideoError() {
+        mView?.hideLoadingProgress()
+        mView?.showMessage(R.string.encountered_error_handling_class_video_data, R.color.red)
     }
 
     private fun navigateToNoClass() {
@@ -175,13 +179,20 @@ class ScheduledVideosPresenter(context: Context) : BaseResponseObserver<ArrayLis
         mView?.onNoClassVideos(message, isClickedFromBtnBottom = isClickedFromBtnBottom)
     }
 
+    override fun onTimePlaySchedule() {
+        scheduleVideos?.also { videos->
+            VideoDBUtil.createOrUpdateVideos(videos, Constant.MM_SCHEDULE)
+            mView?.onTimePlaySchedule()
+        }
+    }
+
     override fun onDetach() {
         mView = null
     }
 
     override fun onDestroy() {
-        mScheduledTimeProcessor?.release()
-        mScheduledTimeProcessor = null
+        handlerScheduleTime?.release()
+        handlerScheduleTime = null
 
         mCompoDisposable.dispose()
         mIsLoading = false
@@ -189,7 +200,7 @@ class ScheduledVideosPresenter(context: Context) : BaseResponseObserver<ArrayLis
 
     override fun onExpired(error: String) {
         mView?.getFragment()?.also {
-            if (it is BaseFragment) {
+            if (it is BaseScheduleFragment) {
                 it.onExpired(error)
             }
         }
@@ -199,9 +210,15 @@ class ScheduledVideosPresenter(context: Context) : BaseResponseObserver<ArrayLis
         if (mView != null && mView?.getViewContext() is MainActivity) {
             (mView?.getViewContext() as MainActivity).getTokenAgainWhenTokenExpire(object : IGetNewToken {
                 override fun onGetSuccess() {
-                    loadSchedule(this@ScheduledVideosPresenter.mView!!, this@ScheduledVideosPresenter.isClickedFromBtnBottom)
+                    loadSchedule(this@SchedulePresenter.mView!!, this@SchedulePresenter.isClickedFromBtnBottom)
                 }
             })
         }
+    }
+
+    override fun setScheduleCurrentAndWaitNextVideo(videos: ArrayList<MMVideo>) {
+        this.scheduleVideos?.clear()
+        this.scheduleVideos?.addAll(videos)
+        handlerScheduleTime?.setupScheduleForComingUpVideo(videos)
     }
 }

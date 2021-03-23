@@ -18,8 +18,8 @@ import kotlinx.android.synthetic.main.vh_search_result.view.*
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.utils.search_util.SearchCollectionUtil
 import player.wellnesssolutions.com.common.constant.Constant
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.com.network.models.search_result.MMTinyCategory
 import player.wellnesssolutions.com.ui.activity_main.MainActivity
@@ -118,7 +118,7 @@ class VideosSearchResultPageVH(view: View, val mItemWidth: Int, val mItemHeight:
             it.cornerRadius = itemView.resources.getDimensionPixelSize(R.dimen.corner_2dp) * 1f
             val itemSize = Math.min(mItemWidth, mItemHeight)
             val strokeWidth = (itemSize * 0.02f).toInt()
-            it.setStroke(strokeWidth, Color.parseColor(SharedPreferencesCustomized.getInstance(itemView.context).getString(SPrefConstant.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)))
+            it.setStroke(strokeWidth, Color.parseColor(PreferenceHelper.getInstance(itemView.context).getString(ConstantPreference.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)))
         }
         itemView.thumbnailSelectedView.background = shape
     }
@@ -185,7 +185,7 @@ class VideosSearchResultPageVH(view: View, val mItemWidth: Int, val mItemHeight:
             mVideosToPlay.forEach {
                 if (it.id == data.id) {
                     mIsSelected = true
-                    itemView.tvVideoTitle.setTextColor(Color.parseColor(SharedPreferencesCustomized.getInstance(itemView.context).getString(SPrefConstant.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)))
+                    itemView.tvVideoTitle.setTextColor(Color.parseColor(PreferenceHelper.getInstance(itemView.context).getString(ConstantPreference.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)))
                     itemView.thumbnailSelectedView.visibility = View.VISIBLE
                 }
             }
@@ -268,7 +268,7 @@ class VideosSearchResultPageVH(view: View, val mItemWidth: Int, val mItemHeight:
                 itemView.thumbnailSelectedView.visibility = View.INVISIBLE
             }
             false -> {
-                itemView.tvVideoTitle.setTextColor(Color.parseColor(SharedPreferencesCustomized.getInstance(itemView.context).getString(SPrefConstant.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)))
+                itemView.tvVideoTitle.setTextColor(Color.parseColor(PreferenceHelper.getInstance(itemView.context).getString(ConstantPreference.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)))
                 itemView.thumbnailSelectedView.visibility = View.VISIBLE
             }
         }

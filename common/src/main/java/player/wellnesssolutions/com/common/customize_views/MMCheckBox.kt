@@ -11,8 +11,8 @@ import android.util.AttributeSet
 import android.widget.CheckBox
 import androidx.core.content.ContextCompat
 import player.wellnesssolutions.com.common.R
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 
 class MMCheckBox : CheckBox {
     private var mCheckedDrawable:Drawable?=null
@@ -38,7 +38,7 @@ class MMCheckBox : CheckBox {
 
 
     private fun init() {
-        var strPrimaryColor = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.PRIMARY_COLOR, "")
+        var strPrimaryColor = PreferenceHelper.getInstance(context).getString(ConstantPreference.PRIMARY_COLOR, "")
         if(strPrimaryColor.isEmpty()) strPrimaryColor = "#00c3b3"
         mCheckedDrawable = createCheckedDrawable(strPrimaryColor)
         mUnCheckedDrawable = createUnCheckedDrawable(strPrimaryColor)

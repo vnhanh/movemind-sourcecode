@@ -12,7 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_search_brands.*
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.base.view.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.base.utils.search_util.SearchUIHelper
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.utils.MessageUtils
@@ -22,7 +22,7 @@ import player.wellnesssolutions.com.ui.fragment_search_brands.module.OpenSearchS
 import player.wellnesssolutions.com.ui.fragment_search_brands.recyclerview.SearchBrandsAdapter
 
 
-class SearchBrandsFragment : BaseFragment(), ISearchBrandsContract.View {
+class SearchBrandsFragment : BaseScheduleFragment(), ISearchBrandsContract.View {
     private var mPresenter: ISearchBrandsContract.Presenter? = SearchBrandsPresenter()
 
     // dialog will show in this fragment

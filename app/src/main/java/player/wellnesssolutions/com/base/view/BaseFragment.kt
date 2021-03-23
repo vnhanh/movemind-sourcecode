@@ -2,7 +2,6 @@ package player.wellnesssolutions.com.base.view
 
 import android.content.Context
 import android.content.DialogInterface
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import player.wellnesssolutions.com.R
@@ -10,10 +9,10 @@ import player.wellnesssolutions.com.base.utils.FragmentUtil
 import player.wellnesssolutions.com.common.utils.DialogUtil
 import player.wellnesssolutions.com.ui.activity_main.MainActivity
 
-open class BaseFragment : Fragment(), ILifeCycle.View {
+abstract class BaseFragment : Fragment(), ILifeCycle.View{
     protected var mIsJustBeDestroyed = false
 
-    fun onBackPressed(view: View) {
+    protected open fun onBackPressed(view: View) {
         view.isEnabled = false
         FragmentUtil.onBackPressedActivity(activity)
     }
@@ -85,4 +84,5 @@ open class BaseFragment : Fragment(), ILifeCycle.View {
         super.onDestroyView()
         mIsJustBeDestroyed = true
     }
+
 }

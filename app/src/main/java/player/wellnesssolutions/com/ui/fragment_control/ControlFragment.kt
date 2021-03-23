@@ -24,15 +24,14 @@ import kotlinx.android.synthetic.main.merge_now_playing_coming_up_next.*
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.common.download.DownloadVideoHelper
 import player.wellnesssolutions.com.base.common.load_scheduled_videos.IScheduleContract
-import player.wellnesssolutions.com.base.common.load_scheduled_videos.ScheduledVideosPresenter
-import player.wellnesssolutions.com.base.view.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.base.utils.FragmentUtil
 import player.wellnesssolutions.com.base.utils.ParameterUtils
 import player.wellnesssolutions.com.base.utils.ViewUtil
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.customize_views.MMTextView
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.common.utils.DialogUtil
 import player.wellnesssolutions.com.common.utils.FileUtil
 import player.wellnesssolutions.com.common.utils.MessageUtils
@@ -41,16 +40,15 @@ import player.wellnesssolutions.com.network.datasource.videos.PlayMode
 import player.wellnesssolutions.com.network.models.config.MMConfigData
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.com.network.models.screen_search.MMBrand
-import player.wellnesssolutions.com.services.AlarmManagerSchedule
 import player.wellnesssolutions.com.ui.activity_main.CastingBroadcastReceiver
 import player.wellnesssolutions.com.ui.activity_main.IRouterChanged
 import player.wellnesssolutions.com.ui.activity_main.MainActivity
 import player.wellnesssolutions.com.ui.activity_main.ScheduleBroadcastReceiver
-import player.wellnesssolutions.com.ui.fragment_control.helpers.ControlFragmentSetupUIHelper
 import player.wellnesssolutions.com.ui.fragment_control.helpers.MMMenuAnimationHelper
 import player.wellnesssolutions.com.ui.fragment_help_me_choose.HelpMeChooseFragment
 import player.wellnesssolutions.com.ui.fragment_home.HomeFragment
 import player.wellnesssolutions.com.ui.fragment_no_class.NoClassFragment
+import player.wellnesssolutions.com.ui.fragment_now_playing.NowPlayingFragment
 import player.wellnesssolutions.com.ui.fragment_now_playing.helper.GCUDisplayHelper
 import player.wellnesssolutions.com.ui.fragment_now_playing.helper.NowPlayingVideoSetupHelper
 import player.wellnesssolutions.com.ui.fragment_search_brands.SearchBrandsFragment
@@ -67,15 +65,12 @@ import player.wellnesssolutions.com.ui.fragment_time_table.TimeTableFragment
 /**
  * This fragment is container of screens (child fragments) such as Brands screen, Search Preview screen, Search Video Results screen...
  */
-class ControlFragment : BaseFragment(), IControlContract.View, IScheduleContract.View, IRouterChanged,
+class ControlFragment : BaseScheduleFragment(), IControlContract.View, IScheduleContract.View, IRouterChanged,
         CastingBroadcastReceiver.TVListener,
         ScheduleBroadcastReceiver.ScheduleListener {
     private var mPresenter: IControlContract.Presenter? = ControlPresenter()
     var mCurrentChildScreenTag = ""
     var isClicked = false
-
-    // handler that perform loading schedule task
-    private var mSchedulePresenter: IScheduleContract.Presenter? = null
 
     // handler that perform downloading videos task
     // use for PLAYLIST function in case casting videos on TV
@@ -91,8 +86,6 @@ class ControlFragment : BaseFragment(), IControlContract.View, IScheduleContract
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        mSchedulePresenter = ScheduledVideosPresenter(context!!)
 
         registerRouterChangedListener()
         registerCastingTVBroadcast()
@@ -117,7 +110,6 @@ class ControlFragment : BaseFragment(), IControlContract.View, IScheduleContract
 
     override fun onPause() {
         mPresenter?.onDetach()
-        mSchedulePresenter?.onDetach()
         super.onPause()
     }
 
@@ -125,12 +117,8 @@ class ControlFragment : BaseFragment(), IControlContract.View, IScheduleContract
         unregisterCastingTVBroadcast()
         unregisterScheduleBroadcast()
         unregisterRouterChangedListener()
-        mSchedulePresenter?.onDestroy()
-        mSchedulePresenter = null
 
         mPresenter?.onDestroy()
-        mPresenter = null
-
         mMenuAnimationHelper.release()
 
         super.onDestroy()
@@ -176,8 +164,8 @@ class ControlFragment : BaseFragment(), IControlContract.View, IScheduleContract
                 var fragment: Fragment? = fm.findFragmentByTag(tag) // find the earlier fragment if existed
                 fragment =
                         when (fragment != null && fragment is HomeFragment) {
-                            true -> fragment                    // use old instance
-                            false -> HomeFragment.getInstance() // create new instance if it has been not created yet
+                            true -> HomeFragment.updateAlreadyInstanceWithNoSchedule(fragment)                    // use old instance
+                            false -> HomeFragment.getInstanceNoLoadSchedule() // create new instance if it has been not created yet
                         }
                 FragmentUtil.replaceFragment(fm = fm,
                         newFragment = fragment, newFragmentTag = tag,
@@ -189,31 +177,34 @@ class ControlFragment : BaseFragment(), IControlContract.View, IScheduleContract
     }
 
     override fun onHaveClassVideos(scheduledVideos: ArrayList<MMVideo>, isClickedFromBtnBottom: Boolean) {
-        activity?.also { act ->
-            if (act is MainActivity && act.isPresentationAvailable()) {
+        activity?.also { activity ->
+            if (activity is MainActivity && activity.isPresentationAvailable()) {
                 MessageUtils.showSnackBar(snackView = btnLogoBottom, message = getString(R.string.now_playing_class),
                         colorRes = R.color.white)
-                act.playVideo(PlayMode.SCHEDULE, scheduledVideos)
+                activity.playVideo(PlayMode.SCHEDULE, scheduledVideos)
 
             } else {
-                ControlFragmentSetupUIHelper.playNewScheduleOnNewScreen(act, scheduledVideos)
+                loadNowPlayingScreen()
             }
         }
     }
 
-    override fun onReceivePlayVideoScheduleFromUI() {
-//        AlarmManagerSchedule.cancelAlarmScheduleTime()
-        mSchedulePresenter?.onLoadSchedule(this, false)
+    override fun onTimePlaySchedule() {
+        loadNowPlayingScreen()
     }
 
-    override fun onReceiveResetScheduleFromUI() {
-        AlarmManagerSchedule.cancelAlarmScheduleTime()
-        mSchedulePresenter?.onLoadSchedule(this, false)
-    }
+    fun loadNowPlayingScreen() {
+        activity?.supportFragmentManager?.also { _fm ->
+            val tag = NowPlayingFragment.TAG
+            var fragment = _fm.findFragmentByTag(tag)
+            fragment =
+                    when (fragment != null && fragment is NowPlayingFragment) {
+                        true -> fragment
+                        false -> NowPlayingFragment.getInstancePlaySchedule()
+                    }
+            FragmentUtil.replaceFragment(fm = _fm, newFragment = fragment, newFragmentTag = tag, frameId = R.id.frameLayoutHome, isAddToBackStack = true, isRemoveOlds = true)
+        }
 
-    override fun onReceiveUpdateScheduleFromUI() {
-        AlarmManagerSchedule.cancelAlarmScheduleTime()
-        mSchedulePresenter?.onLoadSchedule(this, false)
     }
 
     override fun onReceiveChangeApiBackToHome() {
@@ -275,7 +266,7 @@ class ControlFragment : BaseFragment(), IControlContract.View, IScheduleContract
                     fragment =
                             when (fragment != null && fragment is HomeFragment) {
                                 true -> fragment                    // use old instance
-                                false -> HomeFragment.getInstance() // create new instance if it has been not created yet
+                                false -> HomeFragment.getInstanceWithLoadSchedule() // create new instance if it has been not created yet
                             }
                     FragmentUtil.replaceFragment(fm = fm,
                             newFragment = fragment, newFragmentTag = tag,
@@ -421,7 +412,7 @@ class ControlFragment : BaseFragment(), IControlContract.View, IScheduleContract
                     val message: String = getString(player.wellnesssolutions.com.R.string.confirm_stop_video_and_navigate_to_screen_get_started)
 
                     val yesBtnListener = DialogInterface.OnClickListener { _, _ ->
-                        loadScheduledVideos(true)
+                        loadSchedule(true)
                         btnLogoBottom.isEnabled = true
                         mVideosToPlay.clear()
                     }
@@ -433,12 +424,8 @@ class ControlFragment : BaseFragment(), IControlContract.View, IScheduleContract
                 mVideosToPlay.clear()
             }
         }
-        loadScheduledVideos(true)
+        loadSchedule(true)
 
-    }
-
-    private fun loadScheduledVideos(isClickedFromBtnBottom: Boolean) {
-        mSchedulePresenter?.onLoadSchedule(this, isClickedFromBtnBottom)
     }
 
     private fun setupButtonFloatMenu() {
@@ -956,7 +943,7 @@ class ControlFragment : BaseFragment(), IControlContract.View, IScheduleContract
 
     private fun setupButtonPlayPausePlaylist() {
         context?.also {
-            val strPrimaryColor = SharedPreferencesCustomized.getInstance(it).getString(SPrefConstant.PRIMARY_COLOR, Constant.DEF_PRIMARY_COLOR)
+            val strPrimaryColor = PreferenceHelper.getInstance(it).getString(ConstantPreference.PRIMARY_COLOR, Constant.DEF_PRIMARY_COLOR)
             val primaryColor = Color.parseColor(strPrimaryColor)
             val textColor = ColorUtils.blendARGB(primaryColor, Color.WHITE, 0.2f)
             tvVideoPlayingPlaylistPosition?.setTextColor(textColor)

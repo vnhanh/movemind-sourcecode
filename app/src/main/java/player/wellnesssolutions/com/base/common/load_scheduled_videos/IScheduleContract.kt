@@ -12,6 +12,7 @@ interface IScheduleContract {
         fun onNoClassVideos(message: String = "", @ColorRes msgColor: Int = R.color.yellow, isClickedFromBtnBottom: Boolean) {}
         fun onHaveClassVideos(scheduledVideos: ArrayList<MMVideo>, isClickedFromBtnBottom: Boolean) {}
         fun onHaveClassVideosWithTimeWaiting(videos: ArrayList<MMVideo>) {}
+        fun onTimePlaySchedule() {}
     }
 
     interface Presenter {
@@ -19,5 +20,7 @@ interface IScheduleContract {
         fun onDetach()
         fun onDestroy()
         fun onAttach(view: View)
+        fun setScheduleCurrentAndWaitNextVideo(videos: ArrayList<MMVideo>)
+        fun onTimePlaySchedule()
     }
 }

@@ -16,8 +16,8 @@ import com.google.gson.Gson
 import okhttp3.ResponseBody
 import player.wellnesssolutions.com.common.R
 import player.wellnesssolutions.com.common.constant.Constant
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.network.models.response.ErrorBody
 
 
@@ -28,9 +28,9 @@ object CommonUtility {
     }
 
     fun getDrawableByPrimary(context: Context): Drawable? {
-        val mPref = SharedPreferencesCustomized.getInstance(context)
+        val mPref = PreferenceHelper.getInstance(context)
 
-        val strPrimaryColor = mPref.getString(SPrefConstant.PRIMARY_COLOR, "")
+        val strPrimaryColor = mPref.getString(ConstantPreference.PRIMARY_COLOR, "")
 
         if (strPrimaryColor.isEmpty()) return null
         val shape = GradientDrawable()
@@ -42,9 +42,9 @@ object CommonUtility {
     }
 
     fun getDrawableByPrimary(context: Context, @ColorRes solidColor: Int): Drawable? {
-        val mPref = SharedPreferencesCustomized.getInstance(context)
+        val mPref = PreferenceHelper.getInstance(context)
 
-        val strPrimaryColor = mPref.getString(SPrefConstant.PRIMARY_COLOR, "")
+        val strPrimaryColor = mPref.getString(ConstantPreference.PRIMARY_COLOR, "")
 
         if (strPrimaryColor.isEmpty()) return null
         val shape = GradientDrawable()

@@ -6,8 +6,8 @@ import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.common.constant.Constant
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.common.utils.DialogUtil
 import player.wellnesssolutions.com.common.utils.MessageUtils
 import player.wellnesssolutions.com.services.download.DownloadManagerCustomized
@@ -67,14 +67,14 @@ class ActivityDownloadHelper(activity: Activity, view: View) : IProgressListener
     private fun checkIfShowMessageDownloadSuccess(fileName: String?) {
         mWeakView.get()?.also { view ->
             view.post {
-                when (SharedPreferencesCustomized.getInstance(view.context).getBoolean(key = SPrefConstant.IS_SHOW_MESSAGE_ALLOWED, defValue = true)) {
+                when (PreferenceHelper.getInstance(view.context).getBoolean(key = ConstantPreference.IS_SHOW_MESSAGE_ALLOWED, defValue = true)) {
                     true -> {
                         showMessageDownloadSuccess(fileName)
                     }
                     false -> {
                         view.postDelayed(object : Runnable {
                             override fun run() {
-                                if (SharedPreferencesCustomized.getInstance(view.context).getBoolean(key = SPrefConstant.IS_SHOW_MESSAGE_ALLOWED, defValue = true)) {
+                                if (PreferenceHelper.getInstance(view.context).getBoolean(key = ConstantPreference.IS_SHOW_MESSAGE_ALLOWED, defValue = true)) {
                                     showMessageDownloadSuccess(fileName)
                                     view.removeCallbacks(null)
                                 } else {

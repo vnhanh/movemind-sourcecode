@@ -11,7 +11,7 @@ import player.wellnesssolutions.com.base.view.IShowMessageView
 import player.wellnesssolutions.com.custom_exoplayer.PlayerState
 import player.wellnesssolutions.com.network.models.config.MMConfigData
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
-import player.wellnesssolutions.com.ui.fragment_home.helper.IProcessTimeNowPlayingVideoListener
+import player.wellnesssolutions.com.ui.fragment_home.helper.IListenerHandleScheduleTime
 import player.wellnesssolutions.com.ui.fragment_now_playing.helper.IComingUpNextClickListener
 import player.wellnesssolutions.com.ui.fragment_search_brands.module.ILoadBrandHandler
 
@@ -32,10 +32,12 @@ interface INowPlayingConstruct {
         fun openTimeTableScreen() {}
         fun hideCountDownTimer() {}
         fun hideControlWhenNextVideoSchedule() {}
-        fun passRemainScheduleBackToHomeScreen(videos: java.util.ArrayList<MMVideo>) {}
+        fun showDialogAskWantToLoadSchedule(){}
+        fun onLoadScheduleWhilePlaySearchedVideos(){}
+        fun backToHomeScreenWithNotLoadSchedule(){}
     }
 
-    interface Presenter : ILifeCycle.Presenter<View>, IComingUpNextClickListener, IProcessTimeNowPlayingVideoListener {
+    interface Presenter : ILifeCycle.Presenter<View>, IComingUpNextClickListener, IListenerHandleScheduleTime {
         fun onChangeVolume(context: Context, progress: Int)
         fun pausePlayer()
         fun getPlayerManager(): IPlayVideoContract.Manager
@@ -77,5 +79,6 @@ interface INowPlayingConstruct {
 
         fun getIsCountDown(): Boolean
         fun startToPlayScheduleVideo() {}
+        fun clickToCallServiceLoadSchedule()
     }
 }

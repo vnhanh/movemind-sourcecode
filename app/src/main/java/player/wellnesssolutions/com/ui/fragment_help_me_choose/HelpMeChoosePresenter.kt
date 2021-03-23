@@ -3,12 +3,12 @@ package player.wellnesssolutions.com.ui.fragment_help_me_choose
 import android.content.Context
 import com.google.gson.GsonBuilder
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.base.view.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
 import player.wellnesssolutions.com.common.constant.Constant
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.common.utils.DialogUtil
 import player.wellnesssolutions.com.network.datasource.help_me_choose.HelpMeChooseApi
 import player.wellnesssolutions.com.network.models.config.MMConfigData
@@ -44,7 +44,7 @@ class HelpMeChoosePresenter : BaseResponseObserver<ArrayList<MMHelpMeChooseQuest
 
     override fun loadData(view: IHelpMeChooseContract.View) {
         view.getViewContext()?.also {
-            val headerData = CheckHeaderApiUtil.checkData(SharedPreferencesCustomized.getInstance(it), view.getFragment())
+            val headerData = CheckHeaderApiUtil.checkData(PreferenceHelper.getInstance(it), view.getFragment())
                     ?: return
 
             if (!wasDisplayed && mLoadedData != null) {
@@ -75,7 +75,7 @@ class HelpMeChoosePresenter : BaseResponseObserver<ArrayList<MMHelpMeChooseQuest
     }
 
     private fun showViewsByRemote(context: Context) {
-        SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.SS_CONFIG, Constant.EMPTY).also {
+        PreferenceHelper.getInstance(context).getString(ConstantPreference.SS_CONFIG, Constant.EMPTY).also {
             if (it.isEmpty()) return
             val gson = GsonBuilder().setLenient().create()
 
@@ -164,7 +164,7 @@ class HelpMeChoosePresenter : BaseResponseObserver<ArrayList<MMHelpMeChooseQuest
 
     override fun onExpired(error: String) {
         mView?.getFragment()?.also {
-            if (it is BaseFragment) {
+            if (it is BaseScheduleFragment) {
                 it.onExpired(error)
             }
         }
@@ -172,7 +172,7 @@ class HelpMeChoosePresenter : BaseResponseObserver<ArrayList<MMHelpMeChooseQuest
 
     override fun onExpiredUnauthenticated(error: String) {
         mView?.getFragment()?.also {
-            if (it is BaseFragment) {
+            if (it is BaseScheduleFragment) {
                 it.onExpiredUnAuth(error)
             }
         }

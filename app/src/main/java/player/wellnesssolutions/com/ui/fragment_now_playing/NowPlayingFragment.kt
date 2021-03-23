@@ -27,16 +27,16 @@ import kotlinx.android.synthetic.main.merge_now_playing_coming_up_next.*
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.common.download.DownloadVideoHelper
 import player.wellnesssolutions.com.base.common.load_scheduled_videos.IScheduleContract
-import player.wellnesssolutions.com.base.common.load_scheduled_videos.ScheduledVideosPresenter
+import player.wellnesssolutions.com.base.common.load_scheduled_videos.SchedulePresenter
 import player.wellnesssolutions.com.base.common.play_video.ClosedCaptionController
 import player.wellnesssolutions.com.base.common.play_video.PlayVideoDisplayHelper
-import player.wellnesssolutions.com.base.view.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.base.utils.FragmentUtil
 import player.wellnesssolutions.com.base.utils.ParameterUtils.mCountDownNumber
 import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
 import player.wellnesssolutions.com.common.constant.Constant
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.common.utils.DialogUtil
 import player.wellnesssolutions.com.common.utils.FileUtil
 import player.wellnesssolutions.com.common.utils.MessageUtils
@@ -58,7 +58,7 @@ import player.wellnesssolutions.com.ui.fragment_search_result_videos.SearchResul
 import player.wellnesssolutions.com.ui.fragment_time_table.TimeTableFragment
 import player.wellnesssolutions.fontsizelibrary.TypefaceUtil
 
-class NowPlayingFragment : BaseFragment(), INowPlayingConstruct.View, IRouterChanged,
+class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IRouterChanged,
         NetworkReceiver.IStateListener, ScheduleBroadcastReceiver.ScheduleListener {
     private var mPresenter: INowPlayingConstruct.Presenter? = null
 
@@ -91,30 +91,33 @@ class NowPlayingFragment : BaseFragment(), INowPlayingConstruct.View, IRouterCha
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         registerScheduleBroadcast()
-        mSchedulePresenter = ScheduledVideosPresenter(context!!)
+        mSchedulePresenter = SchedulePresenter(context!!)
 
         readArguments()
     }
 
     private fun readArguments() {
         arguments?.also { extras ->
-            val mode: PlayMode? =
-                    when {
-                        extras.containsKey(Constant.BUNDLE_SCHEDULE) -> PlayMode.SCHEDULE
-                        extras.containsKey(KEY_DATA_PLAYING_VIDEO) -> PlayMode.ON_DEMAND
-                        else -> null
+            when{
+                extras.containsKey(Constant.BUNDLE_SCHEDULE) -> {
+                    val videos: ArrayList<MMVideo> = VideoDBUtil.getVideosFromDB(Constant.MM_SCHEDULE, false)
+                    mPresenter = NowPlayingPresenter(
+                            context = context!!,
+                            playMode = PlayMode.SCHEDULE
+                    ).apply {
+                        setVideos(videos)
                     }
+                }
 
-            if (mode != null) {
-                if (context == null) return
-
-                val videos: ArrayList<MMVideo> = VideoDBUtil.readVideosFromDB(Constant.MM_SCHEDULE, false)
-
-                mPresenter = NowPlayingPresenter(
-                        context = context!!,
-                        playMode = mode
-                ).apply {
-                    setVideos(videos)
+                extras.containsKey(KEY_DATA_PLAYING_VIDEO) -> {
+                    val videos: ArrayList<MMVideo> = VideoDBUtil.getVideosFromDB(TAG, true)
+                    Log.d("LOG", this.javaClass.simpleName + " readArguments() | videos number: ${videos.size}")
+                    mPresenter = NowPlayingPresenter(
+                            context = context!!,
+                            playMode = PlayMode.ON_DEMAND
+                    ).apply {
+                        setVideos(videos)
+                    }
                 }
             }
 
@@ -189,7 +192,7 @@ class NowPlayingFragment : BaseFragment(), INowPlayingConstruct.View, IRouterCha
 
         //save time countdown for backing from other screen
         context?.let {
-            SharedPreferencesCustomized.getInstance(it).putLong(SPrefConstant.LAST_TIME_COUNT_DOWN, mCountDownNumber)
+            PreferenceHelper.getInstance(it).putLong(ConstantPreference.LAST_TIME_COUNT_DOWN, mCountDownNumber)
         }
         unregisterScheduleBroadcast()
 
@@ -207,6 +210,11 @@ class NowPlayingFragment : BaseFragment(), INowPlayingConstruct.View, IRouterCha
         destroyPresenters()
 
         super.onDestroy()
+    }
+
+    override fun onBackPressed(view: View) {
+        mSchedulePresenter
+        super.onBackPressed(view)
     }
 
 //    private fun releaseDownloadButtonManager() {
@@ -260,7 +268,7 @@ class NowPlayingFragment : BaseFragment(), INowPlayingConstruct.View, IRouterCha
         btnPrevious?.also { button ->
             button.visibility = View.VISIBLE
             button.setOnClickListener {
-                SharedPreferencesCustomized.getInstance(context = button.context).delete(SPrefConstant.LAST_PLAYED_VIDEO_POSITION)
+                PreferenceHelper.getInstance(context = button.context).delete(ConstantPreference.LAST_PLAYED_VIDEO_POSITION)
                 onBackPressed(button)
             }
         }
@@ -323,44 +331,33 @@ class NowPlayingFragment : BaseFragment(), INowPlayingConstruct.View, IRouterCha
     private fun setupButtonLogo() {
         btnLogoBottom?.setOnClickListener {
             it.isEnabled = false
-            onClickedButtonLogo()
+            mPresenter?.clickToCallServiceLoadSchedule()
             it.isEnabled = true
         }
     }
 
-    private fun onClickedButtonLogo() {
-        mPresenter?.getPlayMode()?.also { playMode ->
-
-            when {
-                // show dialog "Do you want to reloead schedule ?"
-                playMode == PlayMode.SCHEDULE -> {
-                    videoPlayer?.context?.also { context ->
-                        val message = context.getString(R.string.do_you_wan_to_reload_schedule)
-                        val okButtonListener = DialogInterface.OnClickListener { _, _ ->
-                            mPresenter?.stopCountdown()
-                            loadSchedule(true)
-                            SearchResultFragment.mVideosToPlay.clear()
-                        }
-
-                        DialogUtil.createDialogTwoButtons(context = context, message = message, titleLeftButton = R.string.btn_no,
-                                leftButtonClickListener = null, titleRightButton = R.string.btn_yes, rightButtonClickListener = okButtonListener).show()
-                    }
-                }
-
-                playMode == PlayMode.ON_DEMAND -> {
-                    mPresenter?.stopCountdown()
-                    loadSchedule(true)
-                    SearchResultFragment.mVideosToPlay.clear()
-                }
+    override fun showDialogAskWantToLoadSchedule() {
+        context?.also { context ->
+            val message = context.getString(R.string.do_you_wan_to_reload_schedule)
+            val okButtonListener = DialogInterface.OnClickListener { _, _ ->
+                mPresenter?.stopCountdown()
+                mCheckVideoPositionRunnable?.stopTask()
+                loadSchedule(true)
+                SearchResultFragment.mVideosToPlay.clear()
             }
+
+            dialog = DialogUtil.createDialogTwoButtons(context = context, message = message, titleLeftButton = R.string.btn_no,
+                    leftButtonClickListener = null, titleRightButton = R.string.btn_yes, rightButtonClickListener = okButtonListener).apply { show() }
         }
     }
 
-    private fun loadSchedule(isClickedFromBtnBottom: Boolean) {
+    override fun onLoadScheduleWhilePlaySearchedVideos() {
+        mPresenter?.stopCountdown()
         mCheckVideoPositionRunnable?.stopTask()
-        mSchedulePresenter?.onLoadSchedule(this, isClickedFromBtnBottom)
-        btnLogoBottom.isEnabled = false
+        loadSchedule(true)
+        SearchResultFragment.mVideosToPlay.clear()
     }
+
 
     // vars help for determining swipe or click on video player
     private var mVideoPlayerTouchedX = 0f
@@ -544,7 +541,7 @@ class NowPlayingFragment : BaseFragment(), INowPlayingConstruct.View, IRouterCha
                 it.showDialogBackToHome()
                 Handler().postDelayed({
                     it.hideDialogBackToHome()
-                    NowPlayingVideoSetupHelper.openHomeFragment(fm = it.supportFragmentManager)
+                    NowPlayingVideoSetupHelper.openHomeFragmentWithLoadSchedule(fm = it.supportFragmentManager)
                 }, 3000)
             }
         }
@@ -559,7 +556,7 @@ class NowPlayingFragment : BaseFragment(), INowPlayingConstruct.View, IRouterCha
                 it.showDialogBackToHome()
                 if (it.appVisible) {
                     Handler().postDelayed({
-                        NowPlayingVideoSetupHelper.openHomeFragment(fm = it.supportFragmentManager)
+                        NowPlayingVideoSetupHelper.openHomeFragmentWithLoadSchedule(fm = it.supportFragmentManager)
                     }, 3000)
                 }
             }
@@ -580,7 +577,7 @@ class NowPlayingFragment : BaseFragment(), INowPlayingConstruct.View, IRouterCha
                 it.getApiConfigData()
                 Handler().postDelayed({
                     //it.hideDialogBackToHome()
-                    NowPlayingVideoSetupHelper.openHomeFragment(fm = it.supportFragmentManager)
+                    NowPlayingVideoSetupHelper.openHomeFragmentWithLoadSchedule(fm = it.supportFragmentManager)
                 }, 3000)
             }
         }
@@ -592,10 +589,6 @@ class NowPlayingFragment : BaseFragment(), INowPlayingConstruct.View, IRouterCha
                 it.getApiConfigData()
             }
         }
-    }
-
-    override fun passRemainScheduleBackToHomeScreen(videos: ArrayList<MMVideo>) {
-        NowPlayingVideoSetupHelper.openHomeFragment(fm = activity?.supportFragmentManager, videos = videos)
     }
 
     private fun registerScheduleBroadcast() {
@@ -682,8 +675,12 @@ class NowPlayingFragment : BaseFragment(), INowPlayingConstruct.View, IRouterCha
         }
     }
 
+    override fun backToHomeScreenWithNotLoadSchedule() {
+        NowPlayingVideoSetupHelper.openHomeFragmentWithNotLoadSchedule(fm = activity?.supportFragmentManager)
+    }
+
     override fun openNoClassSearchScreen(isClickedFromBtnBottom: Boolean?) {
-        NowPlayingVideoSetupHelper.openHomeFragment(fm = activity?.supportFragmentManager)
+        NowPlayingVideoSetupHelper.openHomeFragmentWithNotLoadSchedule(fm = activity?.supportFragmentManager)
     }
 
     override fun hideGroupViewsComingUpNext() {
@@ -709,7 +706,7 @@ class NowPlayingFragment : BaseFragment(), INowPlayingConstruct.View, IRouterCha
 //                }
 //                NowPlayingVideoSetupHelper.openNoClassScreen(fm = activity?.supportFragmentManager)
                 if (isClickedFromBtnBottom) {
-                    NowPlayingVideoSetupHelper.openHomeFragment(fm = activity?.supportFragmentManager)
+                    NowPlayingVideoSetupHelper.openHomeFragmentWithNotLoadSchedule(fm = activity?.supportFragmentManager)
                     activity?.let {
                         if (it is MainActivity) {
                             it.getApiConfigData()
@@ -756,6 +753,10 @@ class NowPlayingFragment : BaseFragment(), INowPlayingConstruct.View, IRouterCha
                 }
             }
         }
+    }
+
+    override fun onTimePlaySchedule() {
+        // do nothing
     }
 
     private fun switchToCurrentClass(schedulingVideos: ArrayList<MMVideo>) {
@@ -965,7 +966,7 @@ class NowPlayingFragment : BaseFragment(), INowPlayingConstruct.View, IRouterCha
     override fun openTimeTableScreen() {
         activity?.supportFragmentManager?.also { fm ->
             context?.also {
-                SharedPreferencesCustomized.getInstance(it).putBoolean(SPrefConstant.IS_SHOW_BUTTON_PREVIOUS, true)
+                PreferenceHelper.getInstance(it).putBoolean(ConstantPreference.IS_SHOW_BUTTON_PREVIOUS, true)
             }
 
             val containerTag: String = ControlFragment.TAG
@@ -989,7 +990,7 @@ class NowPlayingFragment : BaseFragment(), INowPlayingConstruct.View, IRouterCha
 
         fun getInstanceForSearchedVideos(data: ArrayList<MMVideo>): NowPlayingFragment =
                 NowPlayingFragment().apply {
-                    VideoDBUtil.saveVideosToDB(data, TAG)
+                    VideoDBUtil.createOrUpdateVideos(data, TAG)
 
                     val bundle = Bundle().apply {
                         putBoolean(KEY_DATA_PLAYING_VIDEO, true)
@@ -998,27 +999,15 @@ class NowPlayingFragment : BaseFragment(), INowPlayingConstruct.View, IRouterCha
                 }
 
         fun getBundleBySearchedVideos(data: ArrayList<MMVideo>): Bundle {
-            VideoDBUtil.saveVideosToDB(data, TAG)
+            VideoDBUtil.createOrUpdateVideos(data, TAG)
 
             return Bundle().apply {
                 putBoolean(KEY_DATA_PLAYING_VIDEO, true)
             }
         }
 
-        fun getInstancePlaySchedule(videos: ArrayList<MMVideo>): NowPlayingFragment =
-                NowPlayingFragment().apply {
-                    VideoDBUtil.createOrUpdateVideos(videos, Constant.MM_SCHEDULE)
-                    val bundle = Bundle().apply {
-                        putBoolean(Constant.BUNDLE_SCHEDULE, true)
-                    }
-                    arguments = bundle
-                }
-
-        fun updateAlreadyInstance(fragment: NowPlayingFragment, videos: ArrayList<MMVideo>): NowPlayingFragment = fragment.apply {
-            arguments = Bundle().apply {
-                VideoDBUtil.createOrUpdateVideos(videos, Constant.MM_SCHEDULE)
-                putBoolean(Constant.BUNDLE_SCHEDULE, true)
-            }
+        fun getInstancePlaySchedule(): NowPlayingFragment = NowPlayingFragment().apply {
+            arguments = Bundle().also { it.putBoolean(Constant.BUNDLE_SCHEDULE, true) }
         }
     }
 

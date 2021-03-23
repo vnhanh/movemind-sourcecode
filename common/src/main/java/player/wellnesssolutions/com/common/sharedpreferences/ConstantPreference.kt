@@ -1,6 +1,6 @@
 package player.wellnesssolutions.com.common.sharedpreferences
 
-object SPrefConstant {
+object ConstantPreference {
     const val TOKEN = "SS TOKEN"
     const val EMAIL = "SS EMAIL"
     const val PASSWORD = "SS PASSWORD"
@@ -21,7 +21,7 @@ object SPrefConstant {
     const val SS_DOWNLOADED_BUT_NO_PERMISSION = "SS_DOWNLOADED_BUT_NO_PERMISSION"
 
     const val SP_COOKIE = "COOKIE"
-    
+
     // flag determines should show message to avoid lag
     const val IS_SHOW_MESSAGE_ALLOWED = "IS_SHOW_MESSAGE_ALLOWED"
 
@@ -41,4 +41,5 @@ object SPrefConstant {
     const val DOWNLOAD_VIDEOS_SUBS_ID = "downloadVideosSubsID"
     const val IS_SET_TIME_EVERY_DAY = "isSetTimeEveryDay"
 
+    const val IS_HAVE_CLASS_VIDEOS = "IS_HAVE_CLASS_VIDEOS"
 }

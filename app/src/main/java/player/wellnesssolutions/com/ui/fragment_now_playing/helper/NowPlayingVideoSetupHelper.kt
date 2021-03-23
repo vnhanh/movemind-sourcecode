@@ -29,8 +29,8 @@ import kotlinx.android.synthetic.main.merge_now_playing_coming_up_next.view.*
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.utils.FragmentUtil
 import player.wellnesssolutions.com.common.constant.Constant
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.common.utils.DialogUtil
 import player.wellnesssolutions.com.custom_exoplayer.EnumVolumeLevel
 import player.wellnesssolutions.com.network.datasource.videos.PlayMode
@@ -305,8 +305,8 @@ object NowPlayingVideoSetupHelper {
     private fun setBackgroundForVideoNowPlaying(wrapperVideoNowPlaying: MMVideoNowPlayingView?, bgNowPlayingItemViedeo: View?) {
         if (wrapperVideoNowPlaying == null || bgNowPlayingItemViedeo == null) return
 
-        var strSecondaryColor = SharedPreferencesCustomized.getInstance(wrapperVideoNowPlaying.context)
-                .getString(SPrefConstant.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
+        var strSecondaryColor = PreferenceHelper.getInstance(wrapperVideoNowPlaying.context)
+                .getString(ConstantPreference.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
 
         if (strSecondaryColor.isEmpty()) {
             strSecondaryColor = Constant.DEF_SECONDARY_COLOR
@@ -336,7 +336,7 @@ object NowPlayingVideoSetupHelper {
         val message = context.getString(R.string.confirm_stop_video_and_navigate_to_screen_get_started)
         val okButtonListener = DialogInterface.OnClickListener { _, _ ->
             if (isClickedFromBtnBottom) {
-                openHomeFragment(fm)
+                openHomeFragmentWithLoadSchedule(fm)
             }
         }
 
@@ -344,41 +344,40 @@ object NowPlayingVideoSetupHelper {
                 leftButtonClickListener = null, titleRightButton = R.string.btn_yes, rightButtonClickListener = okButtonListener).show()
     }
 
-    fun openHomeFragment(fm: FragmentManager?) {
+    fun openHomeFragmentWithLoadSchedule(fm: FragmentManager?) {
         fm?.also { _fm ->
             val tag = HomeFragment.TAG
             var fragment = _fm.findFragmentByTag(tag)
             fragment =
                     when (fragment != null && fragment is HomeFragment) {
-                        true -> fragment
-                        false -> HomeFragment.getInstance()
+                        true -> HomeFragment.updateAlreadyInstanceWithLoadSchedule(fragment)
+                        false -> HomeFragment.getInstanceWithLoadSchedule()
                     }
             FragmentUtil.replaceFragment(fm = _fm, newFragment = fragment, newFragmentTag = tag, frameId = R.id.frameLayoutHome, isAddToBackStack = false, isRemoveOlds = true)
         }
     }
 
-    fun openHomeFragment(fm: FragmentManager?, videos: ArrayList<MMVideo>) {
+    fun openHomeFragmentWithNotLoadSchedule(fm: FragmentManager?) {
         fm?.also { _fm ->
             val tag = HomeFragment.TAG
             var fragment = _fm.findFragmentByTag(tag)
             fragment =
                     when (fragment != null && fragment is HomeFragment) {
-                        true -> HomeFragment.updateAlreadyInstance(fragment, videos)
-                        false -> HomeFragment.getInstanceWithRemainSchedule(videos)
+                        true -> HomeFragment.updateAlreadyInstanceWithNoSchedule(fragment)
+                        false -> HomeFragment.getInstanceNoLoadSchedule()
                     }
             FragmentUtil.replaceFragment(fm = _fm, newFragment = fragment, newFragmentTag = tag, frameId = R.id.frameLayoutHome, isAddToBackStack = false, isRemoveOlds = true)
         }
     }
 
-
-    fun openNowPlayingWithSchedule(fm: FragmentManager?, videos: ArrayList<MMVideo>) {
+    fun openNowPlayingWithSchedule(fm: FragmentManager?) {
         fm?.also { _fm ->
             val tag = NowPlayingFragment.TAG
             var fragment = _fm.findFragmentByTag(tag)
             fragment =
                     when (fragment != null && fragment is NowPlayingFragment) {
-                        true -> NowPlayingFragment.updateAlreadyInstance(fragment, videos)
-                        false -> NowPlayingFragment.getInstancePlaySchedule(videos)
+                        true -> fragment
+                        false -> NowPlayingFragment.getInstancePlaySchedule()
                     }
             FragmentUtil.replaceFragment(fm = _fm, newFragment = fragment, newFragmentTag = tag, frameId = R.id.frameLayoutHome, isAddToBackStack = true, isRemoveOlds = true)
         }

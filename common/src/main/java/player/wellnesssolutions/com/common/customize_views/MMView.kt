@@ -6,8 +6,8 @@ import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.View
 import player.wellnesssolutions.com.common.constant.Constant
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 
 class MMView : View {
     private var mShape: GradientDrawable? = null
@@ -42,7 +42,7 @@ class MMView : View {
     }
 
     private fun init() {
-        val strColor = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
+        val strColor = PreferenceHelper.getInstance(context).getString(ConstantPreference.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
 
         if (!strColor.isEmpty()) {
             val colors = arrayOf(transparentColor("99", strColor),

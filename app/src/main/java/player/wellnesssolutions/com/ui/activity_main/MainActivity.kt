@@ -39,8 +39,8 @@ import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.media_router.models.PlaylistItem
 import player.wellnesssolutions.com.common.media_router.receivers.MediaButtonReceiver
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.common.utils.DialogUtil
 import player.wellnesssolutions.com.common.utils.FileUtil
 import player.wellnesssolutions.com.common.utils.MessageUtils
@@ -184,7 +184,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
     private fun openPresentationIfIsPlaying() {
         frameLayoutHome?.postDelayed({
             if (isPresentationAvailable()) {
-                val playedModeValue = SharedPreferencesCustomized.getInstance(this).getInt(SPrefConstant.PRESENTATION_PLAYED_MODE,
+                val playedModeValue = PreferenceHelper.getInstance(this).getInt(ConstantPreference.PRESENTATION_PLAYED_MODE,
                         PlayMode.ON_DEMAND.value)
                 PlayMode.valueOf(playedModeValue)?.also { mode ->
                     playVideo(mode = mode, videos = PresentationDataHelper.readVideos())
@@ -274,7 +274,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
 
     fun playVideo(mode: PlayMode, videos: ArrayList<MMVideo>) {
         mSessionManager.stop()
-        val currentPosition: Long = SharedPreferencesCustomized.getInstance(this).getLong(SPrefConstant.LAST_PLAYED_VIDEO_POSITION,
+        val currentPosition: Long = PreferenceHelper.getInstance(this).getLong(ConstantPreference.LAST_PLAYED_VIDEO_POSITION,
                 0L)
         mSessionManager.add(mode = mode, videos = videos, playedPosition = currentPosition)
     }
@@ -287,7 +287,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         super.onCreate(savedInstanceState)
 
         if (!checkAuthorized()) return
-
+        PreferenceHelper.getInstance(this)
         // clear cache of last videos for presentation (TV)
         PresentationDataHelper.clearCacheLastVideos(this)
 
@@ -333,16 +333,16 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
     }
 
     private fun checkSendTokenDeviceFCM(token: String) {
-        val tokenAu: String = SharedPreferencesCustomized.getInstance(this).getString(SPrefConstant.TOKEN, "")
-        val deviceId = SharedPreferencesCustomized.getInstance(this).getString(SPrefConstant.DEVICE_ID, "")
-        val isSendTokenFCM = SharedPreferencesCustomized.getInstance(this).getBoolean(SPrefConstant.IS_SEND_DEVICE_TOKEN, true)
+        val tokenAu: String = PreferenceHelper.getInstance(this).getString(ConstantPreference.TOKEN, "")
+        val deviceId = PreferenceHelper.getInstance(this).getString(ConstantPreference.DEVICE_ID, "")
+        val isSendTokenFCM = PreferenceHelper.getInstance(this).getBoolean(ConstantPreference.IS_SEND_DEVICE_TOKEN, true)
         if (isSendTokenFCM && deviceId.isNotEmpty() && tokenAu.isNotEmpty()) {
             FirebaseApi().sendTokenFCMToServer(tokenAu, deviceId, token).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(object : SingleObserver<Response<Any>> {
                         override fun onSuccess(t: Response<Any>) {
                             if (t.code() == 200) {
-                                SharedPreferencesCustomized.getInstance(this@MainActivity).putBoolean(SPrefConstant.IS_SEND_DEVICE_TOKEN, false)
+                                PreferenceHelper.getInstance(this@MainActivity).putBoolean(ConstantPreference.IS_SEND_DEVICE_TOKEN, false)
                             }
                         }
 
@@ -402,8 +402,8 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
 
     // if expired then the app will navigate to the Scan Barcode screen
     private fun checkAuthorized(): Boolean {
-        val token: String = SharedPreferencesCustomized.getInstance(this).getString(SPrefConstant.TOKEN, "")
-        val deviceId: String = SharedPreferencesCustomized.getInstance(this).getString(SPrefConstant.DEVICE_ID, "")
+        val token: String = PreferenceHelper.getInstance(this).getString(ConstantPreference.TOKEN, "")
+        val deviceId: String = PreferenceHelper.getInstance(this).getString(ConstantPreference.DEVICE_ID, "")
 
         if (token.isEmpty() || deviceId.isEmpty()) {
             mIsReturnScanScreen = true
@@ -433,7 +433,15 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
 
     private fun onInsufficientSpace() {
         DialogUtil.createDialogOnlyOneButton(this,
-                R.style.NormalDialog_Error, "Can't start download  because of insufficient space", R.string.btn_ok, null).show()
+                R.style.NormalDialog_Error,
+                "Can not download because there is not enough space",
+                R.string.btn_ok,
+                object: DialogInterface.OnClickListener{
+                    override fun onClick(dialogInterface: DialogInterface?, p1: Int) {
+                        dialogInterface?.dismiss()
+                    }
+
+                }).show()
     }
 
 
@@ -495,10 +503,10 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
     }
 
     fun getTokenAgainWhenTokenExpire(callback: IGetNewToken) {
-        val email = SharedPreferencesCustomized.getInstance(this).getString(SPrefConstant.EMAIL, "")
-        val password = SharedPreferencesCustomized.getInstance(this).getString(SPrefConstant.PASSWORD, "")
+        val email = PreferenceHelper.getInstance(this).getString(ConstantPreference.EMAIL, "")
+        val password = PreferenceHelper.getInstance(this).getString(ConstantPreference.PASSWORD, "")
 
-        val deviceId = SharedPreferencesCustomized.getInstance(this).getString(SPrefConstant.DEVICE_ID, "")
+        val deviceId = PreferenceHelper.getInstance(this).getString(ConstantPreference.DEVICE_ID, "")
         LoginApi().login(email, password, deviceId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -537,13 +545,13 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         builder.append("CloudFront-Policy=").append(policy)
         builder.append(";CloudFront-Signature=").append(signature)
         builder.append(";CloudFront-Key-Pair-Id=").append(keyPairid)
-        SharedPreferencesCustomized.getInstance(this).putString(SPrefConstant.SP_COOKIE, builder.toString())
-        SharedPreferencesCustomized.getInstance(this).putString(SPrefConstant.TOKEN, token)
+        PreferenceHelper.getInstance(this).putString(ConstantPreference.SP_COOKIE, builder.toString())
+        PreferenceHelper.getInstance(this).putString(ConstantPreference.TOKEN, token)
     }
 
     fun getApiConfigData() {
-        val tokenAu: String = SharedPreferencesCustomized.getInstance(this).getString(SPrefConstant.TOKEN, "")
-        val deviceId = SharedPreferencesCustomized.getInstance(this).getString(SPrefConstant.DEVICE_ID, "")
+        val tokenAu: String = PreferenceHelper.getInstance(this).getString(ConstantPreference.TOKEN, "")
+        val deviceId = PreferenceHelper.getInstance(this).getString(ConstantPreference.DEVICE_ID, "")
         HomeApi().getConfigData(tokenAu, deviceId)
                 .subscribe(object : BaseResponseObserver<MMConfigData>() {
 
@@ -583,8 +591,9 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
     }
 
     override fun onDestroy() {
+        VideoDBUtil.deleteVideosFromDB(Constant.MM_SCHEDULE) // clear all schedule
         mPlayer?.release()
-        SharedPreferencesCustomized.getInstance(this).delete(SPrefConstant.TIME_DIFFS)
+        PreferenceHelper.getInstance(this).delete(ConstantPreference.TIME_DIFFS)
         unregisterReceivers()
         super.onDestroy()
     }
@@ -672,7 +681,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
     fun navigateToHomeScreen() {
         FragmentUtil.replaceFragment(
                 fm = supportFragmentManager,
-                newFragment = HomeFragment.getInstance(),
+                newFragment = HomeFragment.getInstanceWithLoadSchedule(),
                 newFragmentTag = HomeFragment.TAG,
                 frameId = R.id.frameLayoutHome,
                 isAddToBackStack = false
@@ -755,7 +764,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         sendBroadcast(broadCast)
         clearAllDataDownload()
         ParameterUtils.isFragmentHomeOpen = true
-        SharedPreferencesCustomized.getInstance(this).clearAllCached()
+        PreferenceHelper.getInstance(this).clearAllCached()
 
         val intent = Intent(this, ScanBarCodeActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
@@ -770,8 +779,8 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         FileUtil.clearFolder(this, Constant.FOLDER_DOWNLOADED_VIDEOS)
         FileUtil.clearFolder(this, Constant.FOLDER_DOWNLOADED)
         DownloadDBManager.getInstance().clearAll()
-        SharedPreferencesCustomized.getInstance(this).putBoolean(SPrefConstant.IS_DOWNLOAD_VIDEOS, true)
-        SharedPreferencesCustomized.getInstance(this).putInt(SPrefConstant.DOWNLOAD_VIDEOS_SUBS_ID, -1)
+        PreferenceHelper.getInstance(this).putBoolean(ConstantPreference.IS_DOWNLOAD_VIDEOS, true)
+        PreferenceHelper.getInstance(this).putInt(ConstantPreference.DOWNLOAD_VIDEOS_SUBS_ID, -1)
     }
 
     override fun onChangedState(isConnected: Boolean) {
@@ -796,12 +805,12 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         when (requestCode) {
             PermissionUtils.REQUEST_CODE_PERMISSION_DOWNLOAD -> {
                 if (permissions.isNotEmpty() && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (SharedPreferencesCustomized.getInstance(this).getBoolean(SPrefConstant.SS_DOWNLOADED_BUT_NO_PERMISSION,
+                    if (PreferenceHelper.getInstance(this).getBoolean(ConstantPreference.SS_DOWNLOADED_BUT_NO_PERMISSION,
                                     defValue = false)) {
                         DialogUtil.createDialogOnlyOneButton(context = this, msgResId = player.wellnesssolutions.com.network.R.string.press_download_button_more_to_download,
                                 titleButton = player.wellnesssolutions.com.network.R.string.btn_ok, dialogClickListener = null).show()
 
-                        SharedPreferencesCustomized.getInstance(this).delete(SPrefConstant.SS_DOWNLOADED_BUT_NO_PERMISSION)
+                        PreferenceHelper.getInstance(this).delete(ConstantPreference.SS_DOWNLOADED_BUT_NO_PERMISSION)
                     }
                 } else {
                     MessageUtils.showToast(this, R.string.no_permissions_needed_for_download, R.color.yellow)?.show()
@@ -828,18 +837,18 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
     private fun storeBranding(branding: MMBranding?) {
         if (branding == null) return
 
-        SharedPreferencesCustomized.getInstance(context = this).putString(SPrefConstant.SS_BOTTOM_BAR_COLOR, branding.bottomBarColor
+        PreferenceHelper.getInstance(context = this).putString(ConstantPreference.SS_BOTTOM_BAR_COLOR, branding.bottomBarColor
                 ?: "")
-        SharedPreferencesCustomized.getInstance(context = this).putString(SPrefConstant.PRIMARY_COLOR, branding.primaryColor
+        PreferenceHelper.getInstance(context = this).putString(ConstantPreference.PRIMARY_COLOR, branding.primaryColor
                 ?: "")
-        SharedPreferencesCustomized.getInstance(context = this).putString(SPrefConstant.SECONDARY_COLOR, branding.textColor
+        PreferenceHelper.getInstance(context = this).putString(ConstantPreference.SECONDARY_COLOR, branding.textColor
                 ?: "")
-        SharedPreferencesCustomized.getInstance(context = this).putString(SPrefConstant.SS_COMPANY_LOGO, branding.companyLogo
+        PreferenceHelper.getInstance(context = this).putString(ConstantPreference.SS_COMPANY_LOGO, branding.companyLogo
                 ?: "")
         if (branding.backgroundPictures?.size == 0) {
-            SharedPreferencesCustomized.getInstance(context = this).delete(SPrefConstant.SS_BACKGROUND_PICTURES)
+            PreferenceHelper.getInstance(context = this).delete(ConstantPreference.SS_BACKGROUND_PICTURES)
         } else {
-            SharedPreferencesCustomized.getInstance(context = this).putStrings(SPrefConstant.SS_BACKGROUND_PICTURES, branding.backgroundPictures)
+            PreferenceHelper.getInstance(context = this).putStrings(ConstantPreference.SS_BACKGROUND_PICTURES, branding.backgroundPictures)
         }
 
     }
@@ -847,7 +856,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
     private fun savePref(data: MMConfigData) {
         val gson = Gson()
         val json = gson.toJson(data)
-        SharedPreferencesCustomized.getInstance(this).putString(SPrefConstant.SS_CONFIG, json)
+        PreferenceHelper.getInstance(this).putString(ConstantPreference.SS_CONFIG, json)
     }
 
     /**

@@ -8,8 +8,8 @@ import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.application.MyApplication
 import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.base.utils.CommonUtility
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.common.utils.MessageUtils
 import player.wellnesssolutions.com.network.datasource.login.LoginApi
 import player.wellnesssolutions.com.network.models.login.MMBranding
@@ -22,27 +22,27 @@ import java.util.*
 class ScanBarCodePresenter(private val mView: ScanBarCodeContract.View) : ScanBarCodeContract.Presenter, BaseResponseObserver<Any>() {
 
     private var loginService: LoginApi = LoginApi()
-    private var mPref: SharedPreferencesCustomized? = SharedPreferencesCustomized.getInstance(mView.getViewContext()!!)
+    private var mPref: PreferenceHelper? = PreferenceHelper.getInstance(mView.getViewContext()!!)
 
     private fun storeInformation(body: MMQRCodeResponse) {
         mPref?.also { sharedPref ->
-            sharedPref.putString(SPrefConstant.EMAIL, body.email ?: "").save()
-            sharedPref.putString(SPrefConstant.PASSWORD, body.loginToken ?: "").save()
-            sharedPref.putString(SPrefConstant.DEVICE_ID, body.deviceId ?: "").save()
+            sharedPref.putString(ConstantPreference.EMAIL, body.email ?: "").save()
+            sharedPref.putString(ConstantPreference.PASSWORD, body.loginToken ?: "").save()
+            sharedPref.putString(ConstantPreference.DEVICE_ID, body.deviceId ?: "").save()
         }
     }
 
     private fun storeBranding(token: String, branding: MMBranding) {
         mPref?.also { sharedPref ->
-            sharedPref.putString(SPrefConstant.TOKEN, token)
+            sharedPref.putString(ConstantPreference.TOKEN, token)
 //        mPref.putString(SPrefConstant.SS_BOTTOM_BAR_COLOR, "#041e41")
 //        mPref.putString(SPrefConstant.PRIMARY_COLOR, "#00c3b3")
 //        mPref.putString(SPrefConstant.SECONDARY_COLOR, "#FFFFFF")
-            sharedPref.putString(SPrefConstant.SS_BOTTOM_BAR_COLOR, branding.bottomBarColor ?: "")
-            sharedPref.putString(SPrefConstant.PRIMARY_COLOR, branding.primaryColor ?: "")
-            sharedPref.putString(SPrefConstant.SECONDARY_COLOR, branding.textColor ?: "")
-            sharedPref.putString(SPrefConstant.SS_COMPANY_LOGO, branding.companyLogo ?: "")
-            sharedPref.putStrings(SPrefConstant.SS_BACKGROUND_PICTURES, branding.backgroundPictures)
+            sharedPref.putString(ConstantPreference.SS_BOTTOM_BAR_COLOR, branding.bottomBarColor ?: "")
+            sharedPref.putString(ConstantPreference.PRIMARY_COLOR, branding.primaryColor ?: "")
+            sharedPref.putString(ConstantPreference.SECONDARY_COLOR, branding.textColor ?: "")
+            sharedPref.putString(ConstantPreference.SS_COMPANY_LOGO, branding.companyLogo ?: "")
+            sharedPref.putStrings(ConstantPreference.SS_BACKGROUND_PICTURES, branding.backgroundPictures)
         }
     }
 
@@ -98,10 +98,10 @@ class ScanBarCodePresenter(private val mView: ScanBarCodeContract.View) : ScanBa
         val sharedPref = mPref
 
         if (sharedPref != null) {
-            val email = sharedPref.getString(SPrefConstant.EMAIL, "")
-            val password = sharedPref.getString(SPrefConstant.PASSWORD, "")
+            val email = sharedPref.getString(ConstantPreference.EMAIL, "")
+            val password = sharedPref.getString(ConstantPreference.PASSWORD, "")
 
-            val deviceId = sharedPref.getString(SPrefConstant.DEVICE_ID, "")
+            val deviceId = sharedPref.getString(ConstantPreference.DEVICE_ID, "")
             loginService.login(email, password, deviceId)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
@@ -138,7 +138,7 @@ class ScanBarCodePresenter(private val mView: ScanBarCodeContract.View) : ScanBa
                 builder.append(";CloudFront-Signature=").append(signature)
                 builder.append(";CloudFront-Key-Pair-Id=").append(keyPairid)
 
-                SharedPreferencesCustomized.getInstance(context).putString(SPrefConstant.SP_COOKIE, builder.toString())
+                PreferenceHelper.getInstance(context).putString(ConstantPreference.SP_COOKIE, builder.toString())
             }
         }
     }

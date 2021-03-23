@@ -8,8 +8,8 @@ import android.util.AttributeSet
 import android.widget.ImageView
 import player.wellnesssolutions.com.common.R
 import player.wellnesssolutions.com.common.constant.Constant
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 
 class MMImageView : ImageView {
     private var isTintBackground = false
@@ -34,7 +34,7 @@ class MMImageView : ImageView {
     }
 
     private fun init(attrs: AttributeSet?) {
-        val strSecondaryColor = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
+        val strSecondaryColor = PreferenceHelper.getInstance(context).getString(ConstantPreference.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
 
         val ta = context.obtainStyledAttributes(attrs, R.styleable.MMAttributes)
         isTintBackground = ta.getBoolean(R.styleable.MMAttributes_tintBackground, false)
@@ -60,7 +60,7 @@ class MMImageView : ImageView {
     }
 
     private fun activeBackground() {
-        val strSecondaryColor = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
+        val strSecondaryColor = PreferenceHelper.getInstance(context).getString(ConstantPreference.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
 
         val shape = GradientDrawable()
         shape.shape = GradientDrawable.OVAL

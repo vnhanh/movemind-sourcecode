@@ -1,11 +1,11 @@
 package player.wellnesssolutions.com.ui.fragment_search_collections
 
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.base.view.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
 import player.wellnesssolutions.com.base.utils.search_util.SearchDataHelper
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.network.datasource.collection.CollectionApi
 import player.wellnesssolutions.com.network.models.response.ResponseValue
 import player.wellnesssolutions.com.network.models.screen_search.MMBrand
@@ -38,7 +38,7 @@ class SearchCollectionsPresenter() : BaseResponseObserver<ArrayList<MMCollection
 
     override fun loadData(view: ISearchCollectionContract.View) {
         view.getViewContext()?.also { context ->
-            val headerData = CheckHeaderApiUtil.checkData(SharedPreferencesCustomized.getInstance(context), view.getFragment())
+            val headerData = CheckHeaderApiUtil.checkData(PreferenceHelper.getInstance(context), view.getFragment())
 
             if (headerData == null || mIsLoading) return
 
@@ -148,14 +148,14 @@ class SearchCollectionsPresenter() : BaseResponseObserver<ArrayList<MMCollection
 
     override fun onExpired(error: String) {
         mView?.getFragment()?.also {
-            if (it is BaseFragment)
+            if (it is BaseScheduleFragment)
                 it.onExpired(error)
         }
     }
 
     override fun onExpiredUnauthenticated(error: String) {
         mView?.getFragment()?.also {
-            if (it is BaseFragment)
+            if (it is BaseScheduleFragment)
                 it.onExpiredUnAuth(error)
         }
     }

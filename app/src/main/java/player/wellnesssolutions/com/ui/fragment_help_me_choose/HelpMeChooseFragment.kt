@@ -10,7 +10,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.fragment_help_me_choose.*
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.base.view.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.base.utils.FragmentUtil
 import player.wellnesssolutions.com.base.utils.ViewUtil
 import player.wellnesssolutions.com.common.constant.Constant
@@ -26,7 +26,7 @@ import player.wellnesssolutions.com.ui.fragment_help_me_choose.recyclerview.Help
 import player.wellnesssolutions.com.ui.fragment_search_result_videos.SearchResultFragment
 
 
-class HelpMeChooseFragment : BaseFragment(), IHelpMeChooseContract.View {
+class HelpMeChooseFragment : BaseScheduleFragment(), IHelpMeChooseContract.View {
     private var mPresenter: IHelpMeChooseContract.Presenter? = HelpMeChoosePresenter()
     private var mAdapters: ArrayList<HelpMeChooseQuestionsAdapter>? = null
 

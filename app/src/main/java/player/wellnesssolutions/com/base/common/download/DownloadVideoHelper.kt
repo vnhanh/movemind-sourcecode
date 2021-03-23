@@ -4,8 +4,8 @@ import android.content.Context
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.common.constant.Constant
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.common.utils.MessageUtils
 import player.wellnesssolutions.com.network.datasource.download.DownloadApi
 import player.wellnesssolutions.com.network.datasource.storage.StorageApi
@@ -43,8 +43,8 @@ object DownloadVideoHelper {
     }
 
     fun sendDownloadStatusToServer(context: Context, status: String) {
-        val tokenAu: String = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.TOKEN, "")
-        val deviceId = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.DEVICE_ID, "")
+        val tokenAu: String = PreferenceHelper.getInstance(context).getString(ConstantPreference.TOKEN, "")
+        val deviceId = PreferenceHelper.getInstance(context).getString(ConstantPreference.DEVICE_ID, "")
         DownloadApi().sendDownloadVideoStatusToServer(tokenAu, status, deviceId)
                 .subscribe(object : BaseResponseObserver<Any>() {
                     override fun onExpired(error: String) {
@@ -61,8 +61,8 @@ object DownloadVideoHelper {
     }
 
     fun senStorageStatusToServer(context: Context, availableSpace: Long, totalSpace: Long, sdAvailableSpace: Long, sdTotalSpace: Long) {
-        val tokenAu: String = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.TOKEN, "")
-        val deviceId = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.DEVICE_ID, "")
+        val tokenAu: String = PreferenceHelper.getInstance(context).getString(ConstantPreference.TOKEN, "")
+        val deviceId = PreferenceHelper.getInstance(context).getString(ConstantPreference.DEVICE_ID, "")
         StorageApi().sendStorageStatusToServer(tokenAu, deviceId, availableSpace, totalSpace, sdAvailableSpace, sdTotalSpace)
                 .subscribe(object : BaseResponseObserver<Any>() {
                     override fun onExpired(error: String) {

@@ -7,8 +7,8 @@ import com.google.android.exoplayer2.upstream.DataSink
 import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.crypto.AesCipherDataSink
 import com.google.android.exoplayer2.util.Util
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.common.utils.FileUtil
 import player.wellnesssolutions.com.network.network_connect.NetworkReceiver
 import java.io.*
@@ -20,7 +20,7 @@ class DownloadTask(context: Context, callback: Callback) : AsyncTask<DownloadDat
     private var mWeakContext = WeakReference(context)
     private var mWeakCallbacks = mutableListOf(WeakReference(callback))
     private var mDownloadData: DownloadData? = null
-    private var mCookieValue = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.SP_COOKIE, "")
+    private var mCookieValue = PreferenceHelper.getInstance(context).getString(ConstantPreference.SP_COOKIE, "")
     private var mReason = ""
     private var mFileLength = 0L
     private var mAvailableSpace = 0L

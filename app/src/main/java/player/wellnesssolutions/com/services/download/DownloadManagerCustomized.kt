@@ -11,8 +11,8 @@ import io.reactivex.schedulers.Schedulers
 import player.wellnesssolutions.com.base.common.download.DownloadVideoHelper
 import player.wellnesssolutions.com.base.utils.ParameterUtils
 import player.wellnesssolutions.com.common.constant.Constant
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.common.utils.FileUtil
 import player.wellnesssolutions.com.network.network_connect.NetworkReceiver
 import player.wellnesssolutions.com.services.notification.DownloadNotification
@@ -45,7 +45,7 @@ class DownloadManagerCustomized(context: Context) : DownloadTask.Callback, Netwo
         }
     }
 
-    private var mCookieValue = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.SP_COOKIE, "")
+    private var mCookieValue = PreferenceHelper.getInstance(context).getString(ConstantPreference.SP_COOKIE, "")
     private var mWeakContext: WeakReference<Context>? = WeakReference(context)
     private var mDownloadTask: DownloadTask? = null
 

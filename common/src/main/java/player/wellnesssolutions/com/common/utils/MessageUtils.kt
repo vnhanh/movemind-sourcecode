@@ -16,8 +16,8 @@ import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
 import player.wellnesssolutions.com.common.constant.Constant
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 
 object MessageUtils {
     fun showToast(context: Context?, @StringRes messageRes: Int, @ColorRes colorRes: Int, isLongTime: Boolean = true): Toast? {
@@ -51,7 +51,7 @@ object MessageUtils {
                 colorRes = colorRes,
                 isLongTime = isLongTime,
                 btnRes = btnRes,
-                btnColor = Color.parseColor(SharedPreferencesCustomized.getInstance(snackView.context).getString(SPrefConstant.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR))
+                btnColor = Color.parseColor(PreferenceHelper.getInstance(snackView.context).getString(ConstantPreference.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR))
         )
     }
 
@@ -62,7 +62,7 @@ object MessageUtils {
                 colorRes = colorRes,
                 isLongTime = isLongTime,
                 btnRes = btnRes,
-                btnColor = Color.parseColor(SharedPreferencesCustomized.getInstance(snackView.context).getString(SPrefConstant.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR))
+                btnColor = Color.parseColor(PreferenceHelper.getInstance(snackView.context).getString(ConstantPreference.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR))
         )
     }
 

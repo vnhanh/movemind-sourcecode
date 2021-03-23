@@ -16,8 +16,8 @@ import kotlinx.android.synthetic.main.layout_back_ground_image.view.*
 import player.wellnesssolutions.com.common.R
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.enums.StyleEnum
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 
 class MMBackGroundView : ConstraintLayout {
     companion object{
@@ -74,7 +74,7 @@ class MMBackGroundView : ConstraintLayout {
 
     // for menu
     private fun generateBGWithBorder() {
-        var strPrimaryColor = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.PRIMARY_COLOR, Constant.DEF_PRIMARY_COLOR)
+        var strPrimaryColor = PreferenceHelper.getInstance(context).getString(ConstantPreference.PRIMARY_COLOR, Constant.DEF_PRIMARY_COLOR)
         if (strPrimaryColor.isEmpty()) {
             strPrimaryColor = Constant.DEF_PRIMARY_COLOR
         }
@@ -132,8 +132,8 @@ class MMBackGroundView : ConstraintLayout {
     }
 
     private fun loadBgImageRandom() {
-        val strBG : Array<String> = SharedPreferencesCustomized.getInstance(context).getStrings(SPrefConstant.SS_BACKGROUND_PICTURES)
-        val curBG : String = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.SS_CURRENT_BACKGROUND, "")
+        val strBG : Array<String> = PreferenceHelper.getInstance(context).getStrings(ConstantPreference.SS_BACKGROUND_PICTURES)
+        val curBG : String = PreferenceHelper.getInstance(context).getString(ConstantPreference.SS_CURRENT_BACKGROUND, "")
 
         val bg : String? =
                 when (strBG.size == 1) {
@@ -152,7 +152,7 @@ class MMBackGroundView : ConstraintLayout {
     }
 
     private fun loadImage(bg : String, width : Int, height : Int) {
-        SharedPreferencesCustomized.getInstance(context).putString(SPrefConstant.SS_CURRENT_BACKGROUND, bg)
+        PreferenceHelper.getInstance(context).putString(ConstantPreference.SS_CURRENT_BACKGROUND, bg)
 
         Glide.with(context).load(bg).override(width, height)
                 .into(imgBackground)

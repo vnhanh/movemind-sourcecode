@@ -3,12 +3,12 @@ package player.wellnesssolutions.com.ui.fragment_time_table
 import androidx.core.content.ContextCompat
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import player.wellnesssolutions.com.base.view.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
 import player.wellnesssolutions.com.common.R
 import player.wellnesssolutions.com.common.constant.Constant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.network.datasource.time_table.TimeTableApi
 import player.wellnesssolutions.com.network.models.response.ResponseValue
 import player.wellnesssolutions.com.network.models.response.Session
@@ -74,7 +74,7 @@ class TimeTablePresenter : ITimeTableContract.Presenter, BaseResponseObserver<Ti
         val view: ITimeTableContract.View = mView ?: return
 
         view.getViewContext()?.also { context ->
-            val headerData = CheckHeaderApiUtil.checkData(SharedPreferencesCustomized.getInstance(context), view.getFragment())
+            val headerData = CheckHeaderApiUtil.checkData(PreferenceHelper.getInstance(context), view.getFragment())
             if (headerData == null || mIsLoading || mIsRendered) return
 
             if (mResponse != null) {
@@ -157,7 +157,7 @@ class TimeTablePresenter : ITimeTableContract.Presenter, BaseResponseObserver<Ti
 
     override fun onExpired(error: String) {
         mView?.getFragment()?.also {
-            if (it is BaseFragment) {
+            if (it is BaseScheduleFragment) {
                 it.onExpired(error)
             }
         }
@@ -165,7 +165,7 @@ class TimeTablePresenter : ITimeTableContract.Presenter, BaseResponseObserver<Ti
 
     override fun onExpiredUnauthenticated(error: String) {
         mView?.getFragment()?.also {
-            if (it is BaseFragment)
+            if (it is BaseScheduleFragment)
                 it.onExpiredUnAuth(error)
         }
     }

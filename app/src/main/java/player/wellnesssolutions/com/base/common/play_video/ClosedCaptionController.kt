@@ -12,8 +12,8 @@ import androidx.core.view.ViewCompat
 import com.google.android.exoplayer2.ui.SubtitleView
 import kotlinx.android.synthetic.main.custom_controller_player_screen_now_playing.view.*
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.network.models.now_playing.MMVideoLanguage
 import java.lang.ref.WeakReference
 
@@ -84,7 +84,7 @@ class ClosedCaptionController(playerControllerView: ConstraintLayout, subtilteVi
     private fun updateSubtitleBoardView() {
         mWeakPlayerControllerView.get()?.context?.also {
             // show subtitle view if language option has been selected
-            if (SharedPreferencesCustomized.getInstance(it).getString(SPrefConstant.LAST_LANGUAGE_KEY, NoneLanguageKey).equals(NoneLanguageKey)) {
+            if (PreferenceHelper.getInstance(it).getString(ConstantPreference.LAST_LANGUAGE_KEY, NoneLanguageKey).equals(NoneLanguageKey)) {
                 hideSubtitleView()
             } else {
                 showSubtitleView()
@@ -116,9 +116,9 @@ class ClosedCaptionController(playerControllerView: ConstraintLayout, subtilteVi
         mIsShownCheckViewOnInit = false
         var index = 0
 
-        val lastLanguageKey = SharedPreferencesCustomized.getInstance(subtitleBoard.context).getString(SPrefConstant.LAST_LANGUAGE_KEY, NoneLanguageKey)
+        val lastLanguageKey = PreferenceHelper.getInstance(subtitleBoard.context).getString(ConstantPreference.LAST_LANGUAGE_KEY, NoneLanguageKey)
         if (lastLanguageKey == NoneLanguageKey) {
-            SharedPreferencesCustomized.getInstance(subtitleBoard.context).putString(SPrefConstant.LAST_LANGUAGE_KEY, NoneLanguageKey)
+            PreferenceHelper.getInstance(subtitleBoard.context).putString(ConstantPreference.LAST_LANGUAGE_KEY, NoneLanguageKey)
         }
 
         var iconCheck: View? = null
@@ -146,7 +146,7 @@ class ClosedCaptionController(playerControllerView: ConstraintLayout, subtilteVi
         }
 
         if (!mIsShownCheckViewOnInit) {
-            SharedPreferencesCustomized.getInstance(subtitleBoard.context).putString(SPrefConstant.LAST_LANGUAGE_KEY, NoneLanguageKey)
+            PreferenceHelper.getInstance(subtitleBoard.context).putString(ConstantPreference.LAST_LANGUAGE_KEY, NoneLanguageKey)
             mCheckViews.get(NoneLanguageKey)?.get()?.visibility = View.VISIBLE
 
             // add background view if mode == TV
@@ -158,7 +158,7 @@ class ClosedCaptionController(playerControllerView: ConstraintLayout, subtilteVi
             mLastLanguageKey = NoneLanguageKey
         }
 
-        if (SharedPreferencesCustomized.getInstance(subtitleBoard.context).getString(SPrefConstant.LAST_LANGUAGE_KEY, NoneLanguageKey).equals(NoneLanguageKey)) {
+        if (PreferenceHelper.getInstance(subtitleBoard.context).getString(ConstantPreference.LAST_LANGUAGE_KEY, NoneLanguageKey).equals(NoneLanguageKey)) {
             hideSubtitleView()
         } else {
             showSubtitleView()
@@ -226,7 +226,7 @@ class ClosedCaptionController(playerControllerView: ConstraintLayout, subtilteVi
                 mWeakControllerSubtitleBoard?.get()?.visibility = View.GONE
 
             if (value is MMVideoLanguage) {
-                val lastLanguageKey: String = SharedPreferencesCustomized.getInstance(it.context).getString(SPrefConstant.LAST_LANGUAGE_KEY, NoneLanguageKey)
+                val lastLanguageKey: String = PreferenceHelper.getInstance(it.context).getString(ConstantPreference.LAST_LANGUAGE_KEY, NoneLanguageKey)
                 // no change
                 if (value.id == null || lastLanguageKey.equals(value.id.toString())) {
                     return@setOnClickListener
@@ -236,10 +236,10 @@ class ClosedCaptionController(playerControllerView: ConstraintLayout, subtilteVi
                 displayCheckView(context = it.context, isDisplay = false)
 
                 // save the latest language key
-                SharedPreferencesCustomized.getInstance(it.context).putString(SPrefConstant.LAST_LANGUAGE_KEY,
+                PreferenceHelper.getInstance(it.context).putString(ConstantPreference.LAST_LANGUAGE_KEY,
                         if (value.id != null) value.id.toString()
                         else NoneLanguageKey)
-                SharedPreferencesCustomized.getInstance(it.context).putString(SPrefConstant.LAST_LANGUAGE_CODE, value.code
+                PreferenceHelper.getInstance(it.context).putString(ConstantPreference.LAST_LANGUAGE_CODE, value.code
                         ?: "")
 
                 // change icon cc
@@ -319,7 +319,7 @@ class ClosedCaptionController(playerControllerView: ConstraintLayout, subtilteVi
     }
 
     private fun displayCheckView(context: Context, isDisplay: Boolean) {
-        val lastLanguageKey = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.LAST_LANGUAGE_KEY, NoneLanguageKey)
+        val lastLanguageKey = PreferenceHelper.getInstance(context).getString(ConstantPreference.LAST_LANGUAGE_KEY, NoneLanguageKey)
         when (isDisplay) {
             true -> mCheckViews[lastLanguageKey]?.get()?.visibility = View.VISIBLE
             false -> mCheckViews[lastLanguageKey]?.get()?.visibility = View.INVISIBLE
@@ -412,7 +412,7 @@ class ClosedCaptionController(playerControllerView: ConstraintLayout, subtilteVi
 
     fun resetData() {
         mWeakCCView.get()?.context?.also { context ->
-            val lastLanguageKey: String = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.LAST_LANGUAGE_KEY, NoneLanguageKey)
+            val lastLanguageKey: String = PreferenceHelper.getInstance(context).getString(ConstantPreference.LAST_LANGUAGE_KEY, NoneLanguageKey)
             if (lastLanguageKey == NoneLanguageKey) mLastLanguageKey = NoneLanguageKey
         }
     }

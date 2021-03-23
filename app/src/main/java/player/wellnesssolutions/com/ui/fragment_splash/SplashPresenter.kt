@@ -1,33 +1,30 @@
 package player.wellnesssolutions.com.ui.fragment_splash
 
-import androidx.appcompat.app.AlertDialog
+import android.util.Log
 import com.google.gson.Gson
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.base.view.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.base.view.BaseResponseObserver
-import player.wellnesssolutions.com.base.view.IGetNewToken
 import player.wellnesssolutions.com.base.utils.ParameterUtils
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
 import player.wellnesssolutions.com.base.utils.check_header_api_util.HeaderData
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
-import player.wellnesssolutions.com.common.utils.DialogUtil
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.network.datasource.home.HomeApi
 import player.wellnesssolutions.com.network.models.config.MMConfigData
 import player.wellnesssolutions.com.network.models.login.MMBranding
 import player.wellnesssolutions.com.network.models.response.ResponseValue
 import player.wellnesssolutions.com.network.network_connect.NetworkReceiver
-import player.wellnesssolutions.com.ui.activity_main.MainActivity
 
 class SplashPresenter : BaseResponseObserver<MMConfigData>(), ISplashContract.Presenter, NetworkReceiver.IStateListener {
     private var mView: ISplashContract.View? = null
     private var mLoadedData: MMConfigData? = null
     private var mConfigApi = HomeApi()
-    private var mDialog: AlertDialog? = null
     private val REQUEST_FAILED = -1
     private val RESPONSE_SUCCESS = 1
     private val RESPONSE_FALSE = -10
     private var mRequestCode = RESPONSE_SUCCESS
+    private var isLoading = false
 
     init {
         NetworkReceiver.getInstance().addListener(this)
@@ -40,21 +37,34 @@ class SplashPresenter : BaseResponseObserver<MMConfigData>(), ISplashContract.Pr
     }
 
     override fun loadApi() {
-        mView?.getViewContext()?.also {
-            val headerData: HeaderData = CheckHeaderApiUtil.checkData(sharedPref = SharedPreferencesCustomized.getInstance(it), fragment = mView!!.getFragment())
-                    ?: return
+        if(isLoading) return
 
-            when (mLoadedData == null) {
-                true -> {
-                    mView!!.onStartLoadApi()
-                    loadApi(headerData.token, headerData.deviceId)
+        mView?.getViewContext()?.also {
+            val headerData: HeaderData? = CheckHeaderApiUtil.checkData(sharedPref = PreferenceHelper.getInstance(it), fragment = mView!!.getFragment()) ?: null
+
+            when{
+                headerData == null -> {
+                    mView?.backToScanQRCode()
                 }
-                false -> mView!!.navigateToHomeScreen()
+
+                else -> {
+                    when (mLoadedData == null) {
+                        true -> {
+                            mView?.onStartLoadApi()
+                            loadApi(headerData.token, headerData.deviceId)
+                        }
+                        false -> {
+                            mView?.navigateToHomeScreen()
+                        }
+                    }
+
+                }
             }
         }
     }
 
     private fun loadApi(token: String, deviceId: String) {
+        isLoading = true
         mConfigApi.getConfigData(token, deviceId).subscribe(this)
     }
 
@@ -63,8 +73,8 @@ class SplashPresenter : BaseResponseObserver<MMConfigData>(), ISplashContract.Pr
      */
     override fun onResponseSuccess(data: ResponseValue<MMConfigData>?) {
         super.onResponseSuccess(data)
+
         mRequestCode = RESPONSE_SUCCESS
-        mDialog?.dismiss()
 
         mView?.updateProgress(70)
         mLoadedData = data?.data
@@ -95,18 +105,18 @@ class SplashPresenter : BaseResponseObserver<MMConfigData>(), ISplashContract.Pr
     private fun storeBranding(branding: MMBranding?) {
         if (branding == null) return
         mView?.getViewContext()?.also { context ->
-            SharedPreferencesCustomized.getInstance(context = context).putString(SPrefConstant.SS_BOTTOM_BAR_COLOR, branding.bottomBarColor
+            PreferenceHelper.getInstance(context = context).putString(ConstantPreference.SS_BOTTOM_BAR_COLOR, branding.bottomBarColor
                     ?: "")
-            SharedPreferencesCustomized.getInstance(context = context).putString(SPrefConstant.PRIMARY_COLOR, branding.primaryColor
+            PreferenceHelper.getInstance(context = context).putString(ConstantPreference.PRIMARY_COLOR, branding.primaryColor
                     ?: "")
-            SharedPreferencesCustomized.getInstance(context = context).putString(SPrefConstant.SECONDARY_COLOR, branding.textColor
+            PreferenceHelper.getInstance(context = context).putString(ConstantPreference.SECONDARY_COLOR, branding.textColor
                     ?: "")
-            SharedPreferencesCustomized.getInstance(context = context).putString(SPrefConstant.SS_COMPANY_LOGO, branding.companyLogo
+            PreferenceHelper.getInstance(context = context).putString(ConstantPreference.SS_COMPANY_LOGO, branding.companyLogo
                     ?: "")
             if (branding.backgroundPictures?.size == 0) {
-                SharedPreferencesCustomized.getInstance(context = context).delete(SPrefConstant.SS_BACKGROUND_PICTURES)
+                PreferenceHelper.getInstance(context = context).delete(ConstantPreference.SS_BACKGROUND_PICTURES)
             } else {
-                SharedPreferencesCustomized.getInstance(context = context).putStrings(SPrefConstant.SS_BACKGROUND_PICTURES, branding.backgroundPictures)
+                PreferenceHelper.getInstance(context = context).putStrings(ConstantPreference.SS_BACKGROUND_PICTURES, branding.backgroundPictures)
             }
         }
     }
@@ -115,7 +125,7 @@ class SplashPresenter : BaseResponseObserver<MMConfigData>(), ISplashContract.Pr
         mView?.getViewContext()?.also {
             val gson = Gson()
             val json = gson.toJson(data)
-            SharedPreferencesCustomized.getInstance(it).putString(SPrefConstant.SS_CONFIG, json)
+            PreferenceHelper.getInstance(it).putString(ConstantPreference.SS_CONFIG, json)
         }
     }
 
@@ -126,30 +136,37 @@ class SplashPresenter : BaseResponseObserver<MMConfigData>(), ISplashContract.Pr
     override fun onResponseFalse(code: Int, message: String?) {
         super.onResponseFalse(code, message)
         mRequestCode = RESPONSE_FALSE
-        handleOnRequestApiFailed()
+        handleOnCallServiceFailed()
     }
 
     override fun onRequestError(message: String?) {
         super.onRequestError(message)
 //        onExpired("Unauthentication !")
         mRequestCode = REQUEST_FAILED
-        handleOnRequestApiFailed()
+        handleOnCallServiceFailed()
     }
 
-    private fun handleOnRequestApiFailed() {
+    override fun onUnAuthorized() {
+        super.onUnAuthorized()
+        mView?.updateProgress(-1)
+        mView?.backToScanQRCode()
+    }
+
+    override fun onComplete() {
+        super.onComplete()
+        isLoading = false
+    }
+
+    private fun handleOnCallServiceFailed() {
+        mView?.updateProgress(-1)
         val msgResId: Int =
                 when (mRequestCode) {
                     REQUEST_FAILED -> R.string.request_failed
                     RESPONSE_FALSE -> R.string.response_false
                     else -> return
                 }
-        mDialog?.dismiss()
-        mView?.updateProgress(-1)
-        mView?.getViewContext()?.also { context ->
-            mDialog = DialogUtil.createDialogOnlyOneButton(context = context, msgResId = msgResId, titleButton = R.string.btn_ok, dialogClickListener = null).also {
-                it.show()
-            }
-        }
+
+        mView?.onCallServiceFailed(msgResId)
     }
 
     override fun onDetach() {
@@ -157,9 +174,7 @@ class SplashPresenter : BaseResponseObserver<MMConfigData>(), ISplashContract.Pr
     }
 
     override fun onDestroy() {
-        mDialog?.dismiss()
         NetworkReceiver.getInstance().removeListener(this)
-        mLoadedData = null
         mView = null
     }
 
@@ -171,19 +186,13 @@ class SplashPresenter : BaseResponseObserver<MMConfigData>(), ISplashContract.Pr
 
     override fun onExpired(error: String) {
         mView?.getFragment()?.also {
-            if (it is BaseFragment) {
+            if (it is BaseScheduleFragment) {
                 it.onExpired(error)
             }
         }
     }
 
     override fun onExpiredUnauthenticated(error: String) {
-        if (mView?.getViewContext() is MainActivity) {
-            (mView?.getViewContext() as MainActivity).getTokenAgainWhenTokenExpire(object : IGetNewToken {
-                override fun onGetSuccess() {
-                    loadApi()
-                }
-            })
-        }
+        mView?.callGetTokenAgain()
     }
 }

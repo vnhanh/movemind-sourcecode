@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import java.util.*
 import kotlin.collections.HashSet
 
-class SharedPreferencesCustomized constructor(context: Context, name: String) {
+class PreferenceHelper constructor(context: Context, name: String) {
     private var preferences: SharedPreferences = context.applicationContext.getSharedPreferences(name, Context.MODE_PRIVATE)
     private var editor: SharedPreferences.Editor
 
@@ -78,14 +78,16 @@ class SharedPreferencesCustomized constructor(context: Context, name: String) {
 
     companion object {
         val DEF_NAME = "MoveMind"
-        private var INSTANCE: SharedPreferencesCustomized? = null
+        private var INSTANCE: PreferenceHelper? = null
 
-        fun getInstance(context: Context): SharedPreferencesCustomized {
+        fun getInstance(context: Context): PreferenceHelper {
             if (INSTANCE == null) {
-                INSTANCE = SharedPreferencesCustomized(context.applicationContext, DEF_NAME)
+                INSTANCE = PreferenceHelper(context.applicationContext, DEF_NAME)
             }
 
             return INSTANCE!!
         }
+
+        fun getInstance(): PreferenceHelper? = INSTANCE
     }
 }

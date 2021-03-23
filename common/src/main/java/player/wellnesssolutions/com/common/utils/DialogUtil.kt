@@ -8,8 +8,8 @@ import androidx.annotation.StyleRes
 import androidx.appcompat.app.AlertDialog
 import player.wellnesssolutions.com.common.R
 import player.wellnesssolutions.com.common.constant.Constant
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 
 object DialogUtil {
     fun createDialogOnlyOneButton(context: Context, @StringRes msgResId: Int,
@@ -22,8 +22,8 @@ object DialogUtil {
     fun createDialogOnlyOneButton(context: Context, @StyleRes style: Int,
                                   message: String, @StringRes titleButton: Int,
                                   dialogClickListener: DialogInterface.OnClickListener?): AlertDialog {
-        val primaryColor = SharedPreferencesCustomized
-                .getInstance(context).getString(SPrefConstant.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
+        val primaryColor = PreferenceHelper
+                .getInstance(context).getString(ConstantPreference.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
         var color : Int?
         color = try {
             Color.parseColor(primaryColor)
@@ -59,8 +59,8 @@ object DialogUtil {
     fun createDialogOnlyOneButton(context: Context, @StyleRes style: Int?,
                                   title: String?, message: String, @StringRes titleButton: Int,
                                   dialogClickListener: DialogInterface.OnClickListener?): AlertDialog {
-        val primaryColor = SharedPreferencesCustomized
-                .getInstance(context).getString(SPrefConstant.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
+        val primaryColor = PreferenceHelper
+                .getInstance(context).getString(ConstantPreference.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
         val color = Color.parseColor(primaryColor)
 
         val builder: AlertDialog.Builder =
@@ -84,8 +84,8 @@ object DialogUtil {
 
     fun createDialogOnlyOneButton(context: Context, message: String, @StringRes titleButton: Int,
                                   dialogClickListener: DialogInterface.OnClickListener?): AlertDialog {
-        val primaryColor = SharedPreferencesCustomized
-                .getInstance(context).getString(SPrefConstant.PRIMARY_COLOR, "#00c3b3")
+        val primaryColor = PreferenceHelper
+                .getInstance(context).getString(ConstantPreference.PRIMARY_COLOR, "#00c3b3")
         val color: Int?
         color = try {
             Color.parseColor(primaryColor)
@@ -125,8 +125,8 @@ object DialogUtil {
     }
 
     fun createDialogOnlyOneButton(context: Context, @StyleRes style: Int, message: String, isCancelable: Boolean): AlertDialog {
-        val primaryColor = SharedPreferencesCustomized
-                .getInstance(context).getString(SPrefConstant.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
+        val primaryColor = PreferenceHelper
+                .getInstance(context).getString(ConstantPreference.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
         val color = Color.parseColor(primaryColor)
 
         val dialog =
@@ -147,8 +147,8 @@ object DialogUtil {
                                leftButtonClickListener: DialogInterface.OnClickListener?,
                                @StringRes titleRightButton: Int, rightButtonClickListener: DialogInterface.OnClickListener?,
                                isCancelable: Boolean = true): AlertDialog {
-        val primaryColor = SharedPreferencesCustomized
-                .getInstance(context).getString(SPrefConstant.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
+        val primaryColor = PreferenceHelper
+                .getInstance(context).getString(ConstantPreference.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
         val color = Color.parseColor(primaryColor)
 
         val dialog =

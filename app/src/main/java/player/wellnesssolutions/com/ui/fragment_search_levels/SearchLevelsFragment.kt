@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.fragment_search_levels.*
 import kotlinx.android.synthetic.main.merge_layout_group_top_search_screen.*
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.customs.views.RecyclerViewCustom
-import player.wellnesssolutions.com.base.view.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.base.utils.FragmentUtil
 import player.wellnesssolutions.com.base.utils.ViewUtil
 import player.wellnesssolutions.com.base.utils.search_util.SearchUIHelper
@@ -26,7 +26,7 @@ import player.wellnesssolutions.com.ui.fragment_control.ControlFragment
 import player.wellnesssolutions.com.ui.fragment_search_levels.recyclerview.SearchLevelsAdapter
 import player.wellnesssolutions.com.ui.fragment_search_preview.SearchPreviewFragment
 
-class SearchLevelsFragment : BaseFragment(), ISearchLevelsContract.View {
+class SearchLevelsFragment : BaseScheduleFragment(), ISearchLevelsContract.View {
     private var mPrensenter: ISearchLevelsContract.Presenter? = SearchLevelsPresenter()
     private var mDialog: AlertDialog? = null
 

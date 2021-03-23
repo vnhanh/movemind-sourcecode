@@ -12,13 +12,13 @@ import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_search_result.*
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.base.view.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.base.utils.FragmentUtil
 import player.wellnesssolutions.com.base.utils.ParameterUtils.isPlayNewList
 import player.wellnesssolutions.com.base.utils.ViewUtil
 import player.wellnesssolutions.com.common.customize_views.MMButton.Companion.isClickToNowPlaying
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.common.utils.DialogUtil
 import player.wellnesssolutions.com.common.utils.MessageUtils
 import player.wellnesssolutions.com.network.datasource.videos.PlayMode
@@ -41,7 +41,7 @@ import player.wellnesssolutions.com.ui.fragment_search_result_videos.page_result
 /**
  * This fragment has the ViewPager that contains child fragments as pages and every child fragment has a recyclerview to show list of video items
  */
-class SearchResultFragment : BaseFragment(), ISearchResultContract.View, IRouterChanged {
+class SearchResultFragment : BaseScheduleFragment(), ISearchResultContract.View, IRouterChanged {
 
     companion object {
         const val TAG = "SearchResultFragment"
@@ -263,8 +263,8 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View, IRouter
         when (mPresenter?.hasSelectedVideos()) {
             true -> {
                 activity?.let {
-                    SharedPreferencesCustomized.getInstance(it).delete(SPrefConstant.LAST_TIME_COUNT_DOWN)
-                    SharedPreferencesCustomized.getInstance(it).delete(SPrefConstant.LAST_PLAYED_VIDEO_POSITION)
+                    PreferenceHelper.getInstance(it).delete(ConstantPreference.LAST_TIME_COUNT_DOWN)
+                    PreferenceHelper.getInstance(it).delete(ConstantPreference.LAST_PLAYED_VIDEO_POSITION)
                 }
                 mPresenter?.onPlaySearchedVideos()
                 isClickToNowPlaying = true
@@ -393,7 +393,7 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View, IRouter
 
             if ((act as MainActivity).isPresentationAvailable()) {
                 isPlayNewList = true
-                SharedPreferencesCustomized.getInstance(act).putLong(SPrefConstant.LAST_PLAYED_VIDEO_POSITION, 0L)
+                PreferenceHelper.getInstance(act).putLong(ConstantPreference.LAST_PLAYED_VIDEO_POSITION, 0L)
 
                 when (act.isPlayingSearchVideos() || act.isPlayingNowPlaying()) {
                     true -> {

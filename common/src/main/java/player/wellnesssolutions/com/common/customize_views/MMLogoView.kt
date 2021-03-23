@@ -8,8 +8,8 @@ import android.widget.ImageView
 import com.bumptech.glide.Glide
 import player.wellnesssolutions.com.common.R
 import player.wellnesssolutions.com.common.constant.Constant
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 
 class MMLogoView : ImageView {
 
@@ -32,8 +32,8 @@ class MMLogoView : ImageView {
     }
 
     private fun init() {
-        val strLogo = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.SS_COMPANY_LOGO, "")
-        val strPrimaryColor = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
+        val strLogo = PreferenceHelper.getInstance(context).getString(ConstantPreference.SS_COMPANY_LOGO, "")
+        val strPrimaryColor = PreferenceHelper.getInstance(context).getString(ConstantPreference.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
 
         if(strLogo.isEmpty()) return
 

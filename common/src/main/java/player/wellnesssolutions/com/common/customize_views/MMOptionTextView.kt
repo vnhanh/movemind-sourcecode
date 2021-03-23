@@ -14,8 +14,8 @@ import player.wellnesssolutions.com.common.R
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.enums.StyleEnumSelect
 import player.wellnesssolutions.com.common.enums.StyleEnumShape
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 
 class MMOptionTextView : TextView {
     private var selectStyle: StyleEnumSelect? = StyleEnumSelect.UNSELECTED
@@ -104,8 +104,8 @@ class MMOptionTextView : TextView {
             }
         }
 
-        val strSecondaryColor = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
-        val strPrimaryColor = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.PRIMARY_COLOR, Constant.DEF_PRIMARY_COLOR)
+        val strSecondaryColor = PreferenceHelper.getInstance(context).getString(ConstantPreference.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
+        val strPrimaryColor = PreferenceHelper.getInstance(context).getString(ConstantPreference.PRIMARY_COLOR, Constant.DEF_PRIMARY_COLOR)
 
         if (strSecondaryColor.isEmpty() || strPrimaryColor.isEmpty()) return
 

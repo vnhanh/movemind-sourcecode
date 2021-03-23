@@ -2,8 +2,9 @@ package player.wellnesssolutions.com.ui.fragment_now_playing.helper
 
 import com.google.gson.Gson
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.constant.Constant
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.network.models.config.MMConfigData
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.com.ui.fragment_now_playing.INowPlayingConstruct
@@ -11,38 +12,45 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
-object NowPlayingPresenterHelper {
-    /**
-     * @param videos: list of videos that got from server
-     * @param timeDiff: the time different between time of the local system and the network
-     * @return
-     *         firstReturn < 0 : time to play next video
-     *         firstReturn  > 0 : begin position of played video
-     *         secondReturn == 0L: not error
-     *         secondReturn == -1L: count error or next video is no longer played (current time > end time)
-     */
-    const val EXPIRED_TIME_PLAY = 2L
-    const val TIME_PLAY = 1L
-    const val ERROR = 0L
+interface ICallbackTimePlaySchedule {
+    fun onResult(state: STATE_TIME_PLAY_SCHEDULE, timePlay: Long)
+}
 
-    fun calculateTimePlayVideo(video: MMVideo, timeDiff: Long): Array<Long> {
+enum class STATE_TIME_PLAY_SCHEDULE(val state: String) {
+    TIME_PLAY("TIME_PLAY"),
+    TIME_WAIT("TIME_WAIT"),
+    TIME_EXPIRED("EXPIRED_TIME_PLAY"),
+    TIME_ERROR("TIME_ERROR")
+}
+
+object HandlerTimeScheduleHelper {
+
+    fun calculateTimePlayVideo(video: MMVideo, callback: ICallbackTimePlaySchedule) {
         try {
             val playTime: Long = convertTime(video.getStartTime())
             val length = ((video.videoLength ?: 0f) * 1000).toInt()
             val endTime = playTime + length
             val currentTime = System.currentTimeMillis()
-            return if (currentTime <= endTime) {
-                arrayOf(TIME_PLAY, currentTime - playTime) // 0L: isOK
-            } else {
-                arrayOf(EXPIRED_TIME_PLAY, 0)
+            when {
+                currentTime < endTime -> {
+                    val timeDiff = currentTime - playTime
+                    when {
+                        timeDiff < -1 * Constant.TIME_CHANGE_SCREEN -> callback.onResult(STATE_TIME_PLAY_SCHEDULE.TIME_WAIT, -1 * timeDiff)
+                        else -> callback.onResult(STATE_TIME_PLAY_SCHEDULE.TIME_PLAY, timeDiff)
+                    }
+                }
+
+                else -> {
+                    callback.onResult(STATE_TIME_PLAY_SCHEDULE.TIME_EXPIRED, 0L)
+                }
             }
         } catch (parseException: ParseException) {
             parseException.printStackTrace()
+            callback.onResult(STATE_TIME_PLAY_SCHEDULE.TIME_ERROR, 0L)
         } catch (e: Exception) {
             e.printStackTrace()
+            callback.onResult(STATE_TIME_PLAY_SCHEDULE.TIME_ERROR, 0L)
         }
-
-        return arrayOf(ERROR, 0L) // 1L: count error or no longer play video
     }
 
     private fun convertCurrentTimeToDateStr(time: Long): String {
@@ -57,8 +65,8 @@ object NowPlayingPresenterHelper {
     }
 
 
-    fun readSharePrefData(ss: SharedPreferencesCustomized, view: INowPlayingConstruct.View): Boolean {
-        val userConfigJson = ss.getString(SPrefConstant.SS_CONFIG, "")
+    fun readSharePrefData(ss: PreferenceHelper, view: INowPlayingConstruct.View): Boolean {
+        val userConfigJson = ss.getString(ConstantPreference.SS_CONFIG, "")
 
         if (userConfigJson == "") {
             view.showMessage(R.string.msg_not_got_user_config_data, R.color.red)

@@ -14,8 +14,8 @@ import player.wellnesssolutions.com.common.utils.DrawableUtils
 import player.wellnesssolutions.com.common.R
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.enums.StyleEnum
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 
 open class MMTextView : TextView {
     private var style: StyleEnum? = StyleEnum.NORMAL
@@ -52,8 +52,8 @@ open class MMTextView : TextView {
     }
 
     private fun init(attrs: AttributeSet?) {
-        val strPrimaryColor = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.PRIMARY_COLOR, Constant.DEF_PRIMARY_COLOR)
-        val strSecondaryColor = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
+        val strPrimaryColor = PreferenceHelper.getInstance(context).getString(ConstantPreference.PRIMARY_COLOR, Constant.DEF_PRIMARY_COLOR)
+        val strSecondaryColor = PreferenceHelper.getInstance(context).getString(ConstantPreference.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
 
         if (strSecondaryColor.isEmpty() || strPrimaryColor.isEmpty()) return
 
@@ -136,7 +136,7 @@ open class MMTextView : TextView {
 
     fun changeColorOnClick() {
         if(style == StyleEnum.BTN_COLOR){
-            val strBtnColor = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.PRIMARY_COLOR, Constant.DEF_PRIMARY_COLOR)
+            val strBtnColor = PreferenceHelper.getInstance(context).getString(ConstantPreference.PRIMARY_COLOR, Constant.DEF_PRIMARY_COLOR)
             if(strBtnColor.isEmpty()) return
             this.setBackgroundColor(Color.parseColor(strBtnColor))
             this.setTextColor(Color.WHITE)
@@ -163,7 +163,7 @@ open class MMTextView : TextView {
     fun isActive() : Boolean = isActived
 
     private fun generateBorderActive(){
-        val primaryColor = Color.parseColor(SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR))
+        val primaryColor = Color.parseColor(PreferenceHelper.getInstance(context).getString(ConstantPreference.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR))
         val shape = GradientDrawable()
         shape.shape = GradientDrawable.RECTANGLE
         shape.cornerRadius = cornerRad

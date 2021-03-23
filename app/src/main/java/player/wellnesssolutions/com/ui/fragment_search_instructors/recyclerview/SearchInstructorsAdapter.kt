@@ -6,8 +6,8 @@ import com.bumptech.glide.load.model.LazyHeaders
 import kotlinx.android.synthetic.main.viewholder_search_video_presenter.view.*
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.utils.search_util.BaseSearchVideosAdapter
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.network.models.screen_search.MMInstructor
 import player.wellnesssolutions.com.ui.fragment_search_instructors.ISearchInstructorContract
 
@@ -17,7 +17,7 @@ class SearchInstructorsAdapter(presenter: ISearchInstructorContract.Presenter?, 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchInstructorVH {
         if (mGlideHeaders == null) {
-            mGlideHeaders = LazyHeaders.Builder().addHeader("MMCookie", SharedPreferencesCustomized.getInstance(parent.context).getString(SPrefConstant.SP_COOKIE, "")).build()
+            mGlideHeaders = LazyHeaders.Builder().addHeader("MMCookie", PreferenceHelper.getInstance(parent.context).getString(ConstantPreference.SP_COOKIE, "")).build()
         }
 
         val view = LayoutInflater.from(parent.context).inflate(R.layout.viewholder_search_video_presenter, parent, false)

@@ -6,8 +6,8 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.network.datasource.videos.PlayMode
 import player.wellnesssolutions.com.network.models.config.MMConfigData
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
@@ -81,7 +81,7 @@ class ControlPresenter : IControlContract.Presenter {
         val context: Context? = view?.getViewContext()
         if (view == null || context == null) return
 
-        val userConfigJson = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.SS_CONFIG, "")
+        val userConfigJson = PreferenceHelper.getInstance(context).getString(ConstantPreference.SS_CONFIG, "")
 
         if (userConfigJson.isEmpty()) {
             view.showMessage(R.string.msg_not_got_user_config_data, R.color.red)

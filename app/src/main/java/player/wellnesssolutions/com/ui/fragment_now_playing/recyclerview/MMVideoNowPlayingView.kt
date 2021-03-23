@@ -8,8 +8,8 @@ import android.util.AttributeSet
 import android.view.View
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.common.constant.Constant
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 
 class MMVideoNowPlayingView : View {
     private var isTintBackground = false
@@ -34,7 +34,7 @@ class MMVideoNowPlayingView : View {
 
 
     private fun init(attrs: AttributeSet?) {
-        val strSecondaryColor = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
+        val strSecondaryColor = PreferenceHelper.getInstance(context).getString(ConstantPreference.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
 
         val ta = context.obtainStyledAttributes(attrs, R.styleable.MMAttributes)
         isTintBackground = ta.getBoolean(R.styleable.MMAttributes_tintBackground, false)

@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_search_videos_by.*
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.base.view.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.base.utils.ViewUtil
 import player.wellnesssolutions.com.base.utils.search_util.SearchUIHelper
 import player.wellnesssolutions.com.network.models.screen_search.MMBrand
@@ -17,7 +17,7 @@ import player.wellnesssolutions.com.network.models.screen_search.SearchByOption
 import player.wellnesssolutions.com.ui.fragment_search_videos_by.recyclerview.SearchVideosByAdapter
 
 
-class SearchVideosByFragment : BaseFragment(), ISearchVideosByContract.View {
+class SearchVideosByFragment : BaseScheduleFragment(), ISearchVideosByContract.View {
     // vars
     private var mPresenter: ISearchVideosByContract.Presenter? = SearchVideosByPresenter()
 

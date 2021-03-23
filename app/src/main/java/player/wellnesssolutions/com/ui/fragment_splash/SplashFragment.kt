@@ -1,22 +1,28 @@
 package player.wellnesssolutions.com.ui.fragment_splash
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.fragment_splash.*
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.base.view.BaseFragment
 import player.wellnesssolutions.com.base.utils.FragmentUtil
+import player.wellnesssolutions.com.base.view.BaseFragment
+import player.wellnesssolutions.com.base.view.IGetNewToken
+import player.wellnesssolutions.com.common.utils.DialogUtil
+import player.wellnesssolutions.com.ui.activity_main.MainActivity
 import player.wellnesssolutions.com.ui.fragment_home.HomeFragment
 
 
 class SplashFragment : BaseFragment(), ISplashContract.View, View.OnClickListener {
-    private lateinit var mPresenter: ISplashContract.Presenter
+    private var mPresenter: ISplashContract.Presenter? = null
     private val PERIOD = 100L
     private var MAX_PROGRESS_BEFORE_RECEIVE_RESPONSE = 60
     private var mIsStopProgressbar = false
+    private var mDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,27 +72,28 @@ class SplashFragment : BaseFragment(), ISplashContract.View, View.OnClickListene
         progressLoadBrand.progress = 0
         progressLoadBrand?.postDelayed(mProgressRunnable, PERIOD)
         progressLoadBrand?.visibility = View.VISIBLE
-        mPresenter.loadApi()
+        mPresenter?.loadApi()
         view.isEnabled = true
     }
 
     override fun onResume() {
         super.onResume()
-        mPresenter.onAttach(this)
-
+        mPresenter?.onAttach(this)
     }
 
     override fun onPause() {
         super.onPause()
-        mPresenter.onDetach()
+        mPresenter?.onDetach()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mPresenter.onDestroy()
+        mDialog?.dismiss()
+        mPresenter?.onDestroy()
     }
 
     override fun updateProgress(progress: Int) {
+        mDialog?.dismiss()
         when (progress) {
             in 0..100 -> {
                 progressLoadBrand?.also {
@@ -96,6 +103,9 @@ class SplashFragment : BaseFragment(), ISplashContract.View, View.OnClickListene
 
             else -> {
                 mIsStopProgressbar = true
+                progressLoadBrand?.also { progressBar ->
+                    progressBar.progressDrawable = ContextCompat.getDrawable(progressBar.context, R.drawable.progress_splash_failed)
+                }
             }
         }
     }
@@ -104,7 +114,7 @@ class SplashFragment : BaseFragment(), ISplashContract.View, View.OnClickListene
         view?.postDelayed(Runnable {
             FragmentUtil.replaceFragment(
                     fm = activity?.supportFragmentManager,
-                    newFragment = HomeFragment.getInstance(),
+                    newFragment = HomeFragment.getInstanceWithLoadSchedule(),
                     newFragmentTag = HomeFragment.TAG,
                     frameId = R.id.frameLayoutHome,
                     isAddToBackStack = false
@@ -112,19 +122,48 @@ class SplashFragment : BaseFragment(), ISplashContract.View, View.OnClickListene
         }, 500L)
     }
 
+    override fun onCallServiceFailed(messageRes: Int) {
+        mDialog?.dismiss()
+        context?.also { _context ->
+            mDialog = DialogUtil.createDialogOnlyOneButton(context = _context,
+                    msgResId = messageRes,
+                    titleButton = R.string.btn_ok,
+                    dialogClickListener = object : DialogInterface.OnClickListener {
+                        override fun onClick(dialogInterface: DialogInterface?, p1: Int) {
+                            dialogInterface?.dismiss()
+                        }
+
+                    }).also {
+                it.show()
+            }
+        }
+
+    }
+
+    override fun backToScanQRCode() {
+        mDialog?.dismiss()
+        this.onExpired("")
+    }
+
     override fun onExpired(message: String) {
+        mDialog?.dismiss()
         super.onExpired(message)
-        mIsStopProgressbar = true
+    }
+
+    override fun callGetTokenAgain() {
+        activity?.also { activity ->
+            (activity as MainActivity).getTokenAgainWhenTokenExpire(object : IGetNewToken {
+                override fun onGetSuccess() {
+                    mPresenter?.loadApi()
+                }
+            })
+        }
     }
 
     private val mProgressRunnable = object : Runnable {
         override fun run() {
             progressLoadBrand?.also { progressBar ->
                 when (mIsStopProgressbar) {
-                    true -> {
-                        progressBar.progressDrawable = ContextCompat.getDrawable(progressBar.context, R.drawable.progress_splash_failed)
-                    }
-
                     false -> {
                         val progress = progressBar.progress + 1
 

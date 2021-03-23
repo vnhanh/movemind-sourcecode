@@ -8,8 +8,8 @@ import android.widget.ProgressBar
 import androidx.core.graphics.ColorUtils
 import player.wellnesssolutions.com.common.R
 import player.wellnesssolutions.com.common.constant.Constant
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 
 class MMProgressBar : ProgressBar {
     private var mScaleY = 1f
@@ -37,8 +37,8 @@ class MMProgressBar : ProgressBar {
         mScaleY = ta.getFloat(R.styleable.MMAttributes_scaleY, 1f)
         ta.recycle()
 
-        var primaryColor = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.PRIMARY_COLOR, Constant.DEF_PRIMARY_COLOR)
-        var secondaryColor = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
+        var primaryColor = PreferenceHelper.getInstance(context).getString(ConstantPreference.PRIMARY_COLOR, Constant.DEF_PRIMARY_COLOR)
+        var secondaryColor = PreferenceHelper.getInstance(context).getString(ConstantPreference.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
         if(secondaryColor.isEmpty()) {
             secondaryColor = Constant.DEF_SECONDARY_COLOR
         }

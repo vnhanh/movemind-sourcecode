@@ -3,12 +3,12 @@ package player.wellnesssolutions.com.ui.fragment_search_preview
 import io.reactivex.Observable
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.view.BaseClickableAdapter
-import player.wellnesssolutions.com.base.view.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
 import player.wellnesssolutions.com.base.utils.search_util.SearchDataHelper
 import player.wellnesssolutions.com.common.constant.Constant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.common.utils.MessageUtils
 import player.wellnesssolutions.com.network.datasource.search_preview.SearchPreviewApi
 import player.wellnesssolutions.com.network.models.response.ResponseValue
@@ -52,7 +52,7 @@ class SearchPreviewPresenter : BaseResponseObserver<MMSearchPreviewResponse>(), 
 
     override fun loadData(view: ISearchPreviewContract.View) {
         view.getViewContext()?.also { context ->
-            val headerData = CheckHeaderApiUtil.checkData(SharedPreferencesCustomized.getInstance(context), view.getFragment())
+            val headerData = CheckHeaderApiUtil.checkData(PreferenceHelper.getInstance(context), view.getFragment())
 
             if (mData != null) {
                 displayUI()
@@ -228,7 +228,7 @@ class SearchPreviewPresenter : BaseResponseObserver<MMSearchPreviewResponse>(), 
 
     override fun onExpired(error: String) {
         mView?.getFragment()?.also {
-            if (it is BaseFragment) {
+            if (it is BaseScheduleFragment) {
                 it.onExpired(error)
             }
         }
@@ -236,7 +236,7 @@ class SearchPreviewPresenter : BaseResponseObserver<MMSearchPreviewResponse>(), 
 
     override fun onExpiredUnauthenticated(error: String) {
         mView?.getFragment()?.also {
-            if (it is BaseFragment)
+            if (it is BaseScheduleFragment)
                 it.onExpiredUnAuth(error)
         }
     }

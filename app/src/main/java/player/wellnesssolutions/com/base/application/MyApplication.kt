@@ -4,8 +4,8 @@ import android.app.Application
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.fontsizelibrary.TypefaceUtil
 
 class MyApplication : Application() {
@@ -39,15 +39,15 @@ class MyApplication : Application() {
     }
 
     private fun storeBranding() {
-        val mPref = SharedPreferencesCustomized.getInstance(this)
-        mPref.putString(SPrefConstant.TOKEN, token)
-        mPref.putString(SPrefConstant.DEVICE_ID, "233")
-        mPref.putString(SPrefConstant.SS_BOTTOM_BAR_COLOR, "#041e41")
-        mPref.putString(SPrefConstant.PRIMARY_COLOR, "#00c3b3")
-        mPref.putString(SPrefConstant.SECONDARY_COLOR, "#ffffff")
+        val mPref = PreferenceHelper.getInstance(this)
+        mPref.putString(ConstantPreference.TOKEN, token)
+        mPref.putString(ConstantPreference.DEVICE_ID, "233")
+        mPref.putString(ConstantPreference.SS_BOTTOM_BAR_COLOR, "#041e41")
+        mPref.putString(ConstantPreference.PRIMARY_COLOR, "#00c3b3")
+        mPref.putString(ConstantPreference.SECONDARY_COLOR, "#ffffff")
 //        mPref.putString(SPrefConstant.SS_COMPANY_LOGO, branding.companyLogo ?: "")
 //        mPref.putStrings(SPrefConstant.SS_BACKGROUND_PICTURES, branding.backgroundPictures)
-        mPref.putStrings(SPrefConstant.SS_BACKGROUND_PICTURES, fakeImageBG())
+        mPref.putStrings(ConstantPreference.SS_BACKGROUND_PICTURES, fakeImageBG())
     }
 
     private fun fakeImageBG(): Array<String> {

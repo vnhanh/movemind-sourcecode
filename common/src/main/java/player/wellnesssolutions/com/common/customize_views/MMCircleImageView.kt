@@ -11,8 +11,8 @@ import player.wellnesssolutions.com.common.R
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.enums.StyleEnumInner
 import player.wellnesssolutions.com.common.enums.StyleEnumSelect
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 
 class MMCircleImageView : ImageView {
     private var selectStyle: StyleEnumSelect? = StyleEnumSelect.UNSELECTED
@@ -113,8 +113,8 @@ class MMCircleImageView : ImageView {
 
         if(strokeWidth < 0) return
 
-        val strPrimaryColor = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.PRIMARY_COLOR, Constant.DEF_PRIMARY_COLOR)
-        val strSecondaryColor = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
+        val strPrimaryColor = PreferenceHelper.getInstance(context).getString(ConstantPreference.PRIMARY_COLOR, Constant.DEF_PRIMARY_COLOR)
+        val strSecondaryColor = PreferenceHelper.getInstance(context).getString(ConstantPreference.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
 
         if (strSecondaryColor.isEmpty() || strPrimaryColor.isEmpty() || unselectedStrokeColor == -1) return
 

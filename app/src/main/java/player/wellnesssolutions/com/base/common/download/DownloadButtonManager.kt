@@ -16,8 +16,8 @@ import android.webkit.MimeTypeMap
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.customize_views.MMImageView
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.common.utils.DialogUtil
 import player.wellnesssolutions.com.common.utils.MessageUtils
 import player.wellnesssolutions.com.common.utils.PermissionModel
@@ -122,7 +122,7 @@ class DownloadButtonManager : View.OnClickListener, IProgressListener {
                     }
                 }
             } else { // denied download permission but not checked "Never ask again"
-                SharedPreferencesCustomized.getInstance(context).putBoolean(key = SPrefConstant.SS_DOWNLOADED_BUT_NO_PERMISSION, value = true)
+                PreferenceHelper.getInstance(context).putBoolean(key = ConstantPreference.SS_DOWNLOADED_BUT_NO_PERMISSION, value = true)
             }
         }
     }
@@ -184,7 +184,7 @@ class DownloadButtonManager : View.OnClickListener, IProgressListener {
     }
 
     private fun showUIDownloading(button: MMImageView) {
-        val strTextColor = SharedPreferencesCustomized.getInstance(button.context).getString(SPrefConstant.PRIMARY_COLOR,
+        val strTextColor = PreferenceHelper.getInstance(button.context).getString(ConstantPreference.PRIMARY_COLOR,
                 Constant.DEF_PRIMARY_COLOR)
         val shape = GradientDrawable()
         shape.shape = GradientDrawable.OVAL

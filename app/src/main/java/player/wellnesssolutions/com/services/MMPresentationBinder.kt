@@ -30,8 +30,8 @@ import player.wellnesssolutions.com.base.utils.ViewUtil
 import player.wellnesssolutions.com.common.customize_views.MMBackGroundView
 import player.wellnesssolutions.com.common.customize_views.MMProgressBar
 import player.wellnesssolutions.com.common.customize_views.MMTextView
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.common.utils.MessageUtils
 import player.wellnesssolutions.com.custom_exoplayer.PlayerState
 import player.wellnesssolutions.com.network.datasource.videos.PlayMode
@@ -178,7 +178,7 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
         unregisterUICastingBroadcast()
         mContext?.also { context ->
             val lastPosition: Long = mPresenter?.getCurrentPlayedPosition() ?: 0L
-            SharedPreferencesCustomized.getInstance(context).putLong(SPrefConstant.LAST_PLAYED_VIDEO_POSITION, lastPosition)
+            PreferenceHelper.getInstance(context).putLong(ConstantPreference.LAST_PLAYED_VIDEO_POSITION, lastPosition)
         }
 
         if (mView != null) {
@@ -450,7 +450,7 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
                 videoTitle.visibility = View.INVISIBLE
                 groupCollections.visibility = View.INVISIBLE
 
-                frameExoVolume.also { volumeFrame ->
+                frameExoVolume?.also { volumeFrame ->
                     volumeFrame.visibility = View.GONE
                 }
 

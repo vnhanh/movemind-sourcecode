@@ -15,7 +15,7 @@ interface IHomeContract {
     }
 
     interface Presenter : ILifeCycle.Presenter<View> {
-        fun setScheduleRemain(videos: ArrayList<MMVideo>)
+        fun setScheduleCurrent(videos: ArrayList<MMVideo>)
         fun onTimePlayAlreadySchedule()
     }
 }

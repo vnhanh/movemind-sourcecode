@@ -9,8 +9,8 @@ import android.util.AttributeSet
 import android.widget.Button
 import player.wellnesssolutions.com.common.R
 import player.wellnesssolutions.com.common.constant.Constant
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 
 class MMButton : Button {
     private var mShape: GradientDrawable? = null
@@ -53,8 +53,8 @@ class MMButton : Button {
     }
 
     private fun init(attrs: AttributeSet?) {
-        val strPrimaryColor = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.PRIMARY_COLOR, Constant.DEF_PRIMARY_COLOR)
-        val strTextColor = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
+        val strPrimaryColor = PreferenceHelper.getInstance(context).getString(ConstantPreference.PRIMARY_COLOR, Constant.DEF_PRIMARY_COLOR)
+        val strTextColor = PreferenceHelper.getInstance(context).getString(ConstantPreference.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
 
         if (strPrimaryColor.isEmpty() || strTextColor.isEmpty()) return
 
@@ -117,7 +117,7 @@ class MMButton : Button {
 
     private fun setTextColor() {
         when(mIsEnable){
-            true -> this.setTextColor(Color.parseColor(SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.PRIMARY_COLOR, Constant.DEF_PRIMARY_COLOR)))
+            true -> this.setTextColor(Color.parseColor(PreferenceHelper.getInstance(context).getString(ConstantPreference.PRIMARY_COLOR, Constant.DEF_PRIMARY_COLOR)))
             false -> this.setTextColor(Color.parseColor(mDisableTextColorStr))
         }
     }
@@ -125,7 +125,7 @@ class MMButton : Button {
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         if (isCircle && isBorder) {
-            val strPrimaryColor = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.PRIMARY_COLOR, Constant.DEF_PRIMARY_COLOR)
+            val strPrimaryColor = PreferenceHelper.getInstance(context).getString(ConstantPreference.PRIMARY_COLOR, Constant.DEF_PRIMARY_COLOR)
             val parentWidth = MeasureSpec.getSize(widthMeasureSpec)
             val strokeWidth = (parentWidth * 0.065f).toInt()
             val padding = (strokeWidth * 1.1f).toInt()

@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.fragment_search_instructors.*
 import kotlinx.android.synthetic.main.merge_layout_group_top_search_screen.*
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.customs.views.RecyclerViewCustom
-import player.wellnesssolutions.com.base.view.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.base.utils.FragmentUtil
 import player.wellnesssolutions.com.base.utils.ViewUtil
 import player.wellnesssolutions.com.base.utils.search_util.SearchUIHelper
@@ -29,7 +29,7 @@ import player.wellnesssolutions.com.ui.fragment_search_preview.SearchPreviewFrag
 import player.wellnesssolutions.com.ui.fragment_search_result_videos.SearchResultFragment
 import kotlin.math.min
 
-class SearchInstructorsFragment : BaseFragment(), ISearchInstructorContract.View {
+class SearchInstructorsFragment : BaseScheduleFragment(), ISearchInstructorContract.View {
     private var mPresenter: ISearchInstructorContract.Presenter? = SearchInstructorsPresenter()
 
     override fun onCreate(savedInstanceState: Bundle?) {

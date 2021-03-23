@@ -30,29 +30,37 @@ abstract class BaseResponseObserver<T> : Observer<Response<ResponseValue<T>>> {
     }
 
     override fun onNext(response: Response<ResponseValue<T>>) {
+        Log.d("LOG", this.javaClass.simpleName + " onNext() | error body message: ${response.errorBody()?.string()} | " +
+                "body message ${response.body()?.message} | code: ${response.code()}")
         this.response = response
 
-        if (response.code() == 200) {
-            onResponseSuccess(response.body())
-        } else {
-            when (response.body() != null) {
-                true -> {
-                    receivedResponseFalse(code = response.code(), message = response.body()?.message)
-                }
-                else -> {
-                    val errorBody = CommonUtility.getErrorBody(response.errorBody())
+        when{
+            response.code() == 200 -> {
+                onResponseSuccess(response.body())
+            }
 
-                    if (errorBody?.message != null)
-                        receivedResponseFalse(code = response.code(), body = errorBody)
-                    else
-                        onResponseFalse(code = response.code(), message = MSG_NOT_FOUND_API)
-                }
+            response.code() == 401 -> {
+                onUnAuthorized()
+            }
+
+            response.body() != null -> {
+                receivedResponseFalse(code = response.code(), message = response.body()?.message)
+            }
+
+            else -> {
+                val errorBody = CommonUtility.getErrorBody(response.errorBody())
+
+                if (errorBody?.message != null)
+                    receivedResponseFalse(code = response.code(), body = errorBody)
+                else
+                    onResponseFalse(code = response.code(), message = MSG_NOT_FOUND_API)
             }
         }
+
     }
 
     override fun onError(e: Throwable) {
-//        Log.d("LOG", this.javaClass.simpleName + " onError() | message: ${e.message}")
+        Log.d("LOG", this.javaClass.simpleName + " onError() | message: ${e.message}")
         this.requestError = e
         when (e.message?.toLowerCase()?.contains("failed to connect to")) {
             true -> {
@@ -106,6 +114,8 @@ abstract class BaseResponseObserver<T> : Observer<Response<ResponseValue<T>>> {
 
     // the final false/failed function would be called
     protected open fun onResponseFalse(code: Int, message: String?) {}
+
+    protected open fun onUnAuthorized(){}
 
     abstract fun onExpired(error: String)
 

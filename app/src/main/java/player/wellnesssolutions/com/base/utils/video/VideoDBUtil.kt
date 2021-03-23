@@ -8,7 +8,7 @@ import player.wellnesssolutions.database.model.video.RealmDVideo
 import player.wellnesssolutions.database.model.video.VideoEntity
 
 object VideoDBUtil {
-    fun readVideosFromDB(tag: String, isDelete: Boolean = true): ArrayList<MMVideo> {
+    fun getVideosFromDB(tag: String, isDelete: Boolean = true): ArrayList<MMVideo> {
         val realm = Realm.getDefaultInstance()
         var list = ArrayList<MMVideo>()
         try {
@@ -16,8 +16,7 @@ object VideoDBUtil {
             val result = realm.where(VideoEntity::class.java).equalTo("tag", tag).findAll()
             list = RealmObjectsToVideosMapper.mapList(result)
 
-            if (isDelete)
-                result.deleteAllFromRealm()
+            if (isDelete) result.deleteAllFromRealm()
 
             realm.commitTransaction()
         } catch (e: Exception) {
@@ -99,7 +98,7 @@ object VideoDBUtil {
         val realm = Realm.getDefaultInstance()
 
         try {
-            val savedData = DVideosToRealmObjectsMapper.mapList(data, tag)
+            val savedData: RealmList<RealmDVideo> = DVideosToRealmObjectsMapper.mapList(data, tag)
             realm.beginTransaction()
             realm.copyToRealm(savedData)
             realm.commitTransaction()

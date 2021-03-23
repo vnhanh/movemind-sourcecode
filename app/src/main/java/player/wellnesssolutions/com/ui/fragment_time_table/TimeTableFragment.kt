@@ -11,17 +11,17 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_time_table.*
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.customs.views.ItemDecorationGridHorizontalLayout
-import player.wellnesssolutions.com.base.view.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.base.utils.ViewUtil
 import player.wellnesssolutions.com.common.customize_views.MMTabBar
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.common.utils.DialogUtil
 import player.wellnesssolutions.com.network.models.response.SessionVideo
 import player.wellnesssolutions.com.ui.fragment_time_table.recyclerview.SchedulerAdapter
 
 
-class TimeTableFragment : BaseFragment(), ITimeTableContract.View, MMTabBar.TabBarListener, SchedulerAdapter.OnClickItemListener {
+class TimeTableFragment : BaseScheduleFragment(), ITimeTableContract.View, MMTabBar.TabBarListener, SchedulerAdapter.OnClickItemListener {
     companion object {
         const val TAG = "TimeTableFragment"
         const val EXTRA_NEW_DATA = "EXTRA_NEW_DATA"
@@ -140,10 +140,10 @@ class TimeTableFragment : BaseFragment(), ITimeTableContract.View, MMTabBar.TabB
 
     private fun setupButtonPrevious() {
         context?.also {
-            when (SharedPreferencesCustomized.getInstance(it).getBoolean(SPrefConstant.IS_SHOW_BUTTON_PREVIOUS, false)) {
+            when (PreferenceHelper.getInstance(it).getBoolean(ConstantPreference.IS_SHOW_BUTTON_PREVIOUS, false)) {
                 true -> {
                     btnPrevious.visibility = View.VISIBLE
-                    SharedPreferencesCustomized.getInstance(it).delete(SPrefConstant.IS_SHOW_BUTTON_PREVIOUS)
+                    PreferenceHelper.getInstance(it).delete(ConstantPreference.IS_SHOW_BUTTON_PREVIOUS)
                 }
                 false -> {
                     btnPrevious.text = it.getString(R.string.btn_title_back)

@@ -12,8 +12,8 @@ import android.widget.TextView
 import player.wellnesssolutions.com.common.R
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.enums.TextStyle
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 
 open class MMTabBar : LinearLayout, View.OnClickListener {
     private var mTabBarListener: TabBarListener? = null
@@ -54,8 +54,8 @@ open class MMTabBar : LinearLayout, View.OnClickListener {
 
     @SuppressLint("CustomViewStyleable")
     private fun init(attrs: AttributeSet?) {
-        val strSecondaryColor = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
-        val strPrimaryColor = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.PRIMARY_COLOR, Constant.DEF_PRIMARY_COLOR)
+        val strSecondaryColor = PreferenceHelper.getInstance(context).getString(ConstantPreference.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
+        val strPrimaryColor = PreferenceHelper.getInstance(context).getString(ConstantPreference.PRIMARY_COLOR, Constant.DEF_PRIMARY_COLOR)
         if (strSecondaryColor.isEmpty() || strPrimaryColor.isEmpty()) return
 
         mSecondaryColor = Color.parseColor(strSecondaryColor)

@@ -8,8 +8,8 @@ import player.wellnesssolutions.com.base.common.download.DownloadVideoHelper
 import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
 import player.wellnesssolutions.com.common.constant.Constant
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.common.utils.FileUtil
 import player.wellnesssolutions.com.network.datasource.download.DownloadApi
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
@@ -178,8 +178,8 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
     }
 
     private fun getAllVideosForDownload(context: Context) {
-        val tokenAu: String = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.TOKEN, "")
-        val deviceId = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.DEVICE_ID, "")
+        val tokenAu: String = PreferenceHelper.getInstance(context).getString(ConstantPreference.TOKEN, "")
+        val deviceId = PreferenceHelper.getInstance(context).getString(ConstantPreference.DEVICE_ID, "")
         if (deviceId.isNotEmpty() && tokenAu.isNotEmpty()) {
             DownloadApi().getAllVideosFromServer(tokenAu, deviceId)
                     .subscribe(object : BaseResponseObserver<ArrayList<MMVideo>>() {
@@ -233,8 +233,8 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
 
 
     private fun getAllVideosForDownloadWithId(context: Context, dataInt: IntArray) {
-        val tokenAu: String = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.TOKEN, "")
-        val deviceId = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.DEVICE_ID, "")
+        val tokenAu: String = PreferenceHelper.getInstance(context).getString(ConstantPreference.TOKEN, "")
+        val deviceId = PreferenceHelper.getInstance(context).getString(ConstantPreference.DEVICE_ID, "")
         if (deviceId.isNotEmpty() && tokenAu.isNotEmpty()) {
             DownloadApi().getAllVideosFromServer(tokenAu, deviceId)
                     .subscribe(object : BaseResponseObserver<ArrayList<MMVideo>>() {
@@ -286,8 +286,8 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
     }
 
     fun getAllVideosForDownloadChangeSubs(context: Context) {
-        val tokenAu: String = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.TOKEN, "")
-        val deviceId = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.DEVICE_ID, "")
+        val tokenAu: String = PreferenceHelper.getInstance(context).getString(ConstantPreference.TOKEN, "")
+        val deviceId = PreferenceHelper.getInstance(context).getString(ConstantPreference.DEVICE_ID, "")
         if (deviceId.isNotEmpty() && tokenAu.isNotEmpty()) {
             DownloadApi().getAllVideosFromServer(tokenAu, deviceId)
                     .subscribe(object : BaseResponseObserver<ArrayList<MMVideo>>() {

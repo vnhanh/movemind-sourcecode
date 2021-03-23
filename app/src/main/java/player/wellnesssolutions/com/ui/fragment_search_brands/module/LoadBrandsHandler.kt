@@ -2,11 +2,11 @@ package player.wellnesssolutions.com.ui.fragment_search_brands.module
 
 import androidx.annotation.StringRes
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.base.view.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
 import player.wellnesssolutions.com.base.utils.check_header_api_util.HeaderData
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.network.datasource.brand.BrandApi
 import player.wellnesssolutions.com.network.models.response.ResponseValue
 import player.wellnesssolutions.com.network.models.screen_search.MMBrand
@@ -23,7 +23,7 @@ class LoadBrandsHandler(callback: ILoadBrandHandler.Callback) : BaseResponseObse
         mFlowTag = tag
 
         mCallback.getViewContext()?.also { context ->
-            val headerData: HeaderData = CheckHeaderApiUtil.checkData(SharedPreferencesCustomized.getInstance(context), mCallback.getFragment())
+            val headerData: HeaderData = CheckHeaderApiUtil.checkData(PreferenceHelper.getInstance(context), mCallback.getFragment())
                     ?: return
 
             val (token: String, deviceId: String) = headerData
@@ -94,13 +94,13 @@ class LoadBrandsHandler(callback: ILoadBrandHandler.Callback) : BaseResponseObse
     }
 
     override fun onExpired(error: String) {
-        if (mCallback is BaseFragment) {
+        if (mCallback is BaseScheduleFragment) {
             mCallback.onExpired(error)
         }
     }
 
     override fun onExpiredUnauthenticated(error: String) {
-        if (mCallback is BaseFragment) {
+        if (mCallback is BaseScheduleFragment) {
             mCallback.onExpiredUnAuth(error)
         }
     }

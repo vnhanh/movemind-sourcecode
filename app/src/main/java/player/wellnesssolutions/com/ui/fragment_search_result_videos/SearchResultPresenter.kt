@@ -2,11 +2,11 @@ package player.wellnesssolutions.com.ui.fragment_search_result_videos
 
 import android.content.Context
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.base.view.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
 import player.wellnesssolutions.com.common.constant.Constant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.common.utils.MessageUtils
 import player.wellnesssolutions.com.network.datasource.videos.SearchResultApi
 import player.wellnesssolutions.com.network.datasource.videos.SearchVideosRequestOptions
@@ -102,7 +102,7 @@ class SearchResultPresenter(context: Context) : BaseResponseObserver<ArrayList<M
         }
 
         view.getViewContext()?.also { context ->
-            val headerData = CheckHeaderApiUtil.checkData(SharedPreferencesCustomized.getInstance(context), view.getFragment())
+            val headerData = CheckHeaderApiUtil.checkData(PreferenceHelper.getInstance(context), view.getFragment())
                     ?: return
 
             // handle in case loading data completed but exited app then resume app
@@ -336,14 +336,14 @@ class SearchResultPresenter(context: Context) : BaseResponseObserver<ArrayList<M
 
     override fun onExpired(error: String) {
         mView?.getFragment()?.also {
-            if (it is BaseFragment)
+            if (it is BaseScheduleFragment)
                 it.onExpired(error)
         }
     }
 
     override fun onExpiredUnauthenticated(error: String) {
         mView?.getFragment()?.also {
-            if (it is BaseFragment)
+            if (it is BaseScheduleFragment)
                 it.onExpiredUnAuth(error)
         }
     }

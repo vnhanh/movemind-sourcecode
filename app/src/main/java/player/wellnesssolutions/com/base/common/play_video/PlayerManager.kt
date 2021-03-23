@@ -14,8 +14,8 @@ import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeader
 import player.wellnesssolutions.com.base.utils.check_header_api_util.HeaderData
 import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
 import player.wellnesssolutions.com.common.constant.Constant
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.common.utils.DialogUtil
 import player.wellnesssolutions.com.common.utils.FileUtil
 import player.wellnesssolutions.com.custom_exoplayer.EnumTypeViewVideo
@@ -52,7 +52,7 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, context: Cont
     // video data
     private var mVideos: ArrayList<MMVideo>? = null
 
-    private var mCookieValue: String = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.SP_COOKIE, "")
+    private var mCookieValue: String = PreferenceHelper.getInstance(context).getString(ConstantPreference.SP_COOKIE, "")
 
     // handle CloseCaption related to UI
     private var mClosedCaptionController: ClosedCaptionController? = null
@@ -104,8 +104,8 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, context: Cont
 
         mPlayerCallback?.onStartIntializePlayer()
 
-        val languageKey: String = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.LAST_LANGUAGE_KEY, "")
-        val languageCode: String = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.LAST_LANGUAGE_CODE, "")
+        val languageKey: String = PreferenceHelper.getInstance(context).getString(ConstantPreference.LAST_LANGUAGE_KEY, "")
+        val languageCode: String = PreferenceHelper.getInstance(context).getString(ConstantPreference.LAST_LANGUAGE_CODE, "")
 
         resetData()
         this.mTypeVideo = typeVideo
@@ -124,7 +124,7 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, context: Cont
             mPlayerUseCase.setCurrentPlayPosition(playedVideoPosition)
         }
 
-        val volume: Float = SharedPreferencesCustomized.getInstance(context).getFloat(SPrefConstant.SS_LAST_VOLUME_PERCENT, Constant.DEF_EXO_VOLUME)
+        val volume: Float = PreferenceHelper.getInstance(context).getFloat(ConstantPreference.SS_LAST_VOLUME_PERCENT, Constant.DEF_EXO_VOLUME)
 
         val subtitleLink: String =
                 when (isSupportCC) {
@@ -290,7 +290,7 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, context: Cont
         mPlayerUseCase.mPlayer?.volume = value
 
         mWeakContext.get()?.also {
-            SharedPreferencesCustomized.getInstance(it).putFloat(SPrefConstant.SS_LAST_VOLUME_PERCENT, value)
+            PreferenceHelper.getInstance(it).putFloat(ConstantPreference.SS_LAST_VOLUME_PERCENT, value)
         }
     }
 

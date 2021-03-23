@@ -4,25 +4,23 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.ColorRes
+import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_home.*
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.common.download.DownloadVideoHelper
-import player.wellnesssolutions.com.base.common.load_scheduled_videos.IScheduleContract
-import player.wellnesssolutions.com.base.common.load_scheduled_videos.ScheduledVideosPresenter
-import player.wellnesssolutions.com.base.view.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.base.utils.FragmentUtil
 import player.wellnesssolutions.com.base.utils.ParameterUtils
 import player.wellnesssolutions.com.base.utils.StringUtil
 import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
 import player.wellnesssolutions.com.common.constant.Constant
-import player.wellnesssolutions.com.common.sharedpreferences.SPrefConstant
-import player.wellnesssolutions.com.common.sharedpreferences.SharedPreferencesCustomized
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.common.utils.FileUtil
 import player.wellnesssolutions.com.common.utils.MessageUtils
 import player.wellnesssolutions.com.network.datasource.download.DownloadApi
@@ -31,7 +29,6 @@ import player.wellnesssolutions.com.network.datasource.videos.PlayMode
 import player.wellnesssolutions.com.network.models.config.MMConfigData
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.com.network.models.response.ResponseValue
-import player.wellnesssolutions.com.services.AlarmManagerSchedule
 import player.wellnesssolutions.com.services.DownloadService
 import player.wellnesssolutions.com.ui.activity_main.MainActivity
 import player.wellnesssolutions.com.ui.activity_main.ScheduleBroadcastReceiver
@@ -42,32 +39,22 @@ import player.wellnesssolutions.com.ui.fragment_now_playing.helper.NowPlayingVid
 import player.wellnesssolutions.com.ui.fragment_search_preview.helpers.SPDBUtil
 import player.wellnesssolutions.com.ui.fragment_search_result_videos.SearchResultFragment
 
-class HomeFragment : BaseFragment(), IHomeContract.View, ScheduleBroadcastReceiver.ScheduleListener {
-    private var mHomePresenter: IHomeContract.Presenter? = null
-    private var mSchedulePresenter: IScheduleContract.Presenter? = null
+class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
+    private var presenter: IHomeContract.Presenter? = null
 
-    // Home screen only load schedule automatically only 1 time from start this app
-    private var isBeginShowScreen = true
+    private var isLoadScheduleOnScreenRefresh = true
 
     private val handler = Handler()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        restoreStates(savedInstanceState)
-        mHomePresenter = HomePresenter(context!!)
-        mSchedulePresenter = ScheduledVideosPresenter(context!!)
+        presenter = HomePresenter(context!!)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         arguments?.also { arguments ->
-
-            if (arguments.containsKey(Constant.BUNDLE_SCHEDULE)) {
-                val videos: ArrayList<MMVideo> = VideoDBUtil.readVideosFromDB(Constant.MM_SCHEDULE, false)
-                isBeginShowScreen = false
-                mHomePresenter?.setScheduleRemain(videos)
-                arguments.clear()
-            }
-
+            isLoadScheduleOnScreenRefresh = arguments.getBoolean(Constant.BUNDLE_SCHEDULE, false)
+            arguments.clear()
         }
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
@@ -77,39 +64,29 @@ class HomeFragment : BaseFragment(), IHomeContract.View, ScheduleBroadcastReceiv
         setupUI()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-    }
-
-//    override fun onSaveInstanceState(outState: Bundle) {
-//        super.onSaveInstanceState(outState)
-//        outState.putBoolean(Constant.STATE_IS_BEGIN_SHOW_SCREEN, true)
-//    }
-
     override fun onResume() {
         super.onResume()
 
         registerScheduleBroadcast()
 
-        if (isBeginShowScreen) {
-
+        if (isNewScreen) {
             btnLogoBottom?.setOnClickListener {
-                if (isBeginShowScreen) return@setOnClickListener
+                if (isNewScreen) return@setOnClickListener
                 it.isEnabled = false
-                mSchedulePresenter?.onLoadSchedule(view = this@HomeFragment, isClickedFromBtnBottom = true)
+                loadSchedule(true)
                 it.isEnabled = true
             }
 
             handler.postDelayed(runnableAttachPresenterFirstTime, Constant.TIME_TRANSITION_SCREEN)
         } else {
-            mHomePresenter?.onAttach(this)
-            mSchedulePresenter?.onAttach(this)
+            presenter?.onAttach(this)
         }
+
+        setOldScreen()
     }
 
     override fun onPause() {
-        mHomePresenter?.onDetach()
-        mSchedulePresenter?.onDetach()
+        presenter?.onDetach()
         super.onPause()
     }
 
@@ -121,9 +98,7 @@ class HomeFragment : BaseFragment(), IHomeContract.View, ScheduleBroadcastReceiv
     override fun onDestroy() {
         super.onDestroy()
         unregisterScheduleBroadcast()
-        mHomePresenter?.onDestroy()
-        //mSchedulePresenter?.onDestroy()
-        //mSchedulePresenter = null
+        presenter?.onDestroy()
     }
 
     /**
@@ -131,13 +106,13 @@ class HomeFragment : BaseFragment(), IHomeContract.View, ScheduleBroadcastReceiv
      */
 
     private val runnableAttachPresenterFirstTime = Runnable {
-        if (!isBeginShowScreen) return@Runnable
-        isBeginShowScreen = false
-        mSchedulePresenter?.onLoadSchedule(this, false)
+        if (!isNewScreen) return@Runnable
+
+        if(isLoadScheduleOnScreenRefresh) loadSchedule(false)
 
         if (ParameterUtils.isFragmentHomeOpen) {
             context?.let {
-                if (SharedPreferencesCustomized.getInstance(it).getBoolean(SPrefConstant.IS_DOWNLOAD_VIDEOS, true)) {
+                if (PreferenceHelper.getInstance(it).getBoolean(ConstantPreference.IS_DOWNLOAD_VIDEOS, true)) {
                     getAllVideosForDownload(it)
                 } else {
                     checkSubIsChange(it)
@@ -159,8 +134,8 @@ class HomeFragment : BaseFragment(), IHomeContract.View, ScheduleBroadcastReceiv
     }
 
     private fun checkSubIsChange(context: Context) {
-        val tokenAu: String = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.TOKEN, "")
-        val deviceId = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.DEVICE_ID, "")
+        val tokenAu: String = PreferenceHelper.getInstance(context).getString(ConstantPreference.TOKEN, "")
+        val deviceId = PreferenceHelper.getInstance(context).getString(ConstantPreference.DEVICE_ID, "")
         if (deviceId.isNotEmpty() && tokenAu.isNotEmpty()) {
             HomeApi().getUserSubscription(tokenAu, deviceId)
                     .subscribe(object : BaseResponseObserver<Int>() {
@@ -171,18 +146,18 @@ class HomeFragment : BaseFragment(), IHomeContract.View, ScheduleBroadcastReceiv
                         override fun onResponseSuccess(data: ResponseValue<Int>?) {
                             super.onResponseSuccess(data)
                             if (data == null) return
-                            if (SharedPreferencesCustomized.getInstance(context).getInt(SPrefConstant.DOWNLOAD_VIDEOS_SUBS_ID, -1) == -1) {
-                                SharedPreferencesCustomized.getInstance(context).putInt(SPrefConstant.DOWNLOAD_VIDEOS_SUBS_ID, data.data)
+                            if (PreferenceHelper.getInstance(context).getInt(ConstantPreference.DOWNLOAD_VIDEOS_SUBS_ID, -1) == -1) {
+                                PreferenceHelper.getInstance(context).putInt(ConstantPreference.DOWNLOAD_VIDEOS_SUBS_ID, data.data)
                             }
-                            if (SharedPreferencesCustomized.getInstance(context).getInt(SPrefConstant.DOWNLOAD_VIDEOS_SUBS_ID, -1) != data.data) {
-                                SharedPreferencesCustomized.getInstance(context).putInt(SPrefConstant.DOWNLOAD_VIDEOS_SUBS_ID, data.data)
+                            if (PreferenceHelper.getInstance(context).getInt(ConstantPreference.DOWNLOAD_VIDEOS_SUBS_ID, -1) != data.data) {
+                                PreferenceHelper.getInstance(context).putInt(ConstantPreference.DOWNLOAD_VIDEOS_SUBS_ID, data.data)
                                 val intent = Intent().apply {
                                     action = DownloadService.ACTION_DOWNLOAD
                                     putExtra(DownloadService.DOWNLOAD_VIDEO, Constant.API_CHANGE_SUB_SERVICE)
                                 }
                                 context.sendBroadcast(intent)
                             } else {
-                                SharedPreferencesCustomized.getInstance(context).putInt(SPrefConstant.DOWNLOAD_VIDEOS_SUBS_ID, data.data)
+                                PreferenceHelper.getInstance(context).putInt(ConstantPreference.DOWNLOAD_VIDEOS_SUBS_ID, data.data)
                                 continueDownload(context)
                             }
                         }
@@ -195,8 +170,8 @@ class HomeFragment : BaseFragment(), IHomeContract.View, ScheduleBroadcastReceiv
     }
 
     private fun getAllVideosForDownload(context: Context) {
-        val tokenAu: String = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.TOKEN, "")
-        val deviceId = SharedPreferencesCustomized.getInstance(context).getString(SPrefConstant.DEVICE_ID, "")
+        val tokenAu: String = PreferenceHelper.getInstance(context).getString(ConstantPreference.TOKEN, "")
+        val deviceId = PreferenceHelper.getInstance(context).getString(ConstantPreference.DEVICE_ID, "")
         if (deviceId.isNotEmpty() && tokenAu.isNotEmpty()) {
             DownloadApi().getAllVideosFromServer(tokenAu, deviceId)
                     .subscribe(object : BaseResponseObserver<ArrayList<MMVideo>>() {
@@ -208,7 +183,7 @@ class HomeFragment : BaseFragment(), IHomeContract.View, ScheduleBroadcastReceiv
                             super.onResponseSuccess(data)
                             if (data == null) return
                             VideoDBUtil.saveDVideosToDB(data = data.data, tag = Constant.DownloadTag)
-                            SharedPreferencesCustomized.getInstance(context).putBoolean(SPrefConstant.IS_DOWNLOAD_VIDEOS, false)
+                            PreferenceHelper.getInstance(context).putBoolean(ConstantPreference.IS_DOWNLOAD_VIDEOS, false)
                             val intent = Intent().apply {
                                 action = DownloadService.ACTION_DOWNLOAD
                                 putExtra(DownloadService.DOWNLOAD_VIDEO, Constant.DOWNLOAD_START)
@@ -230,44 +205,11 @@ class HomeFragment : BaseFragment(), IHomeContract.View, ScheduleBroadcastReceiv
     }
 
     override fun openNowPlayingScreen(videos: ArrayList<MMVideo>) {
-        loadNowPlayingScreen(videos)
+        loadNowPlayingScreen()
     }
 
     override fun onHaveClassVideosWithTimeWaiting(videos: ArrayList<MMVideo>) {
-        mHomePresenter?.setScheduleRemain(videos)
-    }
-
-    override fun onReceivePlayVideoScheduleFromUI() {
-        mHomePresenter?.onTimePlayAlreadySchedule()
-    }
-
-    override fun onReceiveResetScheduleFromUI() {
-        mSchedulePresenter?.onLoadSchedule(this, false)
-    }
-
-    override fun onReceiveUpdateScheduleFromUI() {
-        AlarmManagerSchedule.cancelAlarmScheduleTime()
-        mSchedulePresenter?.onLoadSchedule(this, false)
-    }
-
-    override fun onReceiveChangeApiBackToHome() {
-
-    }
-
-    override fun onReceiveChangeApiBackToHomeGetConfigApi() {
-        activity?.let {
-            if (it is MainActivity) {
-                it.getApiConfigData()
-            }
-        }
-    }
-
-    override fun onReceiveChangeApiGetConfigApi() {
-        activity?.let {
-            if (it is MainActivity) {
-                it.getApiConfigData()
-            }
-        }
+//        mHomePresenter?.setScheduleCurrent(videos)
     }
 
     private fun registerScheduleBroadcast() {
@@ -315,9 +257,13 @@ class HomeFragment : BaseFragment(), IHomeContract.View, ScheduleBroadcastReceiv
 
                 loadNoClassScreen()
             } else {
-                loadNowPlayingScreen(scheduledVideos)
+                loadNowPlayingScreen()
             }
         }
+    }
+
+    override fun onTimePlaySchedule() {
+        loadNowPlayingScreen()
     }
 
     private fun loadNoClassScreen() {
@@ -330,9 +276,15 @@ class HomeFragment : BaseFragment(), IHomeContract.View, ScheduleBroadcastReceiv
         )
     }
 
-    private fun loadNowPlayingScreen(scheduleVideos: ArrayList<MMVideo>) {
+//    private fun loadNowPlayingScreen(scheduleVideos: ArrayList<MMVideo>) {
+//        activity?.supportFragmentManager?.also { fm ->
+//            NowPlayingVideoSetupHelper.openNowPlayingWithSchedule(fm, scheduleVideos)
+//        }
+//    }
+
+    private fun loadNowPlayingScreen() {
         activity?.supportFragmentManager?.also { fm ->
-            NowPlayingVideoSetupHelper.openNowPlayingWithSchedule(fm, scheduleVideos)
+            NowPlayingVideoSetupHelper.openNowPlayingWithSchedule(fm)
         }
     }
 
@@ -421,7 +373,29 @@ class HomeFragment : BaseFragment(), IHomeContract.View, ScheduleBroadcastReceiv
     companion object {
         const val TAG = "HomeFragment"
 
-        fun getInstance(): HomeFragment = HomeFragment()
+        fun getInstanceWithLoadSchedule(): HomeFragment = HomeFragment().apply {
+            arguments = Bundle().apply {
+                putBoolean(Constant.BUNDLE_SCHEDULE, true)
+            }
+        }
+
+        fun updateAlreadyInstanceWithLoadSchedule(fragment: HomeFragment): HomeFragment = fragment.apply {
+            arguments = Bundle().apply {
+                putBoolean(Constant.BUNDLE_SCHEDULE, true)
+            }
+        }
+
+        fun getInstanceNoLoadSchedule(): HomeFragment = HomeFragment().apply {
+            arguments = Bundle().apply {
+                putBoolean(Constant.BUNDLE_SCHEDULE, false)
+            }
+        }
+
+        fun updateAlreadyInstanceWithNoSchedule(fragment: HomeFragment): Fragment = fragment.apply {
+            arguments = Bundle().apply {
+                putBoolean(Constant.BUNDLE_SCHEDULE, false)
+            }
+        }
 
         fun getInstanceWithRemainSchedule(videos: ArrayList<MMVideo>): HomeFragment = HomeFragment().apply {
             VideoDBUtil.createOrUpdateVideos(videos, Constant.MM_SCHEDULE)
