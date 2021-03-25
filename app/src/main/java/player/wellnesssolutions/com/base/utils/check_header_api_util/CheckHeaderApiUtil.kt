@@ -1,11 +1,9 @@
 package player.wellnesssolutions.com.base.utils.check_header_api_util
 
 import android.content.Context
-import android.util.Log
 import androidx.fragment.app.Fragment
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.view.BaseFragment
-import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 

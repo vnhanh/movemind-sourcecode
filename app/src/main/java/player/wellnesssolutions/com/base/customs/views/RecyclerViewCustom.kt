@@ -33,7 +33,7 @@ class RecyclerViewCustom : androidx.recyclerview.widget.RecyclerView {
             return
         }
 
-        when (val childCount = adapter.getItemCount()) {
+        when (val childCount = adapter.itemCount) {
             in 0..adapter.maxItemCountInRow -> {
                 adapter.apply {
                     rowSpan = 1
@@ -82,7 +82,7 @@ class RecyclerViewCustom : androidx.recyclerview.widget.RecyclerView {
     private fun setupForAdapter(adapter: BaseSearchVideosAdapter<*, *, *>) {
         if (this.adapter != null || !isCustomed) return
 
-        when (val childCount = adapter.getItemCount()) {
+        when (val childCount = adapter.itemCount) {
             in 0..adapter.maxItemCountInRow -> {
                 adapter.apply {
                     rowSpan = 1

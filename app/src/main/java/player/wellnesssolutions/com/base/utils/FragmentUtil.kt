@@ -1,6 +1,5 @@
 package player.wellnesssolutions.com.base.utils
 
-import android.util.Log
 import androidx.annotation.IdRes
 import androidx.fragment.app.*
 import player.wellnesssolutions.com.R

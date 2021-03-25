@@ -6,8 +6,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.application.MyApplication
-import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.base.utils.CommonUtility
+import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.common.utils.MessageUtils
@@ -38,7 +38,8 @@ class ScanBarCodePresenter(private val mView: ScanBarCodeContract.View) : ScanBa
 //        mPref.putString(SPrefConstant.SS_BOTTOM_BAR_COLOR, "#041e41")
 //        mPref.putString(SPrefConstant.PRIMARY_COLOR, "#00c3b3")
 //        mPref.putString(SPrefConstant.SECONDARY_COLOR, "#FFFFFF")
-            sharedPref.putString(ConstantPreference.SS_BOTTOM_BAR_COLOR, branding.bottomBarColor ?: "")
+            sharedPref.putString(ConstantPreference.SS_BOTTOM_BAR_COLOR, branding.bottomBarColor
+                    ?: "")
             sharedPref.putString(ConstantPreference.PRIMARY_COLOR, branding.primaryColor ?: "")
             sharedPref.putString(ConstantPreference.SECONDARY_COLOR, branding.textColor ?: "")
             sharedPref.putString(ConstantPreference.SS_COMPANY_LOGO, branding.companyLogo ?: "")

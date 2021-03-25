@@ -2,10 +2,10 @@ package player.wellnesssolutions.com.ui.fragment_no_class
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import player.wellnesssolutions.com.base.view.BaseScheduleFragment
-import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
 import player.wellnesssolutions.com.base.utils.check_header_api_util.HeaderData
+import player.wellnesssolutions.com.base.view.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.network.models.config.MMConfigData
@@ -14,7 +14,7 @@ import player.wellnesssolutions.com.network.models.screen_search.MMBrand
 import player.wellnesssolutions.com.ui.fragment_search_brands.module.ILoadBrandHandler
 import player.wellnesssolutions.com.ui.fragment_search_brands.module.LoadBrandsHandler
 
-class NoClassPresenter() : BaseResponseObserver<ArrayList<MMBrand>>(), INoClassContract.Presenter {
+class NoClassPresenter : BaseResponseObserver<ArrayList<MMBrand>>(), INoClassContract.Presenter {
     private var mView: INoClassContract.View? = null
     private var mLoadBrandsHandler: ILoadBrandHandler? = null
     private var mNoClassData: MMNoClass? = null
@@ -63,14 +63,14 @@ class NoClassPresenter() : BaseResponseObserver<ArrayList<MMBrand>>(), INoClassC
 
     override fun onExpired(error: String) {
         mView?.getFragment()?.also {
-            if (it is BaseScheduleFragment)
+            if (it is BaseFragment)
                 it.onExpired(error)
         }
     }
 
     override fun onExpiredUnauthenticated(error: String) {
         mView?.getFragment()?.also {
-            if (it is BaseScheduleFragment)
+            if (it is BaseFragment)
                 it.onExpiredUnAuth(error)
         }
     }

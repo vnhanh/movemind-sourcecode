@@ -53,10 +53,6 @@ object DownloadVideoHelper {
                     override fun onExpiredUnauthenticated(error: String) {
                     }
 
-                    override fun onResponseSuccess(data: ResponseValue<Any>?) {
-                        super.onResponseSuccess(data)
-                    }
-
                 })
     }
 
@@ -71,9 +67,6 @@ object DownloadVideoHelper {
                     override fun onExpiredUnauthenticated(error: String) {
                     }
 
-                    override fun onResponseSuccess(data: ResponseValue<Any>?) {
-                        super.onResponseSuccess(data)
-                    }
                 })
     }
 

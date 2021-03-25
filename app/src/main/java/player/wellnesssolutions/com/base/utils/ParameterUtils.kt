@@ -6,5 +6,5 @@ object ParameterUtils {
     var isPlayNewList = false
     var isFragmentHomeOpen = true
     var isGoToMainActivity = true
-    var isClearVideoOnPresentation = true;
+    var isClearVideoOnPresentation = true
 }

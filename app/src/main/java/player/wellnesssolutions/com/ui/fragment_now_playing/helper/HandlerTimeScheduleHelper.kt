@@ -1,5 +1,6 @@
 package player.wellnesssolutions.com.ui.fragment_now_playing.helper
 
+import android.util.Log
 import com.google.gson.Gson
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.common.constant.Constant
@@ -12,7 +13,7 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
-interface ICallbackTimePlaySchedule {
+interface ICallbackNowScheduleVideo {
     fun onResult(state: STATE_TIME_PLAY_SCHEDULE, timePlay: Long)
 }
 
@@ -24,19 +25,24 @@ enum class STATE_TIME_PLAY_SCHEDULE(val state: String) {
 }
 
 object HandlerTimeScheduleHelper {
-
-    fun calculateTimePlayVideo(video: MMVideo, callback: ICallbackTimePlaySchedule) {
+    private const val TIME_PLAY_MAX_ROUND = 2000L
+    fun calculateTimePlayVideo(video: MMVideo, callback: ICallbackNowScheduleVideo) {
         try {
-            val playTime: Long = convertTime(video.getStartTime())
+            val timeStart: Long = convertTime(video.getStartTime())
             val length = ((video.videoLength ?: 0f) * 1000).toInt()
-            val endTime = playTime + length
+            val timeEnd = timeStart + length
+            Log.d("LOG", this.javaClass.simpleName + " claculateTimePlayVideo() | time start: ${convertCurrentTimeToDateStr(timeStart)} | " +
+                    "time end: ${convertCurrentTimeToDateStr(timeEnd)}")
             val currentTime = System.currentTimeMillis()
             when {
-                currentTime < endTime -> {
-                    val timeDiff = currentTime - playTime
+                currentTime < timeEnd -> {
+                    var timePlay = currentTime - timeStart
                     when {
-                        timeDiff < -1 * Constant.TIME_CHANGE_SCREEN -> callback.onResult(STATE_TIME_PLAY_SCHEDULE.TIME_WAIT, -1 * timeDiff)
-                        else -> callback.onResult(STATE_TIME_PLAY_SCHEDULE.TIME_PLAY, timeDiff)
+                        timePlay < -1 * Constant.TIME_CHANGE_SCREEN -> callback.onResult(STATE_TIME_PLAY_SCHEDULE.TIME_WAIT, -1 * timePlay)
+                        else -> {
+                            if (timePlay <= TIME_PLAY_MAX_ROUND) timePlay = 0L
+                            callback.onResult(STATE_TIME_PLAY_SCHEDULE.TIME_PLAY, timePlay)
+                        }
                     }
                 }
 
@@ -53,6 +59,7 @@ object HandlerTimeScheduleHelper {
         }
     }
 
+    // keep this for logging
     private fun convertCurrentTimeToDateStr(time: Long): String {
         val sdf = SimpleDateFormat("H:mm:ss")
         return sdf.format(Date(time))

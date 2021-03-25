@@ -41,8 +41,4 @@ class SearchBrandsAdapter(listener: ISearchBrandsContract.Presenter?, items: Arr
         return vh
     }
 
-    override fun getItemCount(): Int {
-        return super.getItemCount()
-    }
-
 }

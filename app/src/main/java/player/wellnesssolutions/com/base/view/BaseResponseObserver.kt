@@ -34,7 +34,7 @@ abstract class BaseResponseObserver<T> : Observer<Response<ResponseValue<T>>> {
                 "body message ${response.body()?.message} | code: ${response.code()}")
         this.response = response
 
-        when{
+        when {
             response.code() == 200 -> {
                 onResponseSuccess(response.body())
             }
@@ -115,7 +115,7 @@ abstract class BaseResponseObserver<T> : Observer<Response<ResponseValue<T>>> {
     // the final false/failed function would be called
     protected open fun onResponseFalse(code: Int, message: String?) {}
 
-    protected open fun onUnAuthorized(){}
+    protected open fun onUnAuthorized() {}
 
     abstract fun onExpired(error: String)
 

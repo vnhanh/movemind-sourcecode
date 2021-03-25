@@ -2,6 +2,7 @@ package player.wellnesssolutions.com.base.view
 
 import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +10,9 @@ import player.wellnesssolutions.com.base.common.load_scheduled_videos.IScheduleC
 import player.wellnesssolutions.com.base.common.load_scheduled_videos.SchedulePresenter
 import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
 import player.wellnesssolutions.com.common.constant.Constant
+import player.wellnesssolutions.com.common.constant.SOURCE_LOAD_SCHEDULE
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
+import player.wellnesssolutions.com.services.AlarmManagerSchedule
 import player.wellnesssolutions.com.ui.activity_main.MainActivity
 import player.wellnesssolutions.com.ui.activity_main.ScheduleBroadcastReceiver
 
@@ -17,27 +20,46 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
     private var schedulePresenter: IScheduleContract.Presenter? = null
     protected var isNewScreen = true
     protected var dialog: Dialog? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        schedulePresenter = SchedulePresenter(context!!)
-    }
+    protected var isStartedOpenNewScreen = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         isNewScreen = true
+        isStartedOpenNewScreen = false
+        schedulePresenter = SchedulePresenter(context!!)
+
+//        if (isNewScreen) {
+        Log.d("LOG", this.javaClass.simpleName + " onCreateView() | isNewScreen | arguments is: ${arguments ?: "null"}")
+        arguments?.also { bundle ->
+            val sourceLoadSchedule = bundle.getString(Constant.BUNDLE_SOURCE_SCHEDULE).orEmpty()
+            Log.d("LOG", this.javaClass.simpleName + " onCreateView() | sourceLoadSchedule: ${sourceLoadSchedule}")
+            when {
+                sourceLoadSchedule == SOURCE_LOAD_SCHEDULE.LOCAL.toString() -> {
+                    val videos: ArrayList<MMVideo> = VideoDBUtil.getVideosFromDB(Constant.MM_SCHEDULE, false)
+                    Log.d("LOG", this.javaClass.simpleName + " onCreateView() | contains BUNDLE_SCHEDULE | isNewScreen: $isNewScreen | videos number: ${videos.size}")
+                    when {
+                        videos.size > 0 -> schedulePresenter?.setScheduleCurrentAndWaitNextVideo(videos)
+                        else -> {
+                            Log.d("LOG", this.javaClass.simpleName + " onCreateView() | isNewScreen | load remote schedule")
+                            schedulePresenter?.setStateLoadScheduleOnStart()
+                        }
+                    }
+                }
+
+                sourceLoadSchedule == SOURCE_LOAD_SCHEDULE.REMOTE.toString() -> {
+                    Log.d("LOG", this.javaClass.simpleName + " onCreateView() | isNewScreen | load remote schedule")
+                    schedulePresenter?.setStateLoadScheduleOnStart()
+                }
+            }
+
+        }
+//        }
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onResume() {
         super.onResume()
-        if (isNewScreen) {
-            val videos: ArrayList<MMVideo> = VideoDBUtil.getVideosFromDB(Constant.MM_SCHEDULE, false)
-            if (videos.size > 0) {
-                schedulePresenter?.setScheduleCurrentAndWaitNextVideo(videos)
-            }
-        }
+
         schedulePresenter?.onAttach(this)
-        isNewScreen = false
     }
 
     override fun onPause() {
@@ -47,11 +69,12 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
 
     override fun onStop() {
         super.onStop()
-        isNewScreen = true
+        Log.d("LOG", this.javaClass.simpleName + " onStop()")
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        isNewScreen = true
         schedulePresenter?.onDestroy()
     }
 
@@ -63,20 +86,30 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
         isNewScreen = false
     }
 
+    protected fun onHandleSchedule() {
+        schedulePresenter?.onTimePlaySchedule()
+    }
+
     /**
      * ------------------------------------------------------------------------------------------------------------------------
      */
 
     override fun onReceivePlayVideoScheduleFromUI() {
+        Log.d("LOG", this.javaClass.simpleName + " onReceivePlayVideoScheduleFromUI()")
+        AlarmManagerSchedule.cancelAlarmScheduleTime()
         schedulePresenter?.onTimePlaySchedule()
     }
 
     override fun onReceiveResetScheduleFromUI() {
-        schedulePresenter?.onLoadSchedule(this, false)
+        Log.d("LOG", this.javaClass.simpleName + " onReceiveResetScheduleFromUI()")
+        AlarmManagerSchedule.cancelAlarmScheduleTime()
+        schedulePresenter?.onLoadSchedule(this, false, true)
     }
 
     override fun onReceiveUpdateScheduleFromUI() {
-        schedulePresenter?.onLoadSchedule(this, false)
+        Log.d("LOG", this.javaClass.simpleName + " onReceiveUpdateScheduleFromUI()")
+        AlarmManagerSchedule.cancelAlarmScheduleTime()
+        schedulePresenter?.onLoadSchedule(view = this, isClickedFromBtnBottom = false, mustLoad = true)
     }
 
     override fun onReceiveChangeApiBackToHome() {

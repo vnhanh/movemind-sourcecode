@@ -6,7 +6,7 @@ import player.wellnesssolutions.com.ui.fragment_search_brands.module.LoadBrandsH
 import player.wellnesssolutions.com.ui.fragment_search_levels.SearchLevelsFragment
 import player.wellnesssolutions.com.ui.fragment_search_videos_by.SearchVideosByFragment
 
-class SearchBrandsPresenter() : ISearchBrandsContract.Presenter {
+class SearchBrandsPresenter : ISearchBrandsContract.Presenter {
     private var mView: ISearchBrandsContract.View? = null
     private var mLoadBrandsHandler: ILoadBrandHandler? = null
 

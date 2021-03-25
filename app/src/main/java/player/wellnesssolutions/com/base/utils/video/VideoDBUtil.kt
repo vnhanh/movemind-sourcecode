@@ -1,5 +1,6 @@
 package player.wellnesssolutions.com.base.utils.video
 
+import android.util.Log
 import io.realm.Realm
 import io.realm.RealmList
 import player.wellnesssolutions.com.base.utils.video.mapper.*
@@ -45,6 +46,7 @@ object VideoDBUtil {
 
 
     fun createOrUpdateVideos(data: ArrayList<MMVideo>, tag: String) {
+        Log.d("LOG", this.javaClass.simpleName + " createOrUpdateVideos() | videos number: ${data.size}")
         val realm = Realm.getDefaultInstance()
 
         try {
@@ -61,10 +63,10 @@ object VideoDBUtil {
     }
 
     fun deleteVideosFromDB(tag: String): Boolean {
-        val realm = Realm.getDefaultInstance()
         var isSuccess = true
-
+        var realm: Realm? = null
         try {
+            realm = Realm.getDefaultInstance()
             realm.beginTransaction()
             val result = realm.where(VideoEntity::class.java).equalTo("tag", tag).findAll()
             result.deleteAllFromRealm()
@@ -74,7 +76,7 @@ object VideoDBUtil {
             e.printStackTrace()
             isSuccess = false
         } finally {
-            realm.close()
+            realm?.close()
         }
         return isSuccess
     }

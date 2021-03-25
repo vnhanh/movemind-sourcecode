@@ -152,11 +152,6 @@ class FCMService : FirebaseMessagingService() {
         }
     }
 
-    override fun onNewToken(token: String) {
-        super.onNewToken(token)
-
-    }
-
 
     private fun mergeStringWithAppModel(data: String): String = Constant.AppModel + data
 }

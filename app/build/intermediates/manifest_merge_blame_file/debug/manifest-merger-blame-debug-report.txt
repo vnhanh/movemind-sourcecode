@@ -1,0 +1,430 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="player.wellnesssolutions.com.au"
+4    android:versionCode="17"
+5    android:versionName="2.6" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="21"
+8-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml
+9        android:targetSdkVersion="29" />
+9-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml
+10
+11    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+11-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:6:5-78
+11-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:6:22-75
+12    <uses-permission android:name="android.permission.INTERNET" />
+12-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:7:5-67
+12-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:7:22-64
+13    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+13-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:8:5-79
+13-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:8:22-76
+14    <uses-permission android:name="android.permission.CAMERA" />
+14-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:9:5-65
+14-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:9:22-62
+15    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+15-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:10:5-74
+15-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:10:22-72
+16    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+16-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:11:5-13:32
+16-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:12:9-65
+17    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+17-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:14:5-79
+17-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:14:22-77
+18
+19    <!-- This permission is required to start foreground services in Android P. -->
+20    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> <!-- Don't require camera, as this requires a rear camera. This allows it to work on the Nexus 7 -->
+20-->[com.google.android.gms:play-services-cast-framework:19.0.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d435f121fcb7e1ea3d567dc63c118c2a\jetified-play-services-cast-framework-19.0.0\AndroidManifest.xml:7:5-77
+20-->[com.google.android.gms:play-services-cast-framework:19.0.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d435f121fcb7e1ea3d567dc63c118c2a\jetified-play-services-cast-framework-19.0.0\AndroidManifest.xml:7:22-74
+21    <uses-feature
+21-->[com.journeyapps:zxing-android-embedded:3.6.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d0f105d515d4abf601340c19d173aff9\jetified-zxing-android-embedded-3.6.0\AndroidManifest.xml:25:5-27:36
+22        android:name="android.hardware.camera"
+22-->[com.journeyapps:zxing-android-embedded:3.6.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d0f105d515d4abf601340c19d173aff9\jetified-zxing-android-embedded-3.6.0\AndroidManifest.xml:26:9-47
+23        android:required="false" />
+23-->[com.journeyapps:zxing-android-embedded:3.6.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d0f105d515d4abf601340c19d173aff9\jetified-zxing-android-embedded-3.6.0\AndroidManifest.xml:27:9-33
+24    <uses-feature
+24-->[com.journeyapps:zxing-android-embedded:3.6.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d0f105d515d4abf601340c19d173aff9\jetified-zxing-android-embedded-3.6.0\AndroidManifest.xml:28:5-30:36
+25        android:name="android.hardware.camera.front"
+25-->[com.journeyapps:zxing-android-embedded:3.6.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d0f105d515d4abf601340c19d173aff9\jetified-zxing-android-embedded-3.6.0\AndroidManifest.xml:29:9-53
+26        android:required="false" /> <!-- TODO replace above two with next line after Android 4.2 -->
+26-->[com.journeyapps:zxing-android-embedded:3.6.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d0f105d515d4abf601340c19d173aff9\jetified-zxing-android-embedded-3.6.0\AndroidManifest.xml:30:9-33
+27    <!-- <uses-feature android:name="android.hardware.camera.any"/> -->
+28    <uses-feature
+28-->[com.journeyapps:zxing-android-embedded:3.6.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d0f105d515d4abf601340c19d173aff9\jetified-zxing-android-embedded-3.6.0\AndroidManifest.xml:33:5-35:36
+29        android:name="android.hardware.camera.autofocus"
+29-->[com.journeyapps:zxing-android-embedded:3.6.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d0f105d515d4abf601340c19d173aff9\jetified-zxing-android-embedded-3.6.0\AndroidManifest.xml:34:9-57
+30        android:required="false" />
+30-->[com.journeyapps:zxing-android-embedded:3.6.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d0f105d515d4abf601340c19d173aff9\jetified-zxing-android-embedded-3.6.0\AndroidManifest.xml:35:9-33
+31    <uses-feature
+31-->[com.journeyapps:zxing-android-embedded:3.6.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d0f105d515d4abf601340c19d173aff9\jetified-zxing-android-embedded-3.6.0\AndroidManifest.xml:36:5-38:36
+32        android:name="android.hardware.camera.flash"
+32-->[com.journeyapps:zxing-android-embedded:3.6.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d0f105d515d4abf601340c19d173aff9\jetified-zxing-android-embedded-3.6.0\AndroidManifest.xml:37:9-53
+33        android:required="false" />
+33-->[com.journeyapps:zxing-android-embedded:3.6.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d0f105d515d4abf601340c19d173aff9\jetified-zxing-android-embedded-3.6.0\AndroidManifest.xml:38:9-33
+34    <uses-feature
+34-->[com.journeyapps:zxing-android-embedded:3.6.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d0f105d515d4abf601340c19d173aff9\jetified-zxing-android-embedded-3.6.0\AndroidManifest.xml:39:5-41:36
+35        android:name="android.hardware.screen.landscape"
+35-->[com.journeyapps:zxing-android-embedded:3.6.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d0f105d515d4abf601340c19d173aff9\jetified-zxing-android-embedded-3.6.0\AndroidManifest.xml:40:9-57
+36        android:required="false" />
+36-->[com.journeyapps:zxing-android-embedded:3.6.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d0f105d515d4abf601340c19d173aff9\jetified-zxing-android-embedded-3.6.0\AndroidManifest.xml:41:9-33
+37    <uses-feature
+37-->[com.journeyapps:zxing-android-embedded:3.6.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d0f105d515d4abf601340c19d173aff9\jetified-zxing-android-embedded-3.6.0\AndroidManifest.xml:42:5-44:36
+38        android:name="android.hardware.wifi"
+38-->[com.journeyapps:zxing-android-embedded:3.6.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d0f105d515d4abf601340c19d173aff9\jetified-zxing-android-embedded-3.6.0\AndroidManifest.xml:43:9-45
+39        android:required="false" />
+39-->[com.journeyapps:zxing-android-embedded:3.6.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d0f105d515d4abf601340c19d173aff9\jetified-zxing-android-embedded-3.6.0\AndroidManifest.xml:44:9-33
+40
+41    <uses-permission android:name="android.permission.WAKE_LOCK" /> <!-- Required by older versions of Google Play services to create IID tokens -->
+41-->[com.google.firebase:firebase-iid:21.0.1] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\3eed6bcd19ba58865833f1e6af4231e8\jetified-firebase-iid-21.0.1\AndroidManifest.xml:24:5-68
+41-->[com.google.firebase:firebase-iid:21.0.1] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\3eed6bcd19ba58865833f1e6af4231e8\jetified-firebase-iid-21.0.1\AndroidManifest.xml:24:22-65
+42    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+42-->[com.google.firebase:firebase-iid:21.0.1] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\3eed6bcd19ba58865833f1e6af4231e8\jetified-firebase-iid-21.0.1\AndroidManifest.xml:26:5-82
+42-->[com.google.firebase:firebase-iid:21.0.1] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\3eed6bcd19ba58865833f1e6af4231e8\jetified-firebase-iid-21.0.1\AndroidManifest.xml:26:22-79
+43    <uses-permission android:name="com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE" />
+43-->[com.google.android.gms:play-services-measurement:18.0.2] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\726c0b1e9cde1200e41f999b401883c0\jetified-play-services-measurement-18.0.2\AndroidManifest.xml:26:5-110
+43-->[com.google.android.gms:play-services-measurement:18.0.2] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\726c0b1e9cde1200e41f999b401883c0\jetified-play-services-measurement-18.0.2\AndroidManifest.xml:26:22-107
+44
+45    <application
+45-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:16:5-91:19
+46        android:name="player.wellnesssolutions.com.base.application.MyApplication"
+46-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:17:9-83
+47        android:allowBackup="true"
+47-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:18:9-35
+48        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+48-->[androidx.core:core:1.1.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\618507fb174d03c5733b54ed10283e9f\core-1.1.0\AndroidManifest.xml:24:18-86
+49        android:debuggable="true"
+50        android:icon="@mipmap/ic_launcher"
+50-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:19:9-43
+51        android:label="@string/app_name"
+51-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:20:9-41
+52        android:networkSecurityConfig="@xml/network_security_config"
+52-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:21:9-69
+53        android:roundIcon="@mipmap/ic_launcher_round"
+53-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:22:9-54
+54        android:supportsRtl="true"
+54-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:23:9-35
+55        android:testOnly="true"
+56        android:theme="@style/AppTheme" >
+56-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:24:9-40
+57        <activity
+57-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:26:9-34:20
+58            android:name="player.wellnesssolutions.com.ui.activity_scan_barcode.ScanBarCodeActivity"
+58-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:27:13-101
+59            android:screenOrientation="landscape" >
+59-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:28:13-50
+60
+61            <!-- <intent-filter> -->
+62            <!-- <action android:name="android.intent.action.MAIN" /> -->
+63
+64
+65            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+66            <!-- </intent-filter> -->
+67        </activity>
+68        <activity
+68-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:36:9-44:20
+69            android:name="player.wellnesssolutions.com.ui.activity_main.MainActivity"
+69-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:37:13-86
+70            android:screenOrientation="landscape" >
+70-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:38:13-50
+71            <intent-filter>
+71-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:39:13-43:29
+72                <action android:name="android.intent.action.MAIN" />
+72-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:40:17-69
+72-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:40:25-66
+73
+74                <category android:name="android.intent.category.LAUNCHER" />
+74-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:42:17-77
+74-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:42:27-74
+75            </intent-filter>
+76        </activity>
+77
+78        <receiver android:name="player.wellnesssolutions.com.network.network_connect.NetworkReceiver" >
+78-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:46:9-50:20
+78-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:46:19-74
+79            <intent-filter>
+79-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:47:13-49:29
+80                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+80-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:48:17-79
+80-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:48:25-76
+81            </intent-filter>
+82        </receiver>
+83        <receiver android:name="player.wellnesssolutions.com.ui.activity_main.CastingBroadcastReceiver" >
+83-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:52:9-57:20
+83-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:52:19-104
+84            <intent-filter>
+84-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:53:13-56:29
+85                <action android:name="com.tma.movemind.TV_STATUS_CHANGE" />
+85-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:54:17-76
+85-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:54:25-73
+86                <action android:name="com.tma.movemind.UI_COMMAND" />
+86-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:55:17-70
+86-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:55:25-67
+87            </intent-filter>
+88        </receiver>
+89
+90        <service
+90-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:59:9-61:44
+91            android:name="player.wellnesssolutions.com.ui.activity_main.ClosingService"
+91-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:60:13-88
+92            android:stopWithTask="false" />
+92-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:61:13-41
+93        <service
+93-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:63:9-66:43
+94            android:name="player.wellnesssolutions.com.services.DownloadService"
+94-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:63:18-58
+95            android:enabled="true"
+95-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:64:13-35
+96            android:exported="true"
+96-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:65:13-36
+97            android:stopWithTask="false" />
+97-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:66:13-41
+98        <!-- CASTING -->
+99        <meta-data
+99-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:68:9-70:83
+100            android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
+100-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:69:13-93
+101            android:value="com.tma.movemind.ui.main_screen.CastOptionsProvider" />
+101-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:70:13-80
+102
+103        <service
+103-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:72:9-75:40
+104            android:name="player.wellnesssolutions.com.services.MMPresentationService"
+104-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:73:13-87
+105            android:enabled="true"
+105-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:74:13-35
+106            android:exported="false" />
+106-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:75:13-37
+107        <service
+107-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:76:9-84:19
+108            android:name="player.wellnesssolutions.com.services.FCMService"
+108-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:77:13-48
+109            android:enabled="true"
+109-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:78:13-35
+110            android:exported="true" >
+110-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:79:13-36
+111            <intent-filter>
+111-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:81:13-83:29
+112                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+112-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:82:17-78
+112-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:82:25-75
+113            </intent-filter>
+114        </service>
+115        <service android:name="player.wellnesssolutions.com.services.ScheduleVideosService" />
+115-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:85:9-66
+115-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:85:18-64
+116        <!-- Android O not working when we use intent-filter and action at here -->
+117        <receiver android:name="player.wellnesssolutions.com.ui.fragment_presentation.services.NotificationButtonListener" />
+117-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:87:9-126
+117-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:87:19-123
+118        <receiver android:name="player.wellnesssolutions.com.services.notification.DownloadNotiReceiver" />
+118-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:89:9-108
+118-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:89:19-105
+119        <receiver
+119-->[com.google.android.gms:play-services-cast-framework:19.0.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d435f121fcb7e1ea3d567dc63c118c2a\jetified-play-services-cast-framework-19.0.0\AndroidManifest.xml:10:9-12:40
+120            android:name="com.google.android.gms.cast.framework.media.MediaIntentReceiver"
+120-->[com.google.android.gms:play-services-cast-framework:19.0.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d435f121fcb7e1ea3d567dc63c118c2a\jetified-play-services-cast-framework-19.0.0\AndroidManifest.xml:11:13-91
+121            android:exported="false" />
+121-->[com.google.android.gms:play-services-cast-framework:19.0.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d435f121fcb7e1ea3d567dc63c118c2a\jetified-play-services-cast-framework-19.0.0\AndroidManifest.xml:12:13-37
+122
+123        <service
+123-->[com.google.android.gms:play-services-cast-framework:19.0.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d435f121fcb7e1ea3d567dc63c118c2a\jetified-play-services-cast-framework-19.0.0\AndroidManifest.xml:14:9-16:40
+124            android:name="com.google.android.gms.cast.framework.media.MediaNotificationService"
+124-->[com.google.android.gms:play-services-cast-framework:19.0.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d435f121fcb7e1ea3d567dc63c118c2a\jetified-play-services-cast-framework-19.0.0\AndroidManifest.xml:15:13-96
+125            android:exported="false" />
+125-->[com.google.android.gms:play-services-cast-framework:19.0.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d435f121fcb7e1ea3d567dc63c118c2a\jetified-play-services-cast-framework-19.0.0\AndroidManifest.xml:16:13-37
+126        <service
+126-->[com.google.android.gms:play-services-cast-framework:19.0.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d435f121fcb7e1ea3d567dc63c118c2a\jetified-play-services-cast-framework-19.0.0\AndroidManifest.xml:17:9-19:40
+127            android:name="com.google.android.gms.cast.framework.ReconnectionService"
+127-->[com.google.android.gms:play-services-cast-framework:19.0.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d435f121fcb7e1ea3d567dc63c118c2a\jetified-play-services-cast-framework-19.0.0\AndroidManifest.xml:18:13-85
+128            android:exported="false" />
+128-->[com.google.android.gms:play-services-cast-framework:19.0.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d435f121fcb7e1ea3d567dc63c118c2a\jetified-play-services-cast-framework-19.0.0\AndroidManifest.xml:19:13-37
+129
+130        <activity
+130-->[com.journeyapps:zxing-android-embedded:3.6.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d0f105d515d4abf601340c19d173aff9\jetified-zxing-android-embedded-3.6.0\AndroidManifest.xml:47:9-53:63
+131            android:name="com.journeyapps.barcodescanner.CaptureActivity"
+131-->[com.journeyapps:zxing-android-embedded:3.6.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d0f105d515d4abf601340c19d173aff9\jetified-zxing-android-embedded-3.6.0\AndroidManifest.xml:48:13-74
+132            android:clearTaskOnLaunch="true"
+132-->[com.journeyapps:zxing-android-embedded:3.6.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d0f105d515d4abf601340c19d173aff9\jetified-zxing-android-embedded-3.6.0\AndroidManifest.xml:49:13-45
+133            android:screenOrientation="sensorLandscape"
+133-->[com.journeyapps:zxing-android-embedded:3.6.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d0f105d515d4abf601340c19d173aff9\jetified-zxing-android-embedded-3.6.0\AndroidManifest.xml:50:13-56
+134            android:stateNotNeeded="true"
+134-->[com.journeyapps:zxing-android-embedded:3.6.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d0f105d515d4abf601340c19d173aff9\jetified-zxing-android-embedded-3.6.0\AndroidManifest.xml:51:13-42
+135            android:theme="@style/zxing_CaptureTheme"
+135-->[com.journeyapps:zxing-android-embedded:3.6.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d0f105d515d4abf601340c19d173aff9\jetified-zxing-android-embedded-3.6.0\AndroidManifest.xml:52:13-54
+136            android:windowSoftInputMode="stateAlwaysHidden" />
+136-->[com.journeyapps:zxing-android-embedded:3.6.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\d0f105d515d4abf601340c19d173aff9\jetified-zxing-android-embedded-3.6.0\AndroidManifest.xml:53:13-60
+137        <!--
+138             FirebaseMessagingService performs security checks at runtime,
+139             but set to not exported to explicitly avoid allowing another app to call it.
+140        -->
+141        <service
+141-->[com.google.firebase:firebase-messaging:21.0.1] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\bab435685776bcb08385f3a2f8c4e2f0\jetified-firebase-messaging-21.0.1\AndroidManifest.xml:28:9-35:19
+142            android:name="com.google.firebase.messaging.FirebaseMessagingService"
+142-->[com.google.firebase:firebase-messaging:21.0.1] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\bab435685776bcb08385f3a2f8c4e2f0\jetified-firebase-messaging-21.0.1\AndroidManifest.xml:29:13-82
+143            android:directBootAware="true"
+143-->[com.google.firebase:firebase-messaging:21.0.1] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\bab435685776bcb08385f3a2f8c4e2f0\jetified-firebase-messaging-21.0.1\AndroidManifest.xml:30:13-43
+144            android:exported="false" >
+144-->[com.google.firebase:firebase-messaging:21.0.1] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\bab435685776bcb08385f3a2f8c4e2f0\jetified-firebase-messaging-21.0.1\AndroidManifest.xml:31:13-37
+145            <intent-filter android:priority="-500" >
+145-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:81:13-83:29
+146                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+146-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:82:17-78
+146-->D:\workplace\company\android\movemind\movemind-sourcecode\app\src\main\AndroidManifest.xml:82:25-75
+147            </intent-filter>
+148        </service>
+149        <service
+149-->[com.google.firebase:firebase-messaging:21.0.1] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\bab435685776bcb08385f3a2f8c4e2f0\jetified-firebase-messaging-21.0.1\AndroidManifest.xml:36:9-42:19
+150            android:name="com.google.firebase.components.ComponentDiscoveryService"
+150-->[com.google.firebase:firebase-messaging:21.0.1] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\bab435685776bcb08385f3a2f8c4e2f0\jetified-firebase-messaging-21.0.1\AndroidManifest.xml:37:13-84
+151            android:directBootAware="true"
+151-->[com.google.firebase:firebase-common:19.5.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\99f1a28ce85589f6ebdbfa38f6ee327c\jetified-firebase-common-19.5.0\AndroidManifest.xml:35:13-43
+152            android:exported="false" >
+152-->[com.google.firebase:firebase-messaging:21.0.1] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\bab435685776bcb08385f3a2f8c4e2f0\jetified-firebase-messaging-21.0.1\AndroidManifest.xml:38:13-37
+153            <meta-data
+153-->[com.google.firebase:firebase-messaging:21.0.1] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\bab435685776bcb08385f3a2f8c4e2f0\jetified-firebase-messaging-21.0.1\AndroidManifest.xml:39:13-41:85
+154                android:name="com.google.firebase.components:com.google.firebase.messaging.FirebaseMessagingRegistrar"
+154-->[com.google.firebase:firebase-messaging:21.0.1] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\bab435685776bcb08385f3a2f8c4e2f0\jetified-firebase-messaging-21.0.1\AndroidManifest.xml:40:17-119
+155                android:value="com.google.firebase.components.ComponentRegistrar" />
+155-->[com.google.firebase:firebase-messaging:21.0.1] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\bab435685776bcb08385f3a2f8c4e2f0\jetified-firebase-messaging-21.0.1\AndroidManifest.xml:41:17-82
+156            <meta-data
+156-->[com.google.firebase:firebase-iid:21.0.1] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\3eed6bcd19ba58865833f1e6af4231e8\jetified-firebase-iid-21.0.1\AndroidManifest.xml:32:13-34:85
+157                android:name="com.google.firebase.components:com.google.firebase.iid.Registrar"
+157-->[com.google.firebase:firebase-iid:21.0.1] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\3eed6bcd19ba58865833f1e6af4231e8\jetified-firebase-iid-21.0.1\AndroidManifest.xml:33:17-96
+158                android:value="com.google.firebase.components.ComponentRegistrar" />
+158-->[com.google.firebase:firebase-iid:21.0.1] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\3eed6bcd19ba58865833f1e6af4231e8\jetified-firebase-iid-21.0.1\AndroidManifest.xml:34:17-82
+159            <meta-data
+159-->[com.google.android.gms:play-services-measurement-api:18.0.2] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\0b465f082f988a7e22580759d6448ee6\jetified-play-services-measurement-api-18.0.2\AndroidManifest.xml:30:13-32:85
+160                android:name="com.google.firebase.components:com.google.firebase.analytics.connector.internal.AnalyticsConnectorRegistrar"
+160-->[com.google.android.gms:play-services-measurement-api:18.0.2] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\0b465f082f988a7e22580759d6448ee6\jetified-play-services-measurement-api-18.0.2\AndroidManifest.xml:31:17-139
+161                android:value="com.google.firebase.components.ComponentRegistrar" />
+161-->[com.google.android.gms:play-services-measurement-api:18.0.2] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\0b465f082f988a7e22580759d6448ee6\jetified-play-services-measurement-api-18.0.2\AndroidManifest.xml:32:17-82
+162            <meta-data
+162-->[com.google.firebase:firebase-datatransport:17.0.10] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\8e3cc2580938f76287fd7232b3556db7\jetified-firebase-datatransport-17.0.10\AndroidManifest.xml:28:13-30:85
+163                android:name="com.google.firebase.components:com.google.firebase.datatransport.TransportRegistrar"
+163-->[com.google.firebase:firebase-datatransport:17.0.10] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\8e3cc2580938f76287fd7232b3556db7\jetified-firebase-datatransport-17.0.10\AndroidManifest.xml:29:17-115
+164                android:value="com.google.firebase.components.ComponentRegistrar" />
+164-->[com.google.firebase:firebase-datatransport:17.0.10] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\8e3cc2580938f76287fd7232b3556db7\jetified-firebase-datatransport-17.0.10\AndroidManifest.xml:30:17-82
+165            <meta-data
+165-->[com.google.firebase:firebase-installations:16.3.5] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\b87e8f66d292599b6e79c6e54f92bca7\jetified-firebase-installations-16.3.5\AndroidManifest.xml:18:13-20:85
+166                android:name="com.google.firebase.components:com.google.firebase.installations.FirebaseInstallationsRegistrar"
+166-->[com.google.firebase:firebase-installations:16.3.5] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\b87e8f66d292599b6e79c6e54f92bca7\jetified-firebase-installations-16.3.5\AndroidManifest.xml:19:17-127
+167                android:value="com.google.firebase.components.ComponentRegistrar" />
+167-->[com.google.firebase:firebase-installations:16.3.5] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\b87e8f66d292599b6e79c6e54f92bca7\jetified-firebase-installations-16.3.5\AndroidManifest.xml:20:17-82
+168            <!--
+169                This registrar is not defined in the dynamic-module-support sdk itself to allow non-firebase
+170                clients to use it as well, by defining this registrar in their own core/common library.
+171            -->
+172            <meta-data
+172-->[com.google.firebase:firebase-common:19.5.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\99f1a28ce85589f6ebdbfa38f6ee327c\jetified-firebase-common-19.5.0\AndroidManifest.xml:43:13-45:85
+173                android:name="com.google.firebase.components:com.google.firebase.dynamicloading.DynamicLoadingRegistrar"
+173-->[com.google.firebase:firebase-common:19.5.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\99f1a28ce85589f6ebdbfa38f6ee327c\jetified-firebase-common-19.5.0\AndroidManifest.xml:44:17-121
+174                android:value="com.google.firebase.components.ComponentRegistrar" />
+174-->[com.google.firebase:firebase-common:19.5.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\99f1a28ce85589f6ebdbfa38f6ee327c\jetified-firebase-common-19.5.0\AndroidManifest.xml:45:17-82
+175        </service>
+176
+177        <receiver
+177-->[com.google.firebase:firebase-iid:21.0.1] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\3eed6bcd19ba58865833f1e6af4231e8\jetified-firebase-iid-21.0.1\AndroidManifest.xml:37:9-44:20
+178            android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver"
+178-->[com.google.firebase:firebase-iid:21.0.1] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\3eed6bcd19ba58865833f1e6af4231e8\jetified-firebase-iid-21.0.1\AndroidManifest.xml:38:13-78
+179            android:exported="true"
+179-->[com.google.firebase:firebase-iid:21.0.1] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\3eed6bcd19ba58865833f1e6af4231e8\jetified-firebase-iid-21.0.1\AndroidManifest.xml:39:13-36
+180            android:permission="com.google.android.c2dm.permission.SEND" >
+180-->[com.google.firebase:firebase-iid:21.0.1] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\3eed6bcd19ba58865833f1e6af4231e8\jetified-firebase-iid-21.0.1\AndroidManifest.xml:40:13-73
+181            <intent-filter>
+181-->[com.google.firebase:firebase-iid:21.0.1] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\3eed6bcd19ba58865833f1e6af4231e8\jetified-firebase-iid-21.0.1\AndroidManifest.xml:41:13-43:29
+182                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+182-->[com.google.firebase:firebase-iid:21.0.1] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\3eed6bcd19ba58865833f1e6af4231e8\jetified-firebase-iid-21.0.1\AndroidManifest.xml:42:17-81
+182-->[com.google.firebase:firebase-iid:21.0.1] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\3eed6bcd19ba58865833f1e6af4231e8\jetified-firebase-iid-21.0.1\AndroidManifest.xml:42:25-78
+183            </intent-filter>
+184        </receiver>
+185
+186        <activity
+186-->[com.google.android.gms:play-services-base:17.1.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\10343b4589efd648f21449a1024b74f8\jetified-play-services-base-17.1.0\AndroidManifest.xml:23:9-26:75
+187            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+187-->[com.google.android.gms:play-services-base:17.1.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\10343b4589efd648f21449a1024b74f8\jetified-play-services-base-17.1.0\AndroidManifest.xml:24:13-79
+188            android:exported="false"
+188-->[com.google.android.gms:play-services-base:17.1.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\10343b4589efd648f21449a1024b74f8\jetified-play-services-base-17.1.0\AndroidManifest.xml:25:13-37
+189            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+189-->[com.google.android.gms:play-services-base:17.1.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\10343b4589efd648f21449a1024b74f8\jetified-play-services-base-17.1.0\AndroidManifest.xml:26:13-72
+190
+191        <receiver
+191-->[com.google.android.gms:play-services-measurement:18.0.2] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\726c0b1e9cde1200e41f999b401883c0\jetified-play-services-measurement-18.0.2\AndroidManifest.xml:29:9-33:20
+192            android:name="com.google.android.gms.measurement.AppMeasurementReceiver"
+192-->[com.google.android.gms:play-services-measurement:18.0.2] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\726c0b1e9cde1200e41f999b401883c0\jetified-play-services-measurement-18.0.2\AndroidManifest.xml:30:13-85
+193            android:enabled="true"
+193-->[com.google.android.gms:play-services-measurement:18.0.2] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\726c0b1e9cde1200e41f999b401883c0\jetified-play-services-measurement-18.0.2\AndroidManifest.xml:31:13-35
+194            android:exported="false" >
+194-->[com.google.android.gms:play-services-measurement:18.0.2] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\726c0b1e9cde1200e41f999b401883c0\jetified-play-services-measurement-18.0.2\AndroidManifest.xml:32:13-37
+195        </receiver>
+196
+197        <service
+197-->[com.google.android.gms:play-services-measurement:18.0.2] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\726c0b1e9cde1200e41f999b401883c0\jetified-play-services-measurement-18.0.2\AndroidManifest.xml:35:9-38:40
+198            android:name="com.google.android.gms.measurement.AppMeasurementService"
+198-->[com.google.android.gms:play-services-measurement:18.0.2] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\726c0b1e9cde1200e41f999b401883c0\jetified-play-services-measurement-18.0.2\AndroidManifest.xml:36:13-84
+199            android:enabled="true"
+199-->[com.google.android.gms:play-services-measurement:18.0.2] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\726c0b1e9cde1200e41f999b401883c0\jetified-play-services-measurement-18.0.2\AndroidManifest.xml:37:13-35
+200            android:exported="false" />
+200-->[com.google.android.gms:play-services-measurement:18.0.2] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\726c0b1e9cde1200e41f999b401883c0\jetified-play-services-measurement-18.0.2\AndroidManifest.xml:38:13-37
+201        <service
+201-->[com.google.android.gms:play-services-measurement:18.0.2] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\726c0b1e9cde1200e41f999b401883c0\jetified-play-services-measurement-18.0.2\AndroidManifest.xml:39:9-43:72
+202            android:name="com.google.android.gms.measurement.AppMeasurementJobService"
+202-->[com.google.android.gms:play-services-measurement:18.0.2] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\726c0b1e9cde1200e41f999b401883c0\jetified-play-services-measurement-18.0.2\AndroidManifest.xml:40:13-87
+203            android:enabled="true"
+203-->[com.google.android.gms:play-services-measurement:18.0.2] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\726c0b1e9cde1200e41f999b401883c0\jetified-play-services-measurement-18.0.2\AndroidManifest.xml:41:13-35
+204            android:exported="false"
+204-->[com.google.android.gms:play-services-measurement:18.0.2] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\726c0b1e9cde1200e41f999b401883c0\jetified-play-services-measurement-18.0.2\AndroidManifest.xml:42:13-37
+205            android:permission="android.permission.BIND_JOB_SERVICE" />
+205-->[com.google.android.gms:play-services-measurement:18.0.2] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\726c0b1e9cde1200e41f999b401883c0\jetified-play-services-measurement-18.0.2\AndroidManifest.xml:43:13-69
+206
+207        <provider
+207-->[com.google.firebase:firebase-common:19.5.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\99f1a28ce85589f6ebdbfa38f6ee327c\jetified-firebase-common-19.5.0\AndroidManifest.xml:26:9-31:39
+208            android:name="com.google.firebase.provider.FirebaseInitProvider"
+208-->[com.google.firebase:firebase-common:19.5.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\99f1a28ce85589f6ebdbfa38f6ee327c\jetified-firebase-common-19.5.0\AndroidManifest.xml:27:13-77
+209            android:authorities="player.wellnesssolutions.com.au.firebaseinitprovider"
+209-->[com.google.firebase:firebase-common:19.5.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\99f1a28ce85589f6ebdbfa38f6ee327c\jetified-firebase-common-19.5.0\AndroidManifest.xml:28:13-72
+210            android:directBootAware="true"
+210-->[com.google.firebase:firebase-common:19.5.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\99f1a28ce85589f6ebdbfa38f6ee327c\jetified-firebase-common-19.5.0\AndroidManifest.xml:29:13-43
+211            android:exported="false"
+211-->[com.google.firebase:firebase-common:19.5.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\99f1a28ce85589f6ebdbfa38f6ee327c\jetified-firebase-common-19.5.0\AndroidManifest.xml:30:13-37
+212            android:initOrder="100" />
+212-->[com.google.firebase:firebase-common:19.5.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\99f1a28ce85589f6ebdbfa38f6ee327c\jetified-firebase-common-19.5.0\AndroidManifest.xml:31:13-36
+213
+214        <meta-data
+214-->[com.google.android.gms:play-services-basement:17.1.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\cdb172b46b57cf5eb78b2cccc74d73eb\jetified-play-services-basement-17.1.0\AndroidManifest.xml:23:9-25:69
+215            android:name="com.google.android.gms.version"
+215-->[com.google.android.gms:play-services-basement:17.1.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\cdb172b46b57cf5eb78b2cccc74d73eb\jetified-play-services-basement-17.1.0\AndroidManifest.xml:24:13-58
+216            android:value="@integer/google_play_services_version" />
+216-->[com.google.android.gms:play-services-basement:17.1.0] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\cdb172b46b57cf5eb78b2cccc74d73eb\jetified-play-services-basement-17.1.0\AndroidManifest.xml:25:13-66
+217
+218        <service
+218-->[com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\05b745ae5e2e3f7a01581d66b3b61f04\jetified-transport-backend-cct-2.3.3\AndroidManifest.xml:29:9-35:19
+219            android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery"
+219-->[com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\05b745ae5e2e3f7a01581d66b3b61f04\jetified-transport-backend-cct-2.3.3\AndroidManifest.xml:30:13-103
+220            android:exported="false" >
+220-->[com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\05b745ae5e2e3f7a01581d66b3b61f04\jetified-transport-backend-cct-2.3.3\AndroidManifest.xml:31:13-37
+221            <meta-data
+221-->[com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\05b745ae5e2e3f7a01581d66b3b61f04\jetified-transport-backend-cct-2.3.3\AndroidManifest.xml:32:13-34:39
+222                android:name="backend:com.google.android.datatransport.cct.CctBackendFactory"
+222-->[com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\05b745ae5e2e3f7a01581d66b3b61f04\jetified-transport-backend-cct-2.3.3\AndroidManifest.xml:33:17-94
+223                android:value="cct" />
+223-->[com.google.android.datatransport:transport-backend-cct:2.3.3] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\05b745ae5e2e3f7a01581d66b3b61f04\jetified-transport-backend-cct-2.3.3\AndroidManifest.xml:34:17-36
+224        </service>
+225        <service
+225-->[com.google.android.datatransport:transport-runtime:2.2.5] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\ec88db3de1244f52558819b7dc032edd\jetified-transport-runtime-2.2.5\AndroidManifest.xml:26:9-30:19
+226            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService"
+226-->[com.google.android.datatransport:transport-runtime:2.2.5] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\ec88db3de1244f52558819b7dc032edd\jetified-transport-runtime-2.2.5\AndroidManifest.xml:27:13-117
+227            android:exported="false"
+227-->[com.google.android.datatransport:transport-runtime:2.2.5] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\ec88db3de1244f52558819b7dc032edd\jetified-transport-runtime-2.2.5\AndroidManifest.xml:28:13-37
+228            android:permission="android.permission.BIND_JOB_SERVICE" >
+228-->[com.google.android.datatransport:transport-runtime:2.2.5] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\ec88db3de1244f52558819b7dc032edd\jetified-transport-runtime-2.2.5\AndroidManifest.xml:29:13-69
+229        </service>
+230
+231        <receiver
+231-->[com.google.android.datatransport:transport-runtime:2.2.5] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\ec88db3de1244f52558819b7dc032edd\jetified-transport-runtime-2.2.5\AndroidManifest.xml:32:9-34:40
+232            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"
+232-->[com.google.android.datatransport:transport-runtime:2.2.5] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\ec88db3de1244f52558819b7dc032edd\jetified-transport-runtime-2.2.5\AndroidManifest.xml:33:13-132
+233            android:exported="false" />
+233-->[com.google.android.datatransport:transport-runtime:2.2.5] C:\Users\vnhanh\.gradle\caches\transforms-2\files-2.1\ec88db3de1244f52558819b7dc032edd\jetified-transport-runtime-2.2.5\AndroidManifest.xml:34:13-37
+234    </application>
+235
+236</manifest>

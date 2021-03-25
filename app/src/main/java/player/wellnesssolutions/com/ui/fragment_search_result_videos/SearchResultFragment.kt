@@ -12,10 +12,10 @@ import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_search_result.*
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.base.utils.FragmentUtil
 import player.wellnesssolutions.com.base.utils.ParameterUtils.isPlayNewList
 import player.wellnesssolutions.com.base.utils.ViewUtil
+import player.wellnesssolutions.com.base.view.BaseFragment
 import player.wellnesssolutions.com.common.customize_views.MMButton.Companion.isClickToNowPlaying
 import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
@@ -41,7 +41,7 @@ import player.wellnesssolutions.com.ui.fragment_search_result_videos.page_result
 /**
  * This fragment has the ViewPager that contains child fragments as pages and every child fragment has a recyclerview to show list of video items
  */
-class SearchResultFragment : BaseScheduleFragment(), ISearchResultContract.View, IRouterChanged {
+class SearchResultFragment : BaseFragment(), ISearchResultContract.View, IRouterChanged {
 
     companion object {
         const val TAG = "SearchResultFragment"
@@ -428,8 +428,9 @@ class SearchResultFragment : BaseScheduleFragment(), ISearchResultContract.View,
                 fragment =
                         when (fragment != null && fragment is NowPlayingFragment) {
                             true -> {
-                                fragment.arguments = NowPlayingFragment.getBundleBySearchedVideos(passData)
-                                fragment
+                                fragment.apply {
+                                    arguments = NowPlayingFragment.getBundleBySearchedVideos(passData)
+                                }
                             }
 
                             false -> {
@@ -481,15 +482,6 @@ class SearchResultFragment : BaseScheduleFragment(), ISearchResultContract.View,
     override fun hideLoadingProgress() {
         if (loadingProgressBar != null)
             loadingProgressBar.visibility = View.GONE
-    }
-
-    /**
-     * @IRouterChangedListener
-     */
-    // connect to TV
-    override fun onMediaRouterConnected() {
-        super.onMediaRouterConnected()
-
     }
 
     // disconnect to TV

@@ -6,6 +6,7 @@ import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,11 +25,13 @@ import kotlinx.android.synthetic.main.merge_now_playing_coming_up_next.*
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.common.download.DownloadVideoHelper
 import player.wellnesssolutions.com.base.common.load_scheduled_videos.IScheduleContract
-import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.base.utils.FragmentUtil
 import player.wellnesssolutions.com.base.utils.ParameterUtils
 import player.wellnesssolutions.com.base.utils.ViewUtil
+import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
+import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.common.constant.Constant
+import player.wellnesssolutions.com.common.constant.SOURCE_LOAD_SCHEDULE
 import player.wellnesssolutions.com.common.customize_views.MMTextView
 import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
@@ -40,6 +43,7 @@ import player.wellnesssolutions.com.network.datasource.videos.PlayMode
 import player.wellnesssolutions.com.network.models.config.MMConfigData
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.com.network.models.screen_search.MMBrand
+import player.wellnesssolutions.com.services.AlarmManagerSchedule
 import player.wellnesssolutions.com.ui.activity_main.CastingBroadcastReceiver
 import player.wellnesssolutions.com.ui.activity_main.IRouterChanged
 import player.wellnesssolutions.com.ui.activity_main.MainActivity
@@ -84,16 +88,14 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     private var mMenuHeight = 0
     private var mIsShownMenu = false
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
 
         registerRouterChangedListener()
         registerCastingTVBroadcast()
         registerScheduleBroadcast()
-    }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_control, container, false)
     }
@@ -106,6 +108,7 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     override fun onResume() {
         super.onResume()
         mPresenter?.onAttach(this)
+        setOldScreen()
     }
 
     override fun onPause() {
@@ -113,12 +116,15 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
         super.onPause()
     }
 
-    override fun onDestroy() {
+    override fun onDestroyView() {
+        super.onDestroyView()
         unregisterCastingTVBroadcast()
         unregisterScheduleBroadcast()
         unregisterRouterChangedListener()
-
         mPresenter?.onDestroy()
+    }
+
+    override fun onDestroy() {
         mMenuAnimationHelper.release()
 
         super.onDestroy()
@@ -128,7 +134,7 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
      * implementing @interface Presenter
      */
     // process in case no class videos (no schedule) after loading schedule
-    override fun onNoClassVideos(message: String, @ColorRes msgColor: Int, isClickedFromBtnBottom: Boolean) {
+    override fun onNoClassVideosForNow(message: String, @ColorRes msgColor: Int, isClickedFromBtnBottom: Boolean) {
         btnLogoBottom?.isEnabled = true
 //        if (message.isNotEmpty()) {
 //            MessageUtils.showSnackBar(btnLogoBottom, message, R.color.yellow)
@@ -176,12 +182,13 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
         btnLogoBottom?.isEnabled = true
     }
 
-    override fun onHaveClassVideos(scheduledVideos: ArrayList<MMVideo>, isClickedFromBtnBottom: Boolean) {
+    override fun onHaveClassVideos(scheduleVideos: ArrayList<MMVideo>, isClickedFromBtnBottom: Boolean) {
+        Log.d("LOG", this.javaClass.simpleName + " onHaveClassVideos() | videos number: ${scheduleVideos.size}")
         activity?.also { activity ->
             if (activity is MainActivity && activity.isPresentationAvailable()) {
                 MessageUtils.showSnackBar(snackView = btnLogoBottom, message = getString(R.string.now_playing_class),
                         colorRes = R.color.white)
-                activity.playVideo(PlayMode.SCHEDULE, scheduledVideos)
+                activity.playVideo(PlayMode.SCHEDULE, scheduleVideos)
 
             } else {
                 loadNowPlayingScreen()
@@ -190,10 +197,13 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     }
 
     override fun onTimePlaySchedule() {
+        Log.d("LOG", this.javaClass.simpleName + " onTimePlaySchedule()")
         loadNowPlayingScreen()
     }
 
     fun loadNowPlayingScreen() {
+        Log.d("LOG", this.javaClass.simpleName + " loadNowPlayingScreen() | isStartedOpenNewScreen: $isStartedOpenNewScreen")
+        if (isStartedOpenNewScreen) return
         activity?.supportFragmentManager?.also { _fm ->
             val tag = NowPlayingFragment.TAG
             var fragment = _fm.findFragmentByTag(tag)
@@ -616,15 +626,30 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     // connect to TV
     override fun onMediaRouterConnected() {
         super.onMediaRouterConnected()
+        AlarmManagerSchedule.cancelAlarmScheduleTime()
+        Log.d("LOG", this.javaClass.simpleName + " onMediaRouterConnected()")
+        PreferenceHelper.getInstance()?.getBoolean(Constant.IS_CAST_DISCONNECT, true)?.also { isCastDisconnected ->
+            Log.d("LOG", this.javaClass.simpleName + " onMediaRouterConnected()")
+        }
+        activity?.also { activity ->
+            if (activity is MainActivity && activity.isPresentationAvailable()) {
+                val scheduleVideos = VideoDBUtil.getVideosFromDB(tag = Constant.MM_SCHEDULE, isDelete = false)
+                MessageUtils.showSnackBar(snackView = btnLogoBottom, message = getString(R.string.now_playing_class),
+                        colorRes = R.color.white)
+                activity.playVideo(PlayMode.SCHEDULE, scheduleVideos)
 
+            }
+        }
     }
 
     // disconnect TV
     override fun onMediaRouterDisconnected() {
+        Log.d("LOG", this.javaClass.simpleName + " onMediaRouterDisconnected()")
         btnPlaylistPresentation?.visibility = View.INVISIBLE
         constraintArrowUp?.visibility = View.INVISIBLE
         constraintArrowDown?.visibility = View.INVISIBLE
         prgTimebarPlaying?.visibility = View.GONE
+        onHandleSchedule()
     }
 
     // start playing videos on TV or play new videos on TV
@@ -704,7 +729,6 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     }
 
     private fun unregisterScheduleBroadcast() {
-
         activity?.also { _ ->
             if (ScheduleBroadcastReceiver.getInstance().isRegistered(this)) {
                 try {
@@ -714,6 +738,7 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
                 }
             }
         }
+
     }
 
     private fun unregisterRouterChangedListener() {
@@ -1024,34 +1049,34 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
         val EXTRA_CHILD_SCREEN_TAG = "EXTRA_CHILD_SCREEN_TAG"
         val EXTRA_BRAND = "EXTRA_BRAND"
 
-        fun getInstance(screenTag: String): ControlFragment {
-            val instance = ControlFragment()
-            val bundle = Bundle()
-            bundle.putString(EXTRA_CHILD_SCREEN_TAG, screenTag)
-            instance.arguments = bundle
+        fun getInstance(screenTag: String): ControlFragment =
+                ControlFragment().apply {
+                    arguments = Bundle().apply {
+                        putString(EXTRA_CHILD_SCREEN_TAG, screenTag)
+                        putString(Constant.BUNDLE_SOURCE_SCHEDULE, SOURCE_LOAD_SCHEDULE.LOCAL.toString())
+                        Log.d("LOG", this.javaClass.simpleName + " getInstance() | " +
+                                "value to string: ${SOURCE_LOAD_SCHEDULE.LOCAL} | " +
+                                "value form name: ${SOURCE_LOAD_SCHEDULE.LOCAL.name}")
+                    }
+                }
 
-            return instance
-        }
+        fun getInstance(brands: ArrayList<MMBrand>, searchBrandFlowTag: String): ControlFragment =
+                ControlFragment().apply {
+                    arguments = Bundle().apply {
+                        putString(EXTRA_CHILD_SCREEN_TAG, SearchBrandsFragment.TAG)
+                        putParcelableArrayList(SearchBrandsFragment.KEY_BRANDS, brands)
+                        putString(SearchBrandsFragment.KEY_SEARCH_FLOW, searchBrandFlowTag)
+                        putString(Constant.BUNDLE_SOURCE_SCHEDULE, SOURCE_LOAD_SCHEDULE.LOCAL.toString())
+                    }
+                }
 
-        fun getInstance(brands: ArrayList<MMBrand>, searchBrandFlowTag: String): ControlFragment {
-            val instance = ControlFragment()
-            val bundle = Bundle()
-            bundle.putString(EXTRA_CHILD_SCREEN_TAG, SearchBrandsFragment.TAG)
-            bundle.putParcelableArrayList(SearchBrandsFragment.KEY_BRANDS, brands)
-            bundle.putString(SearchBrandsFragment.KEY_SEARCH_FLOW, searchBrandFlowTag)
-            instance.arguments = bundle
-
-            return instance
-        }
-
-        fun getInstance(brand: MMBrand, childScreenTag: String): ControlFragment {
-            val instance = ControlFragment()
-            val bundle = Bundle()
-            bundle.putString(EXTRA_CHILD_SCREEN_TAG, childScreenTag)
-            bundle.putParcelable(EXTRA_BRAND, brand)
-            instance.arguments = bundle
-
-            return instance
-        }
+        fun getInstance(brand: MMBrand, childScreenTag: String): ControlFragment =
+                ControlFragment().apply {
+                    arguments = Bundle().apply {
+                        putString(EXTRA_CHILD_SCREEN_TAG, childScreenTag)
+                        putParcelable(EXTRA_BRAND, brand)
+                        putString(Constant.BUNDLE_SOURCE_SCHEDULE, SOURCE_LOAD_SCHEDULE.LOCAL.toString())
+                    }
+                }
     }
 }

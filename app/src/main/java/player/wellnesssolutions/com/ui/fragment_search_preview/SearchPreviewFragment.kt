@@ -12,10 +12,10 @@ import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_search_preview.*
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.base.utils.FragmentUtil
 import player.wellnesssolutions.com.base.utils.ViewUtil
 import player.wellnesssolutions.com.base.utils.search_util.SearchCollectionUtil
+import player.wellnesssolutions.com.base.view.BaseFragment
 import player.wellnesssolutions.com.common.utils.DialogUtil
 import player.wellnesssolutions.com.common.utils.MessageUtils
 import player.wellnesssolutions.com.network.models.screen_search.MMBrand
@@ -27,7 +27,7 @@ import player.wellnesssolutions.com.ui.fragment_search_preview.recyclerview.dura
 import player.wellnesssolutions.com.ui.fragment_search_result_videos.SearchResultFragment
 
 
-class SearchPreviewFragment : BaseScheduleFragment(), ISearchPreviewContract.View {
+class SearchPreviewFragment : BaseFragment(), ISearchPreviewContract.View {
     private var mPresenter: ISearchPreviewContract.Presenter? = SearchPreviewPresenter()
     private var mDialog: AlertDialog? = null
     private var nameCollectionChoose: String? = null
@@ -146,11 +146,10 @@ class SearchPreviewFragment : BaseScheduleFragment(), ISearchPreviewContract.Vie
         mDialog?.dismiss()
         mPresenter?.onStop()
         super.onDestroyView()
+        mPresenter?.onDestroy()
     }
 
     override fun onDestroy() {
-        mPresenter?.onDestroy()
-        mPresenter = null
         super.onDestroy()
     }
 

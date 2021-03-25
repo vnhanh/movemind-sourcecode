@@ -11,10 +11,10 @@ import kotlinx.android.synthetic.main.fragment_search_durations.*
 import kotlinx.android.synthetic.main.merge_layout_group_top_search_screen.*
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.customs.views.RecyclerViewCustom
-import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.base.utils.FragmentUtil
 import player.wellnesssolutions.com.base.utils.ViewUtil
 import player.wellnesssolutions.com.base.utils.search_util.SearchUIHelper
+import player.wellnesssolutions.com.base.view.BaseFragment
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.constant.Constant.DEAFULT_MAX_ROWS
 import player.wellnesssolutions.com.common.constant.Constant.DEFAULT_MAX_ITEMS_COUNT_IN_ROW
@@ -28,7 +28,7 @@ import player.wellnesssolutions.com.ui.fragment_search_durations.recyclerview.Se
 import player.wellnesssolutions.com.ui.fragment_search_preview.SearchPreviewFragment
 
 
-class SearchDurationsFragment : BaseScheduleFragment(), ISearchDurationContract.View {
+class SearchDurationsFragment : BaseFragment(), ISearchDurationContract.View {
     private var mPresenter: ISearchDurationContract.Presenter? = SearchDurationPresenter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +42,7 @@ class SearchDurationsFragment : BaseScheduleFragment(), ISearchDurationContract.
         if (brand != null) {
             mPresenter?.setChosenBrand(brand)
         }
-        arguments?.clear()
+//        arguments?.clear()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

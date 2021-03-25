@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="dip_23">23dp</dimen>
+    <dimen name="dip_25">25dp</dimen>
+    <dimen name="dip_27">27dp</dimen>
+    <dimen name="dip_5">5dp</dimen>
+    <dimen name="dip_50">50dp</dimen>
+    <dimen name="dip_60">60dp</dimen>
+    <dimen name="screen_home_tv_helper_textsize">16dp</dimen>
+    <dimen name="screen_no_class_btn_help_me_choose_textsize">42dp</dimen>
+    <dimen name="screen_no_class_btn_skip_and_search_textsize">26dp</dimen>
+    <dimen name="screen_no_class_tv_helper_textsize">16dp</dimen>
+    <dimen name="screen_time_table_tab_session_textsize">12sp</dimen>
+    <dimen name="screen_time_table_tab_today_textsize">20sp</dimen>
+    <dimen name="text_size_btn_get_started">42dp</dimen>
+    <dimen name="vh_brand_tv_desc_text_size">15dp</dimen>
+    <dimen name="vh_brand_tv_name_text_size">24dp</dimen>
+    <style name="Base.Widget.AppCompat.DrawerArrowToggle" parent="Base.Widget.AppCompat.DrawerArrowToggle.Common">
+          <item name="barLength">18.66dp</item>
+          <item name="gapBetweenBars">3.33dp</item>
+          <item name="drawableSize">24dp</item>
+     </style>
+</resources>

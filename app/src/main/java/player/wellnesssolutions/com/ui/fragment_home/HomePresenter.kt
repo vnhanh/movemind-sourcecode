@@ -2,9 +2,9 @@ package player.wellnesssolutions.com.ui.fragment_home
 
 import android.content.Context
 import com.google.gson.Gson
-import player.wellnesssolutions.com.base.view.BaseScheduleFragment
-import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
+import player.wellnesssolutions.com.base.view.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.network.datasource.home.HomeApi
@@ -119,7 +119,7 @@ class HomePresenter(context: Context) : BaseResponseObserver<MMConfigData>(), IH
 
     override fun onExpired(error: String) {
         mView?.getFragment()?.also {
-            if (it is BaseScheduleFragment) {
+            if (it is BaseFragment) {
                 it.onExpired(error)
             }
         }

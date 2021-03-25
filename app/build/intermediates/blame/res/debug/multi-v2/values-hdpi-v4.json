@@ -1,0 +1,62 @@
+{
+    "logs": [
+        {
+            "outputFile": "D:\\workplace\\company\\android\\movemind\\movemind-sourcecode\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-hdpi-v4\\values-hdpi-v4.xml",
+            "map": [
+                {
+                    "source": "D:\\workplace\\company\\android\\movemind\\movemind-sourcecode\\app\\src\\main\\res\\values-hdpi\\dimens.xml",
+                    "from": {
+                        "startLines": "16,18,19,17,14,15,4,7,9,8,3,13,12",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "668,744,783,707,590,629,132,225,368,301,74,531,472",
+                        "endColumns": "37,37,37,35,37,37,61,74,75,65,56,57,57",
+                        "endOffsets": "701,777,816,738,623,662,189,295,439,362,126,584,525"
+                    },
+                    "to": {
+                        "startLines": "2,3,4,5,6,7,8,9,10,11,14,15,16",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,93,131,169,205,243,281,343,418,494,698,755,813",
+                        "endColumns": "37,37,37,35,37,37,61,74,75,65,56,57,57",
+                        "endOffsets": "88,126,164,200,238,276,338,413,489,555,750,808,866"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\vnhanh\\.gradle\\caches\\transforms-2\\files-2.1\\0fb583e6fa5d66cde475b8776d9193a5\\appcompat-1.1.0\\res\\values-hdpi-v4\\values-hdpi-v4.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "6",
+                        "endColumns": "13",
+                        "endOffsets": "327"
+                    },
+                    "to": {
+                        "startLines": "17",
+                        "startColumns": "4",
+                        "startOffsets": "871",
+                        "endLines": "21",
+                        "endColumns": "13",
+                        "endOffsets": "1143"
+                    }
+                },
+                {
+                    "source": "D:\\workplace\\company\\android\\movemind\\movemind-sourcecode\\common\\build\\intermediates\\packaged_res\\debug\\values-hdpi-v4\\values-hdpi-v4.xml",
+                    "from": {
+                        "startLines": "2,3",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,125",
+                        "endColumns": "69,67",
+                        "endOffsets": "120,188"
+                    },
+                    "to": {
+                        "startLines": "12,13",
+                        "startColumns": "4,4",
+                        "startOffsets": "560,630",
+                        "endColumns": "69,67",
+                        "endOffsets": "625,693"
+                    }
+                }
+            ]
+        }
+    ]
+}

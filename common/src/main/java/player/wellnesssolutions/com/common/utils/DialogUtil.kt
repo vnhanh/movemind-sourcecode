@@ -24,8 +24,7 @@ object DialogUtil {
                                   dialogClickListener: DialogInterface.OnClickListener?): AlertDialog {
         val primaryColor = PreferenceHelper
                 .getInstance(context).getString(ConstantPreference.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)
-        var color : Int?
-        color = try {
+        val color = try {
             Color.parseColor(primaryColor)
         } catch (e : Exception) {
             e.printStackTrace()
@@ -86,8 +85,8 @@ object DialogUtil {
                                   dialogClickListener: DialogInterface.OnClickListener?): AlertDialog {
         val primaryColor = PreferenceHelper
                 .getInstance(context).getString(ConstantPreference.PRIMARY_COLOR, "#00c3b3")
-        val color: Int?
-        color = try {
+
+        val color = try {
             Color.parseColor(primaryColor)
         } catch (e: Exception) {
             Color.parseColor("#00c3b3")

@@ -19,9 +19,19 @@ import com.google.android.exoplayer2.SimpleExoPlayer
 import kotlinx.android.synthetic.main.custom_controller_player_screen_now_playing.*
 import kotlinx.android.synthetic.main.custom_controller_player_screen_now_playing.view.*
 import kotlinx.android.synthetic.main.exo_simple_player_view.view.*
+import kotlinx.android.synthetic.main.fragment_control.*
 import kotlinx.android.synthetic.main.fragment_now_playing.*
 import kotlinx.android.synthetic.main.layout_float_menu.*
 import kotlinx.android.synthetic.main.merge_layout_bottom_bar_screen_now_playing.*
+import kotlinx.android.synthetic.main.merge_layout_bottom_bar_screen_now_playing.btnCloseMenuFloat
+import kotlinx.android.synthetic.main.merge_layout_bottom_bar_screen_now_playing.btnLogoBottom
+import kotlinx.android.synthetic.main.merge_layout_bottom_bar_screen_now_playing.btnMenuFloat
+import kotlinx.android.synthetic.main.merge_layout_bottom_bar_screen_now_playing.constraintArrowDown
+import kotlinx.android.synthetic.main.merge_layout_bottom_bar_screen_now_playing.constraintArrowUp
+import kotlinx.android.synthetic.main.merge_layout_bottom_bar_screen_now_playing.frameOverlay
+import kotlinx.android.synthetic.main.merge_layout_bottom_bar_screen_now_playing.menuFloat
+import kotlinx.android.synthetic.main.merge_layout_bottom_bar_screen_now_playing.viewBgGroupControllers
+import kotlinx.android.synthetic.main.merge_layout_bottom_bar_screen_now_playing.wrapperMenuFloat
 import kotlinx.android.synthetic.main.merge_load_brand.*
 import kotlinx.android.synthetic.main.merge_now_playing_coming_up_next.*
 import player.wellnesssolutions.com.R
@@ -30,11 +40,12 @@ import player.wellnesssolutions.com.base.common.load_scheduled_videos.IScheduleC
 import player.wellnesssolutions.com.base.common.load_scheduled_videos.SchedulePresenter
 import player.wellnesssolutions.com.base.common.play_video.ClosedCaptionController
 import player.wellnesssolutions.com.base.common.play_video.PlayVideoDisplayHelper
-import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.base.utils.FragmentUtil
 import player.wellnesssolutions.com.base.utils.ParameterUtils.mCountDownNumber
 import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
+import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.common.constant.Constant
+import player.wellnesssolutions.com.common.constant.SOURCE_LOAD_SCHEDULE
 import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.common.utils.DialogUtil
@@ -90,7 +101,8 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        registerScheduleBroadcast()
+        Log.d("LOG", this.javaClass.simpleName + " onCreate()")
+
         mSchedulePresenter = SchedulePresenter(context!!)
 
         readArguments()
@@ -98,9 +110,10 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
 
     private fun readArguments() {
         arguments?.also { extras ->
-            when{
+            when {
                 extras.containsKey(Constant.BUNDLE_SCHEDULE) -> {
                     val videos: ArrayList<MMVideo> = VideoDBUtil.getVideosFromDB(Constant.MM_SCHEDULE, false)
+                    Log.d("LOG", this.javaClass.simpleName + " onCreate() | read arguments | SCHEDULE | videos number: ${videos.size}")
                     mPresenter = NowPlayingPresenter(
                             context = context!!,
                             playMode = PlayMode.SCHEDULE
@@ -111,7 +124,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
 
                 extras.containsKey(KEY_DATA_PLAYING_VIDEO) -> {
                     val videos: ArrayList<MMVideo> = VideoDBUtil.getVideosFromDB(TAG, true)
-                    Log.d("LOG", this.javaClass.simpleName + " readArguments() | videos number: ${videos.size}")
+                    Log.d("LOG", this.javaClass.simpleName + " readArguments() | PLAY VIDEO SEARCHED | videos number: ${videos.size}")
                     mPresenter = NowPlayingPresenter(
                             context = context!!,
                             playMode = PlayMode.ON_DEMAND
@@ -128,12 +141,13 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
+        registerScheduleBroadcast()
         return inflater.inflate(R.layout.fragment_now_playing, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
+        Log.d("LOG", this.javaClass.simpleName + " onActivityCreated()")
         if (arguments != null && arguments?.isEmpty == false) {
             readArguments()
         }
@@ -149,19 +163,20 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         // prevent lag on translating fragment
         mIsTranslateCompleted = false
 
-        view?.postDelayed({
-            mIsTranslateCompleted = true
-            mNowVideo?.also { video ->
-                mComingUpVideos?.also { comingUpVideos ->
-                    showUI(video, comingUpVideos)
-                }
+//        view?.postDelayed({
+        mIsTranslateCompleted = true
+        mNowVideo?.also { video ->
+            mComingUpVideos?.also { comingUpVideos ->
+                showUI(video, comingUpVideos)
             }
-        }, 400L)
+        }
+//        }, 400L)
     }
 
     override fun onResume() {
         super.onResume()
         attachPresenter()
+        setOldScreen()
     }
 
     private fun attachPresenter() {
@@ -195,7 +210,6 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
             PreferenceHelper.getInstance(it).putLong(ConstantPreference.LAST_TIME_COUNT_DOWN, mCountDownNumber)
         }
         unregisterScheduleBroadcast()
-
 
         super.onDestroyView()
     }
@@ -521,7 +535,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
 
     override fun onReceiveUpdateScheduleFromUI() {
         AlarmManagerSchedule.cancelAlarmScheduleTime()
-        mSchedulePresenter?.onLoadSchedule(this, false)
+        mSchedulePresenter?.onLoadSchedule(this, false, true)
     }
 
     override fun onReceivePlayVideoScheduleFromUI() {
@@ -530,10 +544,11 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
     }
 
     override fun onReceiveResetScheduleFromUI() {
-        mSchedulePresenter?.onLoadSchedule(this, false)
+        mSchedulePresenter?.onLoadSchedule(this, false, true)
     }
 
     override fun onReceiveChangeApiBackToHome() {
+        Log.d("LOG", this.javaClass.simpleName + " onReceiveChangeApiBackToHome()")
         activity?.let {
             if (it is MainActivity) {
                 mPresenter?.stopCountdown()
@@ -549,6 +564,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
     }
 
     override fun onReceiveChangeSub() {
+        Log.d("LOG", this.javaClass.simpleName + " onReceiveChangeSub()")
         activity?.let {
             if (it is MainActivity) {
                 mPresenter?.stopCountdown()
@@ -569,6 +585,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
     }
 
     override fun onReceiveChangeApiBackToHomeGetConfigApi() {
+        Log.d("LOG", this.javaClass.simpleName + " onReceiveChangeApiBackToHomeGetConfigApi()")
         activity?.let {
             if (it is MainActivity) {
                 mPresenter?.stopCountdown()
@@ -631,16 +648,24 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
     }
 
     override fun showUIForPlayingVideo(videoData: MMVideo, comingUpVideos: ArrayList<MMVideo>) {
-        this.mNowVideo = videoData
-        this.mNowVideoLength = ((videoData.videoLength ?: 0f) * 1000).toLong()
-        this.mComingUpVideos = comingUpVideos
+        Log.d("LOG", this.javaClass.simpleName + " showUIForPlayingVideo()")
+        activity?.also { activity ->
+            if (activity is MainActivity && activity.isPresentationAvailable()) {
 
-        if (mIsTranslateCompleted) {
-            showUI(videoData, comingUpVideos)
+            } else {
+                this.mNowVideo = videoData
+                this.mNowVideoLength = ((videoData.videoLength ?: 0f) * 1000).toLong()
+                this.mComingUpVideos = comingUpVideos
+
+                if (mIsTranslateCompleted) {
+                    showUI(videoData, comingUpVideos)
+                }
+            }
         }
     }
 
     private fun showUI(video: MMVideo, comingUpNextVideos: ArrayList<MMVideo>) {
+        Log.d("LOG", this.javaClass.simpleName + " showUI() | video name: ${video.videoName} | coming videos number: ${comingUpNextVideos.size}")
         videoPlayer?.let {
             it.useController = true
         }
@@ -675,11 +700,19 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         }
     }
 
+    override fun isCastableOnTV(): Boolean {
+        return activity?.let {
+            activity is MainActivity && (activity as MainActivity).isPresentationAvailable()
+        } ?: false
+    }
+
     override fun backToHomeScreenWithNotLoadSchedule() {
+        Log.d("LOG", this.javaClass.simpleName + " backToHomeScreenWithNotLoadSchedule()")
         NowPlayingVideoSetupHelper.openHomeFragmentWithNotLoadSchedule(fm = activity?.supportFragmentManager)
     }
 
     override fun openNoClassSearchScreen(isClickedFromBtnBottom: Boolean?) {
+        Log.d("LOG", this.javaClass.simpleName + " openNoClassSearchScreen()")
         NowPlayingVideoSetupHelper.openHomeFragmentWithNotLoadSchedule(fm = activity?.supportFragmentManager)
     }
 
@@ -695,16 +728,14 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         }, playedPosition)
     }
 
-    override fun onNoClassVideos(message: String, @ColorRes msgColor: Int, isClickedFromBtnBottom: Boolean) {
+    override fun onNoClassVideosForNow(message: String, @ColorRes msgColor: Int, isClickedFromBtnBottom: Boolean) {
+        Log.d("LOG", this.javaClass.simpleName + " onNoClassVideosForNow()")
         btnLogoBottom.isEnabled = true
         if (videoPlayer == null) return
 
         when (mPresenter?.getPlayMode()) {
             PlayMode.SCHEDULE -> {
-//                view?.also {
-//                    MessageUtils.showSnackBar(it, R.string.no_class_now, R.color.white, R.string.btn_ok, isLongTime = false)
-//                }
-//                NowPlayingVideoSetupHelper.openNoClassScreen(fm = activity?.supportFragmentManager)
+                Log.d("LOG", this.javaClass.simpleName + " onNoClassVideosForNow() | SCHEDULE | isClickedFromBtnBottom: $isClickedFromBtnBottom")
                 if (isClickedFromBtnBottom) {
                     NowPlayingVideoSetupHelper.openHomeFragmentWithNotLoadSchedule(fm = activity?.supportFragmentManager)
                     activity?.let {
@@ -730,25 +761,32 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
                 }
             }
         }
+
     }
 
-    override fun onHaveClassVideos(scheduledVideos: ArrayList<MMVideo>, isClickedFromBtnBottom: Boolean) {
+    override fun onHaveClassVideos(scheduleVideos: ArrayList<MMVideo>, isClickedFromBtnBottom: Boolean) {
         btnLogoBottom.isEnabled = true
-
+//        if(scheduledVideos.size == 0) onNoClassVideos("", R.color.yellow, isClickedFromBtnBottom)
+        Log.d("LOG", this.javaClass.simpleName + " onHaveClassVideos() | videos number: ${scheduleVideos.size} | play mode: ${mPresenter?.getPlayMode()}")
+        hideLoadingProgress()
         videoPlayer?.context?.let {
             when (mPresenter?.getPlayMode()) {
-                PlayMode.SCHEDULE -> switchToCurrentClass(scheduledVideos)
+                PlayMode.SCHEDULE -> switchToCurrentClass(scheduleVideos)
 
                 // show dialog ask user want to play class video
                 PlayMode.ON_DEMAND -> {
+                    Log.d("LOG", this.javaClass.simpleName + " onHaveClassVideos() | isClickedFromBtnBottom: ${isClickedFromBtnBottom}")
                     if (isClickedFromBtnBottom) {
                         val message = it.getString(R.string.confirm_stop_video_and_open_current_class)
-                        val okButtonListener = DialogInterface.OnClickListener { _, _ -> switchToCurrentClass(scheduledVideos) }
+                        val okButtonListener = DialogInterface.OnClickListener { _, _ -> switchToCurrentClass(scheduleVideos) }
+                        val cancelButtonListener = DialogInterface.OnClickListener { _, _ ->
+                            mPresenter?.resumeOrReplay()
+                        }
 
                         DialogUtil.createDialogTwoButtons(context = it, message = message, titleLeftButton = R.string.btn_no,
-                                leftButtonClickListener = null, titleRightButton = R.string.btn_yes, rightButtonClickListener = okButtonListener).show()
+                                leftButtonClickListener = cancelButtonListener, titleRightButton = R.string.btn_yes, rightButtonClickListener = okButtonListener).show()
                     } else {
-                        switchToCurrentClass(scheduledVideos)
+                        switchToCurrentClass(scheduleVideos)
                     }
                 }
             }
@@ -759,15 +797,52 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         // do nothing
     }
 
-    private fun switchToCurrentClass(schedulingVideos: ArrayList<MMVideo>) {
-        rvComingUpNext?.adapter?.also {
-            if (it is NowPlayingComingUpNextAdapter)
-                it.release()
+    override fun showDialogAskWantToBackToHome(isLoadSchedule: Boolean) {
+        Log.d("LOG", this.javaClass.simpleName + " showDialogAskWantToBackToHome()")
+        dialog?.dismiss()
+        context?.also { context ->
+            dialog = DialogUtil.createDialogTwoButtons(context, getString(R.string.confirm_stop_video_and_navigate_to_screen_get_started), R.string.cancel,
+                    object : DialogInterface.OnClickListener {
+                        override fun onClick(dialogInterface: DialogInterface?, p1: Int) {
+                            dialogInterface?.dismiss()
+                            hideLoadingProgress()
+                        }
+
+                    }, R.string.btn_ok, object : DialogInterface.OnClickListener {
+                override fun onClick(dialogInterface: DialogInterface?, p1: Int) {
+                    dialogInterface?.dismiss()
+                    when {
+                        isLoadSchedule -> NowPlayingVideoSetupHelper.openHomeFragmentWithLoadSchedule(fm = activity?.supportFragmentManager)
+                        else -> backToHomeScreenWithNotLoadSchedule()
+                    }
+
+                }
+
+            }).apply { show() }
         }
 
-        context?.also {
-            mPresenter?.switchToPlayScheduledVideos(scheduledVideos = schedulingVideos)
-            setupVideoPlayerOnMode()
+    }
+
+    private fun switchToCurrentClass(scheduleVideos: ArrayList<MMVideo>) {
+        Log.d("LOG", this.javaClass.simpleName + " switchToCurrentClass() | videos number: ${scheduleVideos.size}")
+        activity?.also { activity ->
+            if (activity is MainActivity && activity.isPresentationAvailable()) {
+                Log.d("LOG", this.javaClass.simpleName + " switchToCurrentClass() | case presentation")
+                MessageUtils.showSnackBar(snackView = btnLogoBottom, message = getString(R.string.now_playing_class),
+                        colorRes = R.color.white)
+                activity.playVideo(PlayMode.SCHEDULE, scheduleVideos)
+                backToHomeScreenWithNotLoadSchedule()
+            } else {
+                rvComingUpNext?.adapter?.also {
+                    if (it is NowPlayingComingUpNextAdapter)
+                        it.release()
+                }
+
+                context?.also {
+                    mPresenter?.switchToPlayScheduleVideos(scheduleVideos = scheduleVideos)
+                    setupVideoPlayerOnMode()
+                }
+            }
         }
     }
 
@@ -795,10 +870,16 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
     }
 
     /**
-     * @IRouterChanged
+     * @IRouterChangedListener
      */
 
     override fun onMediaRouterConnected() {
+        Log.d("LOG", this.javaClass.simpleName + " onMediaRouterConnected() ")
+//        when{
+//            mPresenter?.getPlayMode() == PlayMode.ON_DEMAND -> {
+//
+//            }
+//        }
         val videos: ArrayList<MMVideo>? = mPresenter?.getAllVideos()
 
         val lastPosition: Long? = mPresenter?.getPlayerManager()?.getCurrentPosition()
@@ -814,7 +895,6 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
             MessageUtils.showSnackBar(snackView = it, message = getString(R.string.detect_connecting_to_tv),
                     colorRes = R.color.white, isLongTime = true, btnRes = R.string.btn_ok)
         }
-
         openNoClassSearchScreen(null)
     }
 
@@ -992,10 +1072,10 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
                 NowPlayingFragment().apply {
                     VideoDBUtil.createOrUpdateVideos(data, TAG)
 
-                    val bundle = Bundle().apply {
+                    arguments = Bundle().apply {
                         putBoolean(KEY_DATA_PLAYING_VIDEO, true)
+                        putString(Constant.BUNDLE_SOURCE_SCHEDULE, SOURCE_LOAD_SCHEDULE.LOCAL.name)
                     }
-                    arguments = bundle
                 }
 
         fun getBundleBySearchedVideos(data: ArrayList<MMVideo>): Bundle {
@@ -1003,11 +1083,20 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
 
             return Bundle().apply {
                 putBoolean(KEY_DATA_PLAYING_VIDEO, true)
+                putString(Constant.BUNDLE_SOURCE_SCHEDULE, SOURCE_LOAD_SCHEDULE.LOCAL.name)
             }
         }
 
         fun getInstancePlaySchedule(): NowPlayingFragment = NowPlayingFragment().apply {
-            arguments = Bundle().also { it.putBoolean(Constant.BUNDLE_SCHEDULE, true) }
+            arguments = Bundle().also {
+                it.putBoolean(Constant.BUNDLE_SCHEDULE, true)
+            }
+        }
+
+        fun updateAlreadyInstanceWithSchedule(fragment: NowPlayingFragment): Fragment = fragment.apply {
+            arguments = Bundle().also {
+                it.putBoolean(Constant.BUNDLE_SCHEDULE, true)
+            }
         }
     }
 

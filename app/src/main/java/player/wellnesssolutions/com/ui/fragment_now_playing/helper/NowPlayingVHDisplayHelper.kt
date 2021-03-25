@@ -1,7 +1,6 @@
 package player.wellnesssolutions.com.ui.fragment_now_playing.helper
 
 import android.content.res.Resources
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import com.bumptech.glide.Glide

@@ -5,8 +5,8 @@ import android.view.View
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import kotlinx.android.synthetic.main.vh_search_brand_less_4_items.view.*
-import player.wellnesssolutions.com.base.view.BaseVH
 import player.wellnesssolutions.com.base.utils.StringUtil
+import player.wellnesssolutions.com.base.view.BaseVH
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.customize_views.MMOptionTextView.Companion.colorBand
 import player.wellnesssolutions.com.network.models.screen_search.MMBrand
@@ -47,7 +47,7 @@ class SearchBrandVH(view: View, var imageSize: Int, presenter: ISearchBrandsCont
     }
 
     private fun setupTextFontDesciption() {
-        itemView.tvBrandDesc.setTypeface(StringUtil.getTypefaceMadeEvolveSans(itemView.context))
+        itemView.tvBrandDesc.typeface = StringUtil.getTypefaceMadeEvolveSans(itemView.context)
     }
 
     fun bind(data: MMBrand, position: Int) {

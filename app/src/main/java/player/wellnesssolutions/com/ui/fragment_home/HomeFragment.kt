@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,13 +13,14 @@ import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_home.*
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.common.download.DownloadVideoHelper
-import player.wellnesssolutions.com.base.view.BaseScheduleFragment
-import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.base.utils.FragmentUtil
 import player.wellnesssolutions.com.base.utils.ParameterUtils
 import player.wellnesssolutions.com.base.utils.StringUtil
 import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
+import player.wellnesssolutions.com.base.view.BaseResponseObserver
+import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.common.constant.Constant
+import player.wellnesssolutions.com.common.constant.SOURCE_LOAD_SCHEDULE
 import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.common.utils.FileUtil
@@ -41,21 +43,31 @@ import player.wellnesssolutions.com.ui.fragment_search_result_videos.SearchResul
 
 class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
     private var presenter: IHomeContract.Presenter? = null
-
-    private var isLoadScheduleOnScreenRefresh = true
-
     private val handler = Handler()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         presenter = HomePresenter(context!!)
+        btnGetStarted?.isEnabled = false
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        arguments?.also { arguments ->
-            isLoadScheduleOnScreenRefresh = arguments.getBoolean(Constant.BUNDLE_SCHEDULE, false)
-            arguments.clear()
-        }
+//        if (ParameterUtils.isFragmentHomeOpen) {
+//            context?.let {
+//                if (PreferenceHelper.getInstance(it).getBoolean(ConstantPreference.IS_DOWNLOAD_VIDEOS, true)) {
+//                    getAllVideosForDownload(it)
+//                } else {
+//                    checkSubIsChange(it)
+//                }
+//            }
+//            ParameterUtils.isFragmentHomeOpen = false
+//        }
+
+//        arguments?.also { arguments ->
+//            isLoadScheduleOnScreenRefresh = arguments.getBoolean(Constant.BUNDLE_SCHEDULE, false)
+//            arguments.clear()
+//        }
+        super.onCreateView(inflater, container, savedInstanceState)
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
@@ -66,12 +78,10 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
 
     override fun onResume() {
         super.onResume()
-
         registerScheduleBroadcast()
-
+        Log.d("LOG", this.javaClass.simpleName + " onResume() | isNewScreen: $isNewScreen")
         if (isNewScreen) {
             btnLogoBottom?.setOnClickListener {
-                if (isNewScreen) return@setOnClickListener
                 it.isEnabled = false
                 loadSchedule(true)
                 it.isEnabled = true
@@ -90,14 +100,20 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
         super.onPause()
     }
 
+    override fun onStop() {
+        super.onStop()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
+        Log.d("LOG", this.javaClass.simpleName + " onDestroyView()")
+        unregisterScheduleBroadcast()
         handler.removeCallbacks(runnableAttachPresenterFirstTime)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        unregisterScheduleBroadcast()
+        Log.d("LOG", this.javaClass.simpleName + " onDestroy()")
         presenter?.onDestroy()
     }
 
@@ -106,9 +122,7 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
      */
 
     private val runnableAttachPresenterFirstTime = Runnable {
-        if (!isNewScreen) return@Runnable
-
-        if(isLoadScheduleOnScreenRefresh) loadSchedule(false)
+        if (isNewScreen) return@Runnable
 
         if (ParameterUtils.isFragmentHomeOpen) {
             context?.let {
@@ -214,19 +228,15 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
 
     private fun registerScheduleBroadcast() {
         // register casting TV (presentation) broadcast receiver
-        activity?.also { _ ->
-            ScheduleBroadcastReceiver.getInstance().addListener(this)
-        }
+        ScheduleBroadcastReceiver.getInstance().addListener(this)
     }
 
     private fun unregisterScheduleBroadcast() {
-        activity?.also { _ ->
-            if (ScheduleBroadcastReceiver.getInstance().isRegistered(this)) {
-                try {
-                    ScheduleBroadcastReceiver.getInstance().removeListener(this)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
+        if (ScheduleBroadcastReceiver.getInstance().isRegistered(this)) {
+            try {
+                ScheduleBroadcastReceiver.getInstance().removeListener(this)
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
@@ -237,10 +247,10 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
         HMCDataHelper.deleteALlFromTag(SearchResultFragment.getTagOfHMCForDB())
         viewCoverGetStarted?.visibility = View.VISIBLE
 
-        loadNoClassScreen()
+        loadControlScreen()
     }
 
-    override fun onNoClassVideos(message: String, @ColorRes msgColor: Int, isClickedFromBtnBottom: Boolean) {
+    override fun onNoClassVideosForNow(message: String, @ColorRes msgColor: Int, isClickedFromBtnBottom: Boolean) {
         if (btnGetStarted == null) return
         if (message == Constant.ERROR_CANT_CONNECT_SERVER) {
             val text = String.format("%s %s", getString(R.string.request_class_video_failed), message)
@@ -249,13 +259,13 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
         //loadNoClassScreen()
     }
 
-    override fun onHaveClassVideos(scheduledVideos: ArrayList<MMVideo>, isClickedFromBtnBottom: Boolean) {
+    override fun onHaveClassVideos(scheduleVideos: ArrayList<MMVideo>, isClickedFromBtnBottom: Boolean) {
         activity?.also { act ->
             if (act is MainActivity && act.isPresentationAvailable()) {
                 MessageUtils.showSnackBar(snackView = btnGetStarted, message = getString(R.string.now_playing_class), colorRes = R.color.white)
-                act.playVideo(PlayMode.SCHEDULE, scheduledVideos)
+                act.playVideo(PlayMode.SCHEDULE, scheduleVideos)
 
-                loadNoClassScreen()
+                loadControlScreen()
             } else {
                 loadNowPlayingScreen()
             }
@@ -266,7 +276,10 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
         loadNowPlayingScreen()
     }
 
-    private fun loadNoClassScreen() {
+    private fun loadControlScreen() {
+        Log.d("LOG", this.javaClass.simpleName + " loadControlScreen() | isStartedOpenNewScreen: $isStartedOpenNewScreen")
+        if (isStartedOpenNewScreen) return
+        isStartedOpenNewScreen = true
         FragmentUtil.replaceFragment(
                 fm = activity?.supportFragmentManager,
                 newFragment = ControlFragment.getInstance(NoClassFragment.TAG),
@@ -276,14 +289,11 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
         )
     }
 
-//    private fun loadNowPlayingScreen(scheduleVideos: ArrayList<MMVideo>) {
-//        activity?.supportFragmentManager?.also { fm ->
-//            NowPlayingVideoSetupHelper.openNowPlayingWithSchedule(fm, scheduleVideos)
-//        }
-//    }
-
     private fun loadNowPlayingScreen() {
+        Log.d("LOG", this.javaClass.simpleName + " loadNowPlayingScreen() | isStartedOpenNewScreen: $isStartedOpenNewScreen")
+        if (isStartedOpenNewScreen) return
         activity?.supportFragmentManager?.also { fm ->
+            isStartedOpenNewScreen = true
             NowPlayingVideoSetupHelper.openNowPlayingWithSchedule(fm)
         }
     }
@@ -375,41 +385,33 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
 
         fun getInstanceWithLoadSchedule(): HomeFragment = HomeFragment().apply {
             arguments = Bundle().apply {
-                putBoolean(Constant.BUNDLE_SCHEDULE, true)
+                putString(Constant.BUNDLE_SOURCE_SCHEDULE, SOURCE_LOAD_SCHEDULE.REMOTE.name)
             }
         }
 
         fun updateAlreadyInstanceWithLoadSchedule(fragment: HomeFragment): HomeFragment = fragment.apply {
             arguments = Bundle().apply {
-                putBoolean(Constant.BUNDLE_SCHEDULE, true)
+                putString(Constant.BUNDLE_SOURCE_SCHEDULE, SOURCE_LOAD_SCHEDULE.REMOTE.name)
             }
         }
 
         fun getInstanceNoLoadSchedule(): HomeFragment = HomeFragment().apply {
             arguments = Bundle().apply {
-                putBoolean(Constant.BUNDLE_SCHEDULE, false)
+                putString(Constant.BUNDLE_SOURCE_SCHEDULE, SOURCE_LOAD_SCHEDULE.LOCAL.name)
             }
         }
 
         fun updateAlreadyInstanceWithNoSchedule(fragment: HomeFragment): Fragment = fragment.apply {
             arguments = Bundle().apply {
-                putBoolean(Constant.BUNDLE_SCHEDULE, false)
+                putString(Constant.BUNDLE_SOURCE_SCHEDULE, SOURCE_LOAD_SCHEDULE.LOCAL.name)
             }
         }
 
-        fun getInstanceWithRemainSchedule(videos: ArrayList<MMVideo>): HomeFragment = HomeFragment().apply {
-            VideoDBUtil.createOrUpdateVideos(videos, Constant.MM_SCHEDULE)
-            val bundle = Bundle().apply {
-                putBoolean(Constant.BUNDLE_SCHEDULE, true)
-            }
-            arguments = bundle
-        }
-
-        fun updateAlreadyInstance(fragment: HomeFragment, videos: ArrayList<MMVideo>): HomeFragment = fragment.apply {
+        fun updateAlreadyInstanceWithNotLoadSchedule(fragment: HomeFragment): Fragment = fragment.apply {
             arguments = Bundle().apply {
-                VideoDBUtil.createOrUpdateVideos(videos, Constant.MM_SCHEDULE)
-                putBoolean(Constant.BUNDLE_SCHEDULE, true)
+                putString(Constant.BUNDLE_SOURCE_SCHEDULE, SOURCE_LOAD_SCHEDULE.LOCAL.name)
             }
         }
+
     }
 }

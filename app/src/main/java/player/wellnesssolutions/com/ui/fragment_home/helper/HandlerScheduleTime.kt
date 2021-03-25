@@ -1,6 +1,8 @@
 package player.wellnesssolutions.com.ui.fragment_home.helper
 
 import android.content.Context
+import android.util.Log
+import player.wellnesssolutions.com.base.common.load_scheduled_videos.ICallBackNextScheduleVideo
 import player.wellnesssolutions.com.base.utils.ParameterUtils
 import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
@@ -9,19 +11,17 @@ import player.wellnesssolutions.com.network.datasource.time_network.RequestTimeS
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.com.services.AlarmManagerSchedule
 import player.wellnesssolutions.com.ui.fragment_now_playing.helper.HandlerTimeScheduleHelper
-import player.wellnesssolutions.com.ui.fragment_now_playing.helper.ICallbackTimePlaySchedule
+import player.wellnesssolutions.com.ui.fragment_now_playing.helper.ICallbackNowScheduleVideo
 import player.wellnesssolutions.com.ui.fragment_now_playing.helper.STATE_TIME_PLAY_SCHEDULE
+import java.lang.ref.WeakReference
 
-class HandlerScheduleTime(context: Context, var mListener: IListenerHandleScheduleTime?) : IRequestTimeNetworkListener {
-    private var mContext: Context?
+class HandlerScheduleTime(context: Context, listener: IListenerHandleScheduleTime) : IRequestTimeNetworkListener {
+    private var weakContext = WeakReference(context)
+    private var weakListener = WeakReference(listener)
     private var mTimeDiffs = -1L
-    private var mVideos: ArrayList<MMVideo>? = null
-    private var isHandleForNowVideo = false
+    private var videos: ArrayList<MMVideo> = arrayListOf()
 
     init {
-        mContext = context
-        this.mTimeDiffs = PreferenceHelper.getInstance(context).getLong(ConstantPreference.TIME_DIFFS, -1L)
-
         if (this.mTimeDiffs == -1L)
             asyncTimeFromNetwork()
     }
@@ -32,67 +32,74 @@ class HandlerScheduleTime(context: Context, var mListener: IListenerHandleSchedu
 
     override fun onRecivedTime(timeDiffs: Long) {
         this.mTimeDiffs = timeDiffs
-        mContext?.also {
+        weakContext.get()?.also {
             PreferenceHelper.getInstance(it).putLong(ConstantPreference.TIME_DIFFS, timeDiffs)
         }
     }
 
-    fun setupScheduleForComingUpVideo(videos: ArrayList<MMVideo>){
-        isHandleForNowVideo = false
-        this.mVideos = videos
+    fun setupScheduleNextVideo(videos: ArrayList<MMVideo>, callback: ICallBackNextScheduleVideo) {
         if (videos.size == 0) return
-        process(false)
+        handleNextScheduleVideo(videos, 0, callback)
     }
 
-    fun setupScheduleForNowVideo(videos: ArrayList<MMVideo>, isClickedButtonHome: Boolean?) {
-        isHandleForNowVideo = true
-        this.mVideos = videos
+    fun setupScheduleForNowVideo(videos: ArrayList<MMVideo>, isClickedButtonHome: Boolean) {
+        Log.d("LOG", this.javaClass.simpleName + " setupScheduleForNowVideo() | videos number: ${videos.size}")
+        this.videos = videos
         if (videos.size == 0) return
 
-        process(isClickedButtonHome)
+        handleScheduleVideoNow(isClickedButtonHome)
     }
 
-    private fun process(isClickedButtonHome: Boolean?) {
-        val firstVideo = mVideos?.get(0)
-        if (firstVideo == null || mListener == null) return
+    fun setupScheduleForNowVideo(videos: ArrayList<MMVideo>, isClickedButtonHome: Boolean, listener:IListenerHandleScheduleTime,
+    context: Context?) {
+        Log.d("LOG", this.javaClass.simpleName + " setupScheduleForNowVideo() | videos number: ${videos.size} | " +
+                "listener: ${weakListener.get()} | context: ${weakContext.get()}")
+        weakListener = WeakReference(listener)
+        weakContext = WeakReference(context)
+        this.videos = videos
+        if (videos.size == 0) return
 
-        HandlerTimeScheduleHelper.calculateTimePlayVideo(firstVideo, object : ICallbackTimePlaySchedule {
+        handleScheduleVideoNow(isClickedButtonHome)
+    }
+
+    fun release() {
+        weakListener.clear()
+    }
+
+    private fun handleScheduleVideoNow(isClickedButtonHome: Boolean) {
+        if (weakListener.get() == null) return
+        val firstVideo = videos[0]
+        Log.d("LOG", this.javaClass.simpleName + " process() | video name: ${firstVideo.videoName} | videos number: ${videos.size}")
+        HandlerTimeScheduleHelper.calculateTimePlayVideo(firstVideo, object : ICallbackNowScheduleVideo {
             override fun onResult(state: STATE_TIME_PLAY_SCHEDULE, timePlay: Long) {
                 when (state) {
                     STATE_TIME_PLAY_SCHEDULE.TIME_PLAY -> {
-                        when {
-                            isHandleForNowVideo -> {
-                                ParameterUtils.isClearVideoOnPresentation = true
-                                mListener?.onHaveNowPlayingVideo(timePlay)
-                            }
-                            else -> {
-                                mVideos?.removeAt(0)
-                                process(isClickedButtonHome)
-                            }
-                        }
+                        Log.d("LOG", this.javaClass.simpleName + " process() | TIME_PLAY | timePlay: $timePlay")
+
+                        ParameterUtils.isClearVideoOnPresentation = true
+                        weakListener.get()?.onHaveNowPlayingVideo(timePlay)
                     }
 
                     STATE_TIME_PLAY_SCHEDULE.TIME_WAIT -> {
-                        mContext?.also { context ->
-                            val timeWait = (timePlay / 1000L).toInt()
-                            AlarmManagerSchedule.cancelAlarmScheduleTime()
-                            AlarmManagerSchedule.setupTimeWakeSchedule(context, timeWait)
-                        }
-                        mListener?.onHaveVideoAfter(timePlay)
+                        Log.d("LOG", this.javaClass.simpleName + " process() | TIME_WAIT | timePlay: $timePlay | video name: ${firstVideo.videoName} | " +
+                                "videos number: ${videos.size}")
+                        setupAlarmTask(timePlay)
+                        weakListener.get()?.onHaveVideoAfter(timePlay, isClickedButtonHome)
                     }
 
                     STATE_TIME_PLAY_SCHEDULE.TIME_EXPIRED -> {
+                        Log.d("LOG", this.javaClass.simpleName + " process() | TIME_EXPIRED")
                         when {
-                            mVideos?.size ?: 0 == 0 -> mListener?.onVideoExpiredTime()
+                            videos.size == 0 -> weakListener.get()?.onVideoExpiredTime()
                             else -> {
-                                mVideos?.removeAt(0)
-                                process(isClickedButtonHome)
+                                videos.removeAt(0)
+                                handleScheduleVideoNow(isClickedButtonHome)
                             }
                         }
                     }
 
                     STATE_TIME_PLAY_SCHEDULE.TIME_ERROR -> {
-                        mListener?.onProcessVideoError()
+                        weakListener.get()?.onProcessVideoError()
                     }
                 }
             }
@@ -101,8 +108,48 @@ class HandlerScheduleTime(context: Context, var mListener: IListenerHandleSchedu
 
     }
 
-    fun release() {
-        mListener = null
-        mContext = null
+    private fun handleNextScheduleVideo(videos: ArrayList<MMVideo>, index: Int, callback: ICallBackNextScheduleVideo) {
+        if (index >= videos.size) {
+            callback.onNotFound()
+            return
+        }
+
+        val videoHandle = videos[index]
+        HandlerTimeScheduleHelper.calculateTimePlayVideo(videoHandle, object : ICallbackNowScheduleVideo {
+            override fun onResult(state: STATE_TIME_PLAY_SCHEDULE, timePlay: Long) {
+                when (state) {
+                    STATE_TIME_PLAY_SCHEDULE.TIME_PLAY -> {
+                        Log.d("LOG", this.javaClass.simpleName + " handleNextScheduleVideo() | TIME_PLAY | timePlay: $timePlay | " +
+                                "video name: ${videoHandle.videoName} | videos number: ${videos.size}")
+                        handleNextScheduleVideo(videos, index + 1, callback)
+                    }
+
+                    STATE_TIME_PLAY_SCHEDULE.TIME_WAIT -> {
+                        Log.d("LOG", this.javaClass.simpleName + " handleNextScheduleVideo() | TIME_WAIT | timePlay: $timePlay | " +
+                                "video name: ${videoHandle.videoName} | videos number: ${videos.size}")
+                        setupAlarmTask(timePlay)
+                        callback.onResult(index, timePlay)
+                    }
+
+                    STATE_TIME_PLAY_SCHEDULE.TIME_EXPIRED -> {
+                        Log.d("LOG", this.javaClass.simpleName + " handleNextScheduleVideo() | TIME_EXPIRED")
+                        handleNextScheduleVideo(videos, index + 1, callback)
+                    }
+
+                    STATE_TIME_PLAY_SCHEDULE.TIME_ERROR -> {
+                        callback.onNotFound()
+                    }
+                }
+            }
+
+        })
+    }
+
+    private fun setupAlarmTask(time: Long) {
+        weakContext.get()?.also { context ->
+            val timeWait = (time / 1000L).toInt()
+            AlarmManagerSchedule.cancelAlarmScheduleTime()
+            AlarmManagerSchedule.setupTimeWakeSchedule(context, timeWait)
+        }
     }
 }

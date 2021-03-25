@@ -15,7 +15,7 @@ import player.wellnesssolutions.com.ui.fragment_search_levels.SearchLevelsFragme
 import player.wellnesssolutions.com.ui.fragment_time_table.TimeTableFragment
 import java.lang.ref.WeakReference
 
-class NowPlayingFloatMenuHelper() {
+class NowPlayingFloatMenuHelper {
     // the handler for process all animations related to show and close menu
     private lateinit var mAnimHelper: MMMenuAnimationHelper
 

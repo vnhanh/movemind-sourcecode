@@ -1,17 +1,17 @@
 package player.wellnesssolutions.com.ui.fragment_search_instructors
 
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.base.view.BaseScheduleFragment
-import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
 import player.wellnesssolutions.com.base.utils.search_util.SearchDataHelper
+import player.wellnesssolutions.com.base.view.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.network.datasource.instructor.InstructorApi
 import player.wellnesssolutions.com.network.models.response.ResponseValue
 import player.wellnesssolutions.com.network.models.screen_search.MMBrand
 import player.wellnesssolutions.com.network.models.screen_search.MMInstructor
 
-class SearchInstructorsPresenter() : BaseResponseObserver<ArrayList<MMInstructor>>(), ISearchInstructorContract.Presenter {
+class SearchInstructorsPresenter : BaseResponseObserver<ArrayList<MMInstructor>>(), ISearchInstructorContract.Presenter {
     private var mView: ISearchInstructorContract.View? = null
     private var instructorRepository = InstructorApi()
     private var mBrand: MMBrand? = null
@@ -121,14 +121,14 @@ class SearchInstructorsPresenter() : BaseResponseObserver<ArrayList<MMInstructor
 
     override fun onExpired(error: String) {
         mView?.getFragment()?.also {
-            if (it is BaseScheduleFragment)
+            if (it is BaseFragment)
                 it.onExpired(error)
         }
     }
 
     override fun onExpiredUnauthenticated(error: String) {
         mView?.getFragment()?.also {
-            if (it is BaseScheduleFragment)
+            if (it is BaseFragment)
                 it.onExpiredUnAuth(error)
         }
     }

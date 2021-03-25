@@ -1,7 +1,6 @@
 package player.wellnesssolutions.com.ui.fragment_now_playing
 
 import android.content.Context
-import android.content.DialogInterface
 import android.os.CountDownTimer
 import android.util.Log
 import com.google.android.exoplayer2.Player
@@ -26,7 +25,6 @@ import player.wellnesssolutions.com.ui.fragment_home.helper.HandlerScheduleTime
 import player.wellnesssolutions.com.ui.fragment_now_playing.helper.HandlerTimeScheduleHelper
 import player.wellnesssolutions.com.ui.fragment_search_brands.module.ILoadBrandHandler
 import player.wellnesssolutions.com.ui.fragment_search_brands.module.LoadBrandsHandler
-import player.wellnesssolutions.com.ui.fragment_search_result_videos.SearchResultFragment
 import java.lang.ref.WeakReference
 
 class NowPlayingPresenter(context: Context, playMode: PlayMode) :
@@ -44,7 +42,7 @@ class NowPlayingPresenter(context: Context, playMode: PlayMode) :
     private var mIsReload = false // flag check if video is replayed
 
     // for loading class videos
-    private var mScheduledTimeProcessor: HandlerScheduleTime = HandlerScheduleTime(context = context, mListener = this)
+    private var handlerScheduleTimePlay: HandlerScheduleTime = HandlerScheduleTime(context = context, listener = this)
 
     // for Countdown Timer
     private var mCountDownTimerPlayVideo: CountDownTimer? = null
@@ -158,6 +156,7 @@ class NowPlayingPresenter(context: Context, playMode: PlayMode) :
     }
 
     override fun resumeOrReplay() {
+        Log.d("LOG", this.javaClass.simpleName + " resumeOrReplay() | mPlayerState: $mPlayerState | player: ${mPlayerManager.getPlayer()}")
         if (mPlayedMode != PlayMode.ON_DEMAND) return
         when (mPlayerState == PlayerState.PAUSED && mPlayerManager.getPlayer() != null) {
             true -> mPlayerManager.onResume()
@@ -176,7 +175,7 @@ class NowPlayingPresenter(context: Context, playMode: PlayMode) :
     }
 
     override fun setVideos(videos: ArrayList<MMVideo>) {
-        this.mVideos.clear()
+        Log.d("LOG", this.javaClass.simpleName + " setVideos() | videos number: ${videos.size}")
         this.mVideos = videos
         mVideos.also {
             mPlayerManager.addVideos(it)
@@ -202,7 +201,7 @@ class NowPlayingPresenter(context: Context, playMode: PlayMode) :
     private fun isPlayerInitialized(): Boolean = mPlayerManager.getPlayer() != null
 
     private fun processPlayerBaseOnState() {
-        Log.d("LOG", this.javaClass.simpleName + " processPlayerBaseOnState() | videos number: ${mVideos.size}")
+        Log.d("LOG", this.javaClass.simpleName + " processPlayerBaseOnState() | videos number: ${mVideos.size} | mPlayerState: $mPlayerState")
         // player has been initialized
         // return
         if (isPlayerInitialized()) return
@@ -268,6 +267,7 @@ class NowPlayingPresenter(context: Context, playMode: PlayMode) :
     }
 
     private fun initializeSearchPlayer() {
+        Log.d("LOG", this.javaClass.simpleName + " initializeSearchPlayer()")
         if (mPlayedMode != PlayMode.ON_DEMAND) return
         if (mView == null) return
 
@@ -287,6 +287,7 @@ class NowPlayingPresenter(context: Context, playMode: PlayMode) :
     }
 
     override fun onStartIntializePlayer() {
+        Log.d("LOG", this.javaClass.simpleName + " onStartIntializePlayer()")
         mView?.onStartInitializePlayer()
 
         if (mPlayedMode == PlayMode.SCHEDULE) {
@@ -297,6 +298,7 @@ class NowPlayingPresenter(context: Context, playMode: PlayMode) :
     }
 
     override fun onPlayerInitialized(player: SimpleExoPlayer) {
+        Log.d("LOG", this.javaClass.simpleName + " onPlayerInitialized()")
         // class video always play once init
         if (mPlayedMode == PlayMode.SCHEDULE) player.playWhenReady = true
         mView?.onPlayerInitialized(player = player)
@@ -310,6 +312,7 @@ class NowPlayingPresenter(context: Context, playMode: PlayMode) :
     }
 
     override fun onPlayNext() {
+        Log.d("LOG", this.javaClass.simpleName + " onPlayNext()")
 //        mPlayerManager.onInitialize(0L, EnumTypeViewVideo.NORMAL, isPlayCC = true)
         mInitPlayedPosition = 0L
         if (mVideos.size > 0) {
@@ -320,6 +323,7 @@ class NowPlayingPresenter(context: Context, playMode: PlayMode) :
     }
 
     override fun onReload() {
+        Log.d("LOG", this.javaClass.simpleName + " onReload()")
         mInitPlayedPosition = -1L
 //        checkPlayMode()
         mIsReload = true
@@ -359,7 +363,7 @@ class NowPlayingPresenter(context: Context, playMode: PlayMode) :
     }
 
     override fun clickToCallServiceLoadSchedule() {
-        when(mPlayedMode){
+        when (mPlayedMode) {
             PlayMode.SCHEDULE -> {
                 mView?.showDialogAskWantToLoadSchedule()
             }
@@ -375,13 +379,14 @@ class NowPlayingPresenter(context: Context, playMode: PlayMode) :
      */
 
     private fun scanScheduleVideos() {
+        Log.d("LOG", this.javaClass.simpleName + " scanScheduleVideos() | videos number: ${mVideos.size}")
         val videos: ArrayList<MMVideo> = mVideos
         if (videos.isNullOrEmpty()) {
             onDontHaveNowPlayingVideo(null)
             return
         }
 
-        mScheduledTimeProcessor.setupScheduleForNowVideo(videos, null)
+        handlerScheduleTimePlay.setupScheduleForNowVideo(videos, false)
     }
 
     override fun onClickedComingUpNextItem() {
@@ -392,33 +397,42 @@ class NowPlayingPresenter(context: Context, playMode: PlayMode) :
         mPlayerManager.setSubtitleController(closedCaptionController)
     }
 
+    private var isRequestFromUser = false
+
     /**
      * implementing @interface IListenerHandleScheduleTime
      */
     override fun onHaveNowPlayingVideo(playedPosition: Long) {
+        Log.d("LOG", this.javaClass.simpleName + " onHaveNowPlayingVideo() | playedPosition: ${playedPosition / 1000}s | mode: $mPlayedMode")
         when (mPlayedMode) {
             PlayMode.SCHEDULE -> {
+                Log.d("LOG", this.javaClass.simpleName + " onHaveNowPlayingVideo() | SCHEDULE | " +
+                        "isCastableOnTV: ${mView?.isCastableOnTV()}")
                 mView?.hideLoadingProgress()
                 val player: SimpleExoPlayer? = mPlayerManager.getPlayer()
-                when (player != null) {
-                    true -> {
-                        player.seekTo(playedPosition)
-                        player.playWhenReady = true
-                        mView?.reloadScheduledVideo()
-                    }
-                    false -> {
-                        openNowPlayingVideo(playedPosition)
-                    }
-                }
+                Log.d("LOG", this.javaClass.simpleName + " onHaveNowPlayingVideo() |  player: $player")
+//                when (player != null) {
+//                    true -> {
+//                        player.seekTo(playedPosition)
+//                        player.playWhenReady = true
+//                        mView?.reloadScheduledVideo()
+//                    }
+//                    false -> {
+//                        openNowPlayingVideo(playedPosition)
+//                    }
+//                }
+                openNowPlayingVideo(playedPosition)
+
             }
 
             PlayMode.ON_DEMAND -> {
+                Log.d("LOG", this.javaClass.simpleName + " onHaveNowPlayingVideo() | ON_DEMAND")
                 onDontHaveNowPlayingVideo(null)
             }
         }
     }
 
-    override fun onHaveVideoAfter(playedPosition: Long) {
+    override fun onHaveVideoAfter(playedPosition: Long, isRequestFromUser: Boolean) {
         if (playedPosition > 0L) {
             mView?.hideLoadingProgress()
             mView?.hideControlWhenNextVideoSchedule()
@@ -457,11 +471,13 @@ class NowPlayingPresenter(context: Context, playMode: PlayMode) :
     }
 
     override fun onDontHaveNowPlayingVideo(isClickedButtonHome: Boolean?) {
+        Log.d("LOG", this.javaClass.simpleName + " onDontHaveNowPlayingVideo() ")
         mView?.hideLoadingProgress()
         mView?.openNoClassSearchScreen(isClickedButtonHome)
     }
 
     private fun openNowPlayingVideo(playedVideoPosition: Long) {
+        Log.d("LOG", this.javaClass.simpleName + " openNowPlayingVideo() ")
         mPlayerManager.onInitialize(playedVideoPosition = playedVideoPosition, typeVideo = EnumTypeViewVideo.SCHEDULE, isUpdateViewNumber = true, isSupportCC = true)
     }
 
@@ -469,12 +485,14 @@ class NowPlayingPresenter(context: Context, playMode: PlayMode) :
         this.mInitPlayedPosition = position
     }
 
-    override fun switchToPlayScheduledVideos(scheduledVideos: ArrayList<MMVideo>) {
+    override fun switchToPlayScheduleVideos(scheduleVideos: ArrayList<MMVideo>) {
+        Log.d("LOG", this.javaClass.simpleName + " switchToPlayScheduleVideos() | videos number: ${mVideos.size}")
+        mVideos = scheduleVideos
         mPlayedMode = PlayMode.SCHEDULE
         mInitPlayedPosition = -1L
         mPlayerManager.onReleasePlayer(isKeepPosition = true, keepPlayWhenReady = true)
 
-        setVideos(scheduledVideos)
+        setVideos(scheduleVideos)
         scanScheduleVideos()
     }
 
@@ -524,7 +542,7 @@ class NowPlayingPresenter(context: Context, playMode: PlayMode) :
                     timeCountDown = mCountDownNumber)
         }
 
-        mScheduledTimeProcessor.release()
+        handlerScheduleTimePlay.release()
         mPlayerManager.onDestroy()
     }
 

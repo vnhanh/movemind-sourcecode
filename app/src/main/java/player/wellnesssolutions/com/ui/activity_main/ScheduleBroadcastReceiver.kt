@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.os.Message
+import android.util.Log
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.ui.fragment_control.ControlFragment
 import player.wellnesssolutions.com.ui.fragment_home.HomeFragment
@@ -66,6 +67,7 @@ class ScheduleBroadcastReceiver : BroadcastReceiver() {
     }
 
     private fun readScheduleIntent(intent: Intent) {
+        counterTry = 0
         when (intent.getStringExtra(SCHEDULE_PLAY_VIDEO)) {
             Constant.SCHEDULE_BROAD_CAST_EVERY -> onPLayScheduleEvery()
             Constant.SCHEDULE_BROAD_CAST_TIME -> onPLaySchedule()
@@ -85,9 +87,23 @@ class ScheduleBroadcastReceiver : BroadcastReceiver() {
         }
     }
 
+    private var counterTry = 0
+    private val MAX_NUM_TRY = 5
+    private val runnablePlaySchedule = Runnable { onPLaySchedule() }
+    private val TIME_DELAY = 1000L
+
     private fun onPLaySchedule() {
-        for (listener: ScheduleListener in mScheduleListeners) {
-            listener.onReceivePlayVideoScheduleFromUI()
+        Log.d("LOG", this.javaClass.simpleName + " onPLaySchedule() | counterTry: ${counterTry}")
+        counterTry++
+        if (counterTry > MAX_NUM_TRY) return
+        try {
+            mScheduleListeners.forEach { listener ->
+                listener.onReceivePlayVideoScheduleFromUI()
+                Log.d("LOG", this.javaClass.simpleName + " onPLaySchedule() | listener: ${listener}")
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            handler.postDelayed(runnablePlaySchedule, TIME_DELAY)
         }
     }
 
@@ -124,11 +140,16 @@ class ScheduleBroadcastReceiver : BroadcastReceiver() {
     }
 
     fun addListener(listener: ScheduleListener) {
+        if (mScheduleListeners.contains(listener)) return
+        Log.d("LOG", this.javaClass.simpleName + " addListener() | " +
+                "listeners number: ${mScheduleListeners.size} | listener class name: ${listener.javaClass.simpleName}")
         mScheduleListeners.add(listener)
     }
 
     fun removeListener(listener: ScheduleListener) {
-        mScheduleListeners.remove(listener)
+        for (item in mScheduleListeners) {
+            if (item == listener) mScheduleListeners.remove(listener)
+        }
     }
 
     private fun checkListenerHomeAndControl(): Boolean {

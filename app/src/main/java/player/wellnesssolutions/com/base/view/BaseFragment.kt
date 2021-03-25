@@ -9,7 +9,7 @@ import player.wellnesssolutions.com.base.utils.FragmentUtil
 import player.wellnesssolutions.com.common.utils.DialogUtil
 import player.wellnesssolutions.com.ui.activity_main.MainActivity
 
-abstract class BaseFragment : Fragment(), ILifeCycle.View{
+abstract class BaseFragment : Fragment(), ILifeCycle.View {
     protected var mIsJustBeDestroyed = false
 
     protected open fun onBackPressed(view: View) {

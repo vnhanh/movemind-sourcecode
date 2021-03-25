@@ -2,10 +2,10 @@ package player.wellnesssolutions.com.ui.fragment_search_brands.module
 
 import androidx.annotation.StringRes
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.base.view.BaseScheduleFragment
-import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
 import player.wellnesssolutions.com.base.utils.check_header_api_util.HeaderData
+import player.wellnesssolutions.com.base.view.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.network.datasource.brand.BrandApi
 import player.wellnesssolutions.com.network.models.response.ResponseValue
@@ -94,13 +94,13 @@ class LoadBrandsHandler(callback: ILoadBrandHandler.Callback) : BaseResponseObse
     }
 
     override fun onExpired(error: String) {
-        if (mCallback is BaseScheduleFragment) {
+        if (mCallback is BaseFragment) {
             mCallback.onExpired(error)
         }
     }
 
     override fun onExpiredUnauthenticated(error: String) {
-        if (mCallback is BaseScheduleFragment) {
+        if (mCallback is BaseFragment) {
             mCallback.onExpiredUnAuth(error)
         }
     }

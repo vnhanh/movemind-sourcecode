@@ -45,8 +45,8 @@ object HelpMeChooseDisplayHelper {
             isFirstView = false
 
             prevView = createRecyclers(item.answers, parentView, prevView, rvMarginLeft, presenter, adapters)
-            if ((prevView as RecyclerView).adapter != null) {
-                (prevView as RecyclerView).adapter?.let {
+            if (prevView.adapter != null) {
+                prevView.adapter?.let {
                     if (it.itemCount > 4) {
                         flagShowText = 1
                     }

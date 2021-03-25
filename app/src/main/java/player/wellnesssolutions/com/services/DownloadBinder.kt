@@ -5,8 +5,8 @@ import android.content.Context
 import android.os.Binder
 import android.webkit.MimeTypeMap
 import player.wellnesssolutions.com.base.common.download.DownloadVideoHelper
-import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
+import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper

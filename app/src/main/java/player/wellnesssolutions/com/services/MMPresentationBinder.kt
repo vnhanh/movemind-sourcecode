@@ -8,6 +8,7 @@ import android.content.IntentFilter
 import android.graphics.PixelFormat
 import android.os.Binder
 import android.os.Build
+import android.util.Log
 import android.util.TypedValue
 import android.view.*
 import android.widget.ImageView
@@ -27,6 +28,7 @@ import player.wellnesssolutions.com.base.common.play_video.ClosedCaptionControll
 import player.wellnesssolutions.com.base.common.play_video.PlayVideoDisplayHelper
 import player.wellnesssolutions.com.base.common.play_video.ShowMode
 import player.wellnesssolutions.com.base.utils.ViewUtil
+import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.customize_views.MMBackGroundView
 import player.wellnesssolutions.com.common.customize_views.MMProgressBar
 import player.wellnesssolutions.com.common.customize_views.MMTextView
@@ -134,6 +136,7 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
     }
 
     fun onCreate() {
+        Log.d("LOG", this.javaClass.simpleName + " onCreate()")
         val type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
         } else {
@@ -165,15 +168,19 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
         registerUICastingBroadcast()
 
         isShowing = true
+        PreferenceHelper.getInstance()?.putBoolean(Constant.IS_CAST_DISCONNECT, false)
     }
 
     private fun registerUICastingBroadcast() {
+        Log.d("LOG", this.javaClass.simpleName + " registerUICastingBroadcast()")
         val castingFilter = IntentFilter(CastingBroadcastReceiver.ACTION_UI)
         CastingBroadcastReceiver.getInstance().addListener(listener = this)
         mService.registerReceiver(CastingBroadcastReceiver.getInstance(), castingFilter)
     }
 
     fun onDestroy() {
+        PreferenceHelper.getInstance()?.putBoolean(Constant.IS_CAST_DISCONNECT, true)
+        Log.d("LOG", this.javaClass.simpleName + " onDestroy")
         mMonitorVideoAsyncTask?.stopTask()
         unregisterUICastingBroadcast()
         mContext?.also { context ->
@@ -192,6 +199,7 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
     }
 
     private fun unregisterUICastingBroadcast() {
+        Log.d("LOG", this.javaClass.simpleName + " unregisterUICastingBroadcast()")
         if (CastingBroadcastReceiver.getInstance().isRegistered(this)) {
             try {
                 mService.unregisterReceiver(CastingBroadcastReceiver.getInstance())
@@ -203,23 +211,28 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
     }
 
     fun pauseOrPlay() {
+        Log.d("LOG", this.javaClass.simpleName + " pauseOrPlay()")
         when (isShowClosedCaptionView()) {
             // is showing list of closed caption language views
             true -> {
+                Log.d("LOG", this.javaClass.simpleName + " pauseOrPlay() | isShowClosedCaptionView")
                 mPresenter?.selectLanguageCCOption()
                 videoPlayer.controllerShowTimeoutMs = 3000
                 mService.changeToNormalMode()
             }
 
             false -> {
+                Log.d("LOG", this.javaClass.simpleName + " pauseOrPlay() | isShowClosedCaptionView: not")
                 when (mPresenter?.getPlayMode()) {
                     PlayMode.SCHEDULE -> {
+                        Log.d("LOG", this.javaClass.simpleName + " pauseOrPlay() | isShowClosedCaptionView: not | SCHEDULE")
                         MessageUtils.showSnackBar(videoPlayer, R.string.class_video_cant_paused, R.color.yellow, isOnPresentation = true
                         )
                         videoPlayer.showController()
                     }
 
                     PlayMode.ON_DEMAND -> {
+                        Log.d("LOG", this.javaClass.simpleName + " pauseOrPlay() | isShowClosedCaptionView: not | DEMAND")
                         when (videoPlayer.player?.playbackState) {
                             Player.STATE_ENDED -> {
                                 mPresenter?.replayVideo()
@@ -240,14 +253,17 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
     }
 
     fun pause() {
+        Log.d("LOG", this.javaClass.simpleName + " pause()")
         btnPauseVideo.performClick()
     }
 
     fun resume() {
+        Log.d("LOG", this.javaClass.simpleName + " resume()")
         btnPlayVideo.performClick()
     }
 
     fun nextVideo() {
+        Log.d("LOG", this.javaClass.simpleName + " nextVideo()")
         when (isShowClosedCaptionView()) {
             // switch language cc option
             true -> {
@@ -257,6 +273,7 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
             false -> {
                 when (mPresenter?.getPlayMode()) {
                     PlayMode.SCHEDULE -> {
+                        Log.d("LOG", this.javaClass.simpleName + " nextVideo() | SCHEDULE | can not do this")
                         MessageUtils.showSnackBar(videoPlayer, R.string.class_video_cant_skip, R.color.yellow, isOnPresentation = true)
                     }
 
@@ -275,6 +292,7 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
     }
 
     fun showNextVideo() {
+        Log.d("LOG", this.javaClass.simpleName + " showNextVideo()")
         mPresenter?.hideClosedCaptionView()
         when (mPresenter?.getAllVideos()?.size ?: 0 > 0) {
             true -> btnComingUpNext.performClick()
@@ -283,7 +301,7 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
     }
 
     fun showClosedCaption() {
-
+        Log.d("LOG", this.javaClass.simpleName + " showClosedCaption()")
         groupViewsComingUpNext.visibility = View.GONE
 
         when (mPresenter?.isShowClosedCaptionView()) {
@@ -301,6 +319,7 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
     }
 
     fun setupPlayVideo(mode: PlayMode, videos: ArrayList<MMVideo>, lastPosition: Long) {
+        Log.d("LOG", this.javaClass.simpleName + " setupPlayVideo() | play mode: $mode | videos number: ${videos.size} | positionPlay: $lastPosition")
         releasePresenters()
         mPresenter?.onDestroy()
 
@@ -314,6 +333,7 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
     }
 
     private fun releasePresenters() {
+        Log.d("LOG", this.javaClass.simpleName + " releasePresenters()")
         mPresenter?.onDetach()
         mPresenter?.onDestroy()
     }
@@ -450,7 +470,7 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
                 videoTitle.visibility = View.INVISIBLE
                 groupCollections.visibility = View.INVISIBLE
 
-                frameExoVolume?.also { volumeFrame ->
+                frameExoVolume.also { volumeFrame ->
                     volumeFrame.visibility = View.GONE
                 }
 
@@ -626,6 +646,8 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
         super.hideControlWhenNextVideoSchedule()
         sendEndedVideoStateToUI()
     }
+
+    override fun isCastableOnTV(): Boolean = true
 
     private fun sendEndedVideoStateToUI() {
         when (mPresenter?.getPlayMode()) {

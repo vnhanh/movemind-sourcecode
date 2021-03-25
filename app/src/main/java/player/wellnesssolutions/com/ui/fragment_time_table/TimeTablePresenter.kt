@@ -3,9 +3,9 @@ package player.wellnesssolutions.com.ui.fragment_time_table
 import androidx.core.content.ContextCompat
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import player.wellnesssolutions.com.base.view.BaseScheduleFragment
-import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
+import player.wellnesssolutions.com.base.view.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.common.R
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
@@ -126,7 +126,6 @@ class TimeTablePresenter : ITimeTableContract.Presenter, BaseResponseObserver<Ti
                 }
                 false -> {
                     val msg = context.getString(player.wellnesssolutions.com.R.string.request_failed)
-                            ?: MSG_REQUEST_FAILED
                     mView?.showDialog(msg, ContextCompat.getColor(context, R.color.red))
                     mView?.onRequestFailed()
                 }
@@ -157,7 +156,7 @@ class TimeTablePresenter : ITimeTableContract.Presenter, BaseResponseObserver<Ti
 
     override fun onExpired(error: String) {
         mView?.getFragment()?.also {
-            if (it is BaseScheduleFragment) {
+            if (it is BaseFragment) {
                 it.onExpired(error)
             }
         }
@@ -165,7 +164,7 @@ class TimeTablePresenter : ITimeTableContract.Presenter, BaseResponseObserver<Ti
 
     override fun onExpiredUnauthenticated(error: String) {
         mView?.getFragment()?.also {
-            if (it is BaseScheduleFragment)
+            if (it is BaseFragment)
                 it.onExpiredUnAuth(error)
         }
     }

@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "applicationId": "player.wellnesssolutions.com.au",
+  "variantType": "BASE_APK",
+  "elements": [
+    {
+      "outputType": {
+        "type": "BUNDLE_MANIFEST"
+      },
+      "apkData": {
+        "type": "MAIN",
+        "splits": [],
+        "versionCode": 17,
+        "versionName": "2.6",
+        "outputFile": "app-debug.apk",
+        "fullName": "debug",
+        "baseName": "debug",
+        "dirName": ""
+      },
+      "path": "AndroidManifest.xml",
+      "properties": {
+        "packageId": "player.wellnesssolutions.com.au",
+        "split": "",
+        "minSdkVersion": "21"
+      }
+    }
+  ]
+}

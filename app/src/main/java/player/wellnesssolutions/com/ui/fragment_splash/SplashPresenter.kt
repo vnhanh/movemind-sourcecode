@@ -1,13 +1,12 @@
 package player.wellnesssolutions.com.ui.fragment_splash
 
-import android.util.Log
 import com.google.gson.Gson
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.base.view.BaseScheduleFragment
-import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.base.utils.ParameterUtils
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
 import player.wellnesssolutions.com.base.utils.check_header_api_util.HeaderData
+import player.wellnesssolutions.com.base.view.BaseFragment
+import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.network.datasource.home.HomeApi
@@ -37,12 +36,13 @@ class SplashPresenter : BaseResponseObserver<MMConfigData>(), ISplashContract.Pr
     }
 
     override fun loadApi() {
-        if(isLoading) return
+        if (isLoading) return
 
         mView?.getViewContext()?.also {
-            val headerData: HeaderData? = CheckHeaderApiUtil.checkData(sharedPref = PreferenceHelper.getInstance(it), fragment = mView!!.getFragment()) ?: null
+            val headerData: HeaderData? = CheckHeaderApiUtil.checkData(sharedPref = PreferenceHelper.getInstance(it), fragment = mView!!.getFragment())
+                    ?: null
 
-            when{
+            when {
                 headerData == null -> {
                     mView?.backToScanQRCode()
                 }
@@ -186,7 +186,7 @@ class SplashPresenter : BaseResponseObserver<MMConfigData>(), ISplashContract.Pr
 
     override fun onExpired(error: String) {
         mView?.getFragment()?.also {
-            if (it is BaseScheduleFragment) {
+            if (it is BaseFragment) {
                 it.onExpired(error)
             }
         }

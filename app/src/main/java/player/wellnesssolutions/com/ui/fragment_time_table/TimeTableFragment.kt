@@ -11,8 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_time_table.*
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.customs.views.ItemDecorationGridHorizontalLayout
-import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.base.utils.ViewUtil
+import player.wellnesssolutions.com.base.view.BaseFragment
 import player.wellnesssolutions.com.common.customize_views.MMTabBar
 import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
@@ -21,7 +21,7 @@ import player.wellnesssolutions.com.network.models.response.SessionVideo
 import player.wellnesssolutions.com.ui.fragment_time_table.recyclerview.SchedulerAdapter
 
 
-class TimeTableFragment : BaseScheduleFragment(), ITimeTableContract.View, MMTabBar.TabBarListener, SchedulerAdapter.OnClickItemListener {
+class TimeTableFragment : BaseFragment(), ITimeTableContract.View, MMTabBar.TabBarListener, SchedulerAdapter.OnClickItemListener {
     companion object {
         const val TAG = "TimeTableFragment"
         const val EXTRA_NEW_DATA = "EXTRA_NEW_DATA"

@@ -32,9 +32,10 @@ interface INowPlayingConstruct {
         fun openTimeTableScreen() {}
         fun hideCountDownTimer() {}
         fun hideControlWhenNextVideoSchedule() {}
-        fun showDialogAskWantToLoadSchedule(){}
-        fun onLoadScheduleWhilePlaySearchedVideos(){}
-        fun backToHomeScreenWithNotLoadSchedule(){}
+        fun showDialogAskWantToLoadSchedule() {}
+        fun onLoadScheduleWhilePlaySearchedVideos() {}
+        fun backToHomeScreenWithNotLoadSchedule() {}
+        fun isCastableOnTV(): Boolean
     }
 
     interface Presenter : ILifeCycle.Presenter<View>, IComingUpNextClickListener, IListenerHandleScheduleTime {
@@ -52,7 +53,7 @@ interface INowPlayingConstruct {
         fun setPlayedPosition(position: Long)
 
         fun setSubtitleController(closedCaptionController: ClosedCaptionController)
-        fun switchToPlayScheduledVideos(scheduledVideos: ArrayList<MMVideo>)
+        fun switchToPlayScheduleVideos(scheduleVideos: ArrayList<MMVideo>)
 
         fun onClickedComingUpNextItem()
 

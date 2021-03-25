@@ -12,10 +12,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import kotlinx.android.synthetic.main.fragment_no_class_search.*
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.base.utils.FragmentUtil
 import player.wellnesssolutions.com.base.utils.StringUtil
 import player.wellnesssolutions.com.base.utils.search_util.SearchCollectionUtil
+import player.wellnesssolutions.com.base.view.BaseFragment
 import player.wellnesssolutions.com.common.customize_views.MMOptionTextView.Companion.colorBand
 import player.wellnesssolutions.com.common.utils.MessageUtils
 import player.wellnesssolutions.com.network.models.config.MMConfigData
@@ -26,7 +26,7 @@ import player.wellnesssolutions.com.ui.fragment_search_brands.SearchBrandsFragme
 import player.wellnesssolutions.com.ui.fragment_search_brands.module.OpenSearchScreenByBrand
 
 
-class NoClassFragment : BaseScheduleFragment(), INoClassContract.View {
+class NoClassFragment : BaseFragment(), INoClassContract.View {
     private var mPresenter: INoClassContract.Presenter? = null
 
     companion object {

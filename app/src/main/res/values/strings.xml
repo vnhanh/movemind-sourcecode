@@ -283,5 +283,6 @@
     <string name="please_wait_until_download">Please wait until download</string>
     <string name="process_has_completed">process has completed to continue using this device</string>
     <string name="encountered_error_handling_class_video_data">Encountered error while handling class video data</string>
+    <string name="can_not_calculate_time_play_next_schedule_video">Can not calculate time for the next schedule video</string>
 
 </resources>

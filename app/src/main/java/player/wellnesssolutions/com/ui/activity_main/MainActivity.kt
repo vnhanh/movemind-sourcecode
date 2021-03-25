@@ -30,12 +30,12 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.base.view.BaseResponseObserver
-import player.wellnesssolutions.com.base.view.IGetNewToken
 import player.wellnesssolutions.com.base.utils.FragmentUtil
 import player.wellnesssolutions.com.base.utils.ParameterUtils
 import player.wellnesssolutions.com.base.utils.ParameterUtils.mCountDownNumber
 import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
+import player.wellnesssolutions.com.base.view.BaseResponseObserver
+import player.wellnesssolutions.com.base.view.IGetNewToken
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.media_router.models.PlaylistItem
 import player.wellnesssolutions.com.common.media_router.receivers.MediaButtonReceiver
@@ -60,6 +60,7 @@ import player.wellnesssolutions.com.services.AlarmManagerSchedule.setupAlarmTime
 import player.wellnesssolutions.com.services.DownloadService
 import player.wellnesssolutions.com.ui.activity_scan_barcode.ScanBarCodeActivity
 import player.wellnesssolutions.com.ui.fragment_home.HomeFragment
+import player.wellnesssolutions.com.ui.fragment_now_playing.NowPlayingFragment
 import player.wellnesssolutions.com.ui.fragment_presentation.MMDiscoveryFragment
 import player.wellnesssolutions.com.ui.fragment_presentation.MMSessionManager
 import player.wellnesssolutions.com.ui.fragment_presentation.players.MMPlayer
@@ -274,6 +275,15 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
 
     fun playVideo(mode: PlayMode, videos: ArrayList<MMVideo>) {
         mSessionManager.stop()
+        when{
+            mode == PlayMode.ON_DEMAND -> {
+                VideoDBUtil.createOrUpdateVideos(videos, NowPlayingFragment.KEY_DATA_PLAYING_VIDEO)
+            }
+
+            mode == PlayMode.SCHEDULE -> {
+                VideoDBUtil.createOrUpdateVideos(videos, Constant.MM_SCHEDULE)
+            }
+        }
         val currentPosition: Long = PreferenceHelper.getInstance(this).getLong(ConstantPreference.LAST_PLAYED_VIDEO_POSITION,
                 0L)
         mSessionManager.add(mode = mode, videos = videos, playedPosition = currentPosition)
@@ -436,7 +446,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
                 R.style.NormalDialog_Error,
                 "Can not download because there is not enough space",
                 R.string.btn_ok,
-                object: DialogInterface.OnClickListener{
+                object : DialogInterface.OnClickListener {
                     override fun onClick(dialogInterface: DialogInterface?, p1: Int) {
                         dialogInterface?.dismiss()
                     }

@@ -1,25 +1,24 @@
 package player.wellnesssolutions.com.base.common.load_scheduled_videos
 
 import android.content.Context
+import android.os.Handler
+import android.util.Log
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
 import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
-import player.wellnesssolutions.com.base.view.BaseScheduleFragment
+import player.wellnesssolutions.com.base.view.BaseFragment
 import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.base.view.IGetNewToken
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.common.utils.MessageUtils
 import player.wellnesssolutions.com.network.datasource.now_playing.NowPlayingApi
-import player.wellnesssolutions.com.network.datasource.videos.PlayMode
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.com.network.models.response.ResponseValue
 import player.wellnesssolutions.com.ui.activity_main.MainActivity
-import player.wellnesssolutions.com.ui.fragment_help_me_choose.helpers.HMCDataHelper
-import player.wellnesssolutions.com.ui.fragment_home.helper.IListenerHandleScheduleTime
 import player.wellnesssolutions.com.ui.fragment_home.helper.HandlerScheduleTime
-import player.wellnesssolutions.com.ui.fragment_search_preview.helpers.SPDBUtil
-import player.wellnesssolutions.com.ui.fragment_search_result_videos.SearchResultFragment
+import player.wellnesssolutions.com.ui.fragment_home.helper.IListenerHandleScheduleTime
+import java.lang.ref.WeakReference
 
 class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVideo>>(), IScheduleContract.Presenter,
         IListenerHandleScheduleTime {
@@ -29,69 +28,102 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
 
     // vars
     private var mView: IScheduleContract.View? = null
+    private var weakContext = WeakReference(context)
     private var scheduleApi = NowPlayingApi()
-    private var handlerScheduleTime: HandlerScheduleTime? = HandlerScheduleTime(context, this)
-    private var scheduleVideos: ArrayList<MMVideo>? = null
+    private var handlerScheduleTime: HandlerScheduleTime = HandlerScheduleTime(context, this)
+    private var scheduleVideos: ArrayList<MMVideo> = arrayListOf()
     private var isClickedFromBtnBottom = false
+    private var isLoadScheduleOnStart = false
+    private val handler = Handler()
+    private var counterTryPostDelay = 0
+    private val runnable = object : Runnable {
+        override fun run() {
+            try {
+                loadSchedule()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                if (counterTryPostDelay++ < Constant.NUM_MAX_TRY_POST_DELAY) {
+                    handler.postDelayed(this, Constant.TIME_POST_DELAY_DEFAULT)
+                }
+            }
+        }
+
+    }
 
     // flag
     private var mIsLoading = false
 
     override fun onAttach(view: IScheduleContract.View) {
+        Log.d("LOG", this.javaClass.simpleName + " onAttach() | view: ${view.javaClass.simpleName}")
         this.mView = view
+        if (isLoadScheduleOnStart) {
+            isLoadScheduleOnStart = false
+            handler.postDelayed(runnable, 1000L)
+        }
     }
 
-    override fun onLoadSchedule(view: IScheduleContract.View, isClickedFromBtnBottom: Boolean) {
-        if (mIsLoading) {
-            showMessageLoading(view)
-            return
+    override fun setStateLoadScheduleOnStart() {
+        Log.d("LOG", this.javaClass.simpleName + " setStateLoadScheduleOnStart()")
+        isLoadScheduleOnStart = true
+    }
+
+    override fun onLoadSchedule(view: IScheduleContract.View, isClickedFromBtnBottom: Boolean, mustLoad:Boolean) {
+        Log.d("LOG", this.javaClass.simpleName + " onLoadSchedule() | mustLoad: $mustLoad")
+        when{
+            mustLoad -> {
+                Log.d("LOG", this.javaClass.simpleName + " onLoadSchedule() | clear calling")
+                this.mCompoDisposable.dispose()
+                mIsLoading= false
+            }
+
+            else -> {
+                if (mIsLoading) {
+                    Log.d("LOG", this.javaClass.simpleName + " onLoadSchedule() | is loading...")
+                    showMessageLoading(view)
+                    return
+                }
+            }
         }
 
-        loadSchedule(view, isClickedFromBtnBottom)
+        this.mView = view
+        this.isClickedFromBtnBottom = isClickedFromBtnBottom
+        counterTryPostDelay = 0
+        loadSchedule()
     }
 
     private fun showMessageLoading(view: IScheduleContract.View) {
-        view.getViewContext()?.also { context ->
+        weakContext.get()?.also { context ->
             MessageUtils.showToast(context, context.getString(R.string.msg_loading_scheduler), R.color.yellow)?.show()
         }
     }
 
-    private fun loadSchedule(view: IScheduleContract.View, isClickedFromBtnBottom: Boolean) {
+    private fun loadSchedule() {
+        if (mIsLoading || mView == null) return
         mIsLoading = true
-        this.isClickedFromBtnBottom = isClickedFromBtnBottom
-        this.mView = view
 
-        view.getViewContext()?.also { context ->
-            val headerData = CheckHeaderApiUtil.checkData(PreferenceHelper.getInstance(context), view.getFragment())
+        weakContext.get()?.also { context ->
+            val headerData = CheckHeaderApiUtil.checkData(PreferenceHelper.getInstance(context), mView?.getFragment())
                     ?: return
 
-            view.showLoadingProgress()
+            mView?.showLoadingProgress()
+            Log.d("LOG", this.javaClass.simpleName + " loadSchedule()")
             scheduleApi.getSchedule(headerData.token, headerData.deviceId).subscribe(this)
         }
     }
 
-    private fun processLoadedVideos(loadedVideos: ArrayList<MMVideo>) {
-        if (loadedVideos.size == 0) {
-            navigateToNoClass()
-            SPDBUtil.deleteAllFromTag(SearchResultFragment.getTagOfChosen())
-            HMCDataHelper.deleteALlFromTag(SearchResultFragment.getTagOfHMCForDB())
-            return
-        }
-        //save all videos to database
-        //VideoDBUtil.saveVideosScheduleToDB(loadedVideos, Constant.SCHEDULE_TAG)
-//        val video = loadedVideos[0]
-        handlerScheduleTime?.setupScheduleForNowVideo(loadedVideos, this.isClickedFromBtnBottom)
-//        mScheduledTimeProcessor?.progressSetTimeToPlaySchedule(loadedVideos)
-    }
+    /**
+     * LOAD SCHEDULE
+     */
 
     override fun onResponseSuccess(data: ResponseValue<ArrayList<MMVideo>>?) {
         super.onResponseSuccess(data)
+        Log.d("LOG", this.javaClass.simpleName + " onResponseSuccess() | videos number: ${data?.data.orEmpty().size}")
         val loadedVideos = data?.data
 
-        if (loadedVideos == null || loadedVideos.size == 0) {
+        if (loadedVideos.isNullOrEmpty()) {
             navigateToNoClass()
-            SPDBUtil.deleteAllFromTag(SearchResultFragment.getTagOfChosen())
-            HMCDataHelper.deleteALlFromTag(SearchResultFragment.getTagOfHMCForDB())
+//            SPDBUtil.deleteAllFromTag(SearchResultFragment.getTagOfChosen())
+//            HMCDataHelper.deleteALlFromTag(SearchResultFragment.getTagOfHMCForDB())
             return
         }
 
@@ -99,21 +131,18 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
         LoadSchedulingVideosHelper.filterTodaySchedulingVideos(loadedVideos)
         scheduleVideos = loadedVideos
         mIsLoading = false
-//        val video = FakeDataHelper.getNowPlayingVideo()
-        processLoadedVideos(loadedVideos)
+        handlerScheduleTime.setupScheduleForNowVideo(loadedVideos, this.isClickedFromBtnBottom)
     }
 
     override fun onResponseFalse(code: Int, message: String?) {
         super.onResponseFalse(code, message)
-        mView?.hideLoadingProgress()
-        val msg: String = message
-                ?: mView?.getViewContext()?.getString(R.string.request_class_video_failed)
-                ?: MSG_REQUEST_FAILED
-        mView?.onNoClassVideos(msg, R.color.red, isClickedFromBtnBottom)
+        Log.d("LOG", this.javaClass.simpleName + " onResponseFalse() | message: $message")
+        navigateToNoClass()
     }
 
     override fun onRequestError(message: String?) {
         super.onRequestError(message)
+        Log.d("LOG", this.javaClass.simpleName + " onRequestError() | error: $message")
         mView?.hideLoadingProgress()
 
         val msg: String =
@@ -123,11 +152,12 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
                     false -> message
                 }
 
-        mView?.onNoClassVideos(msg, R.color.red, isClickedFromBtnBottom)
+        mView?.onNoClassVideosForNow(msg, R.color.red, isClickedFromBtnBottom)
     }
 
     override fun onComplete() {
         super.onComplete()
+        mView?.hideLoadingProgress()
         mIsLoading = false
     }
 
@@ -135,10 +165,11 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
      * implementing @interface IListenerHandleScheduleTime
      */
     override fun onHaveNowPlayingVideo(playedPosition: Long) {
-        mView?.hideLoadingProgress()
-        val loadedVideos: ArrayList<MMVideo>? = scheduleVideos
-        if (loadedVideos != null && loadedVideos.size > 0) {
-            mView?.onHaveClassVideos(loadedVideos, this.isClickedFromBtnBottom)
+        Log.d("LOG", this.javaClass.simpleName + " onHaveNowPlayingVideo() | playedPosition: $playedPosition | videos number: ${scheduleVideos.size}")
+        if (scheduleVideos.size > 0) {
+            mView?.hideLoadingProgress()
+            VideoDBUtil.createOrUpdateVideos(scheduleVideos, Constant.MM_SCHEDULE)
+            mView?.onHaveClassVideos(scheduleVideos, this.isClickedFromBtnBottom)
         } else {
             navigateToNoClass()
         }
@@ -149,21 +180,27 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
     }
 
     override fun onDontHaveNowPlayingVideo(isClickedButtonHome: Boolean?) {
-        val activity: MainActivity? = mView?.getFragment()?.activity as? MainActivity
-        if (activity?.isPresentationAvailable() == true) {
-            activity.playVideo(PlayMode.SCHEDULE, scheduleVideos!!)
-        }
+        Log.d("LOG", this.javaClass.simpleName + " onDontHaveNowPlayingVideo() | isClickedButtonHome: $isClickedButtonHome |0" +
+                " videos number: ${scheduleVideos.size}")
+//        val activity: MainActivity? = mView?.getFragment()?.activity as? MainActivity
+//        if (activity?.isPresentationAvailable() == true) {
+//            activity.playVideo(PlayMode.SCHEDULE, scheduleVideos)
+//        }
 
-        val message: String = mView?.getViewContext()?.getString(R.string.no_class_now)
-                ?: Constant.MSG_NOW_CLASS_NOW
-
-        mView?.hideLoadingProgress()
-        mView?.onNoClassVideos(message, isClickedFromBtnBottom = isClickedFromBtnBottom)
+        navigateToNoClass()
     }
 
-    override fun onHaveVideoAfter(playedPosition: Long) {
-        super.onHaveVideoAfter(playedPosition)
+    override fun onHaveVideoAfter(playedPosition: Long, isRequestFromUser: Boolean) {
+        super.onHaveVideoAfter(playedPosition, isRequestFromUser)
+        Log.d("LOG", this.javaClass.simpleName + " onHaveVideoAfter() | isClickedButtonHome: $isRequestFromUser | " +
+                " videos number: ${scheduleVideos.size}")
         mView?.hideLoadingProgress()
+        if (isRequestFromUser) {
+            scheduleVideos.also { videos ->
+                VideoDBUtil.createOrUpdateVideos(videos, Constant.MM_SCHEDULE)
+            }
+            mView?.showDialogAskWantToBackToHome(false)
+        }
         // do nothing more
     }
 
@@ -172,18 +209,25 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
         mView?.showMessage(R.string.encountered_error_handling_class_video_data, R.color.red)
     }
 
-    private fun navigateToNoClass() {
+    private fun navigateToNoClass(msg: String = "") {
         mView?.hideLoadingProgress()
-        val message: String = mView?.getViewContext()?.getString(R.string.no_class_now)
-                ?: Constant.MSG_NOW_CLASS_NOW
-        mView?.onNoClassVideos(message, isClickedFromBtnBottom = isClickedFromBtnBottom)
+        VideoDBUtil.deleteVideosFromDB(Constant.MM_SCHEDULE)
+        val message: String =
+                when {
+                    msg.isBlank() -> mView?.getViewContext()?.getString(R.string.no_class_now)
+                            ?: Constant.MSG_NOW_CLASS_NOW
+                    else -> msg
+                }
+        mView?.onNoClassVideosForNow(message, isClickedFromBtnBottom = isClickedFromBtnBottom)
     }
 
     override fun onTimePlaySchedule() {
-        scheduleVideos?.also { videos->
-            VideoDBUtil.createOrUpdateVideos(videos, Constant.MM_SCHEDULE)
-            mView?.onTimePlaySchedule()
+        Log.d("LOG", this.javaClass.simpleName + " onTimePlaySchedule() | already videos: ${scheduleVideos.size}")
+        scheduleVideos = VideoDBUtil.getVideosFromDB(Constant.MM_SCHEDULE, false)
+        if (scheduleVideos.size == 0) {
+            scheduleVideos = VideoDBUtil.getVideosFromDB(Constant.MM_SCHEDULE, false)
         }
+        handlerScheduleTime.setupScheduleForNowVideo(scheduleVideos, false, this, weakContext.get())
     }
 
     override fun onDetach() {
@@ -191,8 +235,8 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
     }
 
     override fun onDestroy() {
-        handlerScheduleTime?.release()
-        handlerScheduleTime = null
+        handler.removeCallbacks(runnable)
+        handlerScheduleTime.release()
 
         mCompoDisposable.dispose()
         mIsLoading = false
@@ -200,7 +244,7 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
 
     override fun onExpired(error: String) {
         mView?.getFragment()?.also {
-            if (it is BaseScheduleFragment) {
+            if (it is BaseFragment) {
                 it.onExpired(error)
             }
         }
@@ -210,15 +254,27 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
         if (mView != null && mView?.getViewContext() is MainActivity) {
             (mView?.getViewContext() as MainActivity).getTokenAgainWhenTokenExpire(object : IGetNewToken {
                 override fun onGetSuccess() {
-                    loadSchedule(this@SchedulePresenter.mView!!, this@SchedulePresenter.isClickedFromBtnBottom)
+                    counterTryPostDelay = 0
+                    loadSchedule()
                 }
             })
         }
     }
 
     override fun setScheduleCurrentAndWaitNextVideo(videos: ArrayList<MMVideo>) {
-        this.scheduleVideos?.clear()
-        this.scheduleVideos?.addAll(videos)
-        handlerScheduleTime?.setupScheduleForComingUpVideo(videos)
+        this.scheduleVideos.clear()
+        this.scheduleVideos = videos
+        Log.d("LOG", this.javaClass.simpleName + " setScheduleCurrentAndWaitNextVideo() | videos number: ${scheduleVideos.size} | " +
+                "videos number 2: ${videos.size}")
+//        handlerScheduleTime.setupScheduleNextVideo(videos, object : ICallBackNextScheduleVideo {
+//            override fun onResult(index: Int, timeWait: Long) {
+//
+//            }
+//
+//            override fun onNotFound() {
+//                mView?.showMessage(R.string.can_not_calculate_time_play_next_schedule_video, R.color.yellow)
+//            }
+//
+//        })
     }
 }

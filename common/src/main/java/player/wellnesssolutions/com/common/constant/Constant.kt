@@ -109,13 +109,16 @@ object Constant {
      */
     const val MM_SCHEDULE = "MM_SCHEDULE"
     const val BUNDLE_SCHEDULE = "BUNDLE_SCHEDULE"
+    const val BUNDLE_SOURCE_SCHEDULE = "BUNDLE_SOURCE_SCHEDULE"
 
     /**
      * VIEW
      */
     const val TIME_TRANSITION_SCREEN = 1600L
     const val STATE_IS_BEGIN_SHOW_SCREEN = "STATE_IS_BEGIN_SHOW_SCREEN"
-
+    const val TIME_POST_DELAY_DEFAULT = 1000L
+    const val NUM_MAX_TRY_POST_DELAY = 5
+    const val IS_CAST_DISCONNECT = "IS_CAST_DISCONNECT"
 
     /**
      * NETWORK
@@ -123,5 +126,5 @@ object Constant {
     const val ERROR_CANT_CONNECT_SERVER = "Cannot connect to the server. Please check network and try again."
 
     const val TIME_MAX_CAN_ROUND = 3000L
-    const val TIME_CHANGE_SCREEN = 2000L
+    const val TIME_CHANGE_SCREEN = 1000L
 }

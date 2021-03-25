@@ -73,11 +73,6 @@ class SearchResultPageFragment : Fragment(), ISearchResultPageContract.View {
         attachPresenter()
     }
 
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super.onViewStateRestored(savedInstanceState)
-//        progressBar.visibility = View.GONE
-    }
-
     private fun attachPresenter() {
         mPresenter?.onAttach(this)
     }

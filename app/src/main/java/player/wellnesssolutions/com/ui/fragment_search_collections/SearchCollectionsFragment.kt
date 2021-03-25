@@ -12,10 +12,10 @@ import kotlinx.android.synthetic.main.fragment_search_collections.*
 import kotlinx.android.synthetic.main.merge_layout_group_top_search_screen.*
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.customs.views.RecyclerViewCustom
-import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.base.utils.FragmentUtil
 import player.wellnesssolutions.com.base.utils.ViewUtil
 import player.wellnesssolutions.com.base.utils.search_util.SearchUIHelper
+import player.wellnesssolutions.com.base.view.BaseFragment
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.constant.Constant.MAX_COLLECTION_ITEMS_COUNT_IN_ROW
 import player.wellnesssolutions.com.common.constant.Constant.MAX_COLLECTION_ROWS
@@ -28,7 +28,7 @@ import player.wellnesssolutions.com.ui.fragment_search_collections.recyclerview.
 import player.wellnesssolutions.com.ui.fragment_search_preview.SearchPreviewFragment
 
 
-class SearchCollectionsFragment : BaseScheduleFragment(), ISearchCollectionContract.View {
+class SearchCollectionsFragment : BaseFragment(), ISearchCollectionContract.View {
     private var mPresenter: ISearchCollectionContract.Presenter? = SearchCollectionsPresenter()
     private var mDialog: AlertDialog? = null
 
@@ -43,7 +43,7 @@ class SearchCollectionsFragment : BaseScheduleFragment(), ISearchCollectionContr
         val brand: MMBrand = arguments?.getParcelable(KEY_BRAND) ?: return
         mPresenter?.setChosenBrand(brand)
 
-        arguments?.clear()
+//        arguments?.clear()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
