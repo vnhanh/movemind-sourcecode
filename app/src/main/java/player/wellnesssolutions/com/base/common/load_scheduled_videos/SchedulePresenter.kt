@@ -3,6 +3,7 @@ package player.wellnesssolutions.com.base.common.load_scheduled_videos
 import android.content.Context
 import android.os.Handler
 import android.util.Log
+import com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerScheduler
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
 import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
@@ -15,6 +16,7 @@ import player.wellnesssolutions.com.common.utils.MessageUtils
 import player.wellnesssolutions.com.network.datasource.now_playing.NowPlayingApi
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.com.network.models.response.ResponseValue
+import player.wellnesssolutions.com.services.AlarmManagerSchedule
 import player.wellnesssolutions.com.ui.activity_main.MainActivity
 import player.wellnesssolutions.com.ui.fragment_home.helper.HandlerScheduleTime
 import player.wellnesssolutions.com.ui.fragment_home.helper.IListenerHandleScheduleTime
@@ -262,19 +264,20 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
     }
 
     override fun setScheduleCurrentAndWaitNextVideo(videos: ArrayList<MMVideo>) {
+        AlarmManagerSchedule.cancelAlarmScheduleTime()
         this.scheduleVideos.clear()
         this.scheduleVideos = videos
         Log.d("LOG", this.javaClass.simpleName + " setScheduleCurrentAndWaitNextVideo() | videos number: ${scheduleVideos.size} | " +
                 "videos number 2: ${videos.size}")
-//        handlerScheduleTime.setupScheduleNextVideo(videos, object : ICallBackNextScheduleVideo {
-//            override fun onResult(index: Int, timeWait: Long) {
-//
-//            }
-//
-//            override fun onNotFound() {
-//                mView?.showMessage(R.string.can_not_calculate_time_play_next_schedule_video, R.color.yellow)
-//            }
-//
-//        })
+        handlerScheduleTime.setupScheduleNextVideo(videos, object : ICallBackNextScheduleVideo {
+            override fun onResult(index: Int, timeWait: Long) {
+
+            }
+
+            override fun onNotFound() {
+                mView?.showMessage(R.string.can_not_calculate_time_play_next_schedule_video, R.color.yellow)
+            }
+
+        })
     }
 }

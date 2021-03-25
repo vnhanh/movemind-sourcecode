@@ -15,8 +15,8 @@ import player.wellnesssolutions.com.ui.fragment_now_playing.helper.ICallbackNowS
 import player.wellnesssolutions.com.ui.fragment_now_playing.helper.STATE_TIME_PLAY_SCHEDULE
 import java.lang.ref.WeakReference
 
-class HandlerScheduleTime(context: Context, listener: IListenerHandleScheduleTime) : IRequestTimeNetworkListener {
-    private var weakContext = WeakReference(context)
+class HandlerScheduleTime(viewContext: Context, listener: IListenerHandleScheduleTime) : IRequestTimeNetworkListener {
+    private var context : Context? = viewContext
     private var weakListener = WeakReference(listener)
     private var mTimeDiffs = -1L
     private var videos: ArrayList<MMVideo> = arrayListOf()
@@ -32,9 +32,6 @@ class HandlerScheduleTime(context: Context, listener: IListenerHandleScheduleTim
 
     override fun onRecivedTime(timeDiffs: Long) {
         this.mTimeDiffs = timeDiffs
-        weakContext.get()?.also {
-            PreferenceHelper.getInstance(it).putLong(ConstantPreference.TIME_DIFFS, timeDiffs)
-        }
     }
 
     fun setupScheduleNextVideo(videos: ArrayList<MMVideo>, callback: ICallBackNextScheduleVideo) {
@@ -53,9 +50,9 @@ class HandlerScheduleTime(context: Context, listener: IListenerHandleScheduleTim
     fun setupScheduleForNowVideo(videos: ArrayList<MMVideo>, isClickedButtonHome: Boolean, listener:IListenerHandleScheduleTime,
     context: Context?) {
         Log.d("LOG", this.javaClass.simpleName + " setupScheduleForNowVideo() | videos number: ${videos.size} | " +
-                "listener: ${weakListener.get()} | context: ${weakContext.get()}")
+                "listener: ${weakListener.get()} | context: ${context}")
         weakListener = WeakReference(listener)
-        weakContext = WeakReference(context)
+        this.context = context
         this.videos = videos
         if (videos.size == 0) return
 
@@ -64,6 +61,7 @@ class HandlerScheduleTime(context: Context, listener: IListenerHandleScheduleTim
 
     fun release() {
         weakListener.clear()
+        context = null
     }
 
     private fun handleScheduleVideoNow(isClickedButtonHome: Boolean) {
@@ -146,7 +144,7 @@ class HandlerScheduleTime(context: Context, listener: IListenerHandleScheduleTim
     }
 
     private fun setupAlarmTask(time: Long) {
-        weakContext.get()?.also { context ->
+        context?.also { context ->
             val timeWait = (time / 1000L).toInt()
             AlarmManagerSchedule.cancelAlarmScheduleTime()
             AlarmManagerSchedule.setupTimeWakeSchedule(context, timeWait)

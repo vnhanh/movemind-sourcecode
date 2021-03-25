@@ -41,7 +41,7 @@ class PlayTrailerVideoDialogFragment : DialogFragment(), IPlayVideoContract.Mana
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        mPlayerManager = PlayerManager(callback = this, context = context!!).also {
+        mPlayerManager = PlayerManager(callback = this, _context = context!!).also {
             it.addListener(this)
         }
 

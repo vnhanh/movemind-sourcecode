@@ -42,7 +42,7 @@ class NowPlayingPresenter(context: Context, playMode: PlayMode) :
     private var mIsReload = false // flag check if video is replayed
 
     // for loading class videos
-    private var handlerScheduleTimePlay: HandlerScheduleTime = HandlerScheduleTime(context = context, listener = this)
+    private var handlerScheduleTimePlay: HandlerScheduleTime = HandlerScheduleTime(viewContext = context, listener = this)
 
     // for Countdown Timer
     private var mCountDownTimerPlayVideo: CountDownTimer? = null
@@ -116,6 +116,7 @@ class NowPlayingPresenter(context: Context, playMode: PlayMode) :
     override fun onAttach(view: INowPlayingConstruct.View) {
         this.mView = view
         mPlayerManager.addListener(view)
+        mPlayerManager.updateContext(view.getViewContext())
 
         if (mLoadBrandsHandler == null) mLoadBrandsHandler = LoadBrandsHandler(view)
 

@@ -141,10 +141,10 @@
         android:layout_height="@dimen/size_progress_circle_in_now_playing"
         android:orientation="vertical"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/videoPlayer"
-        app:layout_constraintEnd_toEndOf="@id/videoPlayer"
-        app:layout_constraintStart_toStartOf="@id/videoPlayer"
-        app:layout_constraintTop_toTopOf="@id/videoPlayer" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <include
         android:id="@+id/barBottom"

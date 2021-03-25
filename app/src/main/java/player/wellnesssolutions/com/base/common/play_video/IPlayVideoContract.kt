@@ -1,5 +1,6 @@
 package player.wellnesssolutions.com.base.common.play_video
 
+import android.content.Context
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import player.wellnesssolutions.com.custom_exoplayer.EnumTypeViewVideo
@@ -50,6 +51,7 @@ interface IPlayVideoContract {
         fun getPlaybackState(): Int
         fun isPlayingCC(): Boolean
         fun getPlayer(): SimpleExoPlayer?
+        fun updateContext(context: Context?)
 
         interface Callback {
             fun onStartIntializePlayer()

@@ -209,10 +209,16 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
             var fragment = _fm.findFragmentByTag(tag)
             fragment =
                     when (fragment != null && fragment is NowPlayingFragment) {
-                        true -> fragment
-                        false -> NowPlayingFragment.getInstancePlaySchedule()
+                        true -> {
+                            Log.d("LOG", this.javaClass.simpleName + " loadNowPlayingScreen() | old instance is NowPlayingFragment")
+                            NowPlayingFragment.updateAlreadyInstanceWithSchedule(fragment)
+                        }
+                        false -> {
+                            Log.d("LOG", this.javaClass.simpleName + " loadNowPlayingScreen() | there's no instance of NowPlayingFragment")
+                            NowPlayingFragment.getInstancePlaySchedule()
+                        }
                     }
-            FragmentUtil.replaceFragment(fm = _fm, newFragment = fragment, newFragmentTag = tag, frameId = R.id.frameLayoutHome, isAddToBackStack = true, isRemoveOlds = true)
+            FragmentUtil.replaceFragment(fm = _fm, newFragment = fragment, newFragmentTag = tag, frameId = R.id.frameLayoutHome, isAddToBackStack = true)
         }
 
     }
@@ -275,7 +281,7 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
                     var fragment: Fragment? = fm.findFragmentByTag(tag) // find the earlier fragment if existed
                     fragment =
                             when (fragment != null && fragment is HomeFragment) {
-                                true -> fragment                    // use old instance
+                                true -> HomeFragment.updateAlreadyInstanceWithLoadSchedule(fragment)                    // use old instance
                                 false -> HomeFragment.getInstanceWithLoadSchedule() // create new instance if it has been not created yet
                             }
                     FragmentUtil.replaceFragment(fm = fm,
@@ -1054,9 +1060,6 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
                     arguments = Bundle().apply {
                         putString(EXTRA_CHILD_SCREEN_TAG, screenTag)
                         putString(Constant.BUNDLE_SOURCE_SCHEDULE, SOURCE_LOAD_SCHEDULE.LOCAL.toString())
-                        Log.d("LOG", this.javaClass.simpleName + " getInstance() | " +
-                                "value to string: ${SOURCE_LOAD_SCHEDULE.LOCAL} | " +
-                                "value form name: ${SOURCE_LOAD_SCHEDULE.LOCAL.name}")
                     }
                 }
 

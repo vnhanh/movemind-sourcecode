@@ -30,7 +30,7 @@ import java.lang.ref.WeakReference
 import java.net.ConnectException
 
 
-class PlayerManager(callback: IPlayVideoContract.Manager.Callback, context: Context) :
+class PlayerManager(callback: IPlayVideoContract.Manager.Callback, _context: Context) :
         BaseResponseObserver<VideoViewResponse>(), IPlayVideoContract.Manager, Player.EventListener {
     companion object {
         const val CODE_NO_ERROR = -1
@@ -42,7 +42,7 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, context: Cont
         const val MAX_UPDATE_VIDEO_VIEW_NUMBER = 3
     }
 
-    private var mWeakContext: WeakReference<Context> = WeakReference(context)
+    private var context : Context? = _context
     private var mPlayerUseCase: PlayerUsecase = PlayerUsecase()
     private var mErrorCode = -1
 
@@ -52,7 +52,7 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, context: Cont
     // video data
     private var mVideos: ArrayList<MMVideo>? = null
 
-    private var mCookieValue: String = PreferenceHelper.getInstance(context).getString(ConstantPreference.SP_COOKIE, "")
+    private var mCookieValue: String = PreferenceHelper.getInstance(_context).getString(ConstantPreference.SP_COOKIE, "")
 
     // handle CloseCaption related to UI
     private var mClosedCaptionController: ClosedCaptionController? = null
@@ -85,6 +85,10 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, context: Cont
         if (!mListeners.contains(listener)) mListeners.add(listener)
     }
 
+    override fun updateContext(context: Context?) {
+        this.context = context
+    }
+
     override fun removeListener(listener: Player.EventListener) {
         mListeners.remove(listener)
     }
@@ -100,12 +104,12 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, context: Cont
     override fun onInitialize(playedVideoPosition: Long, typeVideo: EnumTypeViewVideo, isUpdateViewNumber: Boolean, isSupportCC: Boolean) {
         val videos: ArrayList<MMVideo>? = mVideos
         if (videos == null || videos.size == 0) return
-        val context: Context = mWeakContext.get() ?: return
+        val _context = context ?: return
 
         mPlayerCallback?.onStartIntializePlayer()
 
-        val languageKey: String = PreferenceHelper.getInstance(context).getString(ConstantPreference.LAST_LANGUAGE_KEY, "")
-        val languageCode: String = PreferenceHelper.getInstance(context).getString(ConstantPreference.LAST_LANGUAGE_CODE, "")
+        val languageKey: String = PreferenceHelper.getInstance(_context).getString(ConstantPreference.LAST_LANGUAGE_KEY, "")
+        val languageCode: String = PreferenceHelper.getInstance(_context).getString(ConstantPreference.LAST_LANGUAGE_CODE, "")
 
         resetData()
         this.mTypeVideo = typeVideo
@@ -124,7 +128,7 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, context: Cont
             mPlayerUseCase.setCurrentPlayPosition(playedVideoPosition)
         }
 
-        val volume: Float = PreferenceHelper.getInstance(context).getFloat(ConstantPreference.SS_LAST_VOLUME_PERCENT, Constant.DEF_EXO_VOLUME)
+        val volume: Float = PreferenceHelper.getInstance()?.getFloat(ConstantPreference.SS_LAST_VOLUME_PERCENT, Constant.DEF_EXO_VOLUME)?:0.5f
 
         val subtitleLink: String =
                 when (isSupportCC) {
@@ -140,24 +144,24 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, context: Cont
         val externalFolder: File
         val internalFolder: File
         var dataSpec: DataSpec
-        if (FileUtil.isExternalStorageAvailable() && !FileUtil.isExternalStorageReadOnly() && FileUtil.isSDCardAvailable(mWeakContext.get())) {
-            val externalUrl = mWeakContext.get()?.getExternalFilesDirs(null)
+        if (FileUtil.isExternalStorageAvailable() && !FileUtil.isExternalStorageReadOnly() && FileUtil.isSDCardAvailable(context)) {
+            val externalUrl = context?.getExternalFilesDirs(null)
             if (externalUrl?.get(1) != null) {
                 externalFolder = File(externalUrl[1],
                         String.format("%s/%s", Constant.FOLDER_DOWNLOADED, video.id.toString() + ".mp4"))
                 if (externalFolder.exists()) {
                     dataSpec = DataSpec(Uri.fromFile(externalFolder))
                 } else {
-                    internalFolder = File(context.filesDir, String.format("%s/%s", Constant.FOLDER_DOWNLOADED, video.id.toString() + ".mp4"))
+                    internalFolder = File(_context.filesDir, String.format("%s/%s", Constant.FOLDER_DOWNLOADED, video.id.toString() + ".mp4"))
                     dataSpec = DataSpec(Uri.fromFile(internalFolder))
                 }
             } else {
-                internalFolder = File(context.filesDir, String.format("%s/%s", Constant.FOLDER_DOWNLOADED, video.id.toString() + ".mp4"))
+                internalFolder = File(_context.filesDir, String.format("%s/%s", Constant.FOLDER_DOWNLOADED, video.id.toString() + ".mp4"))
                 dataSpec = DataSpec(Uri.fromFile(internalFolder))
             }
 
         } else {
-            internalFolder = File(context.filesDir, String.format("%s/%s", Constant.FOLDER_DOWNLOADED, video.id.toString() + ".mp4"))
+            internalFolder = File(_context.filesDir, String.format("%s/%s", Constant.FOLDER_DOWNLOADED, video.id.toString() + ".mp4"))
             dataSpec = DataSpec(Uri.fromFile(internalFolder))
         }
 
@@ -168,7 +172,7 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, context: Cont
             e.printStackTrace()
         }
 
-        mPlayerUseCase.initPlayer(context = context, cookieValue = mCookieValue,
+        mPlayerUseCase.initPlayer(context = _context, cookieValue = mCookieValue,
                 url = url, subtitleLink = subtitleLink,
                 languageCode = languageCode, volume = volume, typeVideo = typeVideo,
                 isPlayOffline = when (isUpdateViewNumber) {
@@ -192,9 +196,9 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, context: Cont
     }
 
     private fun checkIfFileExist(fileName: String): Boolean {
-        mWeakContext.get()?.also { context ->
-            if (FileUtil.isExternalStorageAvailable() && !FileUtil.isExternalStorageReadOnly() && FileUtil.isSDCardAvailable(mWeakContext.get())) {
-                val externalUrl = mWeakContext.get()?.getExternalFilesDirs(null)
+        context?.also { context ->
+            if (FileUtil.isExternalStorageAvailable() && !FileUtil.isExternalStorageReadOnly() && FileUtil.isSDCardAvailable(context)) {
+                val externalUrl = context.getExternalFilesDirs(null)
                 if (externalUrl?.get(1) != null) {
                     if (File(externalUrl[1],
                                     String.format("%s/%s", Constant.FOLDER_DOWNLOADED, fileName)).exists()) {
@@ -289,7 +293,7 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, context: Cont
 
         mPlayerUseCase.mPlayer?.volume = value
 
-        mWeakContext.get()?.also {
+        context?.also {
             PreferenceHelper.getInstance(it).putFloat(ConstantPreference.SS_LAST_VOLUME_PERCENT, value)
         }
     }
@@ -399,14 +403,14 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, context: Cont
     }
 
     private fun onHandleDisconnectedError() {
-        mWeakContext.get()?.also { context ->
+        context?.also { context ->
             val message = context.getString(R.string.error_disconnected_video)
             DialogUtil.createDialogOnlyOneButton(context = context, message = message, titleButton = R.string.btn_ok, dialogClickListener = null).show()
         }
     }
 
     private fun onHandlePlayedError() {
-//        mWeakContext.get()?.also { context ->
+//        context.also { context ->
 //            val message = context.getString(R.string.error_cannot_play_video)
 //            DialogUtil.createDialogOnlyOneButton(context = context, message = message, titleButton = R.string.btn_ok, dialogClickListener = null).show()
 //        }
@@ -436,7 +440,7 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, context: Cont
      */
 
     private fun loadApiUpdateViewNumber(videoId: Int) {
-        mWeakContext.get()?.also {
+        context?.also {
             val headerData: HeaderData? = CheckHeaderApiUtil.getExpiredData(it)
             if (headerData == null || headerData.deviceId.isEmpty() || headerData.token.isEmpty()) {
                 onExpired(it.getString(R.string.device_not_store_authenticated_data))

@@ -1,6 +1,0 @@
-.git
-.idea
-.gradle
-build
-*.iml
-app/build
