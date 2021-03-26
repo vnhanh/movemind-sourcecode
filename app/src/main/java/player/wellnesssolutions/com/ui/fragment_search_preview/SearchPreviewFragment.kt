@@ -79,6 +79,16 @@ class SearchPreviewFragment : BaseFragment(), ISearchPreviewContract.View {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+
+        arguments?.also { bundle ->
+            try{
+                Log.d("LOG", this.javaClass.simpleName + " onCreateView() | savedInstanceState | is contains data for search: ${bundle.containsKey(KEY_DATA_FOR_SEARCH)} | " +
+                        "is contains BUNDLE_SAVE_STATE: ${bundle.containsKey(Constant.BUNDLE_SAVE_STATE)}")
+            }catch (e:Exception){
+                e.printStackTrace()
+                Log.d("LOG", this.javaClass.simpleName + " onCreateView() | savedInstanceState | error: ${e.message}")
+            }
+        }
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_search_preview, container, false)
     }

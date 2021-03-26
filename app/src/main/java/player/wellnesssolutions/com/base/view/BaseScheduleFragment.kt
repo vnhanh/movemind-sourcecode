@@ -48,7 +48,7 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
                         videos.size > 0 -> schedulePresenter?.setScheduleCurrentAndWaitNextVideo(videos)
                         else -> {
                             Log.d("LOG", this.javaClass.simpleName + " onCreateView() | isNewScreen | load remote schedule")
-                            schedulePresenter?.setStateLoadScheduleOnStart()
+//                            schedulePresenter?.setStateLoadScheduleOnStart()
                         }
                     }
                 }

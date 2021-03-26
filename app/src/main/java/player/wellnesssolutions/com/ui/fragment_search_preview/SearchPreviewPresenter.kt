@@ -172,22 +172,19 @@ class SearchPreviewPresenter : BaseResponseObserver<MMSearchPreviewResponse>(), 
 
     override fun onStop() {
         mIsRendered = false
-        mAdapters?.also { adapters ->
-            while (adapters.size > 0) {
-                adapters[0].release()
-                adapters.removeAt(0)
-            }
-        }
+//        mAdapters?.also { adapters ->
+//            while (adapters.size > 0) {
+//                adapters[0].release()
+//                adapters.removeAt(0)
+//            }
+//        }
     }
 
 
     override fun onDestroy() {
-        mDisplayData?.clear()
-
-        mChosenOptions?.clear()
-
-        mData?.clear()
-
+//        mDisplayData?.clear()
+//        mChosenOptions?.clear()
+//        mData?.clear()
         mCompoDisposable.clear()
     }
 
