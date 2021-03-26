@@ -37,6 +37,8 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
     private var isLoadScheduleOnStart = false
     private val handler = Handler()
     private var counterTryPostDelay = 0
+    private var isUpdatingNewSchedule = false
+
     private val runnable = object : Runnable {
         override fun run() {
             try {
@@ -76,8 +78,9 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
         Log.d("LOG", this.javaClass.simpleName + " onLoadSchedule() | mustLoad: $mustLoad | mIsLoading: $mIsLoading")
         when{
             mustLoad -> {
-                Log.d("LOG", this.javaClass.simpleName + " onLoadSchedule() | clear calling")
-                this.mCompoDisposable.dispose()
+                Log.d("LOG", this.javaClass.simpleName + " onLoadSchedule() | clear calling | isUpdatingNewSchedule: $isUpdatingNewSchedule")
+                isUpdatingNewSchedule = true
+//                this.mCompoDisposable.dispose()
                 mIsLoading= false
             }
 
@@ -123,6 +126,7 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
 
     override fun onResponseSuccess(data: ResponseValue<ArrayList<MMVideo>>?) {
         super.onResponseSuccess(data)
+        isUpdatingNewSchedule = false
         Log.d("LOG", this.javaClass.simpleName + " onResponseSuccess() | videos number: ${data?.data.orEmpty().size}")
         val loadedVideos = data?.data
 
@@ -142,12 +146,14 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
 
     override fun onResponseFalse(code: Int, message: String?) {
         super.onResponseFalse(code, message)
+        isUpdatingNewSchedule = false
         Log.d("LOG", this.javaClass.simpleName + " onResponseFalse() | message: $message")
         navigateToNoClass()
     }
 
     override fun onRequestError(message: String?) {
         super.onRequestError(message)
+        isUpdatingNewSchedule = false
         Log.d("LOG", this.javaClass.simpleName + " onRequestError() | error: $message")
         mView?.hideLoadingProgress()
 
@@ -226,7 +232,9 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
     }
 
     override fun onTimePlaySchedule() {
-        Log.d("LOG", this.javaClass.simpleName + " onTimePlaySchedule() | already videos: ${scheduleVideos.size}")
+        Log.d("LOG", this.javaClass.simpleName + " onTimePlaySchedule() | already videos: ${scheduleVideos.size} | " +
+                "isUpdatingNewSchedule: $isUpdatingNewSchedule")
+        if(isUpdatingNewSchedule) return
         scheduleVideos = VideoDBUtil.getVideosFromDB(Constant.MM_SCHEDULE, false)
         if (scheduleVideos.size == 0) {
             scheduleVideos = VideoDBUtil.getVideosFromDB(Constant.MM_SCHEDULE, false)
@@ -283,4 +291,6 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
 
         })
     }
+
+    override fun isUpdatingNewSchedule(): Boolean = isUpdatingNewSchedule
 }

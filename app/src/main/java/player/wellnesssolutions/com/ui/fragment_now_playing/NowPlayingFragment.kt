@@ -11,6 +11,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -134,7 +135,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
                               savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         // Inflate the layout for this fragment
-        registerScheduleBroadcast()
+
         return inflater.inflate(R.layout.fragment_now_playing, container, false)
     }
 
@@ -202,7 +203,6 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         context?.let {
             PreferenceHelper.getInstance(it).putLong(ConstantPreference.LAST_TIME_COUNT_DOWN, mCountDownNumber)
         }
-        unregisterScheduleBroadcast()
 
         super.onDestroyView()
     }
@@ -489,6 +489,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
     }
 
     override fun hideLoadingProgress() {
+        if(isUpdatingNewSchedule()) return
         progressLoadingVideo?.visibility = View.GONE
     }
 
@@ -580,21 +581,6 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         }
     }
 
-    private fun registerScheduleBroadcast() {
-        // register casting TV (presentation) broadcast receiver
-        activity?.also { _ ->
-            ScheduleBroadcastReceiver.getInstance().addListener(this)
-        }
-    }
-
-    private fun unregisterScheduleBroadcast() {
-        activity?.also { _ ->
-            if (ScheduleBroadcastReceiver.getInstance().isRegistered(this)) {
-                ScheduleBroadcastReceiver.getInstance().removeListener(this)
-            }
-        }
-    }
-
     private fun showVideoTitleAndCollections() {
         tvTitleVideo?.visibility = View.VISIBLE
         groupMainCollections?.visibility = View.VISIBLE
@@ -680,12 +666,36 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
 
     override fun backToHomeScreenWithNotLoadSchedule() {
         Log.d("LOG", this.javaClass.simpleName + " backToHomeScreenWithNotLoadSchedule()")
-        NowPlayingVideoSetupHelper.openHomeFragmentWithNotLoadSchedule(fm = activity?.supportFragmentManager)
+        handleMoveToNewScreenButUpdatingNewSchedule(true, {
+            NowPlayingVideoSetupHelper.openHomeFragmentWithNotLoadSchedule(fm = activity?.supportFragmentManager)
+        })
     }
 
     override fun openNoClassSearchScreen(isClickedFromBtnBottom: Boolean?) {
         Log.d("LOG", this.javaClass.simpleName + " openNoClassSearchScreen()")
-        NowPlayingVideoSetupHelper.openHomeFragmentWithNotLoadSchedule(fm = activity?.supportFragmentManager)
+
+        handleMoveToNewScreenButUpdatingNewSchedule(true, {
+            NowPlayingVideoSetupHelper.openHomeFragmentWithNotLoadSchedule(fm = activity?.supportFragmentManager)
+        })
+    }
+
+    private fun handleMoveToNewScreenButUpdatingNewSchedule(isBackToHomeScreen: Boolean, caseNotUpdating: ()->Unit){
+        Log.d("LOG", this.javaClass.simpleName + " handleMoveToNewScreenButUpdatingNewSchedule() | isUpdatingNewSchedule()")
+        when {
+            isUpdatingNewSchedule() -> {
+                context?.also { context ->
+                    val resMessage = when{
+                        isBackToHomeScreen -> R.string.app_is_updating_new_schedule_can_not_back_to_get_started_screen
+                        else -> R.string.app_is_updating_new_schedule_can_not_move_to_new_screen
+                    }
+                    Toast.makeText(context, resMessage, Toast.LENGTH_LONG)
+                            .show()
+                    Log.d("LOG", this.javaClass.simpleName + " handleMoveToNewScreenButUpdatingNewSchedule() | can not back to home screen")
+                }
+            }
+
+            else -> caseNotUpdating.invoke()
+        }
     }
 
     override fun hideGroupViewsComingUpNext() {
@@ -706,14 +716,17 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
 
         when (mPresenter?.getPlayMode()) {
             PlayMode.SCHEDULE -> {
-                Log.d("LOG", this.javaClass.simpleName + " onNoClassVideosForNow() | SCHEDULE | isClickedFromBtnBottom: $isClickedFromBtnBottom")
-                NowPlayingVideoSetupHelper
-                        .openHomeFragmentWithNotLoadScheduleAndShowPopup(fm = activity?.supportFragmentManager, message = getString(R.string.no_class_now))
-                activity?.let {
-                    if (it is MainActivity) {
-                        it.getApiConfigData()
+                handleMoveToNewScreenButUpdatingNewSchedule (isBackToHomeScreen = true, caseNotUpdating = {
+                    Log.d("LOG", this.javaClass.simpleName + " onNoClassVideosForNow() | SCHEDULE | isClickedFromBtnBottom: $isClickedFromBtnBottom")
+                    NowPlayingVideoSetupHelper
+                            .openHomeFragmentWithNotLoadScheduleAndShowPopup(fm = activity?.supportFragmentManager, message = getString(R.string.no_class_now))
+                    activity?.let {
+                        if (it is MainActivity) {
+                            it.getApiConfigData()
+                        }
                     }
-                }
+                })
+
             }
 
             PlayMode.ON_DEMAND -> {
@@ -1017,9 +1030,11 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
     }
 
     private fun openControlScreen(newFragment: Fragment) {
-        val fm: FragmentManager? = activity?.supportFragmentManager
+        handleMoveToNewScreenButUpdatingNewSchedule (isBackToHomeScreen = false, caseNotUpdating = {
+            val fm: FragmentManager? = activity?.supportFragmentManager
 
-        FragmentUtil.replaceFragment(fm, newFragment, ControlFragment.TAG, R.id.frameLayoutHome, isAddToBackStack = true)
+            FragmentUtil.replaceFragment(fm, newFragment, ControlFragment.TAG, R.id.frameLayoutHome, isAddToBackStack = true)
+        })
     }
 
     override fun onLoadBrandsFailed(message: String) {
@@ -1027,18 +1042,21 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
     }
 
     override fun openTimeTableScreen() {
-        activity?.supportFragmentManager?.also { fm ->
-            context?.also {
-                PreferenceHelper.getInstance(it).putBoolean(ConstantPreference.IS_SHOW_BUTTON_PREVIOUS, true)
+        handleMoveToNewScreenButUpdatingNewSchedule (isBackToHomeScreen = false, caseNotUpdating = {
+            activity?.supportFragmentManager?.also { fm ->
+                context?.also {
+                    PreferenceHelper.getInstance(it).putBoolean(ConstantPreference.IS_SHOW_BUTTON_PREVIOUS, true)
+                }
+
+                val containerTag: String = ControlFragment.TAG
+
+                val fragment: ControlFragment = ControlFragment.getInstance(TimeTableFragment.TAG)
+
+                FragmentUtil.replaceFragment(fm = fm, newFragment = fragment, newFragmentTag = containerTag,
+                        frameId = R.id.frameLayoutHome, isAddToBackStack = true)
             }
+        })
 
-            val containerTag: String = ControlFragment.TAG
-
-            val fragment: ControlFragment = ControlFragment.getInstance(TimeTableFragment.TAG)
-
-            FragmentUtil.replaceFragment(fm = fm, newFragment = fragment, newFragmentTag = containerTag,
-                    frameId = R.id.frameLayoutHome, isAddToBackStack = true)
-        }
     }
 
     /**

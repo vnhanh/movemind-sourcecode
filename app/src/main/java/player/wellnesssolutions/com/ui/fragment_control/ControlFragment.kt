@@ -94,7 +94,6 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
 
         registerRouterChangedListener()
         registerCastingTVBroadcast()
-        registerScheduleBroadcast()
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_control, container, false)
@@ -119,7 +118,6 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     override fun onDestroyView() {
         super.onDestroyView()
         unregisterCastingTVBroadcast()
-        unregisterScheduleBroadcast()
         unregisterRouterChangedListener()
         mPresenter?.onDestroy()
     }
@@ -711,13 +709,6 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
         }
     }
 
-    private fun registerScheduleBroadcast() {
-        // register casting TV (presentation) broadcast receiver
-        activity?.also { _ ->
-            ScheduleBroadcastReceiver.getInstance().addListener(this)
-        }
-    }
-
     private fun unregisterCastingTVBroadcast() {
         activity?.also { act ->
             if (CastingBroadcastReceiver.getInstance().isRegistered(this)) {
@@ -729,19 +720,6 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
                 }
             }
         }
-    }
-
-    private fun unregisterScheduleBroadcast() {
-        activity?.also { _ ->
-            if (ScheduleBroadcastReceiver.getInstance().isRegistered(this)) {
-                try {
-                    ScheduleBroadcastReceiver.getInstance().removeListener(this)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-        }
-
     }
 
     private fun unregisterRouterChangedListener() {

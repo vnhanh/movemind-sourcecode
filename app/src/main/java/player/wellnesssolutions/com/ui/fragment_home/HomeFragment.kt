@@ -88,7 +88,6 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
 
     override fun onResume() {
         super.onResume()
-        registerScheduleBroadcast()
         Log.d("LOG", this.javaClass.simpleName + " onResume() | isNewScreen: $isNewScreen")
         if (isNewScreen) {
             btnLogoBottom?.setOnClickListener {
@@ -112,7 +111,6 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        unregisterScheduleBroadcast()
         handler.removeCallbacks(runnableAttachPresenterFirstTime)
     }
 
@@ -242,21 +240,6 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
 
     override fun onHaveClassVideosWithTimeWaiting(videos: ArrayList<MMVideo>) {
 //        mHomePresenter?.setScheduleCurrent(videos)
-    }
-
-    private fun registerScheduleBroadcast() {
-        // register casting TV (presentation) broadcast receiver
-        ScheduleBroadcastReceiver.getInstance().addListener(this)
-    }
-
-    private fun unregisterScheduleBroadcast() {
-        if (ScheduleBroadcastReceiver.getInstance().isRegistered(this)) {
-            try {
-                ScheduleBroadcastReceiver.getInstance().removeListener(this)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
     }
 
     private fun onClickedButtonGetStarted() {

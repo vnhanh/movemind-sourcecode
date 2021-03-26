@@ -3,6 +3,7 @@ package player.wellnesssolutions.com.ui.fragment_search_preview
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -149,8 +150,9 @@ class SearchPreviewFragment : BaseFragment(), ISearchPreviewContract.View {
         mPresenter?.onDestroy()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        Log.d("LOG", this.javaClass.simpleName + " onSaveInstanceState() ")
     }
 
     /**

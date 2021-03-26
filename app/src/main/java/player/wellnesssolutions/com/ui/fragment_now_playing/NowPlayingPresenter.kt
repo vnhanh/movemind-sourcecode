@@ -178,9 +178,7 @@ class NowPlayingPresenter(context: Context, playMode: PlayMode) :
     override fun setVideos(videos: ArrayList<MMVideo>) {
         Log.d("LOG", this.javaClass.simpleName + " setVideos() | videos number: ${videos.size}")
         this.mVideos = videos
-        mVideos.also {
-            mPlayerManager.addVideos(it)
-        }
+        mPlayerManager.addVideos(mVideos)
     }
 
     private fun getComingUpNextVideos(videos: ArrayList<MMVideo>): ArrayList<MMVideo> {

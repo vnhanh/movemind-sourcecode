@@ -23,6 +23,7 @@ interface IScheduleContract {
         fun setScheduleCurrentAndWaitNextVideo(videos: ArrayList<MMVideo>)
         fun onTimePlaySchedule()
         fun setStateLoadScheduleOnStart()
+        fun isUpdatingNewSchedule(): Boolean
     }
 }
 
