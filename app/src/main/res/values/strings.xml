@@ -201,6 +201,7 @@
     <string name="content_desc_search_videos_by">The Search Videos By background image</string>
     <string name="content_desc_search_brands">The background image of search brands screen</string>
     <string name="error_no_data_for_request">No data for requesting !</string>
+    <string name="error_request_data_is_empty">Can not get data to request !</string>
     <string name="no_brand_id">No brand id !</string>
 
     <string name="draw_over_other">Please accept the draw over other apps permission !</string>

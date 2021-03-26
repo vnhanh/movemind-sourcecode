@@ -11,12 +11,14 @@ import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_search_preview.*
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.utils.FragmentUtil
 import player.wellnesssolutions.com.base.utils.ViewUtil
 import player.wellnesssolutions.com.base.utils.search_util.SearchCollectionUtil
 import player.wellnesssolutions.com.base.view.BaseFragment
+import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.utils.DialogUtil
 import player.wellnesssolutions.com.common.utils.MessageUtils
 import player.wellnesssolutions.com.network.models.screen_search.MMBrand
@@ -29,13 +31,38 @@ import player.wellnesssolutions.com.ui.fragment_search_result_videos.SearchResul
 
 
 class SearchPreviewFragment : BaseFragment(), ISearchPreviewContract.View {
-    private var mPresenter: ISearchPreviewContract.Presenter? = SearchPreviewPresenter()
+    private var mPresenter: ISearchPreviewContract.Presenter? = null
     private var mDialog: AlertDialog? = null
     private var nameCollectionChoose: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("LOG", this.javaClass.simpleName + " onCreate() | savedInstanceState: ${savedInstanceState}")
+        mPresenter = SearchPreviewPresenter()
+        savedInstanceState?.also { bundle ->
+            try{
+                when{
+                    bundle.containsKey(KEY_DATA_FOR_SEARCH) -> {
+                        val gson = Gson()
+                        val strDataInput = bundle.getString(KEY_DATA_FOR_SEARCH)
+                        val dataInputForSearch: SPSearchedOption = gson.fromJson(strDataInput, SPSearchedOption::class.java)
 
+                        val dataShowUI: SPShowedUIData? = when{
+                            bundle.containsKey(Constant.BUNDLE_SAVE_STATE) -> {
+                                val strShowUIData = bundle.getString(Constant.BUNDLE_SAVE_STATE)
+                                gson.fromJson(strShowUIData, SPShowedUIData::class.java)
+                            }
+
+                            else -> null
+                        }
+                        mPresenter?.setData(dataShowUI, dataInputForSearch)
+                    }
+                }
+            }catch (e:Exception){
+                e.printStackTrace()
+                Log.d("LOG", this.javaClass.simpleName + " onCreate() | savedInstanceState | error: ${e.message}")
+            }
+        }
         readArguments()
     }
 
@@ -48,8 +75,6 @@ class SearchPreviewFragment : BaseFragment(), ISearchPreviewContract.View {
             nameCollectionChoose = searchByData.name
         }
 
-
-        arguments?.clear()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -76,10 +101,10 @@ class SearchPreviewFragment : BaseFragment(), ISearchPreviewContract.View {
             tvTitle2.visibility = View.VISIBLE
             imgCollectionLogoOnTop.let {
                 it.visibility = View.VISIBLE
-                if (!mPresenter?.getData()?.imgStrokeColor!!.isEmpty()) {
-                    it.setStrokeColor(Color.parseColor(mPresenter?.getData()?.imgStrokeColor))
+                if (!mPresenter?.getItemSearchOption()?.imgStrokeColor!!.isEmpty()) {
+                    it.setStrokeColor(Color.parseColor(mPresenter?.getItemSearchOption()?.imgStrokeColor))
                 }
-                Glide.with(it.context).load(mPresenter?.getData()?.imgCollection)
+                Glide.with(it.context).load(mPresenter?.getItemSearchOption()?.imgCollection)
                         .override(60, 60)
                         .placeholder(R.drawable.bg_sp_deault_collection)
                         .fallback(R.drawable.bg_sp_deault_collection)
@@ -147,12 +172,32 @@ class SearchPreviewFragment : BaseFragment(), ISearchPreviewContract.View {
         mDialog?.dismiss()
         mPresenter?.onStop()
         super.onDestroyView()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
         mPresenter?.onDestroy()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        Log.d("LOG", this.javaClass.simpleName + " onSaveInstanceState() ")
+        Log.d("LOG", this.javaClass.simpleName + " onSaveInstanceState() | data: ${mPresenter?.getDataForSearch()}")
+        val gson = Gson()
+        try{
+            mPresenter?.getDataForSearch()?.also { data: SPSearchedOption ->
+                val strInputData = gson.toJson(data, SPSearchedOption::class.java)
+                outState.putString(KEY_DATA_FOR_SEARCH, strInputData)
+            }
+            mPresenter?.getDataForShow()?.also { data: SPShowedUIData ->
+                val strData = gson.toJson(data, SPShowedUIData::class.java)
+                outState.putString(Constant.BUNDLE_SAVE_STATE, strData)
+            }
+        }catch (e:Exception){
+            e.printStackTrace()
+            Log.d("LOG", this.javaClass.simpleName + " can not save state before this fragment destroyed | " +
+                    "error: ${e.message}")
+
+        }
     }
 
     /**
@@ -179,7 +224,6 @@ class SearchPreviewFragment : BaseFragment(), ISearchPreviewContract.View {
         }
 
     }
-
 
     override fun showUI(showUIData: SPShowedUIData) {
         rootSP?.also {
@@ -248,6 +292,7 @@ class SearchPreviewFragment : BaseFragment(), ISearchPreviewContract.View {
         val TAG = "SearchPreviewFragment"
         val KEY_BRAND = "BRAND"
         val KEY_SEARCH_BY_DATA = "KEY NORMAL BY DATA"
+        val KEY_DATA_FOR_SEARCH = "KEY_DATA_FOR_SEARCH"
 
         fun getInstance(brand: MMBrand, chosenTypeOptionId: Int, chosenOptionId: Int?, chosenOptionTitle: String?, imgCollection: String?, imgStrokeColor: String?): SearchPreviewFragment {
             val fragment = SearchPreviewFragment()

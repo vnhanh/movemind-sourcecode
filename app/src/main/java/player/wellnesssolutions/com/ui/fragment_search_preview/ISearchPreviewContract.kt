@@ -25,6 +25,9 @@ interface ISearchPreviewContract {
         fun addAdapter(adapter: BaseClickableAdapter<*, *, *>)
         fun isItemSelected(id: Int?, typeId: Int?): Boolean
         fun loadData(view: View)
-        fun getData(): SearchedOption
+        fun getDataForSearch(): SPSearchedOption?
+        fun getItemSearchOption() : SearchedOption?
+        fun getDataForShow() : SPShowedUIData?
+        fun setData(dataShowUI: SPShowedUIData?, dataInputForSearch: SPSearchedOption)
     }
 }

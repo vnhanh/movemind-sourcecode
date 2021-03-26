@@ -116,10 +116,10 @@ object Constant {
      * VIEW
      */
     const val TIME_TRANSITION_SCREEN = 1600L
-    const val STATE_IS_BEGIN_SHOW_SCREEN = "STATE_IS_BEGIN_SHOW_SCREEN"
     const val TIME_POST_DELAY_DEFAULT = 1000L
     const val NUM_MAX_TRY_POST_DELAY = 5
     const val IS_CAST_DISCONNECT = "IS_CAST_DISCONNECT"
+    const val BUNDLE_SAVE_STATE = "BUNDLE_SAVE_STATE"
 
     /**
      * NETWORK

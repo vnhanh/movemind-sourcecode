@@ -1,5 +1,6 @@
 package player.wellnesssolutions.com.ui.fragment_search_preview
 
+import android.util.Log
 import io.reactivex.Observable
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
@@ -9,7 +10,6 @@ import player.wellnesssolutions.com.base.view.BaseFragment
 import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
-import player.wellnesssolutions.com.common.utils.MessageUtils
 import player.wellnesssolutions.com.network.datasource.search_preview.SearchPreviewApi
 import player.wellnesssolutions.com.network.models.response.ResponseValue
 import player.wellnesssolutions.com.network.models.screen_search.MMBrand
@@ -47,7 +47,14 @@ class SearchPreviewPresenter : BaseResponseObserver<MMSearchPreviewResponse>(), 
 
     override fun onAttach(view: ISearchPreviewContract.View) {
         this.mView = view
-        loadData(view)
+        when {
+            mDisplayData != null && mChosenOptions != null -> {
+                Log.d("LOG", this.javaClass.simpleName + " onAttach() | display right now")
+                displayUI()
+            }
+            else -> loadData(view)
+        }
+
     }
 
     override fun loadData(view: ISearchPreviewContract.View) {
@@ -81,29 +88,37 @@ class SearchPreviewPresenter : BaseResponseObserver<MMSearchPreviewResponse>(), 
         mIsProcessing = true
         mIsRendered = false
 
-        val brandId = mChosenOptions?.brand?.id
-        val searchByData = mChosenOptions?.searchByData
-        val searchById = searchByData?.id
-        val chosenTypeOptionId = searchByData?.typeOptionId
+        val brandId: Int? = mChosenOptions?.brand?.id
+        val searchByData: SearchedOption? = mChosenOptions?.searchByData
+        val searchById: Int? = searchByData?.id
+        val chosenTypeOptionId: Int? = searchByData?.typeOptionId
 
-        if (brandId == null || searchById == null || chosenTypeOptionId == null) {
-            MessageUtils.showToast(mView?.getViewContext(), "Data request null !", R.color.red)?.show()
-            return
+        when {
+            brandId == null || searchById == null || chosenTypeOptionId == null -> mView?.showMessage(R.string.error_request_data_is_empty, R.color.red)
+            else -> {
+                val observable: Observable<Response<ResponseValue<MMSearchPreviewResponse>>> = when (chosenTypeOptionId) {
+                    Constant.SEARCH_COLLECTION -> mSPreviewRespo.getSearchPreviewDataByCollection(token, deviceId, brandId, searchById)
+                    Constant.SEARCH_DURATION -> mSPreviewRespo.getSearchPreviewDataByDuration(token, deviceId, brandId, searchById)
+                    Constant.SEARCH_PRESENTER -> mSPreviewRespo.getSearchPreviewDataByInstructor(token, deviceId, brandId, searchById)
+                    Constant.SEARCH_LEVEL -> mSPreviewRespo.getSearchPreviewDataByLevel(token, deviceId, brandId, searchById)
+                    else -> return
+                }
+
+                observable.subscribe(this)
+            }
         }
 
-        val observable: Observable<Response<ResponseValue<MMSearchPreviewResponse>>> = when (chosenTypeOptionId) {
-            Constant.SEARCH_COLLECTION -> mSPreviewRespo.getSearchPreviewDataByCollection(token, deviceId, brandId, searchById)
-            Constant.SEARCH_DURATION -> mSPreviewRespo.getSearchPreviewDataByDuration(token, deviceId, brandId, searchById)
-            Constant.SEARCH_PRESENTER -> mSPreviewRespo.getSearchPreviewDataByInstructor(token, deviceId, brandId, searchById)
-            Constant.SEARCH_LEVEL -> mSPreviewRespo.getSearchPreviewDataByLevel(token, deviceId, brandId, searchById)
-            else -> return
-        }
-
-        observable.subscribe(this)
     }
 
-    override fun getData(): SearchedOption {
-        return mChosenOptions?.searchByData!!
+    override fun getDataForSearch(): SPSearchedOption? = mChosenOptions
+
+    override fun getDataForShow(): SPShowedUIData? = mDisplayData
+
+    override fun getItemSearchOption(): SearchedOption? = mChosenOptions?.searchByData
+
+    override fun setData(dataShowUI: SPShowedUIData?, dataInputForSearch: SPSearchedOption) {
+        this.mDisplayData = dataShowUI
+        this.mChosenOptions = dataInputForSearch
     }
 
     override fun onResponseSuccess(data: ResponseValue<MMSearchPreviewResponse>?) {
@@ -168,15 +183,12 @@ class SearchPreviewPresenter : BaseResponseObserver<MMSearchPreviewResponse>(), 
 
     override fun onDestroy() {
         mDisplayData?.clear()
-        mDisplayData = null
 
         mChosenOptions?.clear()
-        mChosenOptions == null
 
         mData?.clear()
-        mData = null
 
-        mCompoDisposable.dispose()
+        mCompoDisposable.clear()
     }
 
     override fun onChooseOptionItem(id: Int?, name: String?, typeId: Int?) {
