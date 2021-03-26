@@ -3,7 +3,6 @@ package player.wellnesssolutions.com.base.common.load_scheduled_videos
 import android.content.Context
 import android.os.Handler
 import android.util.Log
-import com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerScheduler
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
 import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
@@ -41,6 +40,7 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
     private val runnable = object : Runnable {
         override fun run() {
             try {
+                isClickedFromBtnBottom = false
                 loadSchedule()
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -62,6 +62,9 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
             isLoadScheduleOnStart = false
             handler.postDelayed(runnable, 1000L)
         }
+        view.getViewContext()?.also { viewContext ->
+            handlerScheduleTime = HandlerScheduleTime(viewContext, this)
+        }
     }
 
     override fun setStateLoadScheduleOnStart() {
@@ -70,7 +73,7 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
     }
 
     override fun onLoadSchedule(view: IScheduleContract.View, isClickedFromBtnBottom: Boolean, mustLoad:Boolean) {
-        Log.d("LOG", this.javaClass.simpleName + " onLoadSchedule() | mustLoad: $mustLoad")
+        Log.d("LOG", this.javaClass.simpleName + " onLoadSchedule() | mustLoad: $mustLoad | mIsLoading: $mIsLoading")
         when{
             mustLoad -> {
                 Log.d("LOG", this.javaClass.simpleName + " onLoadSchedule() | clear calling")
@@ -100,6 +103,7 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
     }
 
     private fun loadSchedule() {
+        Log.d("LOG", this.javaClass.simpleName + " loadSchedule() | mView: $mView")
         if (mIsLoading || mView == null) return
         mIsLoading = true
 
@@ -133,7 +137,7 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
         LoadSchedulingVideosHelper.filterTodaySchedulingVideos(loadedVideos)
         scheduleVideos = loadedVideos
         mIsLoading = false
-        handlerScheduleTime.setupScheduleForNowVideo(loadedVideos, this.isClickedFromBtnBottom)
+        handlerScheduleTime.setupScheduleForNowVideo(loadedVideos)
     }
 
     override fun onResponseFalse(code: Int, message: String?) {
@@ -192,17 +196,15 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
         navigateToNoClass()
     }
 
-    override fun onHaveVideoAfter(playedPosition: Long, isRequestFromUser: Boolean) {
-        super.onHaveVideoAfter(playedPosition, isRequestFromUser)
-        Log.d("LOG", this.javaClass.simpleName + " onHaveVideoAfter() | isClickedButtonHome: $isRequestFromUser | " +
+    override fun onHaveVideoAfter(playedPosition: Long) {
+        super.onHaveVideoAfter(playedPosition)
+        Log.d("LOG", this.javaClass.simpleName + " onHaveVideoAfter() | isClickedButtonHome: $isClickedFromBtnBottom | " +
                 " videos number: ${scheduleVideos.size}")
         mView?.hideLoadingProgress()
-        if (isRequestFromUser) {
-            scheduleVideos.also { videos ->
-                VideoDBUtil.createOrUpdateVideos(videos, Constant.MM_SCHEDULE)
-            }
-            mView?.showDialogAskWantToBackToHome(false)
+        scheduleVideos.also { videos ->
+            VideoDBUtil.createOrUpdateVideos(videos, Constant.MM_SCHEDULE)
         }
+        mView?.onNoClassVideosForNow("", R.color.white, isClickedFromBtnBottom)
         // do nothing more
     }
 
@@ -229,7 +231,7 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
         if (scheduleVideos.size == 0) {
             scheduleVideos = VideoDBUtil.getVideosFromDB(Constant.MM_SCHEDULE, false)
         }
-        handlerScheduleTime.setupScheduleForNowVideo(scheduleVideos, false, this, weakContext.get())
+        handlerScheduleTime.setupScheduleForNowVideo(scheduleVideos, this, weakContext.get())
     }
 
     override fun onDetach() {
@@ -257,6 +259,7 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
             (mView?.getViewContext() as MainActivity).getTokenAgainWhenTokenExpire(object : IGetNewToken {
                 override fun onGetSuccess() {
                     counterTryPostDelay = 0
+                    isClickedFromBtnBottom = false
                     loadSchedule()
                 }
             })

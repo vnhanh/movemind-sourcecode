@@ -95,6 +95,8 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
 
     private var tvNumberDownload: TextView? = null
 
+    private var isShownDialogNotEnoughSpace = false
+
     private val mBroadcastReceiver = object : BroadcastReceiver() {
 
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -442,9 +444,11 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
     }
 
     private fun onInsufficientSpace() {
+        if(isShownDialogNotEnoughSpace) return
+        isShownDialogNotEnoughSpace = true
         DialogUtil.createDialogOnlyOneButton(this,
                 R.style.NormalDialog_Error,
-                "Can not download because there is not enough space",
+                getString(R.string.cant_download_because_not_enough_space),
                 R.string.btn_ok,
                 object : DialogInterface.OnClickListener {
                     override fun onClick(dialogInterface: DialogInterface?, p1: Int) {
@@ -667,7 +671,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
             }
         }
         if (listDoesNotDownloaded.isEmpty()) return
-        val videosFromData = VideoDBUtil.readAllDVideosFromDB(Constant.DownloadTag)
+        val videosFromData = VideoDBUtil.readAllDVideosFromDB(Constant.TAG_VIDEO_DOWNLOAD)
         if (videosFromData.isEmpty()) return
         for (j: Int in 0 until videosFromData.size) {
             for (i: Int in 0 until listDoesNotDownloaded.size) {

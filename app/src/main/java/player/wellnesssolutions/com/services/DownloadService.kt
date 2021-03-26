@@ -8,6 +8,7 @@ import android.content.IntentFilter
 import android.os.IBinder
 import android.util.Log
 import player.wellnesssolutions.com.base.common.download.DownloadVideoHelper
+import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.utils.FileUtil
 import player.wellnesssolutions.com.services.download.DownloadManagerCustomized
@@ -137,6 +138,8 @@ class DownloadService : Service(), IProgressListener, DownloadBinder.BinderDownl
     }
 
     override fun onDownloadCompleted(videoId: Int, fileName: String?, isSuccess: Boolean, message: String) {
+        Log.d("LOG", this.javaClass.simpleName + " onDownloadCompleted() | filename: $fileName")
+//        VideoDBUtil.addDownloadedVideo(videoId, Constant.MM_VIDEO_DOWNLOADED)
         //onUpDateDownload()
     }
 

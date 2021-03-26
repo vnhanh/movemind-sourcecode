@@ -3,6 +3,7 @@ package player.wellnesssolutions.com.services
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Binder
+import android.util.Log
 import android.webkit.MimeTypeMap
 import player.wellnesssolutions.com.base.common.download.DownloadVideoHelper
 import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
@@ -29,8 +30,9 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
     private var mService: DownloadService = listener.onGetService()
 
     fun getListDoesNotDownloaded(context: Context, isCalledComeFromUI: Boolean) {
-        mListDownload = VideoDBUtil.readDVideosFromDB(tag = Constant.DownloadTag)
-        mListDownloadFailure = VideoDBUtil.readDVideosFailureFromDB(tag = Constant.DownloadTag)
+        mListDownload = VideoDBUtil.readDVideosFromDB(tag = Constant.TAG_VIDEO_DOWNLOAD)
+        mListDownloadFailure = VideoDBUtil.readDVideosFailureFromDB(tag = Constant.TAG_VIDEO_DOWNLOAD)
+        Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | mListDownload size: ${mListDownload.size} | list download failed size: ${mListDownloadFailure.size}")
         if (mListDownload.isEmpty()) {
             if (mListDownloadFailure.isEmpty()) {
                 if (!isCalledComeFromUI) {
@@ -58,6 +60,8 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
                 return
             }
         }
+
+        Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | listDownloadNow size: ${mListDownload.size}")
         for (v: MMVideo in mListDownload) {
             if (v.id == null || v.downloadUrl.isNullOrEmpty()) {
                 if (!isCalledComeFromUI) {
@@ -78,13 +82,13 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
     }
 
     fun removeVideoWithId(data: IntArray) {
-        val videosFromData = VideoDBUtil.readAllDVideosFromDB(Constant.DownloadTag)
+        val videosFromData = VideoDBUtil.readAllDVideosFromDB(Constant.TAG_VIDEO_DOWNLOAD)
         for (v: MMVideo in videosFromData) {
             for (i in data) {
                 v.id?.let {
                     if (it == i) {
                         if (v.id == null || v.videoName == null || v.downloadUrl == null) return
-                        VideoDBUtil.deleteDVideosFromDB(Constant.DownloadTag, v.id!!)
+                        VideoDBUtil.deleteDVideosFromDB(Constant.TAG_VIDEO_DOWNLOAD, v.id!!)
                         deleteFileWithId(mService.applicationContext, v.id!!, v.videoName!!, v.downloadUrl!!)
                     }
                 }
@@ -93,7 +97,7 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
     }
 
     fun getFullListVideoAndRemoveVideoWithId(data: IntArray) {
-        val videosFromData = VideoDBUtil.readAllDVideosFromDB(Constant.DownloadTag)
+        val videosFromData = VideoDBUtil.readAllDVideosFromDB(Constant.TAG_VIDEO_DOWNLOAD)
         for (v: MMVideo in videosFromData) {
             var isDelete = true
             for (i in data) {
@@ -105,7 +109,7 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
             }
             if (isDelete) {
                 if (v.id == null || v.videoName == null || v.downloadUrl == null) return
-                VideoDBUtil.deleteDVideosFromDB(Constant.DownloadTag, v.id!!)
+                VideoDBUtil.deleteDVideosFromDB(Constant.TAG_VIDEO_DOWNLOAD, v.id!!)
                 deleteFileWithId(mService.applicationContext, v.id!!, v.videoName!!, v.downloadUrl!!)
             }
         }
@@ -192,7 +196,7 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
                             if (data == null) return
                             val indexForRemove = ArrayList<Int>()
                             val dataSaveToDB = data.data
-                            val videosFromData = VideoDBUtil.readAllDVideosFromDB(Constant.DownloadTag)
+                            val videosFromData = VideoDBUtil.readAllDVideosFromDB(Constant.TAG_VIDEO_DOWNLOAD)
 
                             for (i in 0 until dataSaveToDB.size) {
                                 var isDelete = false
@@ -211,7 +215,7 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
                                 dataSaveToDB.removeAt(i)
                             }
 
-                            VideoDBUtil.saveDVideosToDB(data = dataSaveToDB, tag = Constant.DownloadTag)
+                            VideoDBUtil.saveDVideosToDB(data = dataSaveToDB, tag = Constant.TAG_VIDEO_DOWNLOAD)
                             DownloadManagerCustomized.getInstance(context).cancelDownloadService()
                             DownloadManagerCustomized.getInstance(context).stopNotify()
                             DownloadManagerCustomized.getInstance(context).clearQueue()
@@ -249,14 +253,14 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
                             for (i in 0 until data.data.size) {
                                 for (j in dataInt) {
                                     if (j == data.data[i].id) {
-                                        if (VideoDBUtil.checkVideoAvailable(data = data.data[i], tag = Constant.DownloadTag)) {
+                                        if (VideoDBUtil.checkVideoAvailable(data = data.data[i], tag = Constant.TAG_VIDEO_DOWNLOAD)) {
                                             dataSaveToDB.add(data.data[i])
                                         }
                                     }
 
                                 }
                             }
-                            VideoDBUtil.saveDVideosToDB(data = dataSaveToDB, tag = Constant.DownloadTag)
+                            VideoDBUtil.createOrUpdateVideos(data = dataSaveToDB, tag = Constant.TAG_VIDEO_DOWNLOAD)
                             getListDoesNotDownloaded(context, false)
                         }
 
@@ -298,7 +302,7 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
                         override fun onResponseSuccess(data: ResponseValue<ArrayList<MMVideo>>?) {
                             super.onResponseSuccess(data)
                             if (data == null || data.data.size == 0) return
-                            VideoDBUtil.saveDVideosToDB(data = data.data, tag = Constant.DownloadTag)
+                            VideoDBUtil.saveDVideosToDB(data = data.data, tag = Constant.TAG_VIDEO_DOWNLOAD)
                             downloadWhenChangeSubs(mService.applicationContext)
                         }
 

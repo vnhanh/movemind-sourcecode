@@ -373,10 +373,24 @@ object NowPlayingVideoSetupHelper {
                     when (fragment != null && fragment is HomeFragment) {
                         true -> {
                             HomeFragment.updateAlreadyInstanceWithNotLoadSchedule(fragment)
-//                            _fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
-//                            HomeFragment.getInstanceNoLoadSchedule()
                         }
-                        false -> HomeFragment.getInstanceNoLoadSchedule()
+                        false -> HomeFragment.getInstanceNotLoadSchedule()
+                    }
+            FragmentUtil.replaceFragment(fm = _fm, newFragment = fragment, newFragmentTag = tag, frameId = R.id.frameLayoutHome, isAddToBackStack = false, isRemoveOlds = true)
+        }
+    }
+
+    fun openHomeFragmentWithNotLoadScheduleAndShowPopup(fm: FragmentManager?, message:String) {
+        fm?.also { _fm ->
+            Log.d("LOG", this.javaClass.simpleName + " openHomeFragmentWithNotLoadSchedule()")
+            val tag = HomeFragment.TAG
+            var fragment = _fm.findFragmentByTag(tag)
+            fragment =
+                    when (fragment != null && fragment is HomeFragment) {
+                        true -> {
+                            HomeFragment.updateAlreadyInstanceWithNotLoadScheduleAndShowPopUp(fragment, message)
+                        }
+                        false -> HomeFragment.getInstanceNotLoadScheduleAndShowPopUp(message)
                     }
             FragmentUtil.replaceFragment(fm = _fm, newFragment = fragment, newFragmentTag = tag, frameId = R.id.frameLayoutHome, isAddToBackStack = false, isRemoveOlds = true)
         }

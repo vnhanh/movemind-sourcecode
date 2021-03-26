@@ -1,11 +1,13 @@
 package player.wellnesssolutions.database.manager
 
+import android.util.Log
 import io.realm.Realm
 import player.wellnesssolutions.database.model.download.DownloadedFile
 import player.wellnesssolutions.database.model.video.RealmDVideo
 
 class DownloadDBManager : IProgressListener {
     override fun onDownloadCompleted(videoId: Int, fileName: String?, isSuccess: Boolean, message: String) {
+        Log.d("LOG", this.javaClass.simpleName + " onDownloadCompleted() | fileName: ${fileName}")
         if (isSuccess) {
             writeFileDownloaded(videoId)
             updateTabledVideoDownloaded(videoId)

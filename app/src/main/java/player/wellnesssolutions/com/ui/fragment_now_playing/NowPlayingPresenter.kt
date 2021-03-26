@@ -387,7 +387,7 @@ class NowPlayingPresenter(context: Context, playMode: PlayMode) :
             return
         }
 
-        handlerScheduleTimePlay.setupScheduleForNowVideo(videos, false)
+        handlerScheduleTimePlay.setupScheduleForNowVideo(videos)
     }
 
     override fun onClickedComingUpNextItem() {
@@ -433,7 +433,7 @@ class NowPlayingPresenter(context: Context, playMode: PlayMode) :
         }
     }
 
-    override fun onHaveVideoAfter(playedPosition: Long, isRequestFromUser: Boolean) {
+    override fun onHaveVideoAfter(playedPosition: Long) {
         if (playedPosition > 0L) {
             mView?.hideLoadingProgress()
             mView?.hideControlWhenNextVideoSchedule()

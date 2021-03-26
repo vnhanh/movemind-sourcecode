@@ -13,7 +13,6 @@ interface IScheduleContract {
         fun onHaveClassVideos(scheduleVideos: ArrayList<MMVideo>, isClickedFromBtnBottom: Boolean) {}
         fun onHaveClassVideosWithTimeWaiting(videos: ArrayList<MMVideo>) {}
         fun onTimePlaySchedule() {}
-        fun showDialogAskWantToBackToHome(isLoadSchedule: Boolean) {}
     }
 
     interface Presenter {

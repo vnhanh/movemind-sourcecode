@@ -57,6 +57,7 @@ abstract class BaseResponseObserver<T> : Observer<Response<ResponseValue<T>>> {
             }
         }
 
+        onComplete()
     }
 
     override fun onError(e: Throwable) {
@@ -109,7 +110,6 @@ abstract class BaseResponseObserver<T> : Observer<Response<ResponseValue<T>>> {
                 }
             }
         }
-        onComplete()
     }
 
     // the final false/failed function would be called

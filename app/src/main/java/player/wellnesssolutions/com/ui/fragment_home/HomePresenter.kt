@@ -14,16 +14,12 @@ import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.com.network.models.response.ResponseValue
 import java.util.*
 
-class HomePresenter(context: Context) : BaseResponseObserver<MMConfigData>(), IHomeContract.Presenter {
+class HomePresenter() : BaseResponseObserver<MMConfigData>(), IHomeContract.Presenter {
     // vars
     private var mView: IHomeContract.View? = null
-    private var mHomeApi = HomeApi()
     private var mLoadedConfig: MMConfigData? = null
     private var schedule = arrayListOf<MMVideo>()
-
-    init {
-        PreferenceHelper.getInstance(context).delete(ConstantPreference.TIME_DIFFS)
-    }
+    private var messagePopUpOnStart = ""
 
     override fun onAttach(view: IHomeContract.View) {
         this.mView = view
@@ -39,6 +35,14 @@ class HomePresenter(context: Context) : BaseResponseObserver<MMConfigData>(), IH
                 readConfigData()
             }
         }
+
+        if(messagePopUpOnStart.isNotBlank()){
+            mView?.showPopUp(messagePopUpOnStart)
+        }
+    }
+
+    override fun setupShowPopUpOnStartScreen(message: String) {
+        messagePopUpOnStart = message
     }
 
     override fun setScheduleCurrent(videos: ArrayList<MMVideo>) {

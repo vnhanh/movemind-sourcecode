@@ -97,7 +97,7 @@ object Constant {
     const val Series = "Series"
     const val UserBranding = "UserBranding"
     const val BundleVideo = "BundleVideo"
-    const val DownloadTag = "DownloadTag"
+    const val TAG_VIDEO_DOWNLOAD = "DownloadTag"
 
     const val CANCEL_DOWNLOAD = "cancel_download"
     const val DOWNLOAD_FAILIED = "Failed"
@@ -110,6 +110,7 @@ object Constant {
     const val MM_SCHEDULE = "MM_SCHEDULE"
     const val BUNDLE_SCHEDULE = "BUNDLE_SCHEDULE"
     const val BUNDLE_SOURCE_SCHEDULE = "BUNDLE_SOURCE_SCHEDULE"
+    const val BUNDLE_SHOW_POPUP = "BUNDLE_SHOW_POPUP"
 
     /**
      * VIEW

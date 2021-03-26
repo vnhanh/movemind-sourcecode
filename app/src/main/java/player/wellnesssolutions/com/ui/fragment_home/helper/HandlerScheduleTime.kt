@@ -39,15 +39,15 @@ class HandlerScheduleTime(viewContext: Context, listener: IListenerHandleSchedul
         handleNextScheduleVideo(videos, 0, callback)
     }
 
-    fun setupScheduleForNowVideo(videos: ArrayList<MMVideo>, isClickedButtonHome: Boolean) {
+    fun setupScheduleForNowVideo(videos: ArrayList<MMVideo>) {
         Log.d("LOG", this.javaClass.simpleName + " setupScheduleForNowVideo() | videos number: ${videos.size}")
         this.videos = videos
         if (videos.size == 0) return
 
-        handleScheduleVideoNow(isClickedButtonHome)
+        handleScheduleVideoNow()
     }
 
-    fun setupScheduleForNowVideo(videos: ArrayList<MMVideo>, isClickedButtonHome: Boolean, listener:IListenerHandleScheduleTime,
+    fun setupScheduleForNowVideo(videos: ArrayList<MMVideo>, listener:IListenerHandleScheduleTime,
     context: Context?) {
         Log.d("LOG", this.javaClass.simpleName + " setupScheduleForNowVideo() | videos number: ${videos.size} | " +
                 "listener: ${weakListener.get()} | context: ${context}")
@@ -56,7 +56,7 @@ class HandlerScheduleTime(viewContext: Context, listener: IListenerHandleSchedul
         this.videos = videos
         if (videos.size == 0) return
 
-        handleScheduleVideoNow(isClickedButtonHome)
+        handleScheduleVideoNow()
     }
 
     fun release() {
@@ -64,7 +64,7 @@ class HandlerScheduleTime(viewContext: Context, listener: IListenerHandleSchedul
         context = null
     }
 
-    private fun handleScheduleVideoNow(isClickedButtonHome: Boolean) {
+    private fun handleScheduleVideoNow() {
         if (weakListener.get() == null) return
         val firstVideo = videos[0]
         Log.d("LOG", this.javaClass.simpleName + " process() | video name: ${firstVideo.videoName} | videos number: ${videos.size}")
@@ -82,7 +82,7 @@ class HandlerScheduleTime(viewContext: Context, listener: IListenerHandleSchedul
                         Log.d("LOG", this.javaClass.simpleName + " process() | TIME_WAIT | timePlay: $timePlay | video name: ${firstVideo.videoName} | " +
                                 "videos number: ${videos.size}")
                         setupAlarmTask(timePlay)
-                        weakListener.get()?.onHaveVideoAfter(timePlay, isClickedButtonHome)
+                        weakListener.get()?.onHaveVideoAfter(timePlay)
                     }
 
                     STATE_TIME_PLAY_SCHEDULE.TIME_EXPIRED -> {
@@ -91,7 +91,7 @@ class HandlerScheduleTime(viewContext: Context, listener: IListenerHandleSchedul
                             videos.size == 0 -> weakListener.get()?.onVideoExpiredTime()
                             else -> {
                                 videos.removeAt(0)
-                                handleScheduleVideoNow(isClickedButtonHome)
+                                handleScheduleVideoNow()
                             }
                         }
                     }

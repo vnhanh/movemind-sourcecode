@@ -12,10 +12,12 @@ interface IHomeContract {
     interface View : ILifeCycle.View, IShowMessageView, IProgressView, IScheduleContract.View {
         fun showUI(loadedConfig: MMConfigData?)
         fun openNowPlayingScreen(videos: ArrayList<MMVideo>)
+        fun showPopUp(messagePopUpOnStart: String)
     }
 
     interface Presenter : ILifeCycle.Presenter<View> {
         fun setScheduleCurrent(videos: ArrayList<MMVideo>)
         fun onTimePlayAlreadySchedule()
+        fun setupShowPopUpOnStartScreen(message: String)
     }
 }

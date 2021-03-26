@@ -2,6 +2,7 @@ package player.wellnesssolutions.com.services.download
 
 import android.content.Context
 import android.os.AsyncTask
+import android.util.Log
 import android.webkit.MimeTypeMap
 import io.reactivex.Observable
 import io.reactivex.Observer
@@ -125,6 +126,7 @@ class DownloadManagerCustomized(context: Context) : DownloadTask.Callback, Netwo
     }
 
     override fun onDownloadCompleted(id: Int?, name: String?) {
+        Log.d("LOG", this.javaClass.simpleName + " onDownloadCompleted() | fileName: ${name}")
         if (id == null) return
         getDownloadDataByVideoId(id)?.also { data ->
             resetDataNotDelete()
@@ -183,6 +185,7 @@ class DownloadManagerCustomized(context: Context) : DownloadTask.Callback, Netwo
      * and start download task if it is only
      */
     fun addTask(videoId: Int, url: String?, name: String?, folder: String, hasPermission: Boolean = true) {
+//        Log.d("LOG", this.javaClass.simpleName + " addTask() | url: $url | name: $name")
         if (url.isNullOrEmpty() || name.isNullOrEmpty()) {
             return
         }
@@ -246,6 +249,7 @@ class DownloadManagerCustomized(context: Context) : DownloadTask.Callback, Netwo
 
     private fun createDownloadTask(videoId: Int, url: String, folder: String, hasPermission: Boolean = true,
                                    fileNameDownload: String, nameShowFile: String) {
+        Log.d("LOG", this.javaClass.simpleName + " createDownloadTask() | queue size: ${mQueue.size}")
         val data: DownloadData = DownloadData(videoId = videoId, url = url).also {
             it.folder = folder
             it.name = nameShowFile
@@ -274,9 +278,6 @@ class DownloadManagerCustomized(context: Context) : DownloadTask.Callback, Netwo
 
             }
 
-
-
-
             it.filePath = File(mWeakContext?.get()?.filesDir, String.format("%s/%s", Constant.FOLDER_DOWNLOADED,
                     fileNameDownload)).absolutePath
         }
@@ -290,6 +291,7 @@ class DownloadManagerCustomized(context: Context) : DownloadTask.Callback, Netwo
 
     private fun createDownloadTaskInternal(videoId: Int, url: String, folder: String, hasPermission: Boolean = true,
                                            fileNameDownload: String, nameShowFile: String) {
+        Log.d("LOG", this.javaClass.simpleName + " createDownloadTaskInternal() | queue size: ${mQueue.size} | ")
         val data: DownloadData = DownloadData(videoId = videoId, url = url).also {
             it.folder = folder
             it.name = nameShowFile
@@ -350,6 +352,7 @@ class DownloadManagerCustomized(context: Context) : DownloadTask.Callback, Netwo
     }
 
     private fun startDownloadIfIdle() {
+        Log.d("LOG", this.javaClass.simpleName + " startDownloadIfIdle() | mIsDownloading | queue size: ${mQueue.size}")
         if (mIsDownloading) return
         startDownload()
     }
@@ -362,26 +365,35 @@ class DownloadManagerCustomized(context: Context) : DownloadTask.Callback, Netwo
             return
         }
         val data: DownloadData = mQueue[0]
+        Log.d("LOG", this.javaClass.simpleName + " startDownload()")
         addDownloadTask(downloadData = data)
     }
 
     private fun addDownloadTask(downloadData: DownloadData) {
-        mWeakContext?.get()?.also { context ->
-            if (mDownloadTask != null) {
-                mDownloadTask?.cancel(true)
-                mDownloadTask = null
-            }
-            mDownloadTask = DownloadTask(context, this).apply {
-                mNotiManager.also {
-                    addListener(it)
+        try{
+            mWeakContext?.get()?.also { context ->
+                if (mDownloadTask != null) {
+                    mDownloadTask?.cancel(true)
+                    mDownloadTask = null
                 }
-                mWeakContext?.get()?.let {
-                    DownloadVideoHelper.sendDownloadStatusToServer(it, Constant.DOWNLOAD_DOWNLOADING)
+                mDownloadTask = DownloadTask(context, this).apply {
+                    mNotiManager.also {
+                        addListener(it)
+                    }
+                    mWeakContext?.get()?.let {
+                        DownloadVideoHelper.sendDownloadStatusToServer(it, Constant.DOWNLOAD_DOWNLOADING)
+                    }
                 }
-            }
-            mDownloadTask?.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, downloadData)
+                Log.d("LOG", this.javaClass.simpleName + " addDownloadTask() | status: ${mDownloadTask?.status}")
 
+                mDownloadTask?.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, downloadData)
+
+            }
+        }catch (e:Exception){
+            e.printStackTrace()
+            Log.d("LOG", this.javaClass.simpleName + " addDownloadTask() | error: ${e.message}")
         }
+
     }
 
     private fun notifyDownloadCompleted(data: DownloadData, isSuccess: Boolean, message: String = "") {

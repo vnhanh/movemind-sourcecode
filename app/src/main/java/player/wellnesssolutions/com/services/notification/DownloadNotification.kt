@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.graphics.Color
 import android.os.Build
+import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -53,6 +54,7 @@ class DownloadNotification(context: Context) : DownloadTask.Callback {
     }
 
     override fun onDownloadCompleted(id: Int?, name: String?) {
+        Log.d("LOG", this.javaClass.simpleName + " onDownloadCompleted() | fileName: ${name}")
         cancelNoti()
     }
 
@@ -90,7 +92,7 @@ class DownloadNotification(context: Context) : DownloadTask.Callback {
             }
             mLayout?.setTextViewText(R.id.tvProgress, context.getString(R.string.progress, progress))
             mLayout?.setTextViewText(R.id.tvFilename, name ?: "The downloaded file")
-            val data = VideoDBUtil.countRecordInTable(tag = Constant.DownloadTag)
+            val data = VideoDBUtil.countRecordInTable(tag = Constant.TAG_VIDEO_DOWNLOAD)
             mLayout?.setTextViewText(R.id.tvRestOfDownload, "Downloaded ${data.second} videos. There are ${data.first} videos left.")
 
             if (mNotiManager == null) mNotiManager = NotificationManagerCompat.from(context)

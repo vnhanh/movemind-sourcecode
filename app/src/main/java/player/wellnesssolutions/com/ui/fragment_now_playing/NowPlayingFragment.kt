@@ -36,8 +36,6 @@ import kotlinx.android.synthetic.main.merge_load_brand.*
 import kotlinx.android.synthetic.main.merge_now_playing_coming_up_next.*
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.common.download.DownloadVideoHelper
-import player.wellnesssolutions.com.base.common.load_scheduled_videos.IScheduleContract
-import player.wellnesssolutions.com.base.common.load_scheduled_videos.SchedulePresenter
 import player.wellnesssolutions.com.base.common.play_video.ClosedCaptionController
 import player.wellnesssolutions.com.base.common.play_video.PlayVideoDisplayHelper
 import player.wellnesssolutions.com.base.utils.FragmentUtil
@@ -57,7 +55,6 @@ import player.wellnesssolutions.com.network.models.config.MMConfigData
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.com.network.models.screen_search.MMBrand
 import player.wellnesssolutions.com.network.network_connect.NetworkReceiver
-import player.wellnesssolutions.com.services.AlarmManagerSchedule
 import player.wellnesssolutions.com.ui.activity_main.IRouterChanged
 import player.wellnesssolutions.com.ui.activity_main.MainActivity
 import player.wellnesssolutions.com.ui.activity_main.PresentationDataHelper
@@ -72,9 +69,6 @@ import player.wellnesssolutions.fontsizelibrary.TypefaceUtil
 class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IRouterChanged,
         NetworkReceiver.IStateListener, ScheduleBroadcastReceiver.ScheduleListener {
     private var mPresenter: INowPlayingConstruct.Presenter? = null
-
-    // for loading class videos
-    private var mSchedulePresenter: IScheduleContract.Presenter? = null
 
     // for handle operations related to menu
     private var mMenuSetupHelper = NowPlayingFloatMenuHelper()
@@ -102,8 +96,6 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d("LOG", this.javaClass.simpleName + " onCreate()")
-
-        mSchedulePresenter = SchedulePresenter(context!!)
 
         readArguments()
     }
@@ -140,6 +132,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
         // Inflate the layout for this fragment
         registerScheduleBroadcast()
         return inflater.inflate(R.layout.fragment_now_playing, container, false)
@@ -226,12 +219,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         super.onDestroy()
     }
 
-    override fun onBackPressed(view: View) {
-        mSchedulePresenter
-        super.onBackPressed(view)
-    }
-
-//    private fun releaseDownloadButtonManager() {
+    //    private fun releaseDownloadButtonManager() {
 //        mMainDownloadButtonManager?.release()
 //        mMainDownloadButtonManager = null
 //    }
@@ -251,13 +239,10 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
     }
 
     private fun detachPresenters() {
-        mSchedulePresenter?.onDetach()
         mPresenter?.onDetach()
     }
 
     private fun destroyPresenters() {
-        mSchedulePresenter?.onDestroy()
-
         mPresenter?.onDestroy()
         mPresenter = null
     }
@@ -354,6 +339,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         context?.also { context ->
             val message = context.getString(R.string.do_you_wan_to_reload_schedule)
             val okButtonListener = DialogInterface.OnClickListener { _, _ ->
+                Log.d("LOG", "NowPlayingFragment | clicked button logo")
                 mPresenter?.stopCountdown()
                 mCheckVideoPositionRunnable?.stopTask()
                 loadSchedule(true)
@@ -531,20 +517,6 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
     override fun onIntermediateStage() {
         mCheckVideoPositionRunnable?.stopTask()
         showCountDown()
-    }
-
-    override fun onReceiveUpdateScheduleFromUI() {
-        AlarmManagerSchedule.cancelAlarmScheduleTime()
-        mSchedulePresenter?.onLoadSchedule(this, false, true)
-    }
-
-    override fun onReceivePlayVideoScheduleFromUI() {
-//        mSchedulePresenter?.onLoadSchedule(this, false)
-        mPresenter?.startToPlayScheduleVideo()
-    }
-
-    override fun onReceiveResetScheduleFromUI() {
-        mSchedulePresenter?.onLoadSchedule(this, false, true)
     }
 
     override fun onReceiveChangeApiBackToHome() {
@@ -731,31 +703,42 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
     override fun onNoClassVideosForNow(message: String, @ColorRes msgColor: Int, isClickedFromBtnBottom: Boolean) {
         Log.d("LOG", this.javaClass.simpleName + " onNoClassVideosForNow()")
         btnLogoBottom.isEnabled = true
-        if (videoPlayer == null) return
 
         when (mPresenter?.getPlayMode()) {
             PlayMode.SCHEDULE -> {
                 Log.d("LOG", this.javaClass.simpleName + " onNoClassVideosForNow() | SCHEDULE | isClickedFromBtnBottom: $isClickedFromBtnBottom")
-                if (isClickedFromBtnBottom) {
-                    NowPlayingVideoSetupHelper.openHomeFragmentWithNotLoadSchedule(fm = activity?.supportFragmentManager)
-                    activity?.let {
-                        if (it is MainActivity) {
-                            it.getApiConfigData()
-                        }
+                NowPlayingVideoSetupHelper
+                        .openHomeFragmentWithNotLoadScheduleAndShowPopup(fm = activity?.supportFragmentManager, message = getString(R.string.no_class_now))
+                activity?.let {
+                    if (it is MainActivity) {
+                        it.getApiConfigData()
                     }
                 }
             }
 
             PlayMode.ON_DEMAND -> {
                 videoPlayer?.context?.let {
-                    if (isClickedFromBtnBottom) {
-                        NowPlayingVideoSetupHelper.showDialogNavigateToNoClassScreen(context = it,
-                                fm = activity?.supportFragmentManager,
-                                isClickedFromBtnBottom = isClickedFromBtnBottom)
-                        activity?.let { ac ->
-                            if (ac is MainActivity) {
-                                ac.getApiConfigData()
+                    dialog?.dismiss()
+                    context?.also { context ->
+                        dialog = DialogUtil.createDialogTwoButtons(context, getString(R.string.confirm_stop_video_and_navigate_to_screen_get_started), R.string.cancel,
+                                object : DialogInterface.OnClickListener {
+                                    override fun onClick(dialogInterface: DialogInterface?, p1: Int) {
+                                        dialogInterface?.dismiss()
+                                        hideLoadingProgress()
+                                    }
+
+                                }, R.string.btn_ok, object : DialogInterface.OnClickListener {
+                            override fun onClick(dialogInterface: DialogInterface?, p1: Int) {
+                                dialogInterface?.dismiss()
+                                backToHomeScreenWithNotLoadSchedule()
+
                             }
+
+                        }).apply { show() }
+                    }
+                    activity?.let { ac ->
+                        if (ac is MainActivity) {
+                            ac.getApiConfigData()
                         }
                     }
                 }
@@ -763,6 +746,32 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         }
 
     }
+
+//    override fun noScheduleForNow(isLoadSchedule: Boolean) {
+//        Log.d("LOG", this.javaClass.simpleName + " showDialogAskWantToBackToHome()")
+//        dialog?.dismiss()
+//        context?.also { context ->
+//            dialog = DialogUtil.createDialogTwoButtons(context, getString(R.string.confirm_stop_video_and_navigate_to_screen_get_started), R.string.cancel,
+//                    object : DialogInterface.OnClickListener {
+//                        override fun onClick(dialogInterface: DialogInterface?, p1: Int) {
+//                            dialogInterface?.dismiss()
+//                            hideLoadingProgress()
+//                        }
+//
+//                    }, R.string.btn_ok, object : DialogInterface.OnClickListener {
+//                override fun onClick(dialogInterface: DialogInterface?, p1: Int) {
+//                    dialogInterface?.dismiss()
+//                    when {
+//                        isLoadSchedule -> NowPlayingVideoSetupHelper.openHomeFragmentWithLoadSchedule(fm = activity?.supportFragmentManager)
+//                        else -> backToHomeScreenWithNotLoadSchedule()
+//                    }
+//
+//                }
+//
+//            }).apply { show() }
+//        }
+//
+//    }
 
     override fun onHaveClassVideos(scheduleVideos: ArrayList<MMVideo>, isClickedFromBtnBottom: Boolean) {
         btnLogoBottom.isEnabled = true
@@ -795,32 +804,6 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
 
     override fun onTimePlaySchedule() {
         // do nothing
-    }
-
-    override fun showDialogAskWantToBackToHome(isLoadSchedule: Boolean) {
-        Log.d("LOG", this.javaClass.simpleName + " showDialogAskWantToBackToHome()")
-        dialog?.dismiss()
-        context?.also { context ->
-            dialog = DialogUtil.createDialogTwoButtons(context, getString(R.string.confirm_stop_video_and_navigate_to_screen_get_started), R.string.cancel,
-                    object : DialogInterface.OnClickListener {
-                        override fun onClick(dialogInterface: DialogInterface?, p1: Int) {
-                            dialogInterface?.dismiss()
-                            hideLoadingProgress()
-                        }
-
-                    }, R.string.btn_ok, object : DialogInterface.OnClickListener {
-                override fun onClick(dialogInterface: DialogInterface?, p1: Int) {
-                    dialogInterface?.dismiss()
-                    when {
-                        isLoadSchedule -> NowPlayingVideoSetupHelper.openHomeFragmentWithLoadSchedule(fm = activity?.supportFragmentManager)
-                        else -> backToHomeScreenWithNotLoadSchedule()
-                    }
-
-                }
-
-            }).apply { show() }
-        }
-
     }
 
     private fun switchToCurrentClass(scheduleVideos: ArrayList<MMVideo>) {

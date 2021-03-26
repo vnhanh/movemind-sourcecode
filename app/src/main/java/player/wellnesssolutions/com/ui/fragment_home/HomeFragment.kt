@@ -1,6 +1,7 @@
 package player.wellnesssolutions.com.ui.fragment_home
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -23,6 +24,7 @@ import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.constant.SOURCE_LOAD_SCHEDULE
 import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
+import player.wellnesssolutions.com.common.utils.DialogUtil
 import player.wellnesssolutions.com.common.utils.FileUtil
 import player.wellnesssolutions.com.common.utils.MessageUtils
 import player.wellnesssolutions.com.network.datasource.download.DownloadApi
@@ -47,33 +49,41 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter = HomePresenter(context!!)
-        btnGetStarted?.isEnabled = false
+        presenter = HomePresenter()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-//        if (ParameterUtils.isFragmentHomeOpen) {
-//            context?.let {
-//                if (PreferenceHelper.getInstance(it).getBoolean(ConstantPreference.IS_DOWNLOAD_VIDEOS, true)) {
-//                    getAllVideosForDownload(it)
-//                } else {
-//                    checkSubIsChange(it)
-//                }
-//            }
-//            ParameterUtils.isFragmentHomeOpen = false
-//        }
-
-//        arguments?.also { arguments ->
-//            isLoadScheduleOnScreenRefresh = arguments.getBoolean(Constant.BUNDLE_SCHEDULE, false)
-//            arguments.clear()
-//        }
         super.onCreateView(inflater, container, savedInstanceState)
+
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        Log.d("LOG", this.javaClass.simpleName + " onActivityCreated() ")
+        readArguments()
         setupUI()
+    }
+
+    private fun readArguments() {
+        arguments?.also { bundle ->
+            val sourceLoadSchedule = bundle.getString(Constant.BUNDLE_SOURCE_SCHEDULE).orEmpty()
+
+            when{
+                sourceLoadSchedule !=  SOURCE_LOAD_SCHEDULE.REMOTE.toString() -> {
+                    btnGetStarted?.isEnabled = true
+                }
+            }
+            bundle.remove(Constant.BUNDLE_SOURCE_SCHEDULE)
+
+            val message = bundle.getString(Constant.BUNDLE_SHOW_POPUP, "").orEmpty()
+            Log.d("LOG", this.javaClass.simpleName +" onCreateView() | sourceLoadSChedule: ${sourceLoadSchedule} | " +
+                    "message for popup: ${message} | button getStarted state: ${btnGetStarted?.isEnabled}")
+            when{
+                message.isNotBlank() -> presenter?.setupShowPopUpOnStartScreen(message)
+            }
+            bundle.remove(Constant.BUNDLE_SHOW_POPUP)
+        }
     }
 
     override fun onResume() {
@@ -100,21 +110,29 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
         super.onPause()
     }
 
-    override fun onStop() {
-        super.onStop()
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.d("LOG", this.javaClass.simpleName + " onDestroyView()")
         unregisterScheduleBroadcast()
         handler.removeCallbacks(runnableAttachPresenterFirstTime)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d("LOG", this.javaClass.simpleName + " onDestroy()")
         presenter?.onDestroy()
+    }
+
+    override fun showPopUp(messagePopUpOnStart: String) {
+        dialog?.dismiss()
+        context?.also { context ->
+            dialog = DialogUtil.createDialogOnlyOneButton(context, messagePopUpOnStart, R.string.btn_ok,
+            object: DialogInterface.OnClickListener{
+                override fun onClick(dialogInterface: DialogInterface?, p1: Int) {
+                    dialogInterface?.dismiss()
+                    dialog = null
+                }
+
+            }).apply { show() }
+        }
     }
 
     /**
@@ -196,7 +214,7 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
                         override fun onResponseSuccess(data: ResponseValue<ArrayList<MMVideo>>?) {
                             super.onResponseSuccess(data)
                             if (data == null) return
-                            VideoDBUtil.saveDVideosToDB(data = data.data, tag = Constant.DownloadTag)
+                            VideoDBUtil.saveDVideosToDB(data = data.data, tag = Constant.TAG_VIDEO_DOWNLOAD)
                             PreferenceHelper.getInstance(context).putBoolean(ConstantPreference.IS_DOWNLOAD_VIDEOS, false)
                             val intent = Intent().apply {
                                 action = DownloadService.ACTION_DOWNLOAD
@@ -395,9 +413,16 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
             }
         }
 
-        fun getInstanceNoLoadSchedule(): HomeFragment = HomeFragment().apply {
+        fun getInstanceNotLoadSchedule(): HomeFragment = HomeFragment().apply {
             arguments = Bundle().apply {
                 putString(Constant.BUNDLE_SOURCE_SCHEDULE, SOURCE_LOAD_SCHEDULE.LOCAL.name)
+            }
+        }
+
+        fun getInstanceNotLoadScheduleAndShowPopUp(message: String): HomeFragment = HomeFragment().apply {
+            arguments = Bundle().apply {
+                putString(Constant.BUNDLE_SOURCE_SCHEDULE, SOURCE_LOAD_SCHEDULE.LOCAL.name)
+                putString(Constant.BUNDLE_SHOW_POPUP, message)
             }
         }
 
@@ -410,6 +435,13 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
         fun updateAlreadyInstanceWithNotLoadSchedule(fragment: HomeFragment): Fragment = fragment.apply {
             arguments = Bundle().apply {
                 putString(Constant.BUNDLE_SOURCE_SCHEDULE, SOURCE_LOAD_SCHEDULE.LOCAL.name)
+            }
+        }
+
+        fun updateAlreadyInstanceWithNotLoadScheduleAndShowPopUp(fragment: HomeFragment, message:String): Fragment = fragment.apply {
+            arguments = Bundle().apply {
+                putString(Constant.BUNDLE_SOURCE_SCHEDULE, SOURCE_LOAD_SCHEDULE.LOCAL.name)
+                putString(Constant.BUNDLE_SHOW_POPUP, message)
             }
         }
 

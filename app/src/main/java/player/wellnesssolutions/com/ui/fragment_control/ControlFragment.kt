@@ -158,25 +158,22 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
 //            mCurrentChildScreenTag = NoClassFragment.TAG
 //        }
 
-        // new flow
-        if (isClickedFromBtnBottom) {
-            activity?.let {
-                if (it is MainActivity) {
-                    it.getApiConfigData()
-                }
+        activity?.let {
+            if (it is MainActivity) {
+                it.getApiConfigData()
             }
-            activity?.supportFragmentManager?.also { fm ->
-                val tag: String = HomeFragment.TAG
-                var fragment: Fragment? = fm.findFragmentByTag(tag) // find the earlier fragment if existed
-                fragment =
-                        when (fragment != null && fragment is HomeFragment) {
-                            true -> HomeFragment.updateAlreadyInstanceWithNoSchedule(fragment)                    // use old instance
-                            false -> HomeFragment.getInstanceNoLoadSchedule() // create new instance if it has been not created yet
-                        }
-                FragmentUtil.replaceFragment(fm = fm,
-                        newFragment = fragment, newFragmentTag = tag,
-                        frameId = R.id.frameLayoutHome, isAddToBackStack = false, isRemoveOlds = true)
-            }
+        }
+        activity?.supportFragmentManager?.also { fm ->
+            val tag: String = HomeFragment.TAG
+            var fragment: Fragment? = fm.findFragmentByTag(tag) // find the earlier fragment if existed
+            fragment =
+                    when (fragment != null && fragment is HomeFragment) {
+                        true -> HomeFragment.updateAlreadyInstanceWithNoSchedule(fragment)                    // use old instance
+                        false -> HomeFragment.getInstanceNotLoadSchedule() // create new instance if it has been not created yet
+                    }
+            FragmentUtil.replaceFragment(fm = fm,
+                    newFragment = fragment, newFragmentTag = tag,
+                    frameId = R.id.frameLayoutHome, isAddToBackStack = false, isRemoveOlds = true)
         }
 
         btnLogoBottom?.isEnabled = true

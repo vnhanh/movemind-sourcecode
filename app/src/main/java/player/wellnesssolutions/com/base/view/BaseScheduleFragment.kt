@@ -1,16 +1,19 @@
 package player.wellnesssolutions.com.base.view
 
 import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.common.load_scheduled_videos.IScheduleContract
 import player.wellnesssolutions.com.base.common.load_scheduled_videos.SchedulePresenter
 import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.constant.SOURCE_LOAD_SCHEDULE
+import player.wellnesssolutions.com.common.utils.DialogUtil
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.com.services.AlarmManagerSchedule
 import player.wellnesssolutions.com.ui.activity_main.MainActivity
@@ -21,6 +24,11 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
     protected var isNewScreen = true
     protected var dialog: Dialog? = null
     protected var isStartedOpenNewScreen = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d("LOG", this.javaClass.simpleName + " onCreate()")
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         isNewScreen = true
@@ -74,11 +82,18 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
 
     override fun onDestroyView() {
         super.onDestroyView()
+        Log.d("LOG", this.javaClass.simpleName + " onDestroyView()")
         isNewScreen = true
         schedulePresenter?.onDestroy()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("LOG", this.javaClass.simpleName + " onDestroy()")
+    }
+
     protected fun loadSchedule(isClickedFromBtnBottom: Boolean) {
+        Log.d("LOG", this.javaClass.simpleName + " loadSchedule() | isClickedFromBtnBottom: $isClickedFromBtnBottom | presenter: $schedulePresenter")
         schedulePresenter?.onLoadSchedule(view = this, isClickedFromBtnBottom = isClickedFromBtnBottom)
     }
 
@@ -109,7 +124,24 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
     override fun onReceiveUpdateScheduleFromUI() {
         Log.d("LOG", this.javaClass.simpleName + " onReceiveUpdateScheduleFromUI()")
         AlarmManagerSchedule.cancelAlarmScheduleTime()
-        schedulePresenter?.onLoadSchedule(view = this, isClickedFromBtnBottom = false, mustLoad = true)
+        val _context = context
+        when{
+            _context == null -> schedulePresenter?.onLoadSchedule(view = this, isClickedFromBtnBottom = false, mustLoad = true)
+            else -> {
+                dialog?.dismiss()
+                dialog = DialogUtil.createDialogOnlyOneButton(
+                        _context, R.string.schedule_just_update,
+                        R.string.btn_ok, object: DialogInterface.OnClickListener{
+                            override fun onClick(p0: DialogInterface?, p1: Int) {
+                                p0?.dismiss()
+                                dialog = null
+                                schedulePresenter?.onLoadSchedule(view = this@BaseScheduleFragment, isClickedFromBtnBottom = false, mustLoad = true)
+                            }
+                        }
+                )
+            }
+        }
+
     }
 
     override fun onReceiveChangeApiBackToHome() {

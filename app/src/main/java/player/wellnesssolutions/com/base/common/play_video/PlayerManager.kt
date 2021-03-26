@@ -26,7 +26,6 @@ import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.com.network.models.now_playing.MMVideoLanguage
 import player.wellnesssolutions.com.network.models.response.ResponseValue
 import java.io.File
-import java.lang.ref.WeakReference
 import java.net.ConnectException
 
 
@@ -177,7 +176,7 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, _context: Con
                 languageCode = languageCode, volume = volume, typeVideo = typeVideo,
                 isPlayOffline = when (isUpdateViewNumber) {
                     true -> {
-                        if (VideoDBUtil.checkVideoDownloaded(data = video, tag = Constant.DownloadTag)) {
+                        if (VideoDBUtil.checkVideoDownloaded(data = video, tag = Constant.TAG_VIDEO_DOWNLOAD)) {
                             checkIfFileExist(video.id.toString() + ".mp4")
                         } else {
                             false
