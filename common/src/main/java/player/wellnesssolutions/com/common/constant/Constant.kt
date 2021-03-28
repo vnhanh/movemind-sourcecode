@@ -1,6 +1,18 @@
 package player.wellnesssolutions.com.common.constant
 
 object Constant {
+    /**
+     * "Header X-Device not found.", "Your account is inactive.",
+    "Device not found.", "Device is inactive."
+     */
+    // SERVICE
+    const val HEADER_X_DEVICE_NOT_FOUND = "Header X-Device not found."
+    const val YOUR_ACCOUNT_IS_INACTIVE = "Your account is inactive."
+    const val DEVICE_NOT_FOUND = "Device not found."
+    const val DEVICE_IS_INACTIVE = "Device is inactive."
+    const val UNAUTHENTICATED = "Unauthenticated."
+    const val FAILED_TO_CONNECT = "failed to connect to"
+
     // default branding value
     const val DEF_PRIMARY_COLOR = "#041e41"
     const val DEF_SECONDARY_COLOR = "#00c3b3"

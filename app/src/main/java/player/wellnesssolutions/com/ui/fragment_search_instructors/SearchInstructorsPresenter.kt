@@ -85,8 +85,8 @@ class SearchInstructorsPresenter : BaseResponseObserver<ArrayList<MMInstructor>>
                 ?: MSG_REQUEST_FAILED)
     }
 
-    override fun onResponseFalse(code: Int, message: String?) {
-        super.onResponseFalse(code, message)
+    override fun onResponseFailed(code: Int, message: String?) {
+        super.onResponseFailed(code, message)
 //        val msg = message?:mView?.getViewContext()?.getString(R.string.request_failed)?: Constant.MSG_REQUEST_FAILED
         mView?.onRequestFailed(mView?.getViewContext()?.getString(R.string.request_failed)
                 ?: MSG_REQUEST_FAILED)

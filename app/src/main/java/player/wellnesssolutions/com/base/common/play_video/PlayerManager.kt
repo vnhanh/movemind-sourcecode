@@ -450,8 +450,8 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, _context: Con
         }
     }
 
-    override fun onResponseFalse(code: Int, message: String?) {
-        super.onResponseFalse(code, message)
+    override fun onResponseFailed(code: Int, message: String?) {
+        super.onResponseFailed(code, message)
 
         mUpdateViewNumber++
         if (mUpdateViewNumber < MAX_UPDATE_VIDEO_VIEW_NUMBER) {

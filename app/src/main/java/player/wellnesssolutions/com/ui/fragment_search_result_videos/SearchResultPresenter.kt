@@ -275,8 +275,8 @@ class SearchResultPresenter(context: Context) : BaseResponseObserver<ArrayList<M
         onRequestFailed(message)
     }
 
-    override fun onResponseFalse(code: Int, message: String?) {
-        super.onResponseFalse(code, message)
+    override fun onResponseFailed(code: Int, message: String?) {
+        super.onResponseFailed(code, message)
         onRequestFailed(message)
     }
 

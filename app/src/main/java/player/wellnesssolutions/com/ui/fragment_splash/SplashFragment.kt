@@ -23,7 +23,7 @@ class SplashFragment : BaseFragment(), ISplashContract.View, View.OnClickListene
     private var mPresenter: ISplashContract.Presenter? = null
     private val PERIOD = 100L
     private var MAX_PROGRESS_BEFORE_RECEIVE_RESPONSE = 60
-    private var mIsStopProgressbar = false
+    private var isStopProgressBar = false
     private var dialog: AlertDialog? = null
     private val handler = Handler()
 
@@ -52,7 +52,7 @@ class SplashFragment : BaseFragment(), ISplashContract.View, View.OnClickListene
 
     override fun onStartLoadApi() {
         progressLoadBrand?.also {
-            mIsStopProgressbar = false
+            isStopProgressBar = false
             it.progressDrawable = ContextCompat.getDrawable(progressLoadBrand.context, R.drawable.progress_splash_default)
             it.progress = 0
             handler.postDelayed(runnableLoading, PERIOD)
@@ -106,9 +106,11 @@ class SplashFragment : BaseFragment(), ISplashContract.View, View.OnClickListene
             }
 
             else -> {
-                mIsStopProgressbar = true
+                Log.d("LOG", this.javaClass.simpleName + " updateProgress() | progress: $progress")
+                isStopProgressBar = true
                 progressLoadBrand?.also { progressBar ->
                     progressBar.progressDrawable = ContextCompat.getDrawable(progressBar.context, R.drawable.progress_splash_failed)
+                    progressBar.progress = progressBar.max
                 }
             }
         }
@@ -126,6 +128,8 @@ class SplashFragment : BaseFragment(), ISplashContract.View, View.OnClickListene
     }
 
     override fun onCallServiceFailed(messageRes: Int) {
+        Log.d("LOG", this.javaClass.simpleName + " onCallServiceFailed() | stop progress bar")
+        isStopProgressBar = true
         dialog?.dismiss()
         context?.also { _context ->
             dialog = DialogUtil.createDialogOnlyOneButton(context = _context,
@@ -167,7 +171,8 @@ class SplashFragment : BaseFragment(), ISplashContract.View, View.OnClickListene
         override fun run() {
             try {
                 progressLoadBrand?.also { progressBar ->
-                    when (mIsStopProgressbar) {
+                    Log.d("LOG", "Splash Screen | isStopProgressBar: $isStopProgressBar")
+                    when (isStopProgressBar) {
                         false -> {
                             val progress = progressBar.progress + 1
 

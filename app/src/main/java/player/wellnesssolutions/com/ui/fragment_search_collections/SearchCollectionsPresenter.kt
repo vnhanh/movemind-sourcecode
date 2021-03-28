@@ -79,8 +79,8 @@ class SearchCollectionsPresenter : BaseResponseObserver<ArrayList<MMCollection>>
         displayUI()
     }
 
-    override fun onResponseFalse(code: Int, message: String?) {
-        super.onResponseFalse(code, message)
+    override fun onResponseFailed(code: Int, message: String?) {
+        super.onResponseFailed(code, message)
         onShowRequestApiFailed(message)
     }
 

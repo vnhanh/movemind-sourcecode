@@ -144,8 +144,8 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
         handlerScheduleTime.setupScheduleForNowVideo(loadedVideos)
     }
 
-    override fun onResponseFalse(code: Int, message: String?) {
-        super.onResponseFalse(code, message)
+    override fun onResponseFailed(code: Int, message: String?) {
+        super.onResponseFailed(code, message)
         isUpdatingNewSchedule = false
         Log.d("LOG", this.javaClass.simpleName + " onResponseFalse() | message: $message")
         navigateToNoClass()

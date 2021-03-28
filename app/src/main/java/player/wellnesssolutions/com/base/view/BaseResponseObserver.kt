@@ -5,7 +5,12 @@ import io.reactivex.Observer
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import player.wellnesssolutions.com.base.utils.CommonUtility
-import player.wellnesssolutions.com.network.models.response.ErrorBody
+import player.wellnesssolutions.com.common.constant.Constant.DEVICE_IS_INACTIVE
+import player.wellnesssolutions.com.common.constant.Constant.DEVICE_NOT_FOUND
+import player.wellnesssolutions.com.common.constant.Constant.FAILED_TO_CONNECT
+import player.wellnesssolutions.com.common.constant.Constant.HEADER_X_DEVICE_NOT_FOUND
+import player.wellnesssolutions.com.common.constant.Constant.UNAUTHENTICATED
+import player.wellnesssolutions.com.common.constant.Constant.YOUR_ACCOUNT_IS_INACTIVE
 import player.wellnesssolutions.com.network.models.response.ResponseValue
 import retrofit2.Response
 
@@ -30,9 +35,13 @@ abstract class BaseResponseObserver<T> : Observer<Response<ResponseValue<T>>> {
     }
 
     override fun onNext(response: Response<ResponseValue<T>>) {
-        Log.d("LOG", this.javaClass.simpleName + " onNext() | error body message: ${response.errorBody()?.string()} | " +
-                "body message ${response.body()?.message} | code: ${response.code()}")
+//        Log.d("LOG", this.javaClass.simpleName + " onNext() | error body message: ${response.errorBody()?.string()} | " +
+//                "body message ${response.body()?.message} | code: ${response.code()}")
         this.response = response
+        val strBodyError = response.errorBody()?.string()
+        val bodyError = CommonUtility.getErrorBody(strBodyError)
+        Log.d("LOG", this.javaClass.simpleName + " onNext() | messageError: $strBodyError")
+        val messageError = bodyError?.message
 
         when {
             response.code() == 200 -> {
@@ -44,17 +53,12 @@ abstract class BaseResponseObserver<T> : Observer<Response<ResponseValue<T>>> {
             }
 
             response.body() != null -> {
-                receivedResponseFalse(code = response.code(), message = response.body()?.message)
+                handleResponseMessage(code = response.code(), message = response.body()?.message)
             }
 
-            else -> {
-                val errorBody = CommonUtility.getErrorBody(response.errorBody())
+            messageError.isNullOrBlank() -> onResponseFailed(code = response.code(), message = MSG_NOT_FOUND_API)
 
-                if (errorBody?.message != null)
-                    receivedResponseFalse(code = response.code(), body = errorBody)
-                else
-                    onResponseFalse(code = response.code(), message = MSG_NOT_FOUND_API)
-            }
+            else -> handleErrorMessage(code = response.code(), message = messageError)
         }
 
         onComplete()
@@ -82,38 +86,36 @@ abstract class BaseResponseObserver<T> : Observer<Response<ResponseValue<T>>> {
 
     }
 
-    private fun receivedResponseFalse(code: Int, message: String?) {
+    private fun handleResponseMessage(code: Int, message: String?) {
         if (message != null)
-            processErrorMessage(code, message)
+            handleErrorMessage(code, message)
         else
-            onResponseFalse(code = code, message = null)
+            onResponseFailed(code = code, message = null)
     }
 
-    private fun receivedResponseFalse(code: Int, body: ErrorBody) {
-        processErrorMessage(code, body.message!!)
-    }
-
-    private fun processErrorMessage(code: Int, message: String) {
+    private fun handleErrorMessage(code: Int, message: String) {
+        Log.d("LOG", this.javaClass.simpleName + " handleErrorMessage() | message: $message")
         when (message) {
-            "Header X-Device not found.", "Your account is inactive.",
-            "Device not found.", "Device is inactive."
+            HEADER_X_DEVICE_NOT_FOUND, YOUR_ACCOUNT_IS_INACTIVE,
+            DEVICE_NOT_FOUND, DEVICE_IS_INACTIVE
             -> onExpired(message)
 
-            "Unauthenticated." -> onExpiredUnauthenticated(message)
+            UNAUTHENTICATED -> onExpiredUnauthenticated(message)
 
             else -> {
-                when (message.toLowerCase().contains("failed to connect to")) {
+                Log.d("LOG", this.javaClass.simpleName + " handleErrorMessage() | case default")
+                when (message.toLowerCase().contains(FAILED_TO_CONNECT)) {
                     true -> {
-                        onResponseFalse(code, "Failed to connect to server")
+                        onResponseFailed(code, "Failed to connect to server")
                     }
-                    false -> onResponseFalse(code, message)
+                    false -> onResponseFailed(code, message)
                 }
             }
         }
     }
 
     // the final false/failed function would be called
-    protected open fun onResponseFalse(code: Int, message: String?) {}
+    protected open fun onResponseFailed(code: Int, message: String?) {}
 
     protected open fun onUnAuthorized() {}
 

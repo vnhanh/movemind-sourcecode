@@ -70,8 +70,8 @@ class LoadBrandsHandler(callback: ILoadBrandHandler.Callback) : BaseResponseObse
 
     }
 
-    override fun onResponseFalse(code: Int, message: String?) {
-        super.onResponseFalse(code, message)
+    override fun onResponseFailed(code: Int, message: String?) {
+        super.onResponseFailed(code, message)
 
         when (message == null) {
             true -> onShowRequestApiFalse(R.string.load_brands_failed)

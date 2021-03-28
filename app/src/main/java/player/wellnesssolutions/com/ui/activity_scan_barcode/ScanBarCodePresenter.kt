@@ -144,8 +144,8 @@ class ScanBarCodePresenter(private val mView: ScanBarCodeContract.View) : ScanBa
         }
     }
 
-    override fun onResponseFalse(code: Int, message: String?) {
-        super.onResponseFalse(code, message)
+    override fun onResponseFailed(code: Int, message: String?) {
+        super.onResponseFailed(code, message)
         MessageUtils.showSnackBar(mView.getView(), message ?: "Error", R.color.red)
         mView.resumeScan()
     }

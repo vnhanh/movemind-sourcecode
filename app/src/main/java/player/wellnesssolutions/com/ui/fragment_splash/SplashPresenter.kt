@@ -1,5 +1,6 @@
 package player.wellnesssolutions.com.ui.fragment_splash
 
+import android.util.Log
 import com.google.gson.Gson
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.utils.ParameterUtils
@@ -80,7 +81,7 @@ class SplashPresenter : BaseResponseObserver<MMConfigData>(), ISplashContract.Pr
         mLoadedData = data?.data
 
         if (data?.data == null) {
-            onResponseFalse(-1, mView?.getViewContext()?.getString(R.string.no_data_response))
+            onResponseFailed(-1, mView?.getViewContext()?.getString(R.string.no_data_response))
             return
         }
 
@@ -133,8 +134,9 @@ class SplashPresenter : BaseResponseObserver<MMConfigData>(), ISplashContract.Pr
      * -----------
      */
 
-    override fun onResponseFalse(code: Int, message: String?) {
-        super.onResponseFalse(code, message)
+    override fun onResponseFailed(code: Int, message: String?) {
+        super.onResponseFailed(code, message)
+        Log.d("LOG", this.javaClass.simpleName + " onResponseFailed() | message: $message")
         mRequestCode = RESPONSE_FALSE
         handleOnCallServiceFailed()
     }
@@ -158,6 +160,7 @@ class SplashPresenter : BaseResponseObserver<MMConfigData>(), ISplashContract.Pr
     }
 
     private fun handleOnCallServiceFailed() {
+        Log.d("LOG", this.javaClass.simpleName + " handleOnCallServiceFailed()")
         mView?.updateProgress(-1)
         val msgResId: Int =
                 when (mRequestCode) {
@@ -185,6 +188,7 @@ class SplashPresenter : BaseResponseObserver<MMConfigData>(), ISplashContract.Pr
     }
 
     override fun onExpired(error: String) {
+        mView?.updateProgress(-1)
         mView?.getFragment()?.also {
             if (it is BaseFragment) {
                 it.onExpired(error)

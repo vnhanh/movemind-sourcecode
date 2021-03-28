@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Environment
 import android.os.StatFs
 import android.text.TextUtils
+import android.util.Log
 import android.util.Patterns
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
@@ -56,15 +57,15 @@ object CommonUtility {
         return shape
     }
 
-    fun getErrorBody(body: ResponseBody?): ErrorBody? {
-        val string = body?.string() ?: ""
+    fun getErrorBody(strBodyError: String?): ErrorBody? {
         when {
-            string.isBlank() -> return null
+            strBodyError.isNullOrBlank() -> return null
             else -> return try {
-                Gson().fromJson(string, ErrorBody::class.java)
+                Gson().fromJson(strBodyError, ErrorBody::class.java)
             } catch (e: Exception) {
                 e.printStackTrace()
-                ErrorBody(success = false, message = body?.string() ?: "")
+                Log.d("LOG", this.javaClass.simpleName + " getErrorBody() | error: ${e.message}")
+                ErrorBody(success = false, message = strBodyError)
             }
         }
     }
