@@ -141,9 +141,9 @@ class ScheduleBroadcastReceiver : BroadcastReceiver() {
 
     fun addListener(listener: ScheduleListener) {
         if (mScheduleListeners.contains(listener)) return
+        mScheduleListeners.add(listener)
         Log.d("LOG", this.javaClass.simpleName + " addListener() | " +
                 "listeners number: ${mScheduleListeners.size} | listener class name: ${listener.javaClass.simpleName}")
-        mScheduleListeners.add(listener)
     }
 
     fun removeListener(listener: ScheduleListener) {

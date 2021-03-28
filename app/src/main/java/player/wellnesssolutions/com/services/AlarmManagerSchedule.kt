@@ -4,6 +4,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import player.wellnesssolutions.com.common.constant.Constant
 import java.util.*
 
@@ -46,6 +47,7 @@ object AlarmManagerSchedule {
     }
 
     fun cancelAlarmScheduleTime() {
+        Log.d("LOG", this.javaClass.simpleName + " cancelAlarmScheduleTime")
         if (alarm != null && intentPending != null) {
             alarm?.cancel(intentPending)
         }

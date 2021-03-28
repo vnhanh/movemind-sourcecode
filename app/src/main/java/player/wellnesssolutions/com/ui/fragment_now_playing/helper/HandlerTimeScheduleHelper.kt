@@ -31,8 +31,8 @@ object HandlerTimeScheduleHelper {
             val timeStart: Long = convertTime(video.getStartTime())
             val length = ((video.videoLength ?: 0f) * 1000).toInt()
             val timeEnd = timeStart + length
-            Log.d("LOG", this.javaClass.simpleName + " claculateTimePlayVideo() | time start: ${convertCurrentTimeToDateStr(timeStart)} | " +
-                    "time end: ${convertCurrentTimeToDateStr(timeEnd)}")
+//            Log.d("LOG", this.javaClass.simpleName + " claculateTimePlayVideo() | time start: ${convertCurrentTimeToDateStr(timeStart)} | " +
+//                    "time end: ${convertCurrentTimeToDateStr(timeEnd)}")
             val currentTime = System.currentTimeMillis()
             when {
                 currentTime < timeEnd -> {

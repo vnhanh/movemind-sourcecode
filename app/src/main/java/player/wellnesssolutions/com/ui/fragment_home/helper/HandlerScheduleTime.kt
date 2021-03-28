@@ -13,9 +13,7 @@ import player.wellnesssolutions.com.ui.fragment_now_playing.helper.ICallbackNowS
 import player.wellnesssolutions.com.ui.fragment_now_playing.helper.STATE_TIME_PLAY_SCHEDULE
 import java.lang.ref.WeakReference
 
-class HandlerScheduleTime(viewContext: Context, listener: IListenerHandleScheduleTime) : IRequestTimeNetworkListener {
-    private var context: Context? = viewContext
-    private var weakListener = WeakReference(listener)
+class HandlerScheduleTime(private var context: Context?, private var listener: IListenerHandleScheduleTime?) : IRequestTimeNetworkListener {
     private var mTimeDiffs = -1L
     private var videos: ArrayList<MMVideo> = arrayListOf()
 
@@ -45,25 +43,13 @@ class HandlerScheduleTime(viewContext: Context, listener: IListenerHandleSchedul
         handleScheduleVideoNow()
     }
 
-    fun setupScheduleForNowVideo(videos: ArrayList<MMVideo>, listener: IListenerHandleScheduleTime,
-                                 context: Context?) {
-        Log.d("LOG", this.javaClass.simpleName + " setupScheduleForNowVideo() | videos number: ${videos.size} | " +
-                "listener: ${weakListener.get()} | context: ${context}")
-        weakListener = WeakReference(listener)
-        this.context = context
-        this.videos = videos
-        if (videos.size == 0) return
-
-        handleScheduleVideoNow()
-    }
-
     fun release() {
-        weakListener.clear()
+        listener = null
         context = null
     }
 
     private fun handleScheduleVideoNow() {
-        if (weakListener.get() == null) return
+        if (listener == null) return
         val firstVideo = videos[0]
         Log.d("LOG", this.javaClass.simpleName + " process() | video name: ${firstVideo.videoName} | videos number: ${videos.size}")
         HandlerTimeScheduleHelper.calculateTimePlayVideo(firstVideo, object : ICallbackNowScheduleVideo {
@@ -73,20 +59,20 @@ class HandlerScheduleTime(viewContext: Context, listener: IListenerHandleSchedul
                         Log.d("LOG", this.javaClass.simpleName + " process() | TIME_PLAY | timePlay: $timePlay")
 
                         ParameterUtils.isClearVideoOnPresentation = true
-                        weakListener.get()?.onHaveNowPlayingVideo(timePlay)
+                        listener?.onHaveNowPlayingVideo(timePlay)
                     }
 
                     STATE_TIME_PLAY_SCHEDULE.TIME_WAIT -> {
                         Log.d("LOG", this.javaClass.simpleName + " process() | TIME_WAIT | timePlay: $timePlay | video name: ${firstVideo.videoName} | " +
                                 "videos number: ${videos.size}")
                         setupAlarmTask(timePlay)
-                        weakListener.get()?.onHaveVideoAfter(timePlay)
+                        listener?.onHaveVideoAfter(timePlay)
                     }
 
                     STATE_TIME_PLAY_SCHEDULE.TIME_EXPIRED -> {
                         Log.d("LOG", this.javaClass.simpleName + " process() | TIME_EXPIRED")
                         when {
-                            videos.size == 0 -> weakListener.get()?.onVideoExpiredTime()
+                            videos.size == 0 -> listener?.onVideoExpiredTime()
                             else -> {
                                 videos.removeAt(0)
                                 handleScheduleVideoNow()
@@ -95,7 +81,7 @@ class HandlerScheduleTime(viewContext: Context, listener: IListenerHandleSchedul
                     }
 
                     STATE_TIME_PLAY_SCHEDULE.TIME_ERROR -> {
-                        weakListener.get()?.onProcessVideoError()
+                        listener?.onProcessVideoError()
                     }
                 }
             }
@@ -143,8 +129,8 @@ class HandlerScheduleTime(viewContext: Context, listener: IListenerHandleSchedul
 
     private fun setupAlarmTask(time: Long) {
         context?.also { context ->
-            val timeWait = (time / 1000L).toInt()
             AlarmManagerSchedule.cancelAlarmScheduleTime()
+            val timeWait = (time / 1000L).toInt()
             AlarmManagerSchedule.setupTimeWakeSchedule(context, timeWait)
         }
     }

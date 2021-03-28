@@ -29,8 +29,8 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
         isNewScreen = true
         isStartedOpenNewScreen = false
         schedulePresenter = SchedulePresenter(context!!)
+        registerScheduleBroadcast()
 
-//        if (isNewScreen) {
         Log.d("LOG", this.javaClass.simpleName + " onCreateView() | isNewScreen | arguments is: ${arguments ?: "null"}")
         arguments?.also { bundle ->
             val sourceLoadSchedule = bundle.getString(Constant.BUNDLE_SOURCE_SCHEDULE).orEmpty()
@@ -55,7 +55,6 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
             }
 
         }
-        registerScheduleBroadcast()
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
@@ -74,7 +73,7 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
 
     override fun onDestroyView() {
         super.onDestroyView()
-//        Log.d("LOG", this.javaClass.simpleName + " onDestroyView()")
+        Log.d("LOG", this.javaClass.simpleName + " onDestroyView()")
         unregisterScheduleBroadcast()
         isNewScreen = true
         schedulePresenter?.onDestroy()
@@ -114,7 +113,7 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
 
     override fun onReceivePlayVideoScheduleFromUI() {
         Log.d("LOG", this.javaClass.simpleName + " onReceivePlayVideoScheduleFromUI()")
-        AlarmManagerSchedule.cancelAlarmScheduleTime()
+//        AlarmManagerSchedule.cancelAlarmScheduleTime()
         schedulePresenter?.onTimePlaySchedule()
     }
 

@@ -29,7 +29,7 @@ import java.io.File
 import java.net.ConnectException
 
 
-class PlayerManager(callback: IPlayVideoContract.Manager.Callback, _context: Context) :
+class PlayerManager(callback: IPlayVideoContract.Manager.Callback,private var context: Context?) :
         BaseResponseObserver<VideoViewResponse>(), IPlayVideoContract.Manager, Player.EventListener {
     companion object {
         const val CODE_NO_ERROR = -1
@@ -41,7 +41,6 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, _context: Con
         const val MAX_UPDATE_VIDEO_VIEW_NUMBER = 3
     }
 
-    private var context: Context? = _context
     private var mPlayerUseCase: PlayerUsecase = PlayerUsecase()
     private var mErrorCode = -1
 
@@ -51,7 +50,7 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, _context: Con
     // video data
     private var mVideos: ArrayList<MMVideo>? = null
 
-    private var mCookieValue: String = PreferenceHelper.getInstance(_context).getString(ConstantPreference.SP_COOKIE, "")
+    private var mCookieValue: String = PreferenceHelper.getInstance()?.getString(ConstantPreference.SP_COOKIE, "").orEmpty()
 
     // handle CloseCaption related to UI
     private var mClosedCaptionController: ClosedCaptionController? = null

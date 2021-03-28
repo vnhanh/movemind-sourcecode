@@ -21,7 +21,7 @@ import player.wellnesssolutions.com.ui.fragment_home.helper.HandlerScheduleTime
 import player.wellnesssolutions.com.ui.fragment_home.helper.IListenerHandleScheduleTime
 import java.lang.ref.WeakReference
 
-class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVideo>>(), IScheduleContract.Presenter,
+class SchedulePresenter(private var context: Context?) : BaseResponseObserver<ArrayList<MMVideo>>(), IScheduleContract.Presenter,
         IListenerHandleScheduleTime {
     companion object {
         const val MSG_REQUEST_FAILED = "Request class videos failed !"
@@ -29,7 +29,6 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
 
     // vars
     private var mView: IScheduleContract.View? = null
-    private var weakContext = WeakReference(context)
     private var scheduleApi = NowPlayingApi()
     private var handlerScheduleTime: HandlerScheduleTime = HandlerScheduleTime(context, this)
     private var scheduleVideos: ArrayList<MMVideo> = arrayListOf()
@@ -58,7 +57,7 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
     private var mIsLoading = false
 
     override fun onAttach(view: IScheduleContract.View) {
-        Log.d("LOG", this.javaClass.simpleName + " onAttach() | view: ${view.javaClass.simpleName}")
+        Log.d("LOG", this.javaClass.simpleName + " onAttach()")
         this.mView = view
         if (isLoadScheduleOnStart) {
             isLoadScheduleOnStart = false
@@ -100,7 +99,7 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
     }
 
     private fun showMessageLoading(view: IScheduleContract.View) {
-        weakContext.get()?.also { context ->
+        context?.also { context ->
             MessageUtils.showToast(context, context.getString(R.string.msg_loading_scheduler), R.color.yellow)?.show()
         }
     }
@@ -110,7 +109,7 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
         if (mIsLoading || mView == null) return
         mIsLoading = true
 
-        weakContext.get()?.also { context ->
+        context?.also { context ->
             val headerData = CheckHeaderApiUtil.checkData(PreferenceHelper.getInstance(context), mView?.getFragment())
                     ?: return
 
@@ -239,7 +238,7 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
         if (scheduleVideos.size == 0) {
             scheduleVideos = VideoDBUtil.getVideosFromDB(Constant.MM_SCHEDULE, false)
         }
-        handlerScheduleTime.setupScheduleForNowVideo(scheduleVideos, this, weakContext.get())
+        handlerScheduleTime.setupScheduleForNowVideo(scheduleVideos)
     }
 
     override fun onDetach() {
@@ -248,8 +247,8 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
 
     override fun onDestroy() {
         handler.removeCallbacks(runnable)
+        context = null
         handlerScheduleTime.release()
-
         mCompoDisposable.dispose()
         mIsLoading = false
     }
@@ -275,7 +274,6 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
     }
 
     override fun setScheduleCurrentAndWaitNextVideo(videos: ArrayList<MMVideo>) {
-        AlarmManagerSchedule.cancelAlarmScheduleTime()
         this.scheduleVideos.clear()
         this.scheduleVideos = videos
         Log.d("LOG", this.javaClass.simpleName + " setScheduleCurrentAndWaitNextVideo() | videos number: ${scheduleVideos.size} | " +

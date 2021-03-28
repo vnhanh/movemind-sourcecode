@@ -27,9 +27,8 @@ import player.wellnesssolutions.com.ui.fragment_search_brands.module.ILoadBrandH
 import player.wellnesssolutions.com.ui.fragment_search_brands.module.LoadBrandsHandler
 import java.lang.ref.WeakReference
 
-class NowPlayingPresenter(context: Context, playMode: PlayMode) :
+class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
         INowPlayingConstruct.Presenter, IPlayVideoContract.Manager.Callback, Player.EventListener {
-    private var mWeakContext: WeakReference<Context> = WeakReference(context)
     private var mView: INowPlayingConstruct.View? = null
 
     private var mPlayedMode: PlayMode = PlayMode.ON_DEMAND
@@ -42,7 +41,7 @@ class NowPlayingPresenter(context: Context, playMode: PlayMode) :
     private var mIsReload = false // flag check if video is replayed
 
     // for loading class videos
-    private var handlerScheduleTimePlay: HandlerScheduleTime = HandlerScheduleTime(viewContext = context, listener = this)
+    private var handlerScheduleTimePlay: HandlerScheduleTime = HandlerScheduleTime(context = context, listener = this)
 
     // for Countdown Timer
     private var mCountDownTimerPlayVideo: CountDownTimer? = null
@@ -536,11 +535,11 @@ class NowPlayingPresenter(context: Context, playMode: PlayMode) :
 
     override fun onDestroy() {
         if (mPlayerManager.getCurrentPosition() > 0 && !isPlayNewList) {
-            PresentationDataHelper.save(context = mWeakContext.get(), mode = mPlayedMode, videos = mVideos,
+            PresentationDataHelper.save(context = context, mode = mPlayedMode, videos = mVideos,
                     currentPosition = mPlayerManager.getCurrentPosition(),
                     timeCountDown = mCountDownNumber)
         }
-
+        context = null
         handlerScheduleTimePlay.release()
         mPlayerManager.onDestroy()
     }

@@ -197,6 +197,7 @@ class SplashPresenter : BaseResponseObserver<MMConfigData>(), ISplashContract.Pr
     }
 
     override fun onExpiredUnauthenticated(error: String) {
+        mView?.updateProgress(-1)
         mView?.callGetTokenAgain()
     }
 }
