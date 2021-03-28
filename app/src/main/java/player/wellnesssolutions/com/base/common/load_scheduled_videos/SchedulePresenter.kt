@@ -74,14 +74,14 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
         isLoadScheduleOnStart = true
     }
 
-    override fun onLoadSchedule(view: IScheduleContract.View, isClickedFromBtnBottom: Boolean, mustLoad:Boolean) {
+    override fun onLoadSchedule(view: IScheduleContract.View, isClickedFromBtnBottom: Boolean, mustLoad: Boolean) {
         Log.d("LOG", this.javaClass.simpleName + " onLoadSchedule() | mustLoad: $mustLoad | mIsLoading: $mIsLoading")
-        when{
+        when {
             mustLoad -> {
                 Log.d("LOG", this.javaClass.simpleName + " onLoadSchedule() | clear calling | isUpdatingNewSchedule: $isUpdatingNewSchedule")
                 isUpdatingNewSchedule = true
 //                this.mCompoDisposable.dispose()
-                mIsLoading= false
+                mIsLoading = false
             }
 
             else -> {
@@ -234,7 +234,7 @@ class SchedulePresenter(context: Context) : BaseResponseObserver<ArrayList<MMVid
     override fun onTimePlaySchedule() {
         Log.d("LOG", this.javaClass.simpleName + " onTimePlaySchedule() | already videos: ${scheduleVideos.size} | " +
                 "isUpdatingNewSchedule: $isUpdatingNewSchedule")
-        if(isUpdatingNewSchedule) return
+        if (isUpdatingNewSchedule) return
         scheduleVideos = VideoDBUtil.getVideosFromDB(Constant.MM_SCHEDULE, false)
         if (scheduleVideos.size == 0) {
             scheduleVideos = VideoDBUtil.getVideosFromDB(Constant.MM_SCHEDULE, false)

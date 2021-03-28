@@ -17,15 +17,14 @@ class HelpMeChooseQuestionsAdapter(answers: ArrayList<MMHelpMeChooseAnswer>, cli
         }
         val view = LayoutInflater.from(parent.context).inflate(R.layout.viewholder_selectable_option_text, parent, false)
 
-        return HelpMeChooseQuestionVH(view, presenter)
+        return HelpMeChooseQuestionVH(view, listener)
     }
 
     override fun onBindViewHolder(holder: HelpMeChooseQuestionVH, position: Int) {
         setPadding(holder, position, padding)
-        val presenter: IHelpMeChooseContract.Presenter? = weakPresenter.get()
         val isSelected =
-                when (position >= 0 && position < list.size && presenter != null) {
-                    true -> presenter.isItemSelected(list[position])
+                when (position >= 0 && position < list.size && listener != null) {
+                    true -> listener?.isItemSelected(list[position]) ?: false
                     false -> false
                 }
 

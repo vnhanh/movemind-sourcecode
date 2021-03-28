@@ -277,7 +277,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
 
     fun playVideo(mode: PlayMode, videos: ArrayList<MMVideo>) {
         mSessionManager.stop()
-        when{
+        when {
             mode == PlayMode.ON_DEMAND -> {
                 VideoDBUtil.createOrUpdateVideos(videos, NowPlayingFragment.KEY_DATA_PLAYING_VIDEO)
             }
@@ -444,7 +444,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
     }
 
     private fun onInsufficientSpace() {
-        if(isShownDialogNotEnoughSpace) return
+        if (isShownDialogNotEnoughSpace) return
         isShownDialogNotEnoughSpace = true
         DialogUtil.createDialogOnlyOneButton(this,
                 R.style.NormalDialog_Error,
@@ -751,19 +751,23 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
     }
 
     fun onBackPreviousScreen() {
-        val lastIndex = supportFragmentManager.fragments.size - 1
-        if (lastIndex < 0) return
+        try {
+            val lastIndex = supportFragmentManager.fragments.size - 1
+            if (lastIndex < 0) return
 
-        val lastFragment: Fragment = supportFragmentManager.fragments[lastIndex]
+            supportFragmentManager.fragments[lastIndex]?.childFragmentManager?.also { childFragmentManager ->
+                if (childFragmentManager.backStackEntryCount > 0) {
+                    childFragmentManager.popBackStack()
+                    return
+                }
+            }
 
-        if (lastFragment.childFragmentManager.backStackEntryCount > 0) {
-            lastFragment.childFragmentManager.popBackStack()
-            return
-        }
-
-        if (supportFragmentManager.backStackEntryCount > 0) {
-            supportFragmentManager.popBackStack()
-            return
+            if (supportFragmentManager.backStackEntryCount > 0) {
+                supportFragmentManager.popBackStack()
+                return
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 

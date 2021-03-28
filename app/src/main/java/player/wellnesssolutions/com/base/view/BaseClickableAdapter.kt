@@ -1,20 +1,8 @@
 package player.wellnesssolutions.com.base.view
 
-import java.lang.ref.WeakReference
-
-abstract class BaseClickableAdapter<VH : BaseVH<M>, T : Any, M : Any>(listener: T?, var list: ArrayList<M>) : androidx.recyclerview.widget.RecyclerView.Adapter<VH>() {
-    protected var weakPresenter: WeakReference<T?>
+abstract class BaseClickableAdapter<VH : BaseVH<M>, T : Any, M : Any>(protected var listener: T?, var list: ArrayList<M>) : androidx.recyclerview.widget.RecyclerView.Adapter<VH>() {
     protected var mHolders: ArrayList<VH>? = ArrayList()
 
-    protected var presenter: T?
-        set(value) {
-            weakPresenter = WeakReference(value)
-        }
-        get() = weakPresenter.get()
-
-    init {
-        weakPresenter = WeakReference(listener)
-    }
 
     override fun getItemCount(): Int = list.size
 
@@ -23,7 +11,7 @@ abstract class BaseClickableAdapter<VH : BaseVH<M>, T : Any, M : Any>(listener: 
     }
 
     open fun release() {
-        weakPresenter.clear()
+        listener = null
         mHolders?.also { holders ->
             while (holders.size > 0) {
                 holders[0].release()

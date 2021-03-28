@@ -25,11 +25,6 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
     protected var dialog: Dialog? = null
     protected var isStartedOpenNewScreen = false
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Log.d("LOG", this.javaClass.simpleName + " onCreate()")
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         isNewScreen = true
         isStartedOpenNewScreen = false
@@ -66,31 +61,23 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
 
     override fun onResume() {
         super.onResume()
+//        Log.d("LOG", this.javaClass.simpleName + " onResume()")
 
         schedulePresenter?.onAttach(this)
     }
 
     override fun onPause() {
         super.onPause()
+//        Log.d("LOG", this.javaClass.simpleName + " onPause()")
         schedulePresenter?.onDetach()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Log.d("LOG", this.javaClass.simpleName + " onStop()")
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.d("LOG", this.javaClass.simpleName + " onDestroyView()")
+//        Log.d("LOG", this.javaClass.simpleName + " onDestroyView()")
         unregisterScheduleBroadcast()
         isNewScreen = true
         schedulePresenter?.onDestroy()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d("LOG", this.javaClass.simpleName + " onDestroy()")
     }
 
     private fun registerScheduleBroadcast() {
@@ -141,7 +128,7 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
         Log.d("LOG", this.javaClass.simpleName + " onReceiveUpdateScheduleFromUI() | schedulePresenter: $schedulePresenter")
         AlarmManagerSchedule.cancelAlarmScheduleTime()
         val _context = context
-        when{
+        when {
             _context == null -> {
                 schedulePresenter?.onLoadSchedule(view = this, isClickedFromBtnBottom = false, mustLoad = true)
                 Log.d("LOG", this.javaClass.simpleName + " onReceiveUpdateScheduleFromUI() | context's null")
@@ -151,13 +138,13 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
                 dialog?.dismiss()
                 dialog = DialogUtil.createDialogOnlyOneButton(
                         _context, R.string.schedule_just_update,
-                        R.string.btn_ok, object: DialogInterface.OnClickListener{
-                            override fun onClick(dialogInterface: DialogInterface?, p1: Int) {
-                                dialogInterface?.dismiss()
-                                dialog = null
-                                schedulePresenter?.onLoadSchedule(view = this@BaseScheduleFragment, isClickedFromBtnBottom = false, mustLoad = true)
-                            }
-                        }
+                        R.string.btn_ok, object : DialogInterface.OnClickListener {
+                    override fun onClick(dialogInterface: DialogInterface?, p1: Int) {
+                        dialogInterface?.dismiss()
+                        dialog = null
+                        schedulePresenter?.onLoadSchedule(view = this@BaseScheduleFragment, isClickedFromBtnBottom = false, mustLoad = true)
+                    }
+                }
                 ).apply { show() }
             }
         }
@@ -192,5 +179,6 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
 
     }
 
-    protected fun isUpdatingNewSchedule() : Boolean = schedulePresenter?.isUpdatingNewSchedule()?:false
+    protected fun isUpdatingNewSchedule(): Boolean = schedulePresenter?.isUpdatingNewSchedule()
+            ?: false
 }

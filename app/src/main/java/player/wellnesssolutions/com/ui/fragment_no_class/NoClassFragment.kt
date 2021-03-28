@@ -43,6 +43,7 @@ class NoClassFragment : BaseFragment(), INoClassContract.View {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_no_class_search, container, false)
     }

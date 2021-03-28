@@ -10,7 +10,6 @@ import player.wellnesssolutions.com.common.utils.MessageUtils
 import player.wellnesssolutions.com.network.datasource.download.DownloadApi
 import player.wellnesssolutions.com.network.datasource.storage.StorageApi
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
-import player.wellnesssolutions.com.network.models.response.ResponseValue
 import player.wellnesssolutions.com.services.download.DownloadManagerCustomized
 
 object DownloadVideoHelper {

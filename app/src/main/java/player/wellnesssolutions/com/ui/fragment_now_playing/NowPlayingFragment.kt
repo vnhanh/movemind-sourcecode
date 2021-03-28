@@ -197,7 +197,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
 
         releaseAdapters()
 
-        stopPresenter()
+        releasePresenters()
 
         //save time countdown for backing from other screen
         context?.let {
@@ -207,7 +207,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         super.onDestroyView()
     }
 
-    private fun stopPresenter() {
+    private fun releasePresenters() {
         mPresenter?.onStop()
     }
 
@@ -489,7 +489,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
     }
 
     override fun hideLoadingProgress() {
-        if(isUpdatingNewSchedule()) return
+        if (isUpdatingNewSchedule()) return
         progressLoadingVideo?.visibility = View.GONE
     }
 
@@ -679,12 +679,12 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         })
     }
 
-    private fun handleMoveToNewScreenButUpdatingNewSchedule(isBackToHomeScreen: Boolean, caseNotUpdating: ()->Unit){
+    private fun handleMoveToNewScreenButUpdatingNewSchedule(isBackToHomeScreen: Boolean, caseNotUpdating: () -> Unit) {
         Log.d("LOG", this.javaClass.simpleName + " handleMoveToNewScreenButUpdatingNewSchedule() | isUpdatingNewSchedule()")
         when {
             isUpdatingNewSchedule() -> {
                 context?.also { context ->
-                    val resMessage = when{
+                    val resMessage = when {
                         isBackToHomeScreen -> R.string.app_is_updating_new_schedule_can_not_back_to_get_started_screen
                         else -> R.string.app_is_updating_new_schedule_can_not_move_to_new_screen
                     }
@@ -716,7 +716,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
 
         when (mPresenter?.getPlayMode()) {
             PlayMode.SCHEDULE -> {
-                handleMoveToNewScreenButUpdatingNewSchedule (isBackToHomeScreen = true, caseNotUpdating = {
+                handleMoveToNewScreenButUpdatingNewSchedule(isBackToHomeScreen = true, caseNotUpdating = {
                     Log.d("LOG", this.javaClass.simpleName + " onNoClassVideosForNow() | SCHEDULE | isClickedFromBtnBottom: $isClickedFromBtnBottom")
                     NowPlayingVideoSetupHelper
                             .openHomeFragmentWithNotLoadScheduleAndShowPopup(fm = activity?.supportFragmentManager, message = getString(R.string.no_class_now))
@@ -1030,7 +1030,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
     }
 
     private fun openControlScreen(newFragment: Fragment) {
-        handleMoveToNewScreenButUpdatingNewSchedule (isBackToHomeScreen = false, caseNotUpdating = {
+        handleMoveToNewScreenButUpdatingNewSchedule(isBackToHomeScreen = false, caseNotUpdating = {
             val fm: FragmentManager? = activity?.supportFragmentManager
 
             FragmentUtil.replaceFragment(fm, newFragment, ControlFragment.TAG, R.id.frameLayoutHome, isAddToBackStack = true)
@@ -1042,7 +1042,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
     }
 
     override fun openTimeTableScreen() {
-        handleMoveToNewScreenButUpdatingNewSchedule (isBackToHomeScreen = false, caseNotUpdating = {
+        handleMoveToNewScreenButUpdatingNewSchedule(isBackToHomeScreen = false, caseNotUpdating = {
             activity?.supportFragmentManager?.also { fm ->
                 context?.also {
                     PreferenceHelper.getInstance(it).putBoolean(ConstantPreference.IS_SHOW_BUTTON_PREVIOUS, true)

@@ -4,8 +4,6 @@ import android.content.Context
 import android.util.Log
 import player.wellnesssolutions.com.base.common.load_scheduled_videos.ICallBackNextScheduleVideo
 import player.wellnesssolutions.com.base.utils.ParameterUtils
-import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
-import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.network.datasource.time_network.IRequestTimeNetworkListener
 import player.wellnesssolutions.com.network.datasource.time_network.RequestTimeServer
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
@@ -16,7 +14,7 @@ import player.wellnesssolutions.com.ui.fragment_now_playing.helper.STATE_TIME_PL
 import java.lang.ref.WeakReference
 
 class HandlerScheduleTime(viewContext: Context, listener: IListenerHandleScheduleTime) : IRequestTimeNetworkListener {
-    private var context : Context? = viewContext
+    private var context: Context? = viewContext
     private var weakListener = WeakReference(listener)
     private var mTimeDiffs = -1L
     private var videos: ArrayList<MMVideo> = arrayListOf()
@@ -47,8 +45,8 @@ class HandlerScheduleTime(viewContext: Context, listener: IListenerHandleSchedul
         handleScheduleVideoNow()
     }
 
-    fun setupScheduleForNowVideo(videos: ArrayList<MMVideo>, listener:IListenerHandleScheduleTime,
-    context: Context?) {
+    fun setupScheduleForNowVideo(videos: ArrayList<MMVideo>, listener: IListenerHandleScheduleTime,
+                                 context: Context?) {
         Log.d("LOG", this.javaClass.simpleName + " setupScheduleForNowVideo() | videos number: ${videos.size} | " +
                 "listener: ${weakListener.get()} | context: ${context}")
         weakListener = WeakReference(listener)

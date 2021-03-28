@@ -111,13 +111,11 @@ class HelpMeChooseFragment : BaseFragment(), IHelpMeChooseContract.View {
                 adapters[i].release()
             }
         }
-        mAdapters = null
         super.onDestroyView()
     }
 
     override fun onDestroy() {
         mPresenter?.onDestroy()
-        mPresenter = null
 
         super.onDestroy()
     }

@@ -34,7 +34,7 @@ class SearchBrandsAdapter(listener: ISearchBrandsContract.Presenter?, items: Arr
         val params = GridLayoutManager.LayoutParams(itemWidth, itemHeight)
         view.layoutParams = params
 
-        val vh = SearchBrandVH(view, imageSize, weakPresenter.get())
+        val vh = SearchBrandVH(view, imageSize, listener)
 
         mHolders?.add(vh)
 

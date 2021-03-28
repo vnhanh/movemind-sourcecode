@@ -25,12 +25,12 @@ class SPDurationLevelAdapter(list: ArrayList<SearchedOption>, presenter: ISearch
 
         vh.itemView.setOnClickListener {
             vh.data?.also { data ->
-                val isSelected = !(weakPresenter.get()?.isItemSelected(data.id, data.typeOptionId)
+                val isSelected = !(listener?.isItemSelected(data.id, data.typeOptionId)
                         ?: false)
 
                 vh.select(isSelected)
 
-                presenter?.onChooseOptionItem(data.id, data.name, data.typeOptionId)
+                listener?.onChooseOptionItem(data.id, data.name, data.typeOptionId)
             }
         }
 
@@ -41,7 +41,7 @@ class SPDurationLevelAdapter(list: ArrayList<SearchedOption>, presenter: ISearch
         setPaddingItemView(holder.itemView, position)
 
         val item = list[position]
-        val isSelected = weakPresenter.get()?.isItemSelected(item.id, item.typeOptionId) ?: false
+        val isSelected = listener?.isItemSelected(item.id, item.typeOptionId) ?: false
 
         holder.bind(list[position], isSelected)
     }

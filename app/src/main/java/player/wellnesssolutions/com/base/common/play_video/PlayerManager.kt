@@ -41,7 +41,7 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, _context: Con
         const val MAX_UPDATE_VIDEO_VIEW_NUMBER = 3
     }
 
-    private var context : Context? = _context
+    private var context: Context? = _context
     private var mPlayerUseCase: PlayerUsecase = PlayerUsecase()
     private var mErrorCode = -1
 
@@ -127,7 +127,8 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, _context: Con
             mPlayerUseCase.setCurrentPlayPosition(playedVideoPosition)
         }
 
-        val volume: Float = PreferenceHelper.getInstance()?.getFloat(ConstantPreference.SS_LAST_VOLUME_PERCENT, Constant.DEF_EXO_VOLUME)?:0.5f
+        val volume: Float = PreferenceHelper.getInstance()?.getFloat(ConstantPreference.SS_LAST_VOLUME_PERCENT, Constant.DEF_EXO_VOLUME)
+                ?: 0.5f
 
         val subtitleLink: String =
                 when (isSupportCC) {

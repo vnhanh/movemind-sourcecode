@@ -26,8 +26,8 @@ interface ISearchPreviewContract {
         fun isItemSelected(id: Int?, typeId: Int?): Boolean
         fun loadData(view: View)
         fun getDataForSearch(): SPSearchedOption?
-        fun getItemSearchOption() : SearchedOption?
-        fun getDataForShow() : SPShowedUIData?
+        fun getItemSearchOption(): SearchedOption?
+        fun getDataForShow(): SPShowedUIData?
         fun setData(dataShowUI: SPShowedUIData?, dataInputForSearch: SPSearchedOption)
     }
 }

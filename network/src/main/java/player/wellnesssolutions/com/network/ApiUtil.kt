@@ -15,8 +15,8 @@ open class ApiUtil {
 //        private const val BASE_SERVER = "http://10.1.0.249"
         //UAT server
         //private const val BASE_SERVER = "http://movemind.me"
-        private const val BASE_SERVER = "https://player.wellnesssolutions.com.au"
-//        private const val BASE_SERVER = "https://uat.wellnesssolutions.com.au"
+//        private const val BASE_SERVER = "https://player.wellnesssolutions.com.au"
+        private const val BASE_SERVER = "https://uat.wellnesssolutions.com.au"
 
         fun getLoginService(): LoginService {
             return RetrofitClient.getClient(BASE_SERVER).create(LoginService::class.java)

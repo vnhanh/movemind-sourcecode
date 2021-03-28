@@ -46,16 +46,16 @@ class SPInstructorAdapter(list: ArrayList<MMInstructor>, presenter: ISearchPrevi
         val view = LayoutInflater.from(parent.context).inflate(R.layout.vh_sp_presenter, parent, false)
         val vh = SPInstructorVH(view)
 
-        setTextSize(view, weakPresenter.get())
+        setTextSize(view, listener)
 
         vh.itemView.setOnClickListener {
             vh.data?.also { data ->
-                val isSelected = !(weakPresenter.get()?.isItemSelected(data.id, Constant.SEARCH_PRESENTER)
+                val isSelected = !(listener?.isItemSelected(data.id, Constant.SEARCH_PRESENTER)
                         ?: false)
 
                 vh.select(isSelected)
 
-                weakPresenter.get()?.onChooseOptionItem(data.id, data.name, Constant.SEARCH_PRESENTER)
+                listener?.onChooseOptionItem(data.id, data.name, Constant.SEARCH_PRESENTER)
             }
         }
 
@@ -65,7 +65,7 @@ class SPInstructorAdapter(list: ArrayList<MMInstructor>, presenter: ISearchPrevi
     override fun onBindViewHolder(holder: SPInstructorVH, position: Int) {
         setPadding(holder, position, padding)
         val item = list[position]
-        val isSelected = (weakPresenter.get()?.isItemSelected(item.id, Constant.SEARCH_PRESENTER)
+        val isSelected = (listener?.isItemSelected(item.id, Constant.SEARCH_PRESENTER)
                 ?: false)
         holder.bind(list.get(position), isSelected)
     }

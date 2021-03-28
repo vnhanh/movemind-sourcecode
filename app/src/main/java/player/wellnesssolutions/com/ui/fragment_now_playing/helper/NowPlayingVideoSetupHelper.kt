@@ -354,9 +354,9 @@ object NowPlayingVideoSetupHelper {
             fragment =
                     when (fragment != null && fragment is HomeFragment) {
                         true -> {
-//                            HomeFragment.updateAlreadyInstanceWithLoadSchedule(fragment)
-                            _fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
-                            HomeFragment.getInstanceWithLoadSchedule()
+                            HomeFragment.updateAlreadyInstanceWithLoadSchedule(fragment)
+//                            _fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
+//                            HomeFragment.getInstanceWithLoadSchedule()
                         }
                         false -> HomeFragment.getInstanceWithLoadSchedule()
                     }
@@ -380,7 +380,7 @@ object NowPlayingVideoSetupHelper {
         }
     }
 
-    fun openHomeFragmentWithNotLoadScheduleAndShowPopup(fm: FragmentManager?, message:String) {
+    fun openHomeFragmentWithNotLoadScheduleAndShowPopup(fm: FragmentManager?, message: String) {
         fm?.also { _fm ->
             Log.d("LOG", this.javaClass.simpleName + " openHomeFragmentWithNotLoadSchedule()")
             val tag = HomeFragment.TAG

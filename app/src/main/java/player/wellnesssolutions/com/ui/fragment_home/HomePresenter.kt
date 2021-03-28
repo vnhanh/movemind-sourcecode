@@ -1,20 +1,18 @@
 package player.wellnesssolutions.com.ui.fragment_home
 
-import android.content.Context
 import com.google.gson.Gson
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
 import player.wellnesssolutions.com.base.view.BaseFragment
 import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
-import player.wellnesssolutions.com.network.datasource.home.HomeApi
 import player.wellnesssolutions.com.network.models.config.MMConfigData
 import player.wellnesssolutions.com.network.models.login.MMBranding
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.com.network.models.response.ResponseValue
 import java.util.*
 
-class HomePresenter() : BaseResponseObserver<MMConfigData>(), IHomeContract.Presenter {
+class HomePresenter : BaseResponseObserver<MMConfigData>(), IHomeContract.Presenter {
     // vars
     private var mView: IHomeContract.View? = null
     private var mLoadedConfig: MMConfigData? = null
@@ -36,7 +34,7 @@ class HomePresenter() : BaseResponseObserver<MMConfigData>(), IHomeContract.Pres
             }
         }
 
-        if(messagePopUpOnStart.isNotBlank()){
+        if (messagePopUpOnStart.isNotBlank()) {
             mView?.showPopUp(messagePopUpOnStart)
         }
     }

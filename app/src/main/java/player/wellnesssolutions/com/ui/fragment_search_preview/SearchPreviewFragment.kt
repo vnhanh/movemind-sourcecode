@@ -40,14 +40,14 @@ class SearchPreviewFragment : BaseFragment(), ISearchPreviewContract.View {
         Log.d("LOG", this.javaClass.simpleName + " onCreate() | savedInstanceState: ${savedInstanceState}")
         mPresenter = SearchPreviewPresenter()
         savedInstanceState?.also { bundle ->
-            try{
-                when{
+            try {
+                when {
                     bundle.containsKey(KEY_DATA_FOR_SEARCH) -> {
                         val gson = Gson()
                         val strDataInput = bundle.getString(KEY_DATA_FOR_SEARCH)
                         val dataInputForSearch: SPSearchedOption = gson.fromJson(strDataInput, SPSearchedOption::class.java)
 
-                        val dataShowUI: SPShowedUIData? = when{
+                        val dataShowUI: SPShowedUIData? = when {
                             bundle.containsKey(Constant.BUNDLE_SAVE_STATE) -> {
                                 val strShowUIData = bundle.getString(Constant.BUNDLE_SAVE_STATE)
                                 gson.fromJson(strShowUIData, SPShowedUIData::class.java)
@@ -58,7 +58,7 @@ class SearchPreviewFragment : BaseFragment(), ISearchPreviewContract.View {
                         mPresenter?.setData(dataShowUI, dataInputForSearch)
                     }
                 }
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 e.printStackTrace()
                 Log.d("LOG", this.javaClass.simpleName + " onCreate() | savedInstanceState | error: ${e.message}")
             }
@@ -79,12 +79,12 @@ class SearchPreviewFragment : BaseFragment(), ISearchPreviewContract.View {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-
+        super.onCreateView(inflater, container, savedInstanceState)
         arguments?.also { bundle ->
-            try{
+            try {
                 Log.d("LOG", this.javaClass.simpleName + " onCreateView() | savedInstanceState | is contains data for search: ${bundle.containsKey(KEY_DATA_FOR_SEARCH)} | " +
                         "is contains BUNDLE_SAVE_STATE: ${bundle.containsKey(Constant.BUNDLE_SAVE_STATE)}")
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 e.printStackTrace()
                 Log.d("LOG", this.javaClass.simpleName + " onCreateView() | savedInstanceState | error: ${e.message}")
             }
@@ -193,7 +193,7 @@ class SearchPreviewFragment : BaseFragment(), ISearchPreviewContract.View {
         super.onSaveInstanceState(outState)
         Log.d("LOG", this.javaClass.simpleName + " onSaveInstanceState() | data: ${mPresenter?.getDataForSearch()}")
         val gson = Gson()
-        try{
+        try {
             mPresenter?.getDataForSearch()?.also { data: SPSearchedOption ->
                 val strInputData = gson.toJson(data, SPSearchedOption::class.java)
                 outState.putString(KEY_DATA_FOR_SEARCH, strInputData)
@@ -202,7 +202,7 @@ class SearchPreviewFragment : BaseFragment(), ISearchPreviewContract.View {
                 val strData = gson.toJson(data, SPShowedUIData::class.java)
                 outState.putString(Constant.BUNDLE_SAVE_STATE, strData)
             }
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
             Log.d("LOG", this.javaClass.simpleName + " can not save state before this fragment destroyed | " +
                     "error: ${e.message}")
@@ -273,9 +273,11 @@ class SearchPreviewFragment : BaseFragment(), ISearchPreviewContract.View {
                 nextFragment =
                         when (nextFragment != null && nextFragment is SearchResultFragment) {
                             true -> {
-                                nextFragment.arguments = SearchResultFragment.getBundleBySearchedOptions(selectedOptions)
-                                nextFragment
+                                nextFragment.apply {
+                                    arguments = SearchResultFragment.getBundleBySearchedOptions(selectedOptions)
+                                }
                             }
+
                             false -> {
                                 SearchResultFragment.getInstanceBySearchedOptions(selectedOptions)
                             }

@@ -75,9 +75,9 @@ object FragmentUtil {
     }
 
     fun onBackPressedActivity(activity: FragmentActivity?) {
-        activity?.also { act ->
-            if (act is MainActivity) {
-                act.onBackPreviousScreen()
+        activity?.also {
+            if (it is MainActivity) {
+                it.onBackPreviousScreen()
             }
         }
     }

@@ -24,7 +24,7 @@ class SearchInstructorsAdapter(presenter: ISearchInstructorContract.Presenter?, 
 
         setupLayoutForItemView(view, view.imgAvatar)
 
-        return SearchInstructorVH(view = view, listener = presenter, itemWidth = itemWidth, itemHeight = itemHeight, countItemInRow = countItemInRow,
+        return SearchInstructorVH(view = view, listener = listener, itemWidth = itemWidth, itemHeight = itemHeight, countItemInRow = countItemInRow,
                 mGlideHeaders = mGlideHeaders)
     }
 }

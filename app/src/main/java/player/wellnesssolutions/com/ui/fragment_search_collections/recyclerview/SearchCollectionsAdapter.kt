@@ -16,7 +16,7 @@ class SearchCollectionsAdapter(listener: ISearchCollectionContract.Presenter?, l
 
         setupLayoutForItemView(view, view.imgCollectionLogo)
 
-        val vh = SearchCollectionVH(view, presenter, itemWidth, itemHeight, itemCountInRow)
+        val vh = SearchCollectionVH(view, listener, itemWidth, itemHeight, itemCountInRow)
         mHolders?.add(vh)
         return vh
     }

@@ -370,7 +370,7 @@ class DownloadManagerCustomized(context: Context) : DownloadTask.Callback, Netwo
     }
 
     private fun addDownloadTask(downloadData: DownloadData) {
-        try{
+        try {
             mWeakContext?.get()?.also { context ->
                 if (mDownloadTask != null) {
                     mDownloadTask?.cancel(true)
@@ -389,7 +389,7 @@ class DownloadManagerCustomized(context: Context) : DownloadTask.Callback, Netwo
                 mDownloadTask?.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, downloadData)
 
             }
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
             Log.d("LOG", this.javaClass.simpleName + " addDownloadTask() | error: ${e.message}")
         }

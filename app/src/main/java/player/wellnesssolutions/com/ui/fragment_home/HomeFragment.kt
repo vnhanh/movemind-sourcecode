@@ -35,7 +35,6 @@ import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.com.network.models.response.ResponseValue
 import player.wellnesssolutions.com.services.DownloadService
 import player.wellnesssolutions.com.ui.activity_main.MainActivity
-import player.wellnesssolutions.com.ui.activity_main.ScheduleBroadcastReceiver
 import player.wellnesssolutions.com.ui.fragment_control.ControlFragment
 import player.wellnesssolutions.com.ui.fragment_help_me_choose.helpers.HMCDataHelper
 import player.wellnesssolutions.com.ui.fragment_no_class.NoClassFragment
@@ -69,17 +68,17 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
         arguments?.also { bundle ->
             val sourceLoadSchedule = bundle.getString(Constant.BUNDLE_SOURCE_SCHEDULE).orEmpty()
 
-            when{
-                sourceLoadSchedule !=  SOURCE_LOAD_SCHEDULE.REMOTE.toString() -> {
+            when {
+                sourceLoadSchedule != SOURCE_LOAD_SCHEDULE.REMOTE.toString() -> {
                     btnGetStarted?.isEnabled = true
                 }
             }
             bundle.remove(Constant.BUNDLE_SOURCE_SCHEDULE)
 
             val message = bundle.getString(Constant.BUNDLE_SHOW_POPUP, "").orEmpty()
-            Log.d("LOG", this.javaClass.simpleName +" onCreateView() | sourceLoadSChedule: ${sourceLoadSchedule} | " +
+            Log.d("LOG", this.javaClass.simpleName + " onCreateView() | sourceLoadSChedule: ${sourceLoadSchedule} | " +
                     "message for popup: ${message} | button getStarted state: ${btnGetStarted?.isEnabled}")
-            when{
+            when {
                 message.isNotBlank() -> presenter?.setupShowPopUpOnStartScreen(message)
             }
             bundle.remove(Constant.BUNDLE_SHOW_POPUP)
@@ -123,13 +122,13 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
         dialog?.dismiss()
         context?.also { context ->
             dialog = DialogUtil.createDialogOnlyOneButton(context, messagePopUpOnStart, R.string.btn_ok,
-            object: DialogInterface.OnClickListener{
-                override fun onClick(dialogInterface: DialogInterface?, p1: Int) {
-                    dialogInterface?.dismiss()
-                    dialog = null
-                }
+                    object : DialogInterface.OnClickListener {
+                        override fun onClick(dialogInterface: DialogInterface?, p1: Int) {
+                            dialogInterface?.dismiss()
+                            dialog = null
+                        }
 
-            }).apply { show() }
+                    }).apply { show() }
         }
     }
 
@@ -421,7 +420,7 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
             }
         }
 
-        fun updateAlreadyInstanceWithNotLoadScheduleAndShowPopUp(fragment: HomeFragment, message:String): Fragment = fragment.apply {
+        fun updateAlreadyInstanceWithNotLoadScheduleAndShowPopUp(fragment: HomeFragment, message: String): Fragment = fragment.apply {
             arguments = Bundle().apply {
                 putString(Constant.BUNDLE_SOURCE_SCHEDULE, SOURCE_LOAD_SCHEDULE.LOCAL.name)
                 putString(Constant.BUNDLE_SHOW_POPUP, message)

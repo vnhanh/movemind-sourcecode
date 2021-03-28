@@ -46,7 +46,7 @@ class SPCollectionAdapter(list: ArrayList<MMCollection>, presenter: ISearchPrevi
         val view: View = LayoutInflater.from(parent.context).inflate(R.layout.vh_sp_collection, parent, false)
         val vh = SPCollectionVH(view)
 
-        setTextSize(view, weakPresenter.get())
+        setTextSize(view, listener)
 
         ViewUtil.setupOnClicked(vh.itemView, object : View.OnClickListener {
             override fun onClick(p0: View?) {
@@ -59,12 +59,12 @@ class SPCollectionAdapter(list: ArrayList<MMCollection>, presenter: ISearchPrevi
 
     private fun onClickedItem(vh: SPCollectionVH) {
         vh.data?.also { data ->
-            val isSelected = !(weakPresenter.get()?.isItemSelected(data.id, Constant.SEARCH_COLLECTION)
+            val isSelected = !(listener?.isItemSelected(data.id, Constant.SEARCH_COLLECTION)
                     ?: false)
 
             vh.select(isSelected)
 
-            weakPresenter.get()?.onChooseOptionItem(data.id, data.name, Constant.SEARCH_COLLECTION)
+            listener?.onChooseOptionItem(data.id, data.name, Constant.SEARCH_COLLECTION)
         }
     }
 
@@ -73,7 +73,7 @@ class SPCollectionAdapter(list: ArrayList<MMCollection>, presenter: ISearchPrevi
     override fun onBindViewHolder(holder: SPCollectionVH, position: Int) {
         setPadding(holder, position, padding)
         val item: MMCollection = list[position]
-        val isSelected: Boolean = weakPresenter.get()?.isItemSelected(item.id, Constant.SEARCH_COLLECTION)
+        val isSelected: Boolean = listener?.isItemSelected(item.id, Constant.SEARCH_COLLECTION)
                 ?: false
         holder.bind(list[position], isSelected)
     }
