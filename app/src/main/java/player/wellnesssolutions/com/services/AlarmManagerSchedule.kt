@@ -15,6 +15,7 @@ object AlarmManagerSchedule {
     private var intentPending: PendingIntent? = null
 
     fun setupTimeWakeSchedule(context: Context, secondStart: Int) {
+        Log.d("LOG", this.javaClass.simpleName + " setupTimeWakeSchedule()")
         alarm = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, ScheduleVideosService::class.java)
         intent.putExtra(Constant.SCHEDULE_INTENT, Constant.SCHEDULE_ALARM_TIME)

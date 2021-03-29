@@ -40,7 +40,7 @@ abstract class BaseResponseObserver<T> : Observer<Response<ResponseValue<T>>> {
         this.response = response
         val strBodyError = response.errorBody()?.string()
         val bodyError = CommonUtility.getErrorBody(strBodyError)
-        Log.d("LOG", this.javaClass.simpleName + " onNext() | messageError: $strBodyError")
+        Log.d("LOG", this.javaClass.simpleName + " onNext() | code: ${response.code()} | messageError: $strBodyError | messageBody: ${response.body()?.message}")
         val messageError = bodyError?.message
 
         when {

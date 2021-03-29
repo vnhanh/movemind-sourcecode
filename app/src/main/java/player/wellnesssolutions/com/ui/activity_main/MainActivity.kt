@@ -41,6 +41,7 @@ import player.wellnesssolutions.com.common.media_router.models.PlaylistItem
 import player.wellnesssolutions.com.common.media_router.receivers.MediaButtonReceiver
 import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceManager
 import player.wellnesssolutions.com.common.utils.DialogUtil
 import player.wellnesssolutions.com.common.utils.FileUtil
 import player.wellnesssolutions.com.common.utils.MessageUtils
@@ -300,6 +301,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
 
         if (!checkAuthorized()) return
         PreferenceHelper.getInstance(this)
+        PreferenceManager.clearSchedulePref()
         // clear cache of last videos for presentation (TV)
         PresentationDataHelper.clearCacheLastVideos(this)
 

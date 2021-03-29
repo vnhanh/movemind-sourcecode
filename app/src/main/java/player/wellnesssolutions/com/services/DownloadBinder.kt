@@ -36,6 +36,7 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
         if (mListDownload.isEmpty()) {
             if (mListDownloadFailure.isEmpty()) {
                 if (!isCalledComeFromUI) {
+                    Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | isCalledComeFromUI: $isCalledComeFromUI | end download")
                     mService.onDownloadEnd()
                 }
                 return
@@ -48,6 +49,7 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
                             }
                             return
                         }
+                        Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | mListDownloadFailure is not empty: ${mListDownloadFailure.size}")
                         DownloadManagerCustomized.getInstance(context).addTask(
                                 videoId = v.id!!.toInt(),
                                 url = v.downloadUrl,

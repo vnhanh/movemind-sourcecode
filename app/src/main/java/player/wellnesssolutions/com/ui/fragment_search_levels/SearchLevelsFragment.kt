@@ -43,7 +43,7 @@ class SearchLevelsFragment : BaseFragment(), ISearchLevelsContract.View {
             return
         }
         mPrensenter?.setChosenBrand(brand)
-        arguments?.clear()
+//        arguments?.clear()
     }
 
 

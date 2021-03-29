@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import player.wellnesssolutions.com.base.common.load_scheduled_videos.ICallBackNextScheduleVideo
 import player.wellnesssolutions.com.base.utils.ParameterUtils
+import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.network.datasource.time_network.IRequestTimeNetworkListener
 import player.wellnesssolutions.com.network.datasource.time_network.RequestTimeServer
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
@@ -90,6 +91,11 @@ class HandlerScheduleTime(private var context: Context?, private var listener: I
 
     }
 
+    private fun setupAlarmTaskForCaseWaitSchedule(index: Int, timePlay:Long, callback: ICallBackNextScheduleVideo){
+        setupAlarmTask(timePlay)
+        callback.onResult(index, timePlay)
+    }
+
     private fun handleNextScheduleVideo(videos: ArrayList<MMVideo>, index: Int, callback: ICallBackNextScheduleVideo) {
         if (index >= videos.size) {
             callback.onNotFound()
@@ -103,14 +109,22 @@ class HandlerScheduleTime(private var context: Context?, private var listener: I
                     STATE_TIME_PLAY_SCHEDULE.TIME_PLAY -> {
                         Log.d("LOG", this.javaClass.simpleName + " handleNextScheduleVideo() | TIME_PLAY | timePlay: $timePlay | " +
                                 "video name: ${videoHandle.videoName} | videos number: ${videos.size}")
-                        handleNextScheduleVideo(videos, index + 1, callback)
+                        when{
+                            timePlay < Constant.TIME_CHANGE_SCREEN -> {
+                                Log.d("LOG", this.javaClass.simpleName + " handleNextScheduleVideo() | TIME_WAIT | timePlay: $timePlay | " +
+                                        "video name: ${videoHandle.videoName} | videos number: ${videos.size}")
+                                setupAlarmTaskForCaseWaitSchedule(index, timePlay, callback)
+                            }
+
+                            else -> handleNextScheduleVideo(videos, index + 1, callback)
+                        }
+
                     }
 
                     STATE_TIME_PLAY_SCHEDULE.TIME_WAIT -> {
                         Log.d("LOG", this.javaClass.simpleName + " handleNextScheduleVideo() | TIME_WAIT | timePlay: $timePlay | " +
                                 "video name: ${videoHandle.videoName} | videos number: ${videos.size}")
-                        setupAlarmTask(timePlay)
-                        callback.onResult(index, timePlay)
+                        setupAlarmTaskForCaseWaitSchedule(index, timePlay, callback)
                     }
 
                     STATE_TIME_PLAY_SCHEDULE.TIME_EXPIRED -> {

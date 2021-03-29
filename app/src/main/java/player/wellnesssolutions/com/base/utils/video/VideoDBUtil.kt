@@ -4,6 +4,7 @@ import android.util.Log
 import io.realm.Realm
 import io.realm.RealmList
 import player.wellnesssolutions.com.base.utils.video.mapper.*
+import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.database.model.video.RealmDVideo
 import player.wellnesssolutions.database.model.video.VideoEntity
@@ -28,6 +29,31 @@ object VideoDBUtil {
 
         return list
     }
+
+    fun getVideosFromDBAndSort(tag: String, isDelete: Boolean = true, fieldNameSort:String): ArrayList<MMVideo> {
+        val realm = Realm.getDefaultInstance()
+        var list = ArrayList<MMVideo>()
+        try {
+            realm.beginTransaction()
+            var result = realm.where(VideoEntity::class.java).equalTo("tag", tag).findAll()
+            when{
+                fieldNameSort.isNotBlank() -> result = result.sort(fieldNameSort)
+            }
+            list = RealmObjectsToVideosMapper.mapList(result)
+
+            if (isDelete) result.deleteAllFromRealm()
+
+            realm.commitTransaction()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            realm.close()
+        }
+
+        return list
+    }
+
+    fun getScheduleVideos(isDelete: Boolean = true): ArrayList<MMVideo> = getVideosFromDBAndSort(Constant.MM_SCHEDULE, isDelete, "playTime")
 
     fun saveVideosToDB(data: ArrayList<MMVideo>, tag: String) {
         val realm = Realm.getDefaultInstance()

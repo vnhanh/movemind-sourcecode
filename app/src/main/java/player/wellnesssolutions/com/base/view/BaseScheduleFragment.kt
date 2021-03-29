@@ -28,7 +28,7 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         isNewScreen = true
         isStartedOpenNewScreen = false
-        schedulePresenter = SchedulePresenter(context!!)
+        schedulePresenter = SchedulePresenter(context)
         registerScheduleBroadcast()
 
         Log.d("LOG", this.javaClass.simpleName + " onCreateView() | isNewScreen | arguments is: ${arguments ?: "null"}")
@@ -36,8 +36,13 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
             val sourceLoadSchedule = bundle.getString(Constant.BUNDLE_SOURCE_SCHEDULE).orEmpty()
             Log.d("LOG", this.javaClass.simpleName + " onCreateView() | sourceLoadSchedule: ${sourceLoadSchedule}")
             when {
-                sourceLoadSchedule == SOURCE_LOAD_SCHEDULE.LOCAL.toString() -> {
-                    val videos: ArrayList<MMVideo> = VideoDBUtil.getVideosFromDB(Constant.MM_SCHEDULE, false)
+                sourceLoadSchedule == SOURCE_LOAD_SCHEDULE.REMOTE.toString() -> {
+                    Log.d("LOG", this.javaClass.simpleName + " onCreateView() | isNewScreen | load remote schedule")
+                    schedulePresenter?.setStateLoadScheduleOnStart()
+                }
+
+                else -> {
+                    val videos: ArrayList<MMVideo> = VideoDBUtil.getScheduleVideos(false)
                     Log.d("LOG", this.javaClass.simpleName + " onCreateView() | contains BUNDLE_SCHEDULE | isNewScreen: $isNewScreen | videos number: ${videos.size}")
                     when {
                         videos.size > 0 -> schedulePresenter?.setScheduleCurrentAndWaitNextVideo(videos)
@@ -48,10 +53,6 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
                     }
                 }
 
-                sourceLoadSchedule == SOURCE_LOAD_SCHEDULE.REMOTE.toString() -> {
-                    Log.d("LOG", this.javaClass.simpleName + " onCreateView() | isNewScreen | load remote schedule")
-                    schedulePresenter?.setStateLoadScheduleOnStart()
-                }
             }
 
         }
@@ -87,11 +88,7 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
     }
 
     private fun unregisterScheduleBroadcast() {
-        activity?.also { _ ->
-            if (ScheduleBroadcastReceiver.getInstance().isRegistered(this)) {
-                ScheduleBroadcastReceiver.getInstance().removeListener(this)
-            }
-        }
+        ScheduleBroadcastReceiver.getInstance().removeListener(this)
     }
 
     protected fun loadSchedule(isClickedFromBtnBottom: Boolean) {

@@ -7,6 +7,7 @@ import com.google.android.exoplayer2.upstream.DataSink
 import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.crypto.AesCipherDataSink
 import com.google.android.exoplayer2.util.Util
+import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.common.utils.FileUtil
@@ -16,11 +17,10 @@ import java.lang.ref.WeakReference
 import java.net.HttpURLConnection
 import java.net.URL
 
-class DownloadTask(context: Context, callback: Callback) : AsyncTask<DownloadData, Int, Int>() {
-    private var mWeakContext = WeakReference(context)
+class DownloadTask(private var context: Context?, callback: Callback) : AsyncTask<DownloadData, Int, Int>() {
     private var mWeakCallbacks = mutableListOf(WeakReference(callback))
     private var mDownloadData: DownloadData? = null
-    private var mCookieValue = PreferenceHelper.getInstance(context).getString(ConstantPreference.SP_COOKIE, "")
+    private var mCookieValue = PreferenceHelper.getInstance()?.getString(ConstantPreference.SP_COOKIE, "").orEmpty()
     private var mReason = ""
     private var mFileLength = 0L
     private var mAvailableSpace = 0L
@@ -193,14 +193,20 @@ class DownloadTask(context: Context, callback: Callback) : AsyncTask<DownloadDat
                 count = input.read(bytes)
             }
             closeAll()
+        }catch (exOOM: OutOfMemoryError){
+            exOOM.printStackTrace()
+            mReason = Constant.ERROR_OUT_OF_MEMORY
+            return CODE_FAILED
         } catch (e: Exception) {
-            closeAll()
+            e.printStackTrace()
             mReason =
                     when (isNetworkDisconnected()) {
                         true -> ERR_NETWORK_DISCONNECTED
                         false -> e.message ?: ERR_UNKNOWN
                     }
             return CODE_FAILED
+        }finally {
+            closeAll()
         }
         return CODE_COMPLETED
     }
@@ -234,7 +240,7 @@ class DownloadTask(context: Context, callback: Callback) : AsyncTask<DownloadDat
                 return CODE_FAILED
             }
 
-            mAvailableSpace = FileUtil.getAvailableExternalMemorySize(mWeakContext.get())
+            mAvailableSpace = FileUtil.getAvailableExternalMemorySize(context)
             if (mFileLength >= mAvailableSpace) {
                 closeInAndConn()
                 saveFileInternal(downloadData)
@@ -283,15 +289,20 @@ class DownloadTask(context: Context, callback: Callback) : AsyncTask<DownloadDat
                 aesCipherDataSink.write(bytes, 0, count)
                 count = input.read(bytes)
             }
-            closeAll()
+        }catch (oom: OutOfMemoryError){
+            oom.printStackTrace()
+            mReason = Constant.ERROR_OUT_OF_MEMORY
+            return CODE_FAILED
+
         } catch (e: Exception) {
-            closeAll()
             mReason =
                     when (isNetworkDisconnected()) {
                         true -> ERR_NETWORK_DISCONNECTED
                         false -> e.message ?: ERR_UNKNOWN
                     }
             return CODE_FAILED
+        }finally {
+            closeAll()
         }
         return CODE_COMPLETED
     }
@@ -318,10 +329,14 @@ class DownloadTask(context: Context, callback: Callback) : AsyncTask<DownloadDat
     }
 
     private fun isNetworkDisconnected(): Boolean {
-        mWeakContext.get()?.also { context ->
+        context?.also { context ->
             return !NetworkReceiver.getInstance().checkConnectState(context)
         }
         return false
+    }
+
+    fun release(){
+        context = null
     }
 
     interface Callback {

@@ -285,6 +285,7 @@
     <string name="process_has_completed">process has completed to continue using this device</string>
     <string name="encountered_error_handling_class_video_data">Encountered error while handling class video data</string>
     <string name="can_not_calculate_time_play_next_schedule_video">Can not calculate time for the next schedule video</string>
+    <string name="can_not_calculate_time_play_now_schedule_video">Can not calculate time for the current schedule video</string>
     <string name="schedule_just_update">The schedule has just updated. Press OK to update now !</string>
     <string name="cant_download_because_not_enough_space">Can not download video because your device iss not enough space</string>
     <string name="app_is_updating_new_schedule_can_not_back_to_get_started_screen">Can not back to Get Started screen because updating new schedule</string>

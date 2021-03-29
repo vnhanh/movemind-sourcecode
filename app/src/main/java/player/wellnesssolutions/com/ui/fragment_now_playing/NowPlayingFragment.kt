@@ -105,10 +105,10 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         arguments?.also { extras ->
             when {
                 extras.containsKey(Constant.BUNDLE_SCHEDULE) -> {
-                    val videos: ArrayList<MMVideo> = VideoDBUtil.getVideosFromDB(Constant.MM_SCHEDULE, false)
+                    val videos: ArrayList<MMVideo> = VideoDBUtil.getScheduleVideos(false)
                     Log.d("LOG", this.javaClass.simpleName + " onCreate() | read arguments | SCHEDULE | videos number: ${videos.size}")
                     mPresenter = NowPlayingPresenter(
-                            context = context!!,
+                            context = context,
                             playMode = PlayMode.SCHEDULE
                     ).apply {
                         setVideos(videos)
@@ -119,7 +119,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
                     val videos: ArrayList<MMVideo> = VideoDBUtil.getVideosFromDB(TAG, true)
                     Log.d("LOG", this.javaClass.simpleName + " readArguments() | PLAY VIDEO SEARCHED | videos number: ${videos.size}")
                     mPresenter = NowPlayingPresenter(
-                            context = context!!,
+                            context = context,
                             playMode = PlayMode.ON_DEMAND
                     ).apply {
                         setVideos(videos)
@@ -217,6 +217,11 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         destroyPresenters()
 
         super.onDestroy()
+    }
+
+    override fun onBackPressed(view: View) {
+        mPresenter?.pausePlayer()
+        super.onBackPressed(view)
     }
 
     //    private fun releaseDownloadButtonManager() {

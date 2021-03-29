@@ -17,8 +17,7 @@ import player.wellnesssolutions.com.services.download.DownloadTask
 import java.lang.ref.WeakReference
 
 
-class DownloadNotification(context: Context) : DownloadTask.Callback {
-    private var mWeakContext = WeakReference(context)
+class DownloadNotification(private var context: Context?) : DownloadTask.Callback {
     private var mNotiManager: NotificationManagerCompat? = null
     private val CHANNEL_ID = "DOWNLOAD CHANNEL"
     private var mLayout: RemoteViews? = null
@@ -26,7 +25,7 @@ class DownloadNotification(context: Context) : DownloadTask.Callback {
     private var mBuilder: NotificationCompat.Builder? = null
 
     init {
-        createNotificationChannel(context)
+        createNotificationChannel()
     }
 
     override fun onDownloadStarted(id: Int?, name: String?) {
@@ -40,7 +39,7 @@ class DownloadNotification(context: Context) : DownloadTask.Callback {
     override fun onDownloadUpdate(id: Int?, name: String?, progress: Int) {
         //create(progress, name)
         mLayout?.let {
-            mWeakContext.get()?.also { context ->
+            context?.also { context ->
                 it.setTextViewText(R.id.tvProgress, context.getString(R.string.progress, progress))
                 if (mBuilder == null) return
                 mNotiManager?.notify(NOTI_ID, mBuilder!!.build())
@@ -63,30 +62,32 @@ class DownloadNotification(context: Context) : DownloadTask.Callback {
     }
 
 
-    private fun createNotificationChannel(context: Context) {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = context.getString(R.string.channel_download_name)
-            val description = context.getString(R.string.channel_description)
-            val channel = NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_LOW).also {
-                it.description = description
-                it.enableLights(true)
-                it.enableVibration(false)
-                it.setSound(null, null)
-                it.lightColor = Color.parseColor("#00c3b3")
+    private fun createNotificationChannel() {
+        context?.also { context ->
+            // Create the NotificationChannel, but only on API 26+ because
+            // the NotificationChannel class is new and not in the support library
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val name = context.getString(R.string.channel_download_name)
+                val description = context.getString(R.string.channel_description)
+                val channel = NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_LOW).also {
+                    it.description = description
+                    it.enableLights(true)
+                    it.enableVibration(false)
+                    it.setSound(null, null)
+                    it.lightColor = Color.parseColor("#00c3b3")
+                }
+                // Register the channel with the system; you can't change the importance
+                // or other notification behaviors after this
+                getSystemService(context, NotificationManager::class.java)?.also { notificationManager ->
+                    notificationManager.createNotificationChannel(channel)
+                }
             }
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            getSystemService(context, NotificationManager::class.java)?.also { notificationManager ->
-                notificationManager.createNotificationChannel(channel)
-            }
+            mBuilder = NotificationCompat.Builder(context, CHANNEL_ID)
         }
-        mBuilder = NotificationCompat.Builder(context, CHANNEL_ID)
     }
 
     fun create(progress: Int, name: String?) {
-        mWeakContext.get()?.also { context ->
+        context?.also { context ->
             if (mLayout == null) {
                 mLayout = RemoteViews(context.packageName, R.layout.noti_download)
             }
@@ -135,5 +136,9 @@ class DownloadNotification(context: Context) : DownloadTask.Callback {
 
     fun stop() {
         mNotiManager?.cancel(NOTI_ID)
+    }
+
+    fun release(){
+        context = null
     }
 }

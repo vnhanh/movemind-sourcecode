@@ -90,10 +90,9 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        super.onCreateView(inflater, container, savedInstanceState)
-
         registerRouterChangedListener()
         registerCastingTVBroadcast()
+        super.onCreateView(inflater, container, savedInstanceState)
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_control, container, false)
@@ -634,7 +633,7 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
         }
         activity?.also { activity ->
             if (activity is MainActivity && activity.isPresentationAvailable()) {
-                val scheduleVideos = VideoDBUtil.getVideosFromDB(tag = Constant.MM_SCHEDULE, isDelete = false)
+                val scheduleVideos = VideoDBUtil.getScheduleVideos(isDelete = false)
                 MessageUtils.showSnackBar(snackView = btnLogoBottom, message = getString(R.string.now_playing_class),
                         colorRes = R.color.white)
                 activity.playVideo(PlayMode.SCHEDULE, scheduleVideos)

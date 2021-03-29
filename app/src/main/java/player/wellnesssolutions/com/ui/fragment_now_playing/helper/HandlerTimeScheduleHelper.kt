@@ -31,14 +31,16 @@ object HandlerTimeScheduleHelper {
             val timeStart: Long = convertTime(video.getStartTime())
             val length = ((video.videoLength ?: 0f) * 1000).toInt()
             val timeEnd = timeStart + length
-//            Log.d("LOG", this.javaClass.simpleName + " claculateTimePlayVideo() | time start: ${convertCurrentTimeToDateStr(timeStart)} | " +
-//                    "time end: ${convertCurrentTimeToDateStr(timeEnd)}")
+            Log.d("LOG", this.javaClass.simpleName + " claculateTimePlayVideo() | time start: ${convertCurrentTimeToDateStr(timeStart)} | " +
+                    "time end: ${convertCurrentTimeToDateStr(timeEnd)}")
             val currentTime = System.currentTimeMillis()
             when {
                 currentTime < timeEnd -> {
                     var timePlay = currentTime - timeStart
                     when {
-                        timePlay < -1 * Constant.TIME_CHANGE_SCREEN -> callback.onResult(STATE_TIME_PLAY_SCHEDULE.TIME_WAIT, -1 * timePlay)
+                        timePlay < -1 * Constant.TIME_CHANGE_SCREEN -> {
+                            callback.onResult(STATE_TIME_PLAY_SCHEDULE.TIME_WAIT, -1 * timePlay - 1)
+                        }
                         else -> {
                             if (timePlay <= TIME_PLAY_MAX_ROUND) timePlay = 0L
                             callback.onResult(STATE_TIME_PLAY_SCHEDULE.TIME_PLAY, timePlay)

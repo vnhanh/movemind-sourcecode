@@ -16,6 +16,7 @@ import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceManager
 import player.wellnesssolutions.com.custom_exoplayer.EnumTypeViewVideo
 import player.wellnesssolutions.com.custom_exoplayer.PlayerState
 import player.wellnesssolutions.com.network.datasource.videos.PlayMode
@@ -121,6 +122,8 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
 
         view.getViewContext()?.also {
             HandlerTimeScheduleHelper.readSharePrefData(PreferenceHelper.getInstance(it), view)
+            handlerScheduleTimePlay.release()
+            handlerScheduleTimePlay = HandlerScheduleTime(it, this)
         }
 
         checkPlayMode()
@@ -408,7 +411,10 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
                         "isCastableOnTV: ${mView?.isCastableOnTV()}")
                 mView?.hideLoadingProgress()
                 val player: SimpleExoPlayer? = mPlayerManager.getPlayer()
-                Log.d("LOG", this.javaClass.simpleName + " onHaveNowPlayingVideo() |  player: $player")
+                val video = mVideos[0]
+                PreferenceHelper.getInstance()?.putInt(Constant.SCHEDULE_CURRENT_ID, video.id?:-1)
+                PreferenceHelper.getInstance()?.putString(Constant.SCHEDULE_CURRENT_TIME_START, video.getStartTime())
+                Log.d("LOG", this.javaClass.simpleName + " onHaveNowPlayingVideo() |  player: $player | saved")
 //                when (player != null) {
 //                    true -> {
 //                        player.seekTo(playedPosition)
@@ -471,6 +477,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
     override fun onDontHaveNowPlayingVideo(isClickedButtonHome: Boolean?) {
         Log.d("LOG", this.javaClass.simpleName + " onDontHaveNowPlayingVideo() ")
         mView?.hideLoadingProgress()
+        PreferenceManager.clearSchedulePref()
         mView?.openNoClassSearchScreen(isClickedButtonHome)
     }
 
