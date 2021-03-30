@@ -1,5 +1,7 @@
 package player.wellnesssolutions.com.network.datasource.now_playing
 
+import android.util.Log
+import com.google.gson.Gson
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -17,7 +19,8 @@ class NowPlayingApi {
         //get timezone
         val tz = TimeZone.getDefault()
         val input = NowPlayingRequest(deviceId, tz.getOffset(System.currentTimeMillis()).toString())
-
+        val gson = Gson()
+        Log.d("LOG", this.javaClass.simpleName + " getSchedule() | tz: ${tz} | input: ${gson.toJson(input)}")
         return ApiUtil.getNowPlayingService().getScheduler(tokenHeader, deviceId, input)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

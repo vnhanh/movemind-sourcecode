@@ -54,8 +54,6 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
     // flag check if rendered UI or not yet
     private var mIsRenderedData = false
 
-    private val weakContext = WeakReference(context)
-
     private var isOnCountDown = false
 
     init {
@@ -77,7 +75,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
             e.printStackTrace()
         }
 
-        weakContext.get()?.also { context ->
+        context?.also { context ->
             val timeFromLastCount = PreferenceHelper.getInstance(context = context).getLong(ConstantPreference.LAST_TIME_COUNT_DOWN, 0L)
 
             if (timeFromLastCount > 0) {
@@ -209,15 +207,19 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
 
         when (mPlayerState) {
             PlayerState.NOTHING -> {
+                Log.d("LOG", this.javaClass.simpleName + " processPlayerBaseOnState() | player state nothing | context: $context")
                 mView?.onIntermediateStage()
                 mView?.hideCountDownTimer()
                 renderVideosData()
 
-                weakContext.get()?.also { context ->
+                context?.also { context ->
                     val currentPosition: Long = PreferenceHelper.getInstance(context = context).getLong(ConstantPreference.LAST_PLAYED_VIDEO_POSITION, 0L)
+                    Log.d("LOG", this.javaClass.simpleName + " processPlayerBaseOnState() | videos number: ${mVideos.size} | currentPosition: $currentPosition")
                     if (mVideos.size > 0 && currentPosition <= 0) {
+                        Log.d("LOG", this.javaClass.simpleName + " processPlayerBaseOnState() | run count down")
                         runCountDownTimer()
                     } else if (mVideos.size > 0) {
+                        Log.d("LOG", this.javaClass.simpleName + " processPlayerBaseOnState() | initializeSearchPlayer")
                         PreferenceHelper.getInstance(context = context).delete(ConstantPreference.LAST_PLAYED_VIDEO_POSITION)
                         initializeSearchPlayer()
                     }
@@ -410,21 +412,10 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
                 Log.d("LOG", this.javaClass.simpleName + " onHaveNowPlayingVideo() | SCHEDULE | " +
                         "isCastableOnTV: ${mView?.isCastableOnTV()}")
                 mView?.hideLoadingProgress()
-                val player: SimpleExoPlayer? = mPlayerManager.getPlayer()
                 val video = mVideos[0]
                 PreferenceHelper.getInstance()?.putInt(Constant.SCHEDULE_CURRENT_ID, video.id?:-1)
                 PreferenceHelper.getInstance()?.putString(Constant.SCHEDULE_CURRENT_TIME_START, video.getStartTime())
-                Log.d("LOG", this.javaClass.simpleName + " onHaveNowPlayingVideo() |  player: $player | saved")
-//                when (player != null) {
-//                    true -> {
-//                        player.seekTo(playedPosition)
-//                        player.playWhenReady = true
-//                        mView?.reloadScheduledVideo()
-//                    }
-//                    false -> {
-//                        openNowPlayingVideo(playedPosition)
-//                    }
-//                }
+                Log.d("LOG", this.javaClass.simpleName + " onHaveNowPlayingVideo() | saved current video ")
                 openNowPlayingVideo(playedPosition)
 
             }

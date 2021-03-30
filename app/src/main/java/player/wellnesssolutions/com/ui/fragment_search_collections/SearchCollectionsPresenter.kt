@@ -141,7 +141,7 @@ class SearchCollectionsPresenter : BaseResponseObserver<ArrayList<MMCollection>>
     }
 
     override fun onDestroy() {
-        mCompoDisposable.dispose()
+        disposable.dispose()
         mData?.clear()
         mData = null
     }

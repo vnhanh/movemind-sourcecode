@@ -114,6 +114,7 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
     }
 
     private fun saveFileInternal(downloadData: DownloadData): Int {
+        var isEncounteredOOM = false
         try {
             val httpURLConnection = URL(downloadData.url).openConnection() as HttpURLConnection
             connection = httpURLConnection
@@ -192,19 +193,22 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
                 aesCipherDataSink.write(bytes, 0, count)
                 count = input.read(bytes)
             }
-            closeAll()
+//            closeAll()
         }catch (exOOM: OutOfMemoryError){
             exOOM.printStackTrace()
+            isEncounteredOOM = true
             mReason = Constant.ERROR_OUT_OF_MEMORY
             return CODE_FAILED
         } catch (e: Exception) {
             e.printStackTrace()
-            mReason =
-                    when (isNetworkDisconnected()) {
-                        true -> ERR_NETWORK_DISCONNECTED
-                        false -> e.message ?: ERR_UNKNOWN
-                    }
-            return CODE_FAILED
+            if(!isEncounteredOOM){
+                mReason =
+                        when (isNetworkDisconnected()) {
+                            true -> ERR_NETWORK_DISCONNECTED
+                            false -> e.message ?: ERR_UNKNOWN
+                        }
+                return CODE_FAILED
+            }
         }finally {
             closeAll()
         }
@@ -212,6 +216,7 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
     }
 
     private fun saveFileExternal(downloadData: DownloadData): Int {
+        var isEncounteredOOM = false
         try {
             val httpURLConnection = URL(downloadData.url).openConnection() as HttpURLConnection
             connection = httpURLConnection
@@ -291,16 +296,19 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
             }
         }catch (oom: OutOfMemoryError){
             oom.printStackTrace()
+            isEncounteredOOM = true
             mReason = Constant.ERROR_OUT_OF_MEMORY
             return CODE_FAILED
 
         } catch (e: Exception) {
-            mReason =
-                    when (isNetworkDisconnected()) {
-                        true -> ERR_NETWORK_DISCONNECTED
-                        false -> e.message ?: ERR_UNKNOWN
-                    }
-            return CODE_FAILED
+            if(!isEncounteredOOM){
+                mReason =
+                        when (isNetworkDisconnected()) {
+                            true -> ERR_NETWORK_DISCONNECTED
+                            false -> e.message ?: ERR_UNKNOWN
+                        }
+                return CODE_FAILED
+            }
         }finally {
             closeAll()
         }

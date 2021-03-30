@@ -21,7 +21,7 @@ abstract class BaseResponseObserver<T> : Observer<Response<ResponseValue<T>>> {
         const val MSG_REQUEST_FAILED = "Request failed !"
     }
 
-    protected val mCompoDisposable = CompositeDisposable()
+    protected val disposable = CompositeDisposable()
     private var response: Response<ResponseValue<T>>? = null
     private var requestError: Throwable? = null
 
@@ -31,12 +31,12 @@ abstract class BaseResponseObserver<T> : Observer<Response<ResponseValue<T>>> {
     }
 
     override fun onSubscribe(d: Disposable) {
-        mCompoDisposable.add(d)
+        disposable.add(d)
     }
 
     override fun onNext(response: Response<ResponseValue<T>>) {
-//        Log.d("LOG", this.javaClass.simpleName + " onNext() | error body message: ${response.errorBody()?.string()} | " +
-//                "body message ${response.body()?.message} | code: ${response.code()}")
+        Log.d("LOG", this.javaClass.simpleName + " onNext() | error body message: ${response.errorBody()?.string()} | " +
+                "body message ${response.body()?.message} | code: ${response.code()}")
         this.response = response
         val strBodyError = response.errorBody()?.string()
         val bodyError = CommonUtility.getErrorBody(strBodyError)
@@ -65,7 +65,8 @@ abstract class BaseResponseObserver<T> : Observer<Response<ResponseValue<T>>> {
     }
 
     override fun onError(e: Throwable) {
-        Log.d("LOG", this.javaClass.simpleName + " onError() | message: ${e.message}")
+        e.printStackTrace()
+        Log.d("LOG", this.javaClass.simpleName + " onError() | message: ${e.message} | exception: ${e.printStackTrace()}")
         this.requestError = e
         when (e.message?.toLowerCase()?.contains("failed to connect to")) {
             true -> {

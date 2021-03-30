@@ -1,7 +1,5 @@
 package player.wellnesssolutions.com.network.datasource.storage
 
-import android.util.Log
-import com.google.gson.Gson
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -15,12 +13,11 @@ class StorageApi {
     private var mService = ApiUtil.getDownloadService()
     fun sendStorageStatusToServer(token: String, deviceId: String, availableSpace: Long, totalSpace: Long, sdAvailableSpace: Long, sdTotalSpace: Long): Observable<Response<ResponseValue<Any>>> {
         val tokenHeader: String = RequestUtil.getTokenHeader(token)
-        val params: StorageStatus = StorageStatus(deviceId, availableSpace, totalSpace, sdAvailableSpace, sdTotalSpace)
-        val gson = Gson()
+        val params = StorageStatus(deviceId, availableSpace, totalSpace, sdAvailableSpace, sdTotalSpace)
 
-        Log.d("LOG", this.javaClass.simpleName + " sendStorageStatusToServer() | tokenHeader: $tokenHeader | params: ${gson.toJson(params)}")
+//        Log.d("LOG", this.javaClass.simpleName + " sendStorageStatusToServer() | tokenHeader: $tokenHeader")
         return mService.sendStorageStatus(contentType = RequestUtil.APP_JSON, acceptData = RequestUtil.APP_JSON, authoTokenHeader = tokenHeader, deviceId = deviceId, params = params)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.trampoline())
                 .observeOn(AndroidSchedulers.mainThread())
 
     }

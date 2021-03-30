@@ -41,7 +41,7 @@ class TimeTablePresenter : ITimeTableContract.Presenter, BaseResponseObserver<Ti
 
     override fun onDestroy() {
         mResponse = null
-        mCompoDisposable.dispose()
+        disposable.dispose()
     }
 
     override fun onGetSessionVideo(typeDay: String, typeSession: String): ArrayList<SessionVideo>? {

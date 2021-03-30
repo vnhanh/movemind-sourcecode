@@ -22,12 +22,10 @@ import player.wellnesssolutions.com.ui.fragment_search_result_videos.helpers.Sea
 import player.wellnesssolutions.com.ui.fragment_search_result_videos.helpers.SearchResultDataMapper
 import player.wellnesssolutions.com.ui.fragment_search_result_videos.page_result.recyclerview.ISearchResultItemListener
 import player.wellnesssolutions.database.manager.DownloadDBManager
-import java.lang.ref.WeakReference
 
-class SearchResultPresenter(context: Context) : BaseResponseObserver<ArrayList<MMVideo>>(), ISearchResultContract.Presenter {
+class SearchResultPresenter(private var context: Context?) : BaseResponseObserver<ArrayList<MMVideo>>(), ISearchResultContract.Presenter {
 
     private var mView: ISearchResultContract.View? = null
-    private var mWeakContext = WeakReference(context)
     private var mSearchResultApi = SearchResultApi()
 
     // flag
@@ -468,21 +466,14 @@ class SearchResultPresenter(context: Context) : BaseResponseObserver<ArrayList<M
     }
 
     override fun onDestroy() {
-        mView = null
-        mWeakContext.clear()
+        disposable.clear()
+        mItemListeners.clear()
 
         mInstructor = null
-
         mLoadedData?.clear()
-        mLoadedData = null
 
         mAnswers?.clear()
-        mAnswers = null
 
         mChosenOptions?.clear()
-        mChosenOptions = null
-
-        mCompoDisposable.dispose()
-        mItemListeners.clear()
     }
 }

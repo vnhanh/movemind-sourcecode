@@ -74,6 +74,7 @@ class SplashPresenter : BaseResponseObserver<MMConfigData>(), ISplashContract.Pr
      */
     override fun onResponseSuccess(data: ResponseValue<MMConfigData>?) {
         super.onResponseSuccess(data)
+        isLoading = false
 
         mRequestCode = RESPONSE_SUCCESS
 
@@ -136,6 +137,7 @@ class SplashPresenter : BaseResponseObserver<MMConfigData>(), ISplashContract.Pr
 
     override fun onResponseFailed(code: Int, message: String?) {
         super.onResponseFailed(code, message)
+        isLoading = false
         Log.d("LOG", this.javaClass.simpleName + " onResponseFailed() | message: $message")
         mRequestCode = RESPONSE_FALSE
         handleOnCallServiceFailed()
@@ -143,6 +145,7 @@ class SplashPresenter : BaseResponseObserver<MMConfigData>(), ISplashContract.Pr
 
     override fun onRequestError(message: String?) {
         super.onRequestError(message)
+        isLoading = false
 //        onExpired("Unauthentication !")
         mRequestCode = REQUEST_FAILED
         handleOnCallServiceFailed()
@@ -150,6 +153,7 @@ class SplashPresenter : BaseResponseObserver<MMConfigData>(), ISplashContract.Pr
 
     override fun onUnAuthorized() {
         super.onUnAuthorized()
+        isLoading = false
         mView?.updateProgress(-1)
         mView?.backToScanQRCode()
     }
@@ -177,8 +181,8 @@ class SplashPresenter : BaseResponseObserver<MMConfigData>(), ISplashContract.Pr
     }
 
     override fun onDestroy() {
+        disposable.clear()
         NetworkReceiver.getInstance().removeListener(this)
-        mView = null
     }
 
     override fun onChangedState(isConnected: Boolean) {
@@ -188,6 +192,7 @@ class SplashPresenter : BaseResponseObserver<MMConfigData>(), ISplashContract.Pr
     }
 
     override fun onExpired(error: String) {
+        isLoading = false
         mView?.updateProgress(-1)
         mView?.getFragment()?.also {
             if (it is BaseFragment) {
@@ -197,6 +202,7 @@ class SplashPresenter : BaseResponseObserver<MMConfigData>(), ISplashContract.Pr
     }
 
     override fun onExpiredUnauthenticated(error: String) {
+        isLoading = false
         mView?.updateProgress(-1)
         mView?.callGetTokenAgain()
     }

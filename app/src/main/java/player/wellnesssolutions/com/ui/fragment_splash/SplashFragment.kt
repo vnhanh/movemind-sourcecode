@@ -106,7 +106,7 @@ class SplashFragment : BaseFragment(), ISplashContract.View, View.OnClickListene
             }
 
             else -> {
-                Log.d("LOG", this.javaClass.simpleName + " updateProgress() | progress: $progress")
+//                Log.d("LOG", this.javaClass.simpleName + " updateProgress() | progress: $progress")
                 isStopProgressBar = true
                 progressLoadBrand?.also { progressBar ->
                     progressBar.progressDrawable = ContextCompat.getDrawable(progressBar.context, R.drawable.progress_splash_failed)
@@ -171,7 +171,6 @@ class SplashFragment : BaseFragment(), ISplashContract.View, View.OnClickListene
         override fun run() {
             try {
                 progressLoadBrand?.also { progressBar ->
-                    Log.d("LOG", "Splash Screen | isStopProgressBar: $isStopProgressBar")
                     when (isStopProgressBar) {
                         false -> {
                             val progress = progressBar.progress + 1

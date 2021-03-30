@@ -106,6 +106,6 @@ class LoadBrandsHandler(callback: ILoadBrandHandler.Callback) : BaseResponseObse
     }
 
     override fun release() {
-        mCompoDisposable.dispose()
+        disposable.dispose()
     }
 }

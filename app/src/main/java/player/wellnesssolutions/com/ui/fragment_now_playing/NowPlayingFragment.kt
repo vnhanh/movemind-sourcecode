@@ -116,7 +116,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
                 }
 
                 extras.containsKey(KEY_DATA_PLAYING_VIDEO) -> {
-                    val videos: ArrayList<MMVideo> = VideoDBUtil.getVideosFromDB(TAG, true)
+                    val videos: ArrayList<MMVideo> = VideoDBUtil.getVideosFromDB(TAG, false)
                     Log.d("LOG", this.javaClass.simpleName + " readArguments() | PLAY VIDEO SEARCHED | videos number: ${videos.size}")
                     mPresenter = NowPlayingPresenter(
                             context = context,
@@ -126,8 +126,6 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
                     }
                 }
             }
-
-            extras.clear()
         }
     }
 
@@ -142,9 +140,6 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         Log.d("LOG", this.javaClass.simpleName + " onActivityCreated()")
-        if (arguments != null && arguments?.isEmpty == false) {
-            readArguments()
-        }
 
         // create the animation handler (@mAnimHelper) and reset all flags to make the menu animations run smoothly
         // once fragment is created or be backed from another screen
@@ -1072,7 +1067,6 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         const val TAG = "NowPlayingFragment"
 
         const val KEY_DATA_PLAYING_VIDEO = "KEY DATA PLAYING VIDEO"
-        const val KEY_DATA_NOW_PLAYING = "KEY DATA NOW PLAYING"
 
         fun getInstanceForSearchedVideos(data: ArrayList<MMVideo>): NowPlayingFragment =
                 NowPlayingFragment().apply {
@@ -1096,12 +1090,14 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         fun getInstancePlaySchedule(): NowPlayingFragment = NowPlayingFragment().apply {
             arguments = Bundle().also {
                 it.putBoolean(Constant.BUNDLE_SCHEDULE, true)
+                it.putBoolean(Constant.BUNDLE_NOT_SETUP_NEXT_SCHEDULE, true)
             }
         }
 
         fun updateAlreadyInstanceWithSchedule(fragment: NowPlayingFragment): Fragment = fragment.apply {
             arguments = Bundle().also {
                 it.putBoolean(Constant.BUNDLE_SCHEDULE, true)
+                it.putBoolean(Constant.BUNDLE_NOT_SETUP_NEXT_SCHEDULE, true)
             }
         }
     }

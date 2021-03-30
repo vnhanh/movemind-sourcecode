@@ -89,12 +89,6 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
         super.onResume()
         Log.d("LOG", this.javaClass.simpleName + " onResume() | isNewScreen: $isNewScreen")
         if (isNewScreen) {
-            btnLogoBottom?.setOnClickListener {
-                it.isEnabled = false
-                loadSchedule(true)
-                it.isEnabled = true
-            }
-
             handler.postDelayed(runnableAttachPresenterFirstTime, Constant.TIME_TRANSITION_SCREEN)
         } else {
             presenter?.onAttach(this)
@@ -230,6 +224,11 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
     }
 
     private fun setupUI() {
+        btnLogoBottom?.setOnClickListener {
+            it.isEnabled = false
+            loadSchedule(true)
+            it.isEnabled = true
+        }
         btnGetStarted?.setOnClickListener { onClickedButtonGetStarted() }
     }
 

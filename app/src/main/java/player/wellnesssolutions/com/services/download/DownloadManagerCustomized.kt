@@ -55,6 +55,7 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
     private val mListeners: ArrayList<IProgressListener> = ArrayList()
 
     private var mIsDownloading = false
+    private var mapNotifiedNotEnoughSpace = ArrayList<IProgressListener>()
 
     private val mNotiManager = DownloadNotification(context)
 
@@ -213,50 +214,60 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
 //        Log.d("LOG", this.javaClass.simpleName + " addTask() | isFileExist: $isFileExist")
         if(isFileExist) return
 
-        Observable.fromCallable {
-            val connection: HttpURLConnection = URL(url).openConnection() as HttpURLConnection
-            connection.setRequestProperty("Cookie", mCookieValue)
-            connection.contentLength.toLong()
-        }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(object : Observer<Long> {
-            override fun onComplete() {}
+        try {
+            Observable.just(1L).subscribeOn(Schedulers.computation())
+                    .flatMap { value: Long ->
+                         Observable.fromCallable {
+                             val connection: HttpURLConnection = URL(url).openConnection() as HttpURLConnection
+                             connection.setRequestProperty("Cookie", mCookieValue)
+                             connection.contentLength.toLong()
+                         }.subscribeOn(Schedulers.trampoline())
+                    }.observeOn(AndroidSchedulers.mainThread()).subscribe(object : Observer<Long?> {
+                override fun onComplete() {}
 
-            override fun onSubscribe(d: Disposable) {}
+                override fun onSubscribe(d: Disposable) {}
 
-            override fun onNext(fileLength: Long) {
-                val availableSpaceExternal = FileUtil.getAvailableExternalMemorySize(context = context)
-                Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | start to calculate free space on device | fileLength: $fileLength | availableSpaceExternal: $availableSpaceExternal")
-                when (fileLength < availableSpaceExternal) {
-                    true -> {
-                        Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | store new downloaded video on external storage")
-                        createDownloadTask(videoId, url, folder, hasPermission, fileName, fileNameShowNotification)
-                    }
-                    false -> {
-                        val availableSpaceInternal: Long = FileUtil.getAvailableInternalMemorySize()
-                        Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | start to calculate free space on device | fileLength: $fileLength | availableSpaceInternal: $availableSpaceInternal")
-                        when (fileLength < availableSpaceInternal) {
-                            true -> {
-                                Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | store new downloaded video on internal storage")
-                                createDownloadTaskInternal(videoId, url, folder, hasPermission, fileName, fileNameShowNotification)
-                            }
-                            false -> {
-                                Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | not enough space | emit listeners")
-                                for (listener: IProgressListener in mListeners) {
-                                    Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | listener: ${listener}")
-                                    listener.onDoesNotEnoughMemory()
+                override fun onNext(fileLength: Long) {
+                    val availableSpaceExternal = FileUtil.getAvailableExternalMemorySize(context = context)
+                    Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | start to calculate free space on device | fileLength: $fileLength | availableSpaceExternal: $availableSpaceExternal")
+                    when (fileLength < availableSpaceExternal) {
+                        true -> {
+                            Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | store new downloaded video on external storage")
+                            createDownloadTask(videoId, url, folder, hasPermission, fileName, fileNameShowNotification)
+                        }
+                        false -> {
+                            val availableSpaceInternal: Long = FileUtil.getAvailableInternalMemorySize()
+                            Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | start to calculate free space on device | fileLength: $fileLength | availableSpaceInternal: $availableSpaceInternal")
+                            when (fileLength < availableSpaceInternal) {
+                                true -> {
+                                    Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | store new downloaded video on internal storage")
+                                    createDownloadTaskInternal(videoId, url, folder, hasPermission, fileName, fileNameShowNotification)
+                                }
+                                false -> {
+                                    Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | not enough space | emit listeners")
+                                    for (listener: IProgressListener in mListeners) {
+                                        if (!mapNotifiedNotEnoughSpace.contains(listener)){
+                                            Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | listener: ${listener}")
+                                            listener.onDoesNotEnoughMemory()
+                                            mapNotifiedNotEnoughSpace.add(listener)
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
+
                 }
-            }
 
-            override fun onError(e: Throwable) {
-                Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | can not start downloading video | error: ${e.message}}")
-                notifyDownloadCannotStart(videoId, fileName)
-            }
+                override fun onError(e: Throwable) {
+                    Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | can not start downloading video | error: ${e.message}")
+                    notifyDownloadCannotStart(videoId, fileName)
+                }
 
-        })
-
+            })
+        }catch (e: Exception){
+            e.printStackTrace()
+        }
     }
 
     private fun notifyDownloadCannotStart(videoId: Int, fileName: String) {

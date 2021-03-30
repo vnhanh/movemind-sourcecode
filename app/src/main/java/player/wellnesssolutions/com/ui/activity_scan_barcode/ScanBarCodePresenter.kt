@@ -57,7 +57,7 @@ class ScanBarCodePresenter(private val mView: ScanBarCodeContract.View) : ScanBa
 
     override fun onDestroy() {
         mPref = null
-        mCompoDisposable.dispose()
+        disposable.dispose()
     }
 
     override fun checkFormatBarcode(string: String): Boolean {

@@ -91,7 +91,7 @@ class SearchDurationPresenter : BaseResponseObserver<ArrayList<MMDuration>>(), I
     override fun onDestroy() {
         mData?.clear()
         mData = null
-        mCompoDisposable.dispose()
+        disposable.dispose()
     }
 
     /**

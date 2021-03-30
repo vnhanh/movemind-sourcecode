@@ -19,6 +19,9 @@ class SearchInstructorsPresenter : BaseResponseObserver<ArrayList<MMInstructor>>
     private var mIsRendered = false
     private var mIsProcessing = false
 
+    private var isMustShowUIOnAttach = false
+    private var bufferMessageError = ""
+
     override fun setChosenBrand(brand: MMBrand) {
         this.mBrand = brand
     }
@@ -59,6 +62,7 @@ class SearchInstructorsPresenter : BaseResponseObserver<ArrayList<MMInstructor>>
     private fun loadInstructors(token: String, deviceId: String) {
         mIsRendered = false
         mIsProcessing = true
+        bufferMessageError = ""
         mView?.showLoadingProgress()
         mBrand?.id?.also { brandId ->
             this.instructorRepository.getInstructors(token, deviceId, brandId).subscribe(this)
@@ -81,15 +85,32 @@ class SearchInstructorsPresenter : BaseResponseObserver<ArrayList<MMInstructor>>
 
     override fun onRequestError(message: String?) {
 //        val msg = message?:mView?.getViewContext()?.getString(R.string.request_failed)?: Constant.MSG_REQUEST_FAILED
-        mView?.onRequestFailed(mView?.getViewContext()?.getString(R.string.request_failed)
-                ?: MSG_REQUEST_FAILED)
+
+        if(mView == null){
+            isMustShowUIOnAttach = true
+            mData = null
+            return
+        }
+        bufferMessageError =mView?.getViewContext()?.getString(R.string.request_failed)
+                ?: MSG_REQUEST_FAILED
+
+        mView?.onRequestFailed(bufferMessageError)
+        bufferMessageError = ""
     }
 
     override fun onResponseFailed(code: Int, message: String?) {
         super.onResponseFailed(code, message)
 //        val msg = message?:mView?.getViewContext()?.getString(R.string.request_failed)?: Constant.MSG_REQUEST_FAILED
-        mView?.onRequestFailed(mView?.getViewContext()?.getString(R.string.request_failed)
-                ?: MSG_REQUEST_FAILED)
+
+        if(mView == null){
+            isMustShowUIOnAttach = true
+            mData = null
+            return
+        }
+        bufferMessageError = mView?.getViewContext()?.getString(R.string.request_failed)
+                ?: MSG_REQUEST_FAILED
+        mView?.onRequestFailed(bufferMessageError)
+        bufferMessageError = ""
     }
 
     override fun onResponseSuccess(data: ResponseValue<java.util.ArrayList<MMInstructor>>?) {
@@ -102,6 +123,12 @@ class SearchInstructorsPresenter : BaseResponseObserver<ArrayList<MMInstructor>>
         SearchDataHelper.sortInstructors(loadedData)
 
         mData = loadedData
+
+        if(mView == null){
+            isMustShowUIOnAttach = true
+            return
+        }
+
         displayUI()
     }
 
@@ -148,6 +175,6 @@ class SearchInstructorsPresenter : BaseResponseObserver<ArrayList<MMInstructor>>
     override fun onDestroy() {
         mData?.clear()
         mData = null
-        mCompoDisposable.dispose()
+        disposable.dispose()
     }
 }

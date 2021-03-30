@@ -67,7 +67,7 @@ class HomePresenter : BaseResponseObserver<MMConfigData>(), IHomeContract.Presen
 
     override fun onDestroy() {
         mLoadedConfig = null
-        mCompoDisposable.dispose()
+        disposable.dispose()
     }
 
     override fun onResponseSuccess(data: ResponseValue<MMConfigData>?) {

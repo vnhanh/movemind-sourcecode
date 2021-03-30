@@ -19,7 +19,7 @@ class RetrofitClient {
 
             val client = OkHttpClient.Builder()
                     .connectTimeout(180, TimeUnit.SECONDS)
-                    .readTimeout(180, TimeUnit.SECONDS)
+                    .readTimeout(60, TimeUnit.SECONDS)
                     .callTimeout(180, TimeUnit.SECONDS)
                     .build()
 

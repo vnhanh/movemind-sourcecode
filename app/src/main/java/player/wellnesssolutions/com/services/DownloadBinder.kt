@@ -32,11 +32,11 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
     fun getListDoesNotDownloaded(context: Context, isCalledComeFromUI: Boolean) {
         mListDownload = VideoDBUtil.readDVideosFromDB(tag = Constant.TAG_VIDEO_DOWNLOAD)
         mListDownloadFailure = VideoDBUtil.readDVideosFailureFromDB(tag = Constant.TAG_VIDEO_DOWNLOAD)
-        Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | mListDownload size: ${mListDownload.size} | list download failed size: ${mListDownloadFailure.size}")
+//        Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | mListDownload size: ${mListDownload.size} | list download failed size: ${mListDownloadFailure.size}")
         if (mListDownload.isEmpty()) {
             if (mListDownloadFailure.isEmpty()) {
                 if (!isCalledComeFromUI) {
-                    Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | isCalledComeFromUI: $isCalledComeFromUI | end download")
+//                    Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | isCalledComeFromUI: $isCalledComeFromUI | end download")
                     mService.onDownloadEnd()
                 }
                 return
@@ -63,7 +63,7 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
             }
         }
 
-        Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | listDownloadNow size: ${mListDownload.size}")
+//        Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | listDownloadNow size: ${mListDownload.size}")
         for (v: MMVideo in mListDownload) {
             if (v.id == null || v.downloadUrl.isNullOrEmpty()) {
                 if (!isCalledComeFromUI) {

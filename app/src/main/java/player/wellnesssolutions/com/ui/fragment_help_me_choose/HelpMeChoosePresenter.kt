@@ -135,7 +135,7 @@ class HelpMeChoosePresenter : BaseResponseObserver<ArrayList<MMHelpMeChooseQuest
         mAnswers.clear()
         mLoadedData?.clear()
         mLoadedData = null
-        mCompoDisposable.dispose()
+        disposable.dispose()
     }
 
     override fun selectAnswer(data: MMHelpMeChooseAnswer) {

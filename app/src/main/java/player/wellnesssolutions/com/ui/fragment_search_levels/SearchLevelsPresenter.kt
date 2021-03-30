@@ -79,7 +79,7 @@ class SearchLevelsPresenter : BaseResponseObserver<ArrayList<MMLevel>>(), ISearc
     override fun onDestroy() {
         mData?.clear()
         mData = null
-        mCompoDisposable.dispose()
+        disposable.dispose()
     }
 
     /**

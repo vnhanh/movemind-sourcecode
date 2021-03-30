@@ -121,6 +121,7 @@ object Constant {
      */
     const val MM_SCHEDULE = "MM_SCHEDULE"
     const val BUNDLE_SCHEDULE = "BUNDLE_SCHEDULE"
+    const val BUNDLE_NOT_SETUP_NEXT_SCHEDULE = "BUNDLE_NOT_SETUP_NEXT_SCHEDULE"
     const val BUNDLE_SOURCE_SCHEDULE = "BUNDLE_SOURCE_SCHEDULE"
     const val BUNDLE_SHOW_POPUP = "BUNDLE_SHOW_POPUP"
     const val SCHEDULE_CURRENT_ID = "SCHEDULE_CURRENT_ID"
@@ -141,6 +142,5 @@ object Constant {
     const val ERROR_CANT_CONNECT_SERVER = "Cannot connect to the server. Please check network and try again."
     const val ERROR_OUT_OF_MEMORY = "Error out of memory"
 
-    const val TIME_MAX_CAN_ROUND = 3000L
-    const val TIME_CHANGE_SCREEN = 1000L
+    const val TIME_CHANGE_SCREEN = 1500L
 }

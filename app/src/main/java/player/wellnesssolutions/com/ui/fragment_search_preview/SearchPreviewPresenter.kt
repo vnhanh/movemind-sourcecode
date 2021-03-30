@@ -185,7 +185,7 @@ class SearchPreviewPresenter : BaseResponseObserver<MMSearchPreviewResponse>(), 
 //        mDisplayData?.clear()
 //        mChosenOptions?.clear()
 //        mData?.clear()
-        mCompoDisposable.clear()
+        disposable.clear()
     }
 
     override fun onChooseOptionItem(id: Int?, name: String?, typeId: Int?) {

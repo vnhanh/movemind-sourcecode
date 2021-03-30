@@ -442,7 +442,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
 
     private fun showDialogLoadingDownloaded() {
         DialogUtil.createDialogOnlyOneButton(this,
-                R.style.NormalDialog_Error, "All videos have been downloaded", R.string.btn_ok, null).show()
+                R.style.NormalDialog, "All videos have been downloaded", R.string.btn_ok, null).show()
     }
 
     private fun onInsufficientSpace() {
