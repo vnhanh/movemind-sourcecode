@@ -33,7 +33,7 @@ object DownloadVideoHelper {
         }
 
         DownloadManagerCustomized.getInstance(context)
-                .addTask(
+                .queueTask(
                         videoId = data.id!!,
                         url = data.downloadUrl,
                         name = data.videoName,

@@ -9,6 +9,7 @@ import player.wellnesssolutions.com.base.view.ILifeCycle
 import player.wellnesssolutions.com.base.view.IProgressView
 import player.wellnesssolutions.com.base.view.IShowMessageView
 import player.wellnesssolutions.com.custom_exoplayer.PlayerState
+import player.wellnesssolutions.com.network.datasource.videos.PlayMode
 import player.wellnesssolutions.com.network.models.config.MMConfigData
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.com.ui.fragment_home.helper.IListenerHandleScheduleTime
@@ -49,7 +50,7 @@ interface INowPlayingConstruct {
         fun playNextVideo(): Boolean
         fun pauseVideo()
         fun resumeOrReplay()
-        fun setVideos(videos: ArrayList<MMVideo>)
+        fun setVideos(videos: ArrayList<MMVideo>, playMode: PlayMode)
         fun setPlayedPosition(position: Long)
 
         fun setSubtitleController(closedCaptionController: ClosedCaptionController)
@@ -81,5 +82,6 @@ interface INowPlayingConstruct {
         fun getIsCountDown(): Boolean
         fun startToPlayScheduleVideo() {}
         fun clickToCallServiceLoadSchedule()
+        fun stopPlayNext()
     }
 }

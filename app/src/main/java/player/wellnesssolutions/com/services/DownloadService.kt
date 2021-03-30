@@ -7,6 +7,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.IBinder
 import android.util.Log
+import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
 import player.wellnesssolutions.com.base.common.download.DownloadVideoHelper
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.utils.FileUtil
@@ -29,6 +31,7 @@ class DownloadService : Service(), IProgressListener, DownloadBinder.BinderDownl
 
     private val mBroadcast: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
+            Log.d("LOG", "DownloadService - mBroadcast - onReceive() | current thread: ${Thread.currentThread()}")
             if (context == null || intent == null) return
             when (intent.action) {
                 ACTION_DOWNLOAD -> readScheduleIntent(intent)
@@ -133,7 +136,11 @@ class DownloadService : Service(), IProgressListener, DownloadBinder.BinderDownl
     }
 
     private fun startDownload() {
-        mBinder.getListDoesNotDownloaded(this, true)
+        Observable.fromCallable {  }.subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.trampoline())
+                .subscribe {
+                    mBinder.getListDoesNotDownloaded(this, true)
+                }
     }
 
     override fun onDownloadCompleted(videoId: Int, fileName: String?, isSuccess: Boolean, message: String) {
@@ -149,6 +156,7 @@ class DownloadService : Service(), IProgressListener, DownloadBinder.BinderDownl
 
     override fun onDownloaded() {
         super.onDownloaded()
+        Log.d("LOG", this.javaClass.simpleName + " onDownloaded() | current thread: ${Thread.currentThread()}")
         mBinder.getListDoesNotDownloaded(this, false)
     }
 

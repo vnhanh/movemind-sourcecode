@@ -22,7 +22,7 @@ interface IPlayVideoContract {
         fun resumeOrIntialize(playedVideoPosition: Long, typeVideo: EnumTypeViewVideo, isUpdateViewNumber: Boolean = false, isSupportCC: Boolean)
         fun onInitialize(playedVideoPosition: Long = 0L, typeVideo: EnumTypeViewVideo, isUpdateViewNumber: Boolean = false, isSupportCC: Boolean = false)
 
-        fun addVideos(videos: ArrayList<MMVideo>)
+        fun setVideos(videos: ArrayList<MMVideo>)
         fun addVideo(video: MMVideo)
         fun playVideoAt(index: Int)
         fun onChangedVolume(progress: Int)

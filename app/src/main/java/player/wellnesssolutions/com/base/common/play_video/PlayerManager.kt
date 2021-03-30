@@ -247,7 +247,7 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback,private var co
         }
     }
 
-    override fun addVideos(videos: ArrayList<MMVideo>) {
+    override fun setVideos(videos: ArrayList<MMVideo>) {
         mVideos?.clear()
         mVideos = videos
     }

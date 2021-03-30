@@ -44,13 +44,13 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
 
                 isSetupNextScheduleVideo -> {
                     val videos: ArrayList<MMVideo> = VideoDBUtil.getScheduleVideos(false)
-//                    Log.d("LOG", this.javaClass.simpleName + " onCreateView() | not setup next schedule | videos number: ${videos.size}")
+                    Log.d("LOG", this.javaClass.simpleName + " onCreateView() | not setup next schedule | videos number: ${videos.size}")
                     schedulePresenter?.setScheduleCurrent(videos)
                 }
 
                 else -> {
                     val videos: ArrayList<MMVideo> = VideoDBUtil.getScheduleVideos(false)
-//                    Log.d("LOG", this.javaClass.simpleName + " onCreateView() | setup next schedule | videos number: ${videos.size}")
+                    Log.d("LOG", this.javaClass.simpleName + " onCreateView() | setup next schedule | videos number: ${videos.size}")
                     when {
                         videos.size > 0 -> schedulePresenter?.setScheduleCurrentAndWaitNextVideo(videos)
                         else -> {

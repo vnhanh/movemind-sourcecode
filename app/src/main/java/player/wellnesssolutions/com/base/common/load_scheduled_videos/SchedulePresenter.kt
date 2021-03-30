@@ -381,29 +381,16 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
                 }
 
                 when{
-                    indexSchedulePlayeLast == -1 -> {
-                        handlerScheduleTime.setupScheduleNextVideo(scheduleVideos, object : ICallBackNextScheduleVideo {
-                            override fun onResult(index: Int, timeWait: Long) {
-
-                            }
-
-                            override fun onNotFound() {
-                                mView?.showMessage(R.string.can_not_calculate_time_play_next_schedule_video, R.color.yellow)
-                            }
-
-                        })
-                    }
-
-                    else -> {
+                    indexSchedulePlayeLast > -1 -> {
                         for (i in 0..indexSchedulePlayeLast){
                             scheduleVideos.removeAt(0)
                             Log.d("LOG", this.javaClass.simpleName + " setScheduleCurrentAndWaitNextVideo() | remove first ele")
                         }
-                        Log.d("LOG", this.javaClass.simpleName + " setScheduleCurrentAndWaitNextVideo() | indexScheduleJustPlayed: $indexSchedulePlayeLast | " +
-                                "schedule videos number: ${scheduleVideos.size}")
-                        handlerScheduleTime.setupScheduleForNowVideo(scheduleVideos)
                     }
                 }
+                Log.d("LOG", this.javaClass.simpleName + " setScheduleCurrentAndWaitNextVideo() | indexScheduleJustPlayed: $indexSchedulePlayeLast | " +
+                        "schedule videos number: ${scheduleVideos.size}")
+                handlerScheduleTime.setupScheduleForNowVideo(scheduleVideos)
             }
         }
     }

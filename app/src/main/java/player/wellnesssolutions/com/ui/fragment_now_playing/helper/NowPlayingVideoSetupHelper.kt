@@ -23,6 +23,9 @@ import androidx.fragment.app.FragmentManager
 import com.bumptech.glide.Glide
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerView
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.custom_controller_player_screen_now_playing.view.*
 import kotlinx.android.synthetic.main.fragment_now_playing.view.*
 import kotlinx.android.synthetic.main.merge_layout_bottom_bar_screen_now_playing.view.*
@@ -39,6 +42,7 @@ import player.wellnesssolutions.com.ui.fragment_home.HomeFragment
 import player.wellnesssolutions.com.ui.fragment_now_playing.INowPlayingConstruct
 import player.wellnesssolutions.com.ui.fragment_now_playing.NowPlayingFragment
 import player.wellnesssolutions.com.ui.fragment_now_playing.recyclerview.MMVideoNowPlayingView
+import java.util.concurrent.TimeUnit
 
 
 object NowPlayingVideoSetupHelper {
@@ -381,6 +385,20 @@ object NowPlayingVideoSetupHelper {
     }
 
     fun openHomeFragmentWithNotLoadScheduleAndShowPopup(fm: FragmentManager?, message: String) {
+        try{
+            openHomeScreenNotLoadScheduleAndShowPopUp(fm, message)
+        }catch (e:Exception){
+            e.printStackTrace()
+            Observable.timer(500, TimeUnit.MILLISECONDS)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe{
+                        openHomeScreenNotLoadScheduleAndShowPopUp(fm, message)
+                    }
+        }
+    }
+
+    private fun openHomeScreenNotLoadScheduleAndShowPopUp(fm: FragmentManager?, message: String){
         fm?.also { _fm ->
             Log.d("LOG", this.javaClass.simpleName + " openHomeFragmentWithNotLoadSchedule()")
             val tag = HomeFragment.TAG
@@ -398,6 +416,22 @@ object NowPlayingVideoSetupHelper {
 
     fun openNowPlayingWithSchedule(fm: FragmentManager?) {
         Log.d("LOG", this.javaClass.simpleName + " openNowPlayingWithSchedule()")
+        try {
+            openNowPlayingPlaySchedule(fm)
+        }catch (e:Exception){
+            e.printStackTrace()
+            Observable.timer(500, TimeUnit.MILLISECONDS)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe{ _->
+                        Log.d("LOG", this.javaClass.simpleName + " openNowPlayingWithSchedule() | trans again")
+                        openNowPlayingPlaySchedule(fm)
+                    }
+
+        }
+    }
+
+    fun openNowPlayingPlaySchedule(fm:FragmentManager?){
         fm?.also { _fm ->
             val tag = NowPlayingFragment.TAG
             var fragment = _fm.findFragmentByTag(tag)

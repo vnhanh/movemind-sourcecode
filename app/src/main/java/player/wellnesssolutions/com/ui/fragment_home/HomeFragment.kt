@@ -204,6 +204,7 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
 
                         override fun onResponseSuccess(data: ResponseValue<ArrayList<MMVideo>>?) {
                             super.onResponseSuccess(data)
+                            Log.d("LOG",  "HomeFragment - getAllVideosForDownload() | current thread: ${Thread.currentThread()} | name: ${Thread.currentThread().name}")
                             if (data == null) return
                             VideoDBUtil.saveDVideosToDB(data = data.data, tag = Constant.TAG_VIDEO_DOWNLOAD)
                             PreferenceHelper.getInstance(context).putBoolean(ConstantPreference.IS_DOWNLOAD_VIDEOS, false)

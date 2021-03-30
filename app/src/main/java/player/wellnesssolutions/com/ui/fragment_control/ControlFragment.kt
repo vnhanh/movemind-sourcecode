@@ -185,18 +185,18 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
                 activity.playVideo(PlayMode.SCHEDULE, scheduleVideos)
 
             } else {
-                loadNowPlayingScreen()
+                loadScreenPlaySchedule()
             }
         }
     }
 
     override fun onTimePlaySchedule() {
         Log.d("LOG", this.javaClass.simpleName + " onTimePlaySchedule()")
-        loadNowPlayingScreen()
+        loadScreenPlaySchedule()
     }
 
-    fun loadNowPlayingScreen() {
-        Log.d("LOG", this.javaClass.simpleName + " loadNowPlayingScreen() | isStartedOpenNewScreen: $isStartedOpenNewScreen")
+    fun loadScreenPlaySchedule() {
+        Log.d("LOG", this.javaClass.simpleName + " loadScreenPlaySchedule() | isStartedOpenNewScreen: $isStartedOpenNewScreen")
         if (isStartedOpenNewScreen) return
         activity?.supportFragmentManager?.also { _fm ->
             val tag = NowPlayingFragment.TAG
@@ -204,11 +204,11 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
             fragment =
                     when (fragment != null && fragment is NowPlayingFragment) {
                         true -> {
-                            Log.d("LOG", this.javaClass.simpleName + " loadNowPlayingScreen() | old instance is NowPlayingFragment")
+                            Log.d("LOG", this.javaClass.simpleName + " loadScreenPlaySchedule() | old instance is NowPlayingFragment")
                             NowPlayingFragment.updateAlreadyInstanceWithSchedule(fragment)
                         }
                         false -> {
-                            Log.d("LOG", this.javaClass.simpleName + " loadNowPlayingScreen() | there's no instance of NowPlayingFragment")
+                            Log.d("LOG", this.javaClass.simpleName + " loadScreenPlaySchedule() | there's no instance of NowPlayingFragment")
                             NowPlayingFragment.getInstancePlaySchedule()
                         }
                     }

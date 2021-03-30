@@ -329,20 +329,14 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
         }
 
         setupUI()
-        readPlayingVideoData(videos)
+        mPresenter?.setVideos(videos, mode)
+        mPresenter?.onAttach(this)
     }
 
     private fun releasePresenters() {
         Log.d("LOG", this.javaClass.simpleName + " releasePresenters()")
         mPresenter?.onDetach()
         mPresenter?.onDestroy()
-    }
-
-    private fun readPlayingVideoData(videos: ArrayList<MMVideo>?) {
-        videos?.let {
-            mPresenter?.setVideos(it)
-            mPresenter?.onAttach(this)
-        }
     }
 
     private fun setupUI() {

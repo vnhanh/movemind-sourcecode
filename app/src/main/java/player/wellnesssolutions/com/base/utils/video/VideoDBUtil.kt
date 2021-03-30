@@ -107,21 +107,6 @@ object VideoDBUtil {
         return isSuccess
     }
 
-    fun saveVideosScheduleToDB(data: ArrayList<MMVideo>, tag: String) {
-        val realm = Realm.getDefaultInstance()
-
-        try {
-            val savedData = VideosScheduleToRealmObjectsMapper.mapList(data, tag)
-            realm.beginTransaction()
-            realm.copyToRealm(savedData)
-            realm.commitTransaction()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        } finally {
-            realm.close()
-        }
-    }
-
     fun saveDVideosToDB(data: ArrayList<MMVideo>, tag: String) {
         val realm = Realm.getDefaultInstance()
 

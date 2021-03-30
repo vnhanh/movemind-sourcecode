@@ -30,13 +30,14 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
     private var mService: DownloadService = listener.onGetService()
 
     fun getListDoesNotDownloaded(context: Context, isCalledComeFromUI: Boolean) {
+        Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | current thread: ${Thread.currentThread()} | name: ${Thread.currentThread().name}")
         mListDownload = VideoDBUtil.readDVideosFromDB(tag = Constant.TAG_VIDEO_DOWNLOAD)
         mListDownloadFailure = VideoDBUtil.readDVideosFailureFromDB(tag = Constant.TAG_VIDEO_DOWNLOAD)
-//        Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | mListDownload size: ${mListDownload.size} | list download failed size: ${mListDownloadFailure.size}")
+        Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | mListDownload size: ${mListDownload.size} | list download failed size: ${mListDownloadFailure.size}")
         if (mListDownload.isEmpty()) {
             if (mListDownloadFailure.isEmpty()) {
                 if (!isCalledComeFromUI) {
-//                    Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | isCalledComeFromUI: $isCalledComeFromUI | end download")
+                    Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | isCalledComeFromUI: $isCalledComeFromUI | end download")
                     mService.onDownloadEnd()
                 }
                 return
@@ -50,7 +51,8 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
                             return
                         }
                         Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | mListDownloadFailure is not empty: ${mListDownloadFailure.size}")
-                        DownloadManagerCustomized.getInstance(context).addTask(
+                        
+                        DownloadManagerCustomized.getInstance(context).queueTask(
                                 videoId = v.id!!.toInt(),
                                 url = v.downloadUrl,
                                 name = v.videoName,
@@ -71,7 +73,7 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
                 }
                 return
             }
-            DownloadManagerCustomized.getInstance(context).addTask(
+            DownloadManagerCustomized.getInstance(context).queueTask(
                     videoId = v.id!!.toInt(),
                     url = v.downloadUrl,
                     name = v.videoName,
@@ -184,6 +186,7 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
     }
 
     private fun getAllVideosForDownload(context: Context) {
+        Log.d("LOG", this.javaClass.simpleName + " getAllVideosForDownload() | current thread: ${Thread.currentThread()}")
         val tokenAu: String = PreferenceHelper.getInstance(context).getString(ConstantPreference.TOKEN, "")
         val deviceId = PreferenceHelper.getInstance(context).getString(ConstantPreference.DEVICE_ID, "")
         if (deviceId.isNotEmpty() && tokenAu.isNotEmpty()) {
@@ -234,6 +237,7 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
     }
 
     fun updateDataDVideos(data: IntArray) {
+        Log.d("LOG", this.javaClass.simpleName + " updateDataDVideos()")
         getAllVideosForDownloadWithId(mService.applicationContext, data)
     }
 
@@ -276,6 +280,7 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
     }
 
     fun downloadWhenChangeSubs(context: Context) {
+        Log.d("LOG", this.javaClass.simpleName + " downloadWhenChangeSubs() | current thread: ${Thread.currentThread()}")
         DownloadManagerCustomized.getInstance(context).cancelDownloadService()
         DownloadManagerCustomized.getInstance(context).stopNotify()
         DownloadManagerCustomized.getInstance(context).clearQueue()

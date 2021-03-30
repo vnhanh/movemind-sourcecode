@@ -179,8 +179,7 @@
     <string name="err_not_get_anwers">Pass answers failed !</string>
     <string name="cant_load_videos_cause_wrong_data">Can not load videos because wrong data !</string>
     <!--<string name="confirm_want_to_turn_back_screen_no_class_search">Do you wan to turn back Screen Home ?</string>-->
-    <string name="not_get_playing_videos">Not got playing videos !</string>
-    <string name="not_get_scheduling_videos">Not got scheduling videos !</string>
+    <string name="no_searched_videos">No searched videos !</string>
     <string name="msg_request_scheduler_failed">Requesting class failed !</string>
     <string name="confirm_stop_video_and_navigate_to_screen_get_started">Do you want to stop this video and navigate to the get started screen ?</string>
     <string name="confirm_stop_video_and_open_current_class">Do you want to stop this video and watch the current class?</string>

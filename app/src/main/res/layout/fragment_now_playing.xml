@@ -131,9 +131,8 @@
         android:visibility="gone"
         android:layout_marginTop="@dimen/margin_top_btn_download_screen_now_playing"
         android:layout_marginEnd="@dimen/margin_right_btn_download_screen_now_playing"
-        app:layout_constraintBottom_toBottomOf="@+id/tvTitleHMC"
-        app:layout_constraintEnd_toEndOf="@+id/videoPlayer"
-        app:layout_constraintTop_toTopOf="@+id/videoPlayer" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <player.wellnesssolutions.com.common.customize_views.MMProgressBar
         android:id="@+id/progressLoadingVideo"

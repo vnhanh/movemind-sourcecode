@@ -2,6 +2,7 @@ package player.wellnesssolutions.com.ui.fragment_search_result_videos
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -388,11 +389,13 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View, IRouter
 
 
     override fun openPlayingVideosScreen(data: ArrayList<MMVideo>) {
+        Log.d("LOG", this.javaClass.simpleName + " openPlayingVideosScreen() | videos number: ${data.size}")
         activity?.also { act ->
             val passData = ArrayList<MMVideo>()
             passData.addAll(data)
 
             if ((act as MainActivity).isPresentationAvailable()) {
+                Log.d("LOG", this.javaClass.simpleName + " openPlayingVideosScreen() | play on TV")
                 isPlayNewList = true
                 PreferenceHelper.getInstance(act).putLong(ConstantPreference.LAST_PLAYED_VIDEO_POSITION, 0L)
 

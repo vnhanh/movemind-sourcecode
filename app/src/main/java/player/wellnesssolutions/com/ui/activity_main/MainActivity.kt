@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
@@ -280,7 +281,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         mSessionManager.stop()
         when {
             mode == PlayMode.ON_DEMAND -> {
-                VideoDBUtil.createOrUpdateVideos(videos, NowPlayingFragment.KEY_DATA_PLAYING_VIDEO)
+                VideoDBUtil.createOrUpdateVideos(videos, NowPlayingFragment.BUNDLE_VIDEO_SEARCHED)
             }
 
             mode == PlayMode.SCHEDULE -> {
@@ -478,6 +479,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
 
     override fun onResume() {
         super.onResume()
+        Log.d("LOG", this.javaClass.simpleName + " onResume() | current thread: ${Thread.currentThread()} | name: ${Thread.currentThread().name}")
         mIsVisble = true
         appVisible = true
         checkForCrashes()
