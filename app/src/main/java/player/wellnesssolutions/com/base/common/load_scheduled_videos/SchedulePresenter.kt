@@ -121,7 +121,7 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
     }
 
     private fun loadSchedule() {
-        Log.d("LOG", this.javaClass.simpleName + " loadSchedule() | mView: $mView")
+        Log.d("LOG", this.javaClass.simpleName + " loadSchedule()")
         if (isLoading || mView == null) return
         isLoading = true
 
@@ -236,7 +236,6 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
         val view = mView
         when {
             view == null -> {
-
 //                isPerformNextScheduleOnAttachView = true
                 return
             }

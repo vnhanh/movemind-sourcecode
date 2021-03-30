@@ -788,8 +788,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
 
     override fun onHaveClassVideos(scheduleVideos: ArrayList<MMVideo>, isClickedFromBtnBottom: Boolean) {
         btnLogoBottom.isEnabled = true
-//        if(scheduledVideos.size == 0) onNoClassVideos("", R.color.yellow, isClickedFromBtnBottom)
-        Log.d("LOG", this.javaClass.simpleName + " onHaveClassVideos() | videos number: ${scheduleVideos.size} | play mode: ${mPresenter?.getPlayMode()}")
+//        Log.d("LOG", this.javaClass.simpleName + " onHaveClassVideos() | videos number: ${scheduleVideos.size} | play mode: ${mPresenter?.getPlayMode()}")
         hideLoadingProgress()
         videoPlayer?.context?.let {
             when (mPresenter?.getPlayMode()) {
