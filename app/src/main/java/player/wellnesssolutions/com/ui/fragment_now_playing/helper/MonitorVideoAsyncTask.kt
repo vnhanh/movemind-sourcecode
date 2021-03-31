@@ -4,16 +4,12 @@ import android.view.View
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import player.wellnesssolutions.com.ui.fragment_now_playing.INowPlayingConstruct
-import java.lang.ref.WeakReference
 
-class MonitorVideoAsyncTask(view: View?, presenter: INowPlayingConstruct.Presenter?, listener: Listener? = null) : Runnable {
+class MonitorVideoAsyncTask(private var view: View?, private var presenter: INowPlayingConstruct.Presenter?, private var listener: Listener? = null) : Runnable {
     interface Listener {
         fun onUpdateVideoProgress(isPlaying: Boolean, position: Long)
     }
 
-    private val mWeakView: WeakReference<View?> = WeakReference(view)
-    private val mWeakPresenter: WeakReference<INowPlayingConstruct.Presenter?> = WeakReference(presenter)
-    private val mWeakListener: WeakReference<Listener?> = WeakReference(listener)
     private var mPlayer: SimpleExoPlayer? = null
     private var mVideoId: Int? = null
     private var mVideoLength = 0L
@@ -33,13 +29,13 @@ class MonitorVideoAsyncTask(view: View?, presenter: INowPlayingConstruct.Present
     }
 
     override fun run() {
-        mWeakView.get()?.also { view ->
-            mWeakPresenter.get()?.also { presenter ->
+        view?.also { view ->
+            presenter?.also { presenter ->
                 if (mIsStop) {
                     return@also
                 }
                 val player = mPlayer ?: return
-                mWeakListener.get()?.also { listener ->
+                listener?.also { listener ->
                     listener.onUpdateVideoProgress(player.playWhenReady, player.currentPosition)
                 }
 
@@ -59,8 +55,15 @@ class MonitorVideoAsyncTask(view: View?, presenter: INowPlayingConstruct.Present
 
     fun startTask() {
         mIsStop = false
-        mWeakView.get()?.postDelayed(this, 1000L)
+        view?.postDelayed(this, 1000L)
     }
 
     fun isStop(): Boolean = mIsStop
+
+    fun release() {
+        view = null
+        presenter = null
+        listener = null
+        mPlayer = null
+    }
 }

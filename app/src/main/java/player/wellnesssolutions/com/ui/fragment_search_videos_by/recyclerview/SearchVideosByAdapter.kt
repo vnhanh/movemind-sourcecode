@@ -9,10 +9,8 @@ import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.utils.search_util.SearchCollectionUtil
 import player.wellnesssolutions.com.network.models.screen_search.SearchByOption
 import player.wellnesssolutions.com.ui.fragment_search_videos_by.ISearchVideosByContract
-import java.lang.ref.WeakReference
 
-class SearchVideosByAdapter(presenter: ISearchVideosByContract.Presenter?, var list: ArrayList<SearchByOption>) : RecyclerView.Adapter<SearchVideosByVH>() {
-    private var weakPresenter: WeakReference<ISearchVideosByContract.Presenter?> = WeakReference(presenter)
+class SearchVideosByAdapter(private var presenter: ISearchVideosByContract.Presenter?, var list: ArrayList<SearchByOption>) : RecyclerView.Adapter<SearchVideosByVH>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchVideosByVH {
         val vh: SearchVideosByVH
@@ -42,7 +40,7 @@ class SearchVideosByAdapter(presenter: ISearchVideosByContract.Presenter?, var l
                         vh.itemView.tvWrapperCircleItem.changeBgColorOnClick()
                     }
                 }
-                weakPresenter.get()?.onChooseItem(data)
+                presenter?.onChooseItem(data)
 
                 it.isEnabled = true
             }
@@ -70,6 +68,6 @@ class SearchVideosByAdapter(presenter: ISearchVideosByContract.Presenter?, var l
             }
 
     fun release() {
-        weakPresenter.clear()
+        presenter = null
     }
 }

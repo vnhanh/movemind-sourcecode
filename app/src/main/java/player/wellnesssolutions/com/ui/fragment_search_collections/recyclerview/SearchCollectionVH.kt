@@ -9,12 +9,10 @@ import player.wellnesssolutions.com.base.utils.ViewUtil
 import player.wellnesssolutions.com.base.utils.search_util.BaseSearchVH
 import player.wellnesssolutions.com.network.models.screen_search.MMCollection
 import player.wellnesssolutions.com.ui.fragment_search_collections.ISearchCollectionContract
-import java.lang.ref.WeakReference
 
 
-class SearchCollectionVH(view: View, listener: ISearchCollectionContract.Presenter?, itemWidth: Int, itemHeight: Int, itemCountInRow: Int) :
+class SearchCollectionVH(view: View, private var listener: ISearchCollectionContract.Presenter?, itemWidth: Int, itemHeight: Int, itemCountInRow: Int) :
         BaseSearchVH<MMCollection>(view, itemWidth, itemHeight, itemCountInRow), View.OnClickListener {
-    private var weakPresenter = WeakReference(listener)
 
     private var mLoadSize = 0
 
@@ -32,7 +30,7 @@ class SearchCollectionVH(view: View, listener: ISearchCollectionContract.Present
             itemView.imgCollectionLogo.changeBgColorOnClick()
             view.isEnabled = false
 
-            weakPresenter.get()?.onChooseItem(data)
+            listener?.onChooseItem(data)
 
             view.isEnabled = true
         }
@@ -64,6 +62,6 @@ class SearchCollectionVH(view: View, listener: ISearchCollectionContract.Present
 
     override fun release() {
         super.release()
-        weakPresenter.clear()
+        listener = null
     }
 }

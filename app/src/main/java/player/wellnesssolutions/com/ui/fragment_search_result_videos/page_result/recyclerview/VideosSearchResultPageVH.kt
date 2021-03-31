@@ -26,10 +26,9 @@ import player.wellnesssolutions.com.ui.activity_main.MainActivity
 import player.wellnesssolutions.com.ui.fragment_search_result_videos.SearchResultFragment.Companion.mVideosToPlay
 import player.wellnesssolutions.com.ui.fragment_search_result_videos.page_result.ISearchResultPageContract
 import player.wellnesssolutions.fontsizelibrary.TypefaceUtil
-import java.lang.ref.WeakReference
 
 
-class VideosSearchResultPageVH(view: View, val mItemWidth: Int, val mItemHeight: Int, presenter: ISearchResultPageContract.Presenter?) :
+class VideosSearchResultPageVH(view: View, val mItemWidth: Int, val mItemHeight: Int, private var presenter: ISearchResultPageContract.Presenter?) :
         RecyclerView.ViewHolder(view), View.OnClickListener, ISearchResultItemListener {
 
     companion object {
@@ -40,7 +39,6 @@ class VideosSearchResultPageVH(view: View, val mItemWidth: Int, val mItemHeight:
         private var mThumbnailHeight = 0
     }
 
-    private var mWeakPresenter: WeakReference<ISearchResultPageContract.Presenter?> = WeakReference(presenter)
     private var mVideo: MMVideo? = null
     private var mExtraViews: ArrayList<TextView>? = ArrayList()
 
@@ -125,7 +123,7 @@ class VideosSearchResultPageVH(view: View, val mItemWidth: Int, val mItemHeight:
 
     fun release() {
         //mDownloadButtonManager.release()
-        mWeakPresenter.clear()
+        presenter = null
         mVideo = null
         mExtraViews?.clear()
         mExtraViews = null
@@ -139,7 +137,7 @@ class VideosSearchResultPageVH(view: View, val mItemWidth: Int, val mItemHeight:
 
             else -> {
                 itemView.blurThumbnail.visibility = View.VISIBLE
-                mWeakPresenter.get()?.onClickedResultItem(mVideo)
+                presenter?.onClickedResultItem(mVideo)
                 view.postDelayed({
                     itemView.blurThumbnail.visibility = View.GONE
                 }, 200L)
@@ -162,7 +160,7 @@ class VideosSearchResultPageVH(view: View, val mItemWidth: Int, val mItemHeight:
     fun bind(data: MMVideo) {
         this.mVideo = data
 
-        mWeakPresenter.get()?.also { presenter ->
+        presenter?.also { presenter ->
 
             when (presenter.isVideoSelected(data)) {
                 true -> {
@@ -274,7 +272,7 @@ class VideosSearchResultPageVH(view: View, val mItemWidth: Int, val mItemHeight:
         }
 
         mIsSelected = !mIsSelected
-        mWeakPresenter.get()?.selectVideoToPlay(mVideo, mIsSelected)
+        presenter?.selectVideoToPlay(mVideo, mIsSelected)
     }
 
     override fun selectVideo() {

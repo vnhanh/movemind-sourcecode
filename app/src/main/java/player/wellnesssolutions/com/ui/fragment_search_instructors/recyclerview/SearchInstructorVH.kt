@@ -18,12 +18,10 @@ import player.wellnesssolutions.com.base.utils.search_util.BaseSearchVH
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.network.models.screen_search.MMInstructor
 import player.wellnesssolutions.com.ui.fragment_search_instructors.ISearchInstructorContract
-import java.lang.ref.WeakReference
 
 
-class SearchInstructorVH(view: View, listener: ISearchInstructorContract.Presenter?, itemWidth: Int, itemHeight: Int, countItemInRow: Int, val mGlideHeaders: LazyHeaders?) :
+class SearchInstructorVH(view: View, private var listener: ISearchInstructorContract.Presenter?, itemWidth: Int, itemHeight: Int, countItemInRow: Int, val mGlideHeaders: LazyHeaders?) :
         BaseSearchVH<MMInstructor>(view, itemWidth, itemHeight, countItemInRow), View.OnClickListener {
-    private var weakPresenter = WeakReference(listener)
     private var mLoadSize = 0
 
     init {
@@ -60,10 +58,10 @@ class SearchInstructorVH(view: View, listener: ISearchInstructorContract.Present
 
             when (view.id) {
                 itemView.tvName.id, itemView.imgAvatar.id -> {
-                    weakPresenter.get()?.onClickInstructorItem(data)
+                    listener?.onClickInstructorItem(data)
                 }
                 itemView.btnShowInfoItemSearchInstructor.id -> {
-                    weakPresenter.get()?.onClickShowInfoInstructor(data)
+                    listener?.onClickShowInfoInstructor(data)
                 }
             }
 

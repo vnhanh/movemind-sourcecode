@@ -83,8 +83,6 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
     // manage download task of playing video
     //private var mMainDownloadButtonManager: DownloadButtonManager? = null
 
-    private var mIsTranslateCompleted = false
-
     private var mNowVideo: MMVideo? = null
     private var mNowVideoLength = 0L
 
@@ -114,15 +112,11 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         registerNetworkConnecting()
         setupUI()
 
-        // prevent lag on translating fragment
-        mIsTranslateCompleted = false
-
-        mIsTranslateCompleted = true
-        mNowVideo?.also { video ->
-            mComingUpVideos?.also { comingUpVideos ->
-                showUI(video, comingUpVideos)
-            }
-        }
+//        mNowVideo?.also { video ->
+//            mComingUpVideos?.also { comingUpVideos ->
+//                showUI(video, comingUpVideos)
+//            }
+//        }
     }
 
     override fun onResume() {
@@ -205,7 +199,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
                     when{
                         presenter == null -> presenter = NowPlayingPresenter(
                                 context = context,
-                                playMode = PlayMode.SCHEDULE
+                                playMode = PlayMode.ON_DEMAND
                         ).apply { setVideos(videos, PlayMode.ON_DEMAND) }
 
                         presenter != null -> presenter!!.setVideos(videos, PlayMode.ON_DEMAND)
@@ -612,9 +606,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
                 this.mNowVideoLength = ((videoData.videoLength ?: 0f) * 1000).toLong()
                 this.mComingUpVideos = comingUpVideos
 
-                if (mIsTranslateCompleted) {
-                    showUI(videoData, comingUpVideos)
-                }
+                showUI(videoData, comingUpVideos)
             }
         }
     }
@@ -707,9 +699,19 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         }, playedPosition)
     }
 
-    override fun onNoClassVideosForNow(message: String, @ColorRes msgColor: Int, isClickedFromBtnBottom: Boolean) {
+    override fun onNoClassVideosForNow(scheduleVideos: ArrayList<MMVideo>, message: String, @ColorRes msgColor: Int, isClickedFromBtnBottom: Boolean) {
         Log.d("LOG", this.javaClass.simpleName + " onNoClassVideosForNow()")
         btnLogoBottom.isEnabled = true
+
+        var isCasted = false
+        if(scheduleVideos.size > 0){
+            isCasted = playVideoPresentationable(scheduleVideos)
+        }
+
+        if(isCasted){
+            backToHomeScreenWithNotLoadSchedule()
+            return
+        }
 
         when (presenter?.getPlayMode()) {
             PlayMode.SCHEDULE -> {
@@ -757,36 +759,18 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
 
     }
 
-//    override fun noScheduleForNow(isLoadSchedule: Boolean) {
-//        Log.d("LOG", this.javaClass.simpleName + " showDialogAskWantToBackToHome()")
-//        dialog?.dismiss()
-//        context?.also { context ->
-//            dialog = DialogUtil.createDialogTwoButtons(context, getString(R.string.confirm_stop_video_and_navigate_to_screen_get_started), R.string.cancel,
-//                    object : DialogInterface.OnClickListener {
-//                        override fun onClick(dialogInterface: DialogInterface?, p1: Int) {
-//                            dialogInterface?.dismiss()
-//                            hideLoadingProgress()
-//                        }
-//
-//                    }, R.string.btn_ok, object : DialogInterface.OnClickListener {
-//                override fun onClick(dialogInterface: DialogInterface?, p1: Int) {
-//                    dialogInterface?.dismiss()
-//                    when {
-//                        isLoadSchedule -> NowPlayingVideoSetupHelper.openHomeFragmentWithLoadSchedule(fm = activity?.supportFragmentManager)
-//                        else -> backToHomeScreenWithNotLoadSchedule()
-//                    }
-//
-//                }
-//
-//            }).apply { show() }
-//        }
-//
-//    }
-
     override fun onHaveClassVideos(scheduleVideos: ArrayList<MMVideo>, isClickedFromBtnBottom: Boolean) {
         btnLogoBottom.isEnabled = true
 //        Log.d("LOG", this.javaClass.simpleName + " onHaveClassVideos() | videos number: ${scheduleVideos.size} | play mode: ${mPresenter?.getPlayMode()}")
         hideLoadingProgress()
+        var isCasted = false
+        if(scheduleVideos.size > 0){
+            isCasted = playVideoPresentationable(scheduleVideos)
+        }
+        if(isCasted){
+            backToHomeScreenWithNotLoadSchedule()
+            return
+        }
         videoPlayer?.context?.let {
             when (presenter?.getPlayMode()) {
                 PlayMode.SCHEDULE -> switchToCurrentClass(scheduleVideos)
@@ -794,18 +778,18 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
                 // show dialog ask user want to play class video
                 PlayMode.ON_DEMAND -> {
                     Log.d("LOG", this.javaClass.simpleName + " onHaveClassVideos() | isClickedFromBtnBottom: ${isClickedFromBtnBottom}")
-                    if (isClickedFromBtnBottom) {
-                        val message = it.getString(R.string.confirm_stop_video_and_open_current_class)
-                        val okButtonListener = DialogInterface.OnClickListener { _, _ -> switchToCurrentClass(scheduleVideos) }
-                        val cancelButtonListener = DialogInterface.OnClickListener { _, _ ->
-                            presenter?.resumeOrReplay()
-                        }
-
-                        DialogUtil.createDialogTwoButtons(context = it, message = message, titleLeftButton = R.string.btn_no,
-                                leftButtonClickListener = cancelButtonListener, titleRightButton = R.string.btn_yes, rightButtonClickListener = okButtonListener).show()
-                    } else {
+//                    if (isClickedFromBtnBottom) {
+//                        val message = it.getString(R.string.confirm_stop_video_and_open_current_class)
+//                        val okButtonListener = DialogInterface.OnClickListener { _, _ -> switchToCurrentClass(scheduleVideos) }
+//                        val cancelButtonListener = DialogInterface.OnClickListener { _, _ ->
+//                            presenter?.resumeOrReplay()
+//                        }
+//
+//                        DialogUtil.createDialogTwoButtons(context = it, message = message, titleLeftButton = R.string.btn_no,
+//                                leftButtonClickListener = cancelButtonListener, titleRightButton = R.string.btn_yes, rightButtonClickListener = okButtonListener).show()
+//                    } else {
                         switchToCurrentClass(scheduleVideos)
-                    }
+//                    }
                 }
             }
         }
@@ -1086,14 +1070,14 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         fun getInstancePlaySchedule(): NowPlayingFragment = NowPlayingFragment().apply {
             arguments = Bundle().also {
                 it.putBoolean(Constant.BUNDLE_SCHEDULE, true)
-                it.putBoolean(Constant.BUNDLE_NOT_SETUP_NEXT_SCHEDULE, true)
+                it.putBoolean(Constant.BUNDLE_NOT_SETUP_NOW_SCHEDULE, true)
             }
         }
 
         fun updateAlreadyInstanceWithSchedule(fragment: NowPlayingFragment): Fragment = fragment.apply {
             arguments = Bundle().also {
                 it.putBoolean(Constant.BUNDLE_SCHEDULE, true)
-                it.putBoolean(Constant.BUNDLE_NOT_SETUP_NEXT_SCHEDULE, true)
+                it.putBoolean(Constant.BUNDLE_NOT_SETUP_NOW_SCHEDULE, true)
             }
         }
     }

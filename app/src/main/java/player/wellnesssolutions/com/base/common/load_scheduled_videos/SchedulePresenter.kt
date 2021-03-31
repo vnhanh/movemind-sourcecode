@@ -59,7 +59,6 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
 
     private val runnableHanldeTimeForSchedule = Runnable {
         performForNextSchedule()
-        isPerformNextScheduleOnAttachView = false
     }
 
     override fun onAttach(view: IScheduleContract.View) {
@@ -146,23 +145,26 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
         mView?.hideLoadingProgress()
         val loadedVideos = data?.data
 
+        isLoading = false
+
         if (loadedVideos.isNullOrEmpty()) {
+            scheduleVideos.clear()
             navigateToNoClass()
 //            SPDBUtil.deleteAllFromTag(SearchResultFragment.getTagOfChosen())
 //            HMCDataHelper.deleteALlFromTag(SearchResultFragment.getTagOfHMCForDB())
             return
         }
-
         // filter today scheduler
         LoadSchedulingVideosHelper.filterTodaySchedulingVideos(loadedVideos)
         scheduleVideos = loadedVideos
-        isLoading = false
+
         handlerScheduleTime.setupScheduleForNowVideo(loadedVideos)
     }
 
     override fun onResponseFailed(code: Int, message: String?) {
         super.onResponseFailed(code, message)
         isUpdatingNewSchedule = false
+        isLoading = false
         mView?.hideLoadingProgress()
         Log.d("LOG", this.javaClass.simpleName + " onResponseFalse() | message: $message")
         navigateToNoClass()
@@ -173,15 +175,15 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
         isUpdatingNewSchedule = false
         Log.d("LOG", this.javaClass.simpleName + " onRequestError() | error: $message")
         mView?.hideLoadingProgress()
-
+        isLoading = false
         val msg: String =
                 when (message.isNullOrEmpty()) {
                     true -> mView?.getViewContext()?.getString(R.string.msg_request_scheduler_failed)
                             ?: MSG_REQUEST_FAILED
                     false -> message
                 }
-
-        mView?.onNoClassVideosForNow(msg, R.color.red, isClickedFromBtnBottom)
+        VideoDBUtil.deleteVideosFromDB(Constant.MM_SCHEDULE)
+        mView?.onNoClassVideosForNow(arrayListOf(), msg, R.color.red, isClickedFromBtnBottom)
     }
 
     override fun onComplete() {
@@ -200,7 +202,8 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
             val view = mView
             when{
                 view == null -> {
-                    isPerformNextScheduleOnAttachView = true
+                    // TODO: will have to perform the case view is null setup for now schedule
+                    if(isPerformingNextScheduleVideo) isPerformNextScheduleOnAttachView = true
                 }
 
                 else -> {
@@ -236,17 +239,16 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
         val view = mView
         when {
             view == null -> {
-//                isPerformNextScheduleOnAttachView = true
                 return
             }
 
             else -> {
-                if(isPerformingNextScheduleVideo) return
                 view.hideLoadingProgress()
+                if(isPerformingNextScheduleVideo) return
                 scheduleVideos.also { videos ->
                     VideoDBUtil.createOrUpdateVideos(videos, Constant.MM_SCHEDULE)
                 }
-                view.onNoClassVideosForNow("", R.color.white, isClickedFromBtnBottom)
+                view.onNoClassVideosForNow(scheduleVideos, "", R.color.white, isClickedFromBtnBottom)
                 // do nothing more
             }
         }
@@ -282,7 +284,8 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
                                     ?: Constant.MSG_NOW_CLASS_NOW
                             else -> msg
                         }
-                view.onNoClassVideosForNow(message, isClickedFromBtnBottom = isClickedFromBtnBottom)
+
+                view.onNoClassVideosForNow(arrayListOf(), message, isClickedFromBtnBottom = isClickedFromBtnBottom)
             }
         }
     }
@@ -295,6 +298,8 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
         if (scheduleVideos.size == 0) {
             scheduleVideos = VideoDBUtil.getScheduleVideos( false)
         }
+        isPerformNextScheduleOnAttachView = false
+        isPerformingNextScheduleVideo = false
         handlerScheduleTime.setupScheduleForNowVideo(scheduleVideos)
     }
 
@@ -335,22 +340,29 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
     override fun setScheduleCurrent(videos: ArrayList<MMVideo>) {
         this.scheduleVideos.clear()
         this.scheduleVideos = videos
+        this.isPerformNextScheduleOnAttachView = false
         this.isPerformingNextScheduleVideo = false
+        this.isLoadScheduleOnStart = false
     }
 
     override fun setScheduleCurrentAndWaitNextVideo(videos: ArrayList<MMVideo>) {
         this.scheduleVideos.clear()
         this.scheduleVideos = videos
-        this.isPerformingNextScheduleVideo = true
+        this.isPerformNextScheduleOnAttachView = false
+        this.isPerformingNextScheduleVideo = true // setup schedule for next schedule on screen show
+        this.isLoadScheduleOnStart = false
         if(mView == null){
-            isPerformNextScheduleOnAttachView = true
+            this.isPerformNextScheduleOnAttachView = true
             return
         }
         performForNextSchedule()
     }
 
     private fun performForNextSchedule(){
-        if (scheduleVideos.size == 0) return
+        if (scheduleVideos.size == 0) {
+            isPerformNextScheduleOnAttachView = false
+            return
+        }
 
         val scheduleCurrentID = PreferenceHelper.getInstance()?.getInt(Constant.SCHEDULE_CURRENT_ID, -1)?:-1
         val scheduleCurrentTimeStart = PreferenceHelper.getInstance()?.getString(Constant.SCHEDULE_CURRENT_TIME_START, "").orEmpty()
@@ -393,6 +405,8 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
                 handlerScheduleTime.setupScheduleForNowVideo(scheduleVideos)
             }
         }
+
+        isPerformingNextScheduleVideo = false
     }
 
     override fun isUpdatingNewSchedule(): Boolean = isUpdatingNewSchedule

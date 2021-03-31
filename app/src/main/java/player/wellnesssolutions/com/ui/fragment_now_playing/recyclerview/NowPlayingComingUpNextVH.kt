@@ -13,10 +13,8 @@ import player.wellnesssolutions.com.network.models.search_result.MMTinyCategory
 import player.wellnesssolutions.com.ui.fragment_now_playing.helper.IComingUpNextClickListener
 import player.wellnesssolutions.com.ui.fragment_now_playing.helper.NowPlayingVHDisplayHelper
 import player.wellnesssolutions.com.ui.fragment_now_playing.helper.NowPlayingVideoInfoDisplayHelper
-import java.lang.ref.WeakReference
 
-class NowPlayingComingUpNextVH(view: View, presenter: IComingUpNextClickListener?, isPresentation: Boolean = false) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
-    private var mWeakPresenter: WeakReference<IComingUpNextClickListener?> = WeakReference(presenter)
+class NowPlayingComingUpNextVH(view: View, private var presenter: IComingUpNextClickListener?, isPresentation: Boolean = false) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
 
     //private var mDownloadButtonManager = DownloadButtonManager(itemView.btnDownload)
     private var mExtraCollectionViews: ArrayList<TextView>? = null
@@ -30,7 +28,7 @@ class NowPlayingComingUpNextVH(view: View, presenter: IComingUpNextClickListener
     }
 
     private fun onClickedItemView() {
-        mWeakPresenter.get()?.also { presenter ->
+        presenter?.also { presenter ->
             presenter.onClickedComingUpNextVideo(mPosition)
         }
     }
@@ -57,7 +55,7 @@ class NowPlayingComingUpNextVH(view: View, presenter: IComingUpNextClickListener
 //    }
 
     private fun displayTimeStart(playTime: String) {
-        if (mWeakPresenter.get()?.getPlayMode() == PlayMode.SCHEDULE)
+        if (presenter?.getPlayMode() == PlayMode.SCHEDULE)
             NowPlayingVHDisplayHelper.displayTimeStart(itemView.tvTimeStart, playTime)
         else
             itemView.tvTimeStart?.visibility = View.GONE
@@ -86,7 +84,7 @@ class NowPlayingComingUpNextVH(view: View, presenter: IComingUpNextClickListener
 
     fun release() {
         //mDownloadButtonManager.release()
-        mWeakPresenter.clear()
+        presenter = null
         mVideo = null
         mExtraCollectionViews?.clear()
     }

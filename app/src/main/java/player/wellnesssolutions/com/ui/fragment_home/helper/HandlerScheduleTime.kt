@@ -12,7 +12,6 @@ import player.wellnesssolutions.com.services.AlarmManagerSchedule
 import player.wellnesssolutions.com.ui.fragment_now_playing.helper.HandlerTimeScheduleHelper
 import player.wellnesssolutions.com.ui.fragment_now_playing.helper.ICallbackNowScheduleVideo
 import player.wellnesssolutions.com.ui.fragment_now_playing.helper.STATE_TIME_PLAY_SCHEDULE
-import java.lang.ref.WeakReference
 
 class HandlerScheduleTime(private var context: Context?, private var listener: IListenerHandleScheduleTime?) : IRequestTimeNetworkListener {
     private var mTimeDiffs = -1L
@@ -24,7 +23,7 @@ class HandlerScheduleTime(private var context: Context?, private var listener: I
     }
 
     private fun asyncTimeFromNetwork() {
-        RequestTimeServer(this).execute()
+//        RequestTimeServer(this).execute()
     }
 
     override fun onRecivedTime(timeDiffs: Long) {
@@ -110,7 +109,7 @@ class HandlerScheduleTime(private var context: Context?, private var listener: I
                         Log.d("LOG", this.javaClass.simpleName + " handleNextScheduleVideo() | TIME_PLAY | timePlay: $timePlay | " +
                                 "video name: ${videoHandle.videoName} | videos number: ${videos.size}")
                         when{
-                            timePlay < Constant.TIME_CHANGE_SCREEN -> {
+                            timePlay <= Constant.TIME_CHANGE_SCREEN -> {
                                 Log.d("LOG", this.javaClass.simpleName + " handleNextScheduleVideo() | TIME_WAIT | timePlay: $timePlay | " +
                                         "video name: ${videoHandle.videoName} | videos number: ${videos.size}")
                                 setupAlarmTaskForCaseWaitSchedule(index, timePlay, callback)

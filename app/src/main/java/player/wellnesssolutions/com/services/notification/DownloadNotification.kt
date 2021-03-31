@@ -14,7 +14,6 @@ import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.network.R
 import player.wellnesssolutions.com.services.download.DownloadTask
-import java.lang.ref.WeakReference
 
 
 class DownloadNotification(private var context: Context?) : DownloadTask.Callback {

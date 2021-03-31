@@ -5,6 +5,9 @@ import android.os.CountDownTimer
 import android.util.Log
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.common.play_video.ClosedCaptionController
 import player.wellnesssolutions.com.base.common.play_video.IPlayVideoContract
@@ -26,6 +29,8 @@ import player.wellnesssolutions.com.ui.fragment_home.helper.HandlerScheduleTime
 import player.wellnesssolutions.com.ui.fragment_now_playing.helper.HandlerTimeScheduleHelper
 import player.wellnesssolutions.com.ui.fragment_search_brands.module.ILoadBrandHandler
 import player.wellnesssolutions.com.ui.fragment_search_brands.module.LoadBrandsHandler
+import java.lang.RuntimeException
+import java.util.concurrent.TimeUnit
 
 class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
         INowPlayingConstruct.Presenter, IPlayVideoContract.Manager.Callback, Player.EventListener {
@@ -50,7 +55,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
     private var mLoadBrandsHandler: ILoadBrandHandler? = null
 
     // flag check if rendered UI or not yet
-    private var mIsRenderedData = false
+    private var isRenderedData = false
 
     private var isOnCountDown = false
     private var isStopPlayNext = false
@@ -130,7 +135,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
         Log.d("LOG", this.javaClass.simpleName + " checkPlayMode() | mPlayedMode: $playedMode")
         when (playedMode) {
             PlayMode.ON_DEMAND -> processPlayerBaseOnState()
-            else -> scanScheduleVideos()
+            PlayMode.SCHEDULE -> scanScheduleVideos()
         }
     }
 
@@ -182,10 +187,19 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
 
     override fun setVideos(videos: ArrayList<MMVideo>, playMode: PlayMode) {
         Log.d("LOG", this.javaClass.simpleName + " setVideos() | videos number: ${videos.size}")
+        this.isOnCountDown = false
+        try{
+            this.mCountDownTimerPlayVideo?.cancel()
+        }catch (e: RuntimeException){
+            e.printStackTrace()
+            Log.e("CountDownTimer", " NowPlayingPresenter - " + e.message)
+        }
+        this.mCountDownTimerPlayVideo = null
         this.videos = videos
         this.playedMode  = playMode
         mPlayerState = PlayerState.NOTHING
         isStopPlayNext = false
+        isRenderedData = false
         mPlayerManager.setVideos(this.videos)
     }
 
@@ -261,17 +275,35 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
                 }
 
         initCountDownTimer()
-        mCountDownTimerPlayVideo?.start()
-        mPlayerState = PlayerState.COUNTDOWN
+        try{
+            mCountDownTimerPlayVideo?.start()
+            mPlayerState = PlayerState.COUNTDOWN
+        }catch (e: RuntimeException){
+            e.printStackTrace()
+            Log.e("CountDownTimer", this.javaClass.simpleName + " runCountDownTimer - error: ${e.message}")
+            Observable.timer(200, TimeUnit.MILLISECONDS)
+                    .subscribeOn(Schedulers.single())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe {
+                        try{
+                            mCountDownTimerPlayVideo?.start()
+                            mPlayerState = PlayerState.COUNTDOWN
+                        }catch (e:RuntimeException){
+                            e.printStackTrace()
+                            Log.e("CountDownTimer", this.javaClass.simpleName + " runCountDownTimer again - error: ${e.message}")
+                            mView?.showMessage(R.string.can_not_show_count_down, R.color.yellow)
+                        }
+                    }
+        }
     }
 
     private fun renderVideosData() {
-        if (mIsRenderedData) return
+//        if (mIsRenderedData) return
 
         videos.also { videos ->
             if (videos.size == 0) return@also
             renderVideosInfo(videos)
-            mIsRenderedData = true
+            isRenderedData = true
         }
     }
 
@@ -356,7 +388,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
         mInitPlayedPosition = 0L
         if (videos.size > 0) {
             mPlayerState = PlayerState.NOTHING
-            mIsRenderedData = false
+            isRenderedData = false
         }
         if(!isStopPlayNext){
             checkPlayMode()
@@ -422,7 +454,6 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
 
     private fun scanScheduleVideos() {
         Log.d("LOG", this.javaClass.simpleName + " scanScheduleVideos() | videos number: ${videos.size}")
-        val videos: ArrayList<MMVideo> = videos
         if (videos.isNullOrEmpty()) {
             onDontHaveNowPlayingVideo(null)
             return
@@ -439,8 +470,6 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
         mPlayerManager.setSubtitleController(closedCaptionController)
     }
 
-    private var isRequestFromUser = false
-
     /**
      * implementing @interface IListenerHandleScheduleTime
      */
@@ -455,6 +484,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
                 PreferenceHelper.getInstance()?.putInt(Constant.SCHEDULE_CURRENT_ID, video.id?:-1)
                 PreferenceHelper.getInstance()?.putString(Constant.SCHEDULE_CURRENT_TIME_START, video.getStartTime())
                 Log.d("LOG", this.javaClass.simpleName + " onHaveNowPlayingVideo() | saved current video ")
+                mCountDownTimerPlayVideo?.cancel()
                 openNowPlayingVideo(playedPosition)
 
             }
@@ -475,6 +505,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
                 // not for presentation screen
                 playedMode == PlayMode.SCHEDULE && playedPosition >= Constant.TIME_CHANGE_SCREEN -> {
                     VideoDBUtil.createOrUpdateVideos(videos, Constant.MM_SCHEDULE)
+                    mCountDownTimerPlayVideo?.cancel()
                     mView?.backToHomeScreenWithNotLoadSchedule()
                 }
 
@@ -564,7 +595,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
                         true -> PlayerState.INITIALIZING
                         else -> PlayerState.NOTHING
                     }
-            mIsRenderedData = false
+            isRenderedData = false
         }
     }
 

@@ -13,14 +13,13 @@ import player.wellnesssolutions.com.ui.fragment_search_durations.SearchDurations
 import player.wellnesssolutions.com.ui.fragment_search_instructors.SearchInstructorsFragment
 import player.wellnesssolutions.com.ui.fragment_search_levels.SearchLevelsFragment
 import player.wellnesssolutions.com.ui.fragment_time_table.TimeTableFragment
-import java.lang.ref.WeakReference
 
 class NowPlayingFloatMenuHelper {
     // the handler for process all animations related to show and close menu
     private lateinit var mAnimHelper: MMMenuAnimationHelper
 
     // weak reference of "Close Menu" button
-    private lateinit var mWeakCloseButton: WeakReference<ImageView>
+    private var buttonClose: ImageView? = null
 
     // flag check if menu is showing or not
     private var mIsShowFloatMenu = false
@@ -47,7 +46,7 @@ class NowPlayingFloatMenuHelper {
             onClickedButtonMenuFloat(showButton, closeButton, floatMenu, menuFrame)
         }
 
-        mWeakCloseButton = WeakReference(closeButton)
+        buttonClose = closeButton
 
         closeButton.setOnClickListener {
             hideFloatMenu(showButton, closeButton, floatMenu, menuFrame)
@@ -125,14 +124,15 @@ class NowPlayingFloatMenuHelper {
         }
     }
 
-    fun isFloatMenuIsOpening(): Boolean = mIsShowFloatMenu && mWeakCloseButton.get()?.visibility == View.VISIBLE
+    fun isFloatMenuIsOpening(): Boolean = mIsShowFloatMenu && buttonClose?.visibility == View.VISIBLE
 
     fun closeFloatMenu() {
         if (isFloatMenuIsOpening())
-            mWeakCloseButton.get()?.performClick()
+            buttonClose?.performClick()
     }
 
     fun onRelease() {
+        buttonClose = null
         mAnimHelper.release()
     }
 }

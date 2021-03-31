@@ -7,11 +7,9 @@ import player.wellnesssolutions.com.base.utils.search_util.BaseSearchVH
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.network.models.screen_search.MMLevel
 import player.wellnesssolutions.com.ui.fragment_search_levels.ISearchLevelsContract
-import java.lang.ref.WeakReference
 
-class SearchLevelVH(view: View, listener: ISearchLevelsContract.Presenter?, itemWidth: Int, itemHeight: Int, itemCountInRow: Int) :
+class SearchLevelVH(view: View, private var listener: ISearchLevelsContract.Presenter?, itemWidth: Int, itemHeight: Int, itemCountInRow: Int) :
         BaseSearchVH<MMLevel>(view, itemWidth, itemHeight, itemCountInRow), View.OnClickListener {
-    private var mWeakPresenter = WeakReference(listener)
 
     init {
         ViewUtil.setupOnClicked(view.viewWrapper, this)
@@ -22,7 +20,7 @@ class SearchLevelVH(view: View, listener: ISearchLevelsContract.Presenter?, item
         data?.also { data ->
             view.isEnabled = false
             itemView.viewWrapper?.changeBgColorOnClick()
-            mWeakPresenter.get()?.onChooseItem(data)
+            listener?.onChooseItem(data)
             view.isEnabled = true
         }
     }
@@ -32,5 +30,10 @@ class SearchLevelVH(view: View, listener: ISearchLevelsContract.Presenter?, item
 
         itemView.tvLevel.text = data.level
         itemView.tvName.text = data.name ?: Constant.SHARP
+    }
+
+    override fun release() {
+        super.release()
+        listener = null
     }
 }

@@ -8,11 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.com.ui.fragment_search_result_videos.page_result.ISearchResultPageContract
-import java.lang.ref.WeakReference
 
-class VideosSearchResultPageAdapter(val list: ArrayList<MMVideo>, listener: ISearchResultPageContract.Presenter?) :
+class VideosSearchResultPageAdapter(val list: ArrayList<MMVideo>, private var listener: ISearchResultPageContract.Presenter?) :
         RecyclerView.Adapter<VideosSearchResultPageVH>() {
-    private var weakPresenter: WeakReference<ISearchResultPageContract.Presenter?> = WeakReference(listener)
     private var mHolders: ArrayList<VideosSearchResultPageVH>? = ArrayList()
     private var mItemWidth = 0
     private var mItemHeight = 0
@@ -25,7 +23,7 @@ class VideosSearchResultPageAdapter(val list: ArrayList<MMVideo>, listener: ISea
     override fun onCreateViewHolder(parent: ViewGroup, itemType: Int): VideosSearchResultPageVH {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.vh_search_result, parent, false)
         setupLayoutForVHItem(view)
-        val vh = VideosSearchResultPageVH(view, mItemWidth, mItemHeight, weakPresenter.get())
+        val vh = VideosSearchResultPageVH(view, mItemWidth, mItemHeight, listener)
         mHolders?.add(vh)
         return vh
     }
@@ -45,7 +43,7 @@ class VideosSearchResultPageAdapter(val list: ArrayList<MMVideo>, listener: ISea
     }
 
     fun release() {
-        weakPresenter.clear()
+        listener = null
         mHolders?.also { holders ->
             while (holders.size > 0) {
                 holders[0].release()

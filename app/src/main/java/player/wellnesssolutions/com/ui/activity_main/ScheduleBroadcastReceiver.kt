@@ -10,33 +10,37 @@ import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.ui.fragment_control.ControlFragment
 import player.wellnesssolutions.com.ui.fragment_home.HomeFragment
 import player.wellnesssolutions.com.ui.fragment_now_playing.NowPlayingFragment
-import java.lang.ref.WeakReference
 
 class ScheduleBroadcastReceiver : BroadcastReceiver() {
     companion object {
 
         const val ACTION_SCHEDULE = "player.wellnesssolution.com.au.schedule"
         const val SCHEDULE_PLAY_VIDEO = "schedule_play_video"
-        private var mInstance: ScheduleBroadcastReceiver? = null
+        private var instance: ScheduleBroadcastReceiver? = null
 
         fun getInstance(): ScheduleBroadcastReceiver {
-            if (mInstance == null) {
-                mInstance = ScheduleBroadcastReceiver()
+            if (instance == null) {
+                instance = ScheduleBroadcastReceiver()
             }
-            return mInstance!!
+            return instance!!
         }
     }
 
-    private val scheduleBroadcastReceiver = WeakReference<ScheduleBroadcastReceiver>(this)
+    private val scheduleBroadcastReceiver = this
     private val handler = MyHandle(scheduleBroadcastReceiver)
 
-    class MyHandle(private val scheduleBroadcastReceiver: WeakReference<ScheduleBroadcastReceiver>) : Handler() {
+    class MyHandle(private var scheduleBroadcastReceiver: ScheduleBroadcastReceiver?) : Handler() {
         override fun handleMessage(msg: Message?) {
             when (msg?.what) {
                 1 -> {
-                    scheduleBroadcastReceiver.get()?.onUpdateSchedule()
+                    scheduleBroadcastReceiver?.onUpdateSchedule()
                 }
             }
+        }
+
+        fun release(){
+            this.removeMessages(1)
+            scheduleBroadcastReceiver = null
         }
     }
 
@@ -54,10 +58,10 @@ class ScheduleBroadcastReceiver : BroadcastReceiver() {
 
     fun release() {
         mScheduleListeners.clear()
+        handler.release()
     }
 
     fun isRegistered(listener: ScheduleListener): Boolean = mScheduleListeners.contains(listener)
-
 
     override fun onReceive(context: Context?, intent: Intent?) {
         if (context == null || intent == null) return

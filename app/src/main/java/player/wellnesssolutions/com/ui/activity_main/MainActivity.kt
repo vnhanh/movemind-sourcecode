@@ -622,6 +622,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
                 unregisterReceiver(CastingBroadcastReceiver.getInstance())
                 CastingBroadcastReceiver.getInstance().removeListener(this)
             }
+            ScheduleBroadcastReceiver.getInstance().release()
             unregisterReceiver(ScheduleBroadcastReceiver.getInstance())
             unregisterReceiver(mBroadcastReceiver)
         } catch (e: Exception) {
@@ -841,8 +842,8 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         }
     }
 
-    fun isPlayingNowPlaying(): Boolean = mSessionManager.isPlayingNowPlaying()
-    fun isPlayingSearchVideos(): Boolean = mSessionManager.isPlayingSearchVideos()
+    fun isPlayingClass(): Boolean = mSessionManager.isPlayingNowPlaying()
+    fun isPlayingSearchedVideos(): Boolean = mSessionManager.isPlayingSearchVideos()
     fun isPlayingPresentation(): Boolean = mSessionManager.isPlayingPresentaion()
     fun getPresentationPlayMode(): PlayMode = mSessionManager.getPlayingMode()
 

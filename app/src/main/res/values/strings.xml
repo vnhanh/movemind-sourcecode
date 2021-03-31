@@ -257,7 +257,7 @@
     <string name="request_user_config_data_failed">Request user config data failed !</string>
     <string name="button_close">The close button</string>
     <string name="image_avatar">The presenter avatar</string>
-    <string name="do_you_want_stop_video_and_play_searched_videos">Do you want to stop this video and play the searched videos ?</string>
+    <string name="do_you_want_stop_video_and_play_new_searched_videos">Do you want to stop this video and play the new searched videos ?</string>
     <string name="presentating_video">Sharing on TV</string>
     <string name="please_select_videos_to_play">Please tap the video name to select and play the videos !</string>
     <string name="please_select_searched_option">Please select one or more searched options !</string>
@@ -289,5 +289,6 @@
     <string name="cant_download_because_not_enough_space">Can not download video because your device is not enough space</string>
     <string name="app_is_updating_new_schedule_can_not_back_to_get_started_screen">Can not back to Get Started screen because updating new schedule</string>
     <string name="app_is_updating_new_schedule_can_not_move_to_new_screen">Can not move to new screen because updating new schedule</string>
+    <string name="can_not_show_count_down">Can not show count down</string>
 
 </resources>

@@ -141,6 +141,7 @@ class SplashFragment : BaseFragment(), ISplashContract.View, View.OnClickListene
                         }
 
                     }).also {
+                it.setCancelable(false)
                 it.show()
             }
         }

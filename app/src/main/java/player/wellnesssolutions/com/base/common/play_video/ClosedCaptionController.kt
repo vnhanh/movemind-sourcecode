@@ -15,18 +15,15 @@ import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.network.models.now_playing.MMVideoLanguage
-import java.lang.ref.WeakReference
 
-class ClosedCaptionController(playerControllerView: ConstraintLayout, subtilteView: SubtitleView, showMode: ShowMode = ShowMode.INTERNAL) {
-    private val mWeakPlayerControllerView = WeakReference(playerControllerView)
-    private val mWeakSubtitleView = WeakReference(subtilteView)
-    private val mWeakCCView = WeakReference(playerControllerView.exo_cc)
+class ClosedCaptionController(private var viewControllerPlayer: ConstraintLayout?, private var viewSubtitle: SubtitleView?, showMode: ShowMode = ShowMode.INTERNAL) {
+    private var viewCC = viewControllerPlayer?.exo_cc
     private val mShowMode: ShowMode = showMode
     private var mPlayerManager: IPlayVideoContract.Manager? = null
-    private var mWeakControllerSubtitleBoard: WeakReference<ConstraintLayout>? = null
-    private var mCheckViews: HashMap<String, WeakReference<ImageView>> = HashMap()
-    private var mLanguageTextViews: ArrayList<WeakReference<TextView>> = ArrayList()
-    private var mLanguageBgViews: ArrayList<WeakReference<View>> = ArrayList()
+    private var controllerSubtitleBoard: ConstraintLayout? = null
+    private var mapViewChecks: HashMap<String, ImageView?> = HashMap()
+    private var textViewLanguages: ArrayList<TextView?> = ArrayList()
+    private var bgviewLanguages: ArrayList<View?> = ArrayList()
     private var mMargin = 0
     private var mSubtitleBoardPadding = 0
     private var mVideoId: Int? = null
@@ -41,17 +38,19 @@ class ClosedCaptionController(playerControllerView: ConstraintLayout, subtilteVi
     private var mOptionIndex = 0
 
     init {
-        subtilteView.setBackgroundColor(Color.TRANSPARENT)
-        playerControllerView.exo_cc.setOnClickListener {
-            mWeakControllerSubtitleBoard?.get()?.also {
+        viewSubtitle?.setBackgroundColor(Color.TRANSPARENT)
+        viewControllerPlayer?.exo_cc?.setOnClickListener {
+            controllerSubtitleBoard?.also {
                 if (it.visibility == View.VISIBLE)
                     it.visibility = View.GONE
                 else
                     it.visibility = View.VISIBLE
             }
         }
-        if (mMargin == 0) mMargin = playerControllerView.resources.getDimensionPixelSize(R.dimen.margin)
-        if (mSubtitleBoardPadding == 0) mSubtitleBoardPadding = playerControllerView.resources.getDimensionPixelSize(R.dimen.marginx2)
+        if (mMargin == 0) mMargin = viewControllerPlayer?.resources?.getDimensionPixelSize(R.dimen.margin)
+                ?: 0
+        if (mSubtitleBoardPadding == 0) mSubtitleBoardPadding = viewControllerPlayer?.resources?.getDimensionPixelSize(R.dimen.marginx2)
+                ?: 0
     }
 
     fun createOrUpdateSubtitleBoardView(videoId: Int?, languages: ArrayList<MMVideoLanguage>?) {
@@ -63,8 +62,7 @@ class ClosedCaptionController(playerControllerView: ConstraintLayout, subtilteVi
         this.mVideoId = videoId
         if (videoId == null) return
 
-        val parentView = mWeakPlayerControllerView.get()
-                ?: return
+        val parentView = viewControllerPlayer ?: return
         clearLatestViews(parentView)
 
         if (languages == null) return
@@ -78,11 +76,11 @@ class ClosedCaptionController(playerControllerView: ConstraintLayout, subtilteVi
 
         subtitleBoard.visibility = View.GONE
 
-        mWeakControllerSubtitleBoard = WeakReference(subtitleBoard)
+        controllerSubtitleBoard = subtitleBoard
     }
 
     private fun updateSubtitleBoardView() {
-        mWeakPlayerControllerView.get()?.context?.also {
+        viewControllerPlayer?.context?.also {
             // show subtitle view if language option has been selected
             if (PreferenceHelper.getInstance(it).getString(ConstantPreference.LAST_LANGUAGE_KEY, NoneLanguageKey).equals(NoneLanguageKey)) {
                 hideSubtitleView()
@@ -147,11 +145,11 @@ class ClosedCaptionController(playerControllerView: ConstraintLayout, subtilteVi
 
         if (!mIsShownCheckViewOnInit) {
             PreferenceHelper.getInstance(subtitleBoard.context).putString(ConstantPreference.LAST_LANGUAGE_KEY, NoneLanguageKey)
-            mCheckViews.get(NoneLanguageKey)?.get()?.visibility = View.VISIBLE
+            mapViewChecks.get(NoneLanguageKey)?.visibility = View.VISIBLE
 
             // add background view if mode == TV
-            if (mShowMode == ShowMode.TV && mLanguageBgViews.size > 0) {
-                mLanguageBgViews[0].get()?.also {
+            if (mShowMode == ShowMode.TV && bgviewLanguages.size > 0) {
+                bgviewLanguages[0]?.also {
                     it.setBackgroundResource(R.drawable.bg_closed_caption_language_selected)
                 }
             }
@@ -223,7 +221,7 @@ class ClosedCaptionController(playerControllerView: ConstraintLayout, subtilteVi
 
             // hide the frame view that contains list language options
             if (mShowMode == ShowMode.INTERNAL)
-                mWeakControllerSubtitleBoard?.get()?.visibility = View.GONE
+                controllerSubtitleBoard?.visibility = View.GONE
 
             if (value is MMVideoLanguage) {
                 val lastLanguageKey: String = PreferenceHelper.getInstance(it.context).getString(ConstantPreference.LAST_LANGUAGE_KEY, NoneLanguageKey)
@@ -268,9 +266,9 @@ class ClosedCaptionController(playerControllerView: ConstraintLayout, subtilteVi
         }
 
         if (videoLanguage.id != null)
-            mCheckViews[videoLanguage.id.toString()] = WeakReference(leftView)
+            mapViewChecks[videoLanguage.id.toString()] = leftView
 
-        mLanguageTextViews.add(WeakReference(textView))
+        textViewLanguages.add(textView)
 
         return textView
     }
@@ -288,7 +286,7 @@ class ClosedCaptionController(playerControllerView: ConstraintLayout, subtilteVi
         }
 
         subtitleBoard.addView(bgView)
-        mLanguageBgViews.add(WeakReference(bgView))
+        bgviewLanguages.add(bgView)
 
         val set = ConstraintSet()
         set.clone(subtitleBoard)
@@ -300,20 +298,20 @@ class ClosedCaptionController(playerControllerView: ConstraintLayout, subtilteVi
     }
 
     private fun showSubtitleView() {
-        mWeakCCView.get()?.also {
+        viewCC?.also {
             it.setImageResource(R.drawable.ic_closed_caption_white_28dp)
         }
-        mWeakSubtitleView.get()?.also {
+        viewSubtitle?.also {
             if (it.visibility != View.VISIBLE) it.visibility = View.VISIBLE
         }
     }
 
     private fun hideSubtitleView() {
 
-        mWeakCCView.get()?.also {
+        viewCC?.also {
             it.setImageResource(R.drawable.ic_closed_caption_gray_28dp)
         }
-        mWeakSubtitleView.get()?.also {
+        viewSubtitle?.also {
             if (it.visibility != View.GONE) it.visibility = View.GONE
         }
     }
@@ -321,8 +319,8 @@ class ClosedCaptionController(playerControllerView: ConstraintLayout, subtilteVi
     private fun displayCheckView(context: Context, isDisplay: Boolean) {
         val lastLanguageKey = PreferenceHelper.getInstance(context).getString(ConstantPreference.LAST_LANGUAGE_KEY, NoneLanguageKey)
         when (isDisplay) {
-            true -> mCheckViews[lastLanguageKey]?.get()?.visibility = View.VISIBLE
-            false -> mCheckViews[lastLanguageKey]?.get()?.visibility = View.INVISIBLE
+            true -> mapViewChecks[lastLanguageKey]?.visibility = View.VISIBLE
+            false -> mapViewChecks[lastLanguageKey]?.visibility = View.INVISIBLE
         }
 
         if (!isDisplay) return // if hide icon, return
@@ -330,13 +328,13 @@ class ClosedCaptionController(playerControllerView: ConstraintLayout, subtilteVi
         // if show icon that not NONE, show the subtitle view and verse
         when (lastLanguageKey == NoneLanguageKey) {
             true -> {
-                mWeakCCView.get()?.also {
+                viewCC?.also {
                     it.setImageResource(R.drawable.ic_closed_caption_gray_28dp)
                 }
             }
 
             false -> {
-                mWeakCCView.get()?.also {
+                viewCC?.also {
                     it.setImageResource(R.drawable.ic_closed_caption_white_28dp)
                 }
             }
@@ -344,14 +342,14 @@ class ClosedCaptionController(playerControllerView: ConstraintLayout, subtilteVi
     }
 
     private fun clearLatestViews(parentView: ConstraintLayout) {
-        mCheckViews.clear()
-        mLanguageTextViews.clear()
-        mLanguageBgViews.clear()
+        mapViewChecks.clear()
+        textViewLanguages.clear()
+        bgviewLanguages.clear()
 
-        mWeakControllerSubtitleBoard?.get()?.also {
+        controllerSubtitleBoard?.also {
             parentView.removeView(it)
         }
-        mWeakControllerSubtitleBoard?.clear()
+        controllerSubtitleBoard = null
     }
 
     fun setPlayerManager(playerManager: IPlayVideoContract.Manager) {
@@ -359,13 +357,19 @@ class ClosedCaptionController(playerControllerView: ConstraintLayout, subtilteVi
     }
 
     fun release() {
-        mWeakPlayerControllerView.get()?.also { clearLatestViews(it) }
-        mWeakPlayerControllerView.clear()
+        viewControllerPlayer?.also { clearLatestViews(it) }
+        viewControllerPlayer = null
+        viewCC = null
+        viewSubtitle = null
+        controllerSubtitleBoard = null
+        mapViewChecks.clear()
+        textViewLanguages.clear()
+        bgviewLanguages.clear()
         mPlayerManager = null
     }
 
     fun showClosedCaptionView() {
-        mWeakControllerSubtitleBoard?.get()?.also {
+        controllerSubtitleBoard?.also {
             if (it.visibility != View.VISIBLE) {
                 it.visibility = View.VISIBLE
             }
@@ -373,23 +377,23 @@ class ClosedCaptionController(playerControllerView: ConstraintLayout, subtilteVi
     }
 
     fun hideClosedCaptionView() {
-        mWeakControllerSubtitleBoard?.get()?.also {
+        controllerSubtitleBoard?.also {
             if (it.visibility != View.GONE) {
                 it.visibility = View.GONE
             }
         }
     }
 
-    fun isShowClosedCaptionView(): Boolean = mWeakControllerSubtitleBoard?.get()?.visibility == View.VISIBLE
+    fun isShowClosedCaptionView(): Boolean = controllerSubtitleBoard?.visibility == View.VISIBLE
 
     fun slideNextLanguageCCOption() {
         if (mShowMode != ShowMode.TV) return
         showClosedCaptionView()
 
-        if (mOptionIndex < 0 || mOptionIndex >= mLanguageBgViews.size) mOptionIndex = 0
+        if (mOptionIndex < 0 || mOptionIndex >= bgviewLanguages.size) mOptionIndex = 0
 
         // remove select of old language
-        mLanguageBgViews[mOptionIndex].get()?.also {
+        bgviewLanguages[mOptionIndex]?.also {
             it.setBackgroundResource(0)
         }
 
@@ -398,20 +402,20 @@ class ClosedCaptionController(playerControllerView: ConstraintLayout, subtilteVi
             false -> showClosedCaptionView()
         }
 
-        if (mOptionIndex < 0 || mOptionIndex >= mLanguageBgViews.size) mOptionIndex = 0
+        if (mOptionIndex < 0 || mOptionIndex >= bgviewLanguages.size) mOptionIndex = 0
 
-        mLanguageBgViews[mOptionIndex].get()?.also {
+        bgviewLanguages[mOptionIndex]?.also {
             it.setBackgroundResource(R.drawable.bg_closed_caption_language_selected)
         }
     }
 
     fun selectCurrentLanguageCCOption() {
-        if (mOptionIndex < 0 || mOptionIndex >= mLanguageTextViews.size) mOptionIndex = 0
-        mLanguageTextViews[mOptionIndex].get()?.performClick()
+        if (mOptionIndex < 0 || mOptionIndex >= textViewLanguages.size) mOptionIndex = 0
+        textViewLanguages[mOptionIndex]?.performClick()
     }
 
     fun resetData() {
-        mWeakCCView.get()?.context?.also { context ->
+        viewCC?.context?.also { context ->
             val lastLanguageKey: String = PreferenceHelper.getInstance(context).getString(ConstantPreference.LAST_LANGUAGE_KEY, NoneLanguageKey)
             if (lastLanguageKey == NoneLanguageKey) mLastLanguageKey = NoneLanguageKey
         }

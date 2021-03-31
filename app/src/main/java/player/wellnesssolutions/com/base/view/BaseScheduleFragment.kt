@@ -34,15 +34,15 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
         Log.d("LOG", this.javaClass.simpleName + " onCreateView() | isNewScreen | arguments is: ${arguments ?: "null"}")
         arguments?.also { bundle ->
             val sourceLoadSchedule = bundle.getString(Constant.BUNDLE_SOURCE_SCHEDULE).orEmpty()
-            val isSetupNextScheduleVideo = bundle.getBoolean(Constant.BUNDLE_NOT_SETUP_NEXT_SCHEDULE, false)
-            Log.d("LOG", this.javaClass.simpleName + " onCreateView() | sourceLoadSchedule: ${sourceLoadSchedule} | isSetupNextScheduleVideo: $isSetupNextScheduleVideo")
+            val isSetupNowSchedule = bundle.getBoolean(Constant.BUNDLE_NOT_SETUP_NOW_SCHEDULE, false)
+            Log.d("LOG", this.javaClass.simpleName + " onCreateView() | sourceLoadSchedule: ${sourceLoadSchedule} | isSetupNextScheduleVideo: $isSetupNowSchedule")
             when {
                 sourceLoadSchedule == SOURCE_LOAD_SCHEDULE.REMOTE.toString() -> {
                     Log.d("LOG", this.javaClass.simpleName + " onCreateView() | isNewScreen | load remote schedule")
                     schedulePresenter?.setStateLoadScheduleOnStart()
                 }
 
-                isSetupNextScheduleVideo -> {
+                isSetupNowSchedule -> {
                     val videos: ArrayList<MMVideo> = VideoDBUtil.getScheduleVideos(false)
                     Log.d("LOG", this.javaClass.simpleName + " onCreateView() | not setup next schedule | videos number: ${videos.size}")
                     schedulePresenter?.setScheduleCurrent(videos)
@@ -118,6 +118,7 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
     override fun onReceivePlayVideoScheduleFromUI() {
         Log.d("LOG", this.javaClass.simpleName + " onReceivePlayVideoScheduleFromUI()")
 //        AlarmManagerSchedule.cancelAlarmScheduleTime()
+//                showMessage("Search Screen found schedule video", R.color.white)
         schedulePresenter?.onTimePlaySchedule()
     }
 

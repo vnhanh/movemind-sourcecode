@@ -131,7 +131,7 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
      * implementing @interface Presenter
      */
     // process in case no class videos (no schedule) after loading schedule
-    override fun onNoClassVideosForNow(message: String, @ColorRes msgColor: Int, isClickedFromBtnBottom: Boolean) {
+    override fun onNoClassVideosForNow(scheduleVideos: ArrayList<MMVideo>, message: String, @ColorRes msgColor: Int, isClickedFromBtnBottom: Boolean) {
         btnLogoBottom?.isEnabled = true
 //        if (message.isNotEmpty()) {
 //            MessageUtils.showSnackBar(btnLogoBottom, message, R.color.yellow)
@@ -141,36 +141,43 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
 //            MessageUtils.showSnackBar(btnLogoBottom, msg, R.color.yellow)
 //        }
 
-        activity?.also { act ->
-            if (act is MainActivity && act.isPresentationAvailable() && ParameterUtils.isClearVideoOnPresentation) {
-                act.clearPresentationVideos()
-            } else {
-                ParameterUtils.isClearVideoOnPresentation = true
-            }
-        }
+        val isCasted = playVideoPresentationable(scheduleVideos)
 
-        // old flow
-//        childFragmentManager.also { fm ->
-//            ChildFragmentManager.createOrInputNewDataForFragment(fm, R.id.frameLayoutControl, NoClassFragment.TAG, null)
-//            mCurrentChildScreenTag = NoClassFragment.TAG
-//        }
-
-        activity?.let {
-            if (it is MainActivity) {
-                it.getApiConfigData()
-            }
-        }
-        activity?.supportFragmentManager?.also { fm ->
-            val tag: String = HomeFragment.TAG
-            var fragment: Fragment? = fm.findFragmentByTag(tag) // find the earlier fragment if existed
-            fragment =
-                    when (fragment != null && fragment is HomeFragment) {
-                        true -> HomeFragment.updateAlreadyInstanceWithNoSchedule(fragment)                    // use old instance
-                        false -> HomeFragment.getInstanceNotLoadSchedule() // create new instance if it has been not created yet
+        when{
+            !isCasted -> {
+                activity?.also { act ->
+                    if (act is MainActivity && act.isPresentationAvailable() && ParameterUtils.isClearVideoOnPresentation) {
+                        act.clearPresentationVideos()
+                    } else {
+                        ParameterUtils.isClearVideoOnPresentation = true
                     }
-            FragmentUtil.replaceFragment(fm = fm,
-                    newFragment = fragment, newFragmentTag = tag,
-                    frameId = R.id.frameLayoutHome, isAddToBackStack = false, isRemoveOlds = true)
+                }
+
+                // old flow
+        //        childFragmentManager.also { fm ->
+        //            ChildFragmentManager.createOrInputNewDataForFragment(fm, R.id.frameLayoutControl, NoClassFragment.TAG, null)
+        //            mCurrentChildScreenTag = NoClassFragment.TAG
+        //        }
+
+                activity?.let {
+                    if (it is MainActivity) {
+                        it.getApiConfigData()
+                    }
+                }
+                activity?.supportFragmentManager?.also { fm ->
+                    val tag: String = HomeFragment.TAG
+                    var fragment: Fragment? = fm.findFragmentByTag(tag) // find the earlier fragment if existed
+                    fragment =
+                            when (fragment != null && fragment is HomeFragment) {
+                                true -> HomeFragment.updateAlreadyInstanceWithNoSchedule(fragment)                    // use old instance
+                                false -> HomeFragment.getInstanceNotLoadSchedule() // create new instance if it has been not created yet
+                            }
+                    FragmentUtil.replaceFragment(fm = fm,
+                            newFragment = fragment, newFragmentTag = tag,
+                            frameId = R.id.frameLayoutHome, isAddToBackStack = false, isRemoveOlds = true)
+                }
+
+            }
         }
 
         btnLogoBottom?.isEnabled = true
@@ -178,6 +185,7 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
 
     override fun onHaveClassVideos(scheduleVideos: ArrayList<MMVideo>, isClickedFromBtnBottom: Boolean) {
         Log.d("LOG", this.javaClass.simpleName + " onHaveClassVideos() | videos number: ${scheduleVideos.size}")
+
         activity?.also { activity ->
             if (activity is MainActivity && activity.isPresentationAvailable()) {
                 MessageUtils.showSnackBar(snackView = btnLogoBottom, message = getString(R.string.now_playing_class),
@@ -417,7 +425,7 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
 
         activity?.also { act ->
             if ((act as MainActivity).isPresentationAvailable()) {
-                val isPlayingSearchVideos: Boolean = act.isPlayingSearchVideos()
+                val isPlayingSearchVideos: Boolean = act.isPlayingSearchedVideos()
                 if (isPlayingSearchVideos) {
                     val message: String = getString(player.wellnesssolutions.com.R.string.confirm_stop_video_and_navigate_to_screen_get_started)
 

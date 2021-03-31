@@ -182,6 +182,7 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
         PreferenceHelper.getInstance()?.putBoolean(Constant.IS_CAST_DISCONNECT, true)
         Log.d("LOG", this.javaClass.simpleName + " onDestroy")
         mMonitorVideoAsyncTask?.stopTask()
+        mMonitorVideoAsyncTask?.release()
         unregisterUICastingBroadcast()
         mContext?.also { context ->
             val lastPosition: Long = mPresenter?.getCurrentPlayedPosition() ?: 0L
@@ -323,7 +324,7 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
         releasePresenters()
         mPresenter?.onDestroy()
 
-        mPresenter = NowPlayingPresenter(context = mContext!!, playMode = mode).also {
+        mPresenter = NowPlayingPresenter(context = mContext, playMode = mode).also {
             it.setPlayedPosition(lastPosition)
             it.setSubtitleController(ClosedCaptionController(videoPlayer.playerControllerView, videoPlayer.exo_subtitles, ShowMode.TV))
         }

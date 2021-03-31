@@ -11,11 +11,9 @@ import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.customize_views.MMOptionTextView.Companion.colorBand
 import player.wellnesssolutions.com.network.models.screen_search.MMBrand
 import player.wellnesssolutions.com.ui.fragment_search_brands.ISearchBrandsContract
-import java.lang.ref.WeakReference
 
 
-class SearchBrandVH(view: View, var imageSize: Int, presenter: ISearchBrandsContract.Presenter?) : BaseVH<MMBrand>(view) {
-    private var mWeakPresenter = WeakReference(presenter)
+class SearchBrandVH(view: View, var imageSize: Int, private var presenter: ISearchBrandsContract.Presenter?) : BaseVH<MMBrand>(view) {
     private var mImageSize = 0
 
     init {
@@ -38,7 +36,7 @@ class SearchBrandVH(view: View, var imageSize: Int, presenter: ISearchBrandsCont
             data?.also { data ->
                 it.isEnabled = false
                 itemView.imgBrand?.changeBgColorOnClick()
-                mWeakPresenter.get()?.onChooseItem(data)
+                presenter?.onChooseItem(data)
                 it.isEnabled = true
                 colorBand = data.id!!
             }
@@ -97,6 +95,6 @@ class SearchBrandVH(view: View, var imageSize: Int, presenter: ISearchBrandsCont
 
     override fun release() {
         super.release()
-        mWeakPresenter.clear()
+        presenter = null
     }
 }

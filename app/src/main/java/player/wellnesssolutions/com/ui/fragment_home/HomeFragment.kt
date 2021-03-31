@@ -237,10 +237,6 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
         loadNowPlayingScreen()
     }
 
-    override fun onHaveClassVideosWithTimeWaiting(videos: ArrayList<MMVideo>) {
-//        mHomePresenter?.setScheduleCurrent(videos)
-    }
-
     private fun onClickedButtonGetStarted() {
         //btnGetStarted?.isEnabled = false
         SPDBUtil.deleteAllFromTag(SearchResultFragment.getTagOfChosen())
@@ -250,21 +246,23 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
         loadControlScreen()
     }
 
-    override fun onNoClassVideosForNow(message: String, @ColorRes msgColor: Int, isClickedFromBtnBottom: Boolean) {
+    override fun onNoClassVideosForNow(scheduleVideos: ArrayList<MMVideo>, message: String, @ColorRes msgColor: Int, isClickedFromBtnBottom: Boolean) {
         if (btnGetStarted == null) return
         if (message == Constant.ERROR_CANT_CONNECT_SERVER) {
             val text = String.format("%s %s", getString(R.string.request_class_video_failed), message)
             MessageUtils.showSnackBar(btnGetStarted, text, msgColor)
+        }else if(scheduleVideos.size > 0){
+            playVideoPresentationable(scheduleVideos)
+            loadControlScreen()
         }
         //loadNoClassScreen()
     }
 
     override fun onHaveClassVideos(scheduleVideos: ArrayList<MMVideo>, isClickedFromBtnBottom: Boolean) {
-        activity?.also { act ->
-            if (act is MainActivity && act.isPresentationAvailable()) {
+        activity?.also { activity ->
+            if (activity is MainActivity && activity.isPresentationAvailable()) {
                 MessageUtils.showSnackBar(snackView = btnGetStarted, message = getString(R.string.now_playing_class), colorRes = R.color.white)
-                act.playVideo(PlayMode.SCHEDULE, scheduleVideos)
-
+                activity.playVideo(PlayMode.SCHEDULE, scheduleVideos)
                 loadControlScreen()
             } else {
                 loadNowPlayingScreen()

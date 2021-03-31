@@ -7,11 +7,9 @@ import player.wellnesssolutions.com.base.utils.search_util.BaseSearchVH
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.network.models.screen_search.MMDuration
 import player.wellnesssolutions.com.ui.fragment_search_durations.ISearchDurationContract
-import java.lang.ref.WeakReference
 
-class SearchDurationVH(view: View, listener: ISearchDurationContract.Presenter?, itemWidth: Int, itemHeight: Int, itemCountInRow: Int) :
+class SearchDurationVH(view: View, private var listener: ISearchDurationContract.Presenter?, itemWidth: Int, itemHeight: Int, itemCountInRow: Int) :
         BaseSearchVH<MMDuration>(view, itemWidth, itemHeight, itemCountInRow), View.OnClickListener {
-    private var weakPresenter = WeakReference(listener)
 
     init {
         ViewUtil.setupOnClicked(view.viewWrapper, this)
@@ -20,14 +18,14 @@ class SearchDurationVH(view: View, listener: ISearchDurationContract.Presenter?,
 
     override fun release() {
         super.release()
-        weakPresenter.clear()
+        listener = null
     }
 
     override fun onClick(view: View) {
         data?.also { data ->
             view.isEnabled = false
             itemView.viewWrapper?.changeBgColorOnClick()
-            weakPresenter.get()?.onChooseItem(data)
+            listener?.onChooseItem(data)
             view.isEnabled = true
         }
     }

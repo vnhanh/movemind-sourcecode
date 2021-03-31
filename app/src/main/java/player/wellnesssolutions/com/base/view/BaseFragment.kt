@@ -11,6 +11,8 @@ import androidx.fragment.app.Fragment
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.utils.FragmentUtil
 import player.wellnesssolutions.com.common.utils.DialogUtil
+import player.wellnesssolutions.com.network.datasource.videos.PlayMode
+import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.com.ui.activity_main.MainActivity
 
 abstract class BaseFragment : Fragment(), ILifeCycle.View {
@@ -78,6 +80,16 @@ abstract class BaseFragment : Fragment(), ILifeCycle.View {
                 act.navigateToHomeScreen()
             }
         }
+    }
+
+    protected fun playVideoPresentationable(scheduleVideos: ArrayList<MMVideo>) : Boolean{
+        activity?.also { activity ->
+            if (activity is MainActivity && activity.isPresentationAvailable() == true) {
+                activity.playVideo(PlayMode.SCHEDULE, scheduleVideos)
+                return true
+            }
+        }
+        return false
     }
 
     override fun getFragment(): Fragment = this

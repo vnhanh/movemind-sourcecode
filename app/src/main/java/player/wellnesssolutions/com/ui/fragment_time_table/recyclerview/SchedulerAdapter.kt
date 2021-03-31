@@ -5,9 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.network.models.response.SessionVideo
-import java.lang.ref.WeakReference
 
-class SchedulerAdapter(listener: OnClickItemListener) : RecyclerView.Adapter<SchedulerItemVH>() {
+class SchedulerAdapter(private var listener: OnClickItemListener?) : RecyclerView.Adapter<SchedulerItemVH>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SchedulerItemVH {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.viewholder_timetable, parent, false)
 
@@ -22,11 +21,7 @@ class SchedulerAdapter(listener: OnClickItemListener) : RecyclerView.Adapter<Sch
     }
 
     private var list = ArrayList<SessionVideo>()
-    private var weakListener: WeakReference<OnClickItemListener>? = null
 
-    init {
-        weakListener = WeakReference(listener)
-    }
 
     fun setList(_list: ArrayList<SessionVideo>) {
         list = _list
@@ -34,7 +29,7 @@ class SchedulerAdapter(listener: OnClickItemListener) : RecyclerView.Adapter<Sch
     }
 
     fun release() {
-        weakListener?.clear()
+        listener = null
     }
 
     interface OnClickItemListener {

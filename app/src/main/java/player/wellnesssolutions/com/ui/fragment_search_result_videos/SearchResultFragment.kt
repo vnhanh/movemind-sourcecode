@@ -390,27 +390,27 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View, IRouter
 
     override fun openPlayingVideosScreen(data: ArrayList<MMVideo>) {
         Log.d("LOG", this.javaClass.simpleName + " openPlayingVideosScreen() | videos number: ${data.size}")
-        activity?.also { act ->
+        activity?.also { activity ->
             val passData = ArrayList<MMVideo>()
             passData.addAll(data)
 
-            if ((act as MainActivity).isPresentationAvailable()) {
+            if ((activity as MainActivity).isPresentationAvailable()) {
                 Log.d("LOG", this.javaClass.simpleName + " openPlayingVideosScreen() | play on TV")
                 isPlayNewList = true
-                PreferenceHelper.getInstance(act).putLong(ConstantPreference.LAST_PLAYED_VIDEO_POSITION, 0L)
+                PreferenceHelper.getInstance(activity).putLong(ConstantPreference.LAST_PLAYED_VIDEO_POSITION, 0L)
 
-                when (act.isPlayingSearchVideos() || act.isPlayingNowPlaying()) {
+                when (activity.isPlayingSearchedVideos() || activity.isPlayingClass()) {
                     true -> {
                         mDialog?.dismiss()
                         mDialog = DialogUtil.createDialogTwoButtons(
-                                context = act,
-                                message = getString(R.string.do_you_want_stop_video_and_play_searched_videos),
+                                context = activity,
+                                message = getString(R.string.do_you_want_stop_video_and_play_new_searched_videos),
                                 titleLeftButton = R.string.btn_no,
                                 leftButtonClickListener = null,
                                 titleRightButton = R.string.btn_yes,
                                 rightButtonClickListener = object : DialogInterface.OnClickListener {
                                     override fun onClick(dialog: DialogInterface?, which: Int) {
-                                        act.playVideo(PlayMode.ON_DEMAND, passData)
+                                        activity.playVideo(PlayMode.ON_DEMAND, passData)
                                         //showMessage(R.string.videos_will_be_showned_in_tv_screen, R.color.white)
                                     }
 
@@ -418,7 +418,7 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View, IRouter
                     }
 
                     false -> {
-                        act.playVideo(PlayMode.ON_DEMAND, passData)
+                        activity.playVideo(PlayMode.ON_DEMAND, passData)
                         //showMessage(R.string.videos_will_be_showned_in_tv_screen, R.color.white)
                     }
                 }
@@ -426,7 +426,7 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View, IRouter
                 return
             }
 
-            activity?.supportFragmentManager?.also { fm ->
+            activity.supportFragmentManager.also { fm ->
                 val tag = NowPlayingFragment.TAG
                 var fragment = fm.findFragmentByTag(tag)
                 fragment =
