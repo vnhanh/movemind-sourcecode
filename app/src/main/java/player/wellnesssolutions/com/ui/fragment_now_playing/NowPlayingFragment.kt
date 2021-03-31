@@ -737,6 +737,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
                                     override fun onClick(dialogInterface: DialogInterface?, p1: Int) {
                                         dialogInterface?.dismiss()
                                         hideLoadingProgress()
+                                        presenter?.resumeOrReplay()
                                     }
 
                                 }, R.string.btn_ok, object : DialogInterface.OnClickListener {
@@ -746,7 +747,10 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
 
                             }
 
-                        }).apply { show() }
+                        }).apply {
+                            setCancelable(false)
+                            show()
+                        }
                     }
                     activity?.let { ac ->
                         if (ac is MainActivity) {

@@ -161,10 +161,23 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
     }
 
     override fun resumeOrReplay() {
-        Log.d("LOG", this.javaClass.simpleName + " resumeOrReplay() | mPlayerState: $mPlayerState | player: ${mPlayerManager.getPlayer()}")
+        Log.d("LOG", this.javaClass.simpleName + " resumeOrReplay() | playMode: $playedMode | mPlayerState: $mPlayerState | player: ${mPlayerManager.getPlayer()}")
         if (playedMode != PlayMode.ON_DEMAND) return
-        when (mPlayerState == PlayerState.PAUSED && mPlayerManager.getPlayer() != null) {
-            true -> mPlayerManager.onResume()
+        when {
+            mPlayerState == PlayerState.PAUSED && mPlayerManager.getPlayer() != null -> mPlayerManager.onResume()
+
+            mPlayerState == PlayerState.COUNTDOWN -> {
+                Log.d("LOG", this.javaClass.simpleName + " resumeOrReplay() | case COUNTDOWN")
+                when{
+                    mCountDownTimerPlayVideo == null -> runCountDownTimer()
+                    else -> {
+                        Log.d("LOG", this.javaClass.simpleName + " resumeOrReplay() | case COUNTDOWN | start count down timer again")
+                        mCountDownTimerPlayVideo?.start()
+                    }
+                }
+
+            }
+
             false -> {
                 resumeOrInitPlayer()
             }
