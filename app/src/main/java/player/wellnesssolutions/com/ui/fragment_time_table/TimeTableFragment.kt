@@ -46,8 +46,8 @@ class TimeTableFragment : BaseFragment(), ITimeTableContract.View, MMTabBar.TabB
         super.onViewCreated(view, savedInstanceState)
 
         setupButtons()
-        tabBarToday.setTabBarListener(this)
-        tabsSession.setTabBarListener(this)
+        tabBarToday?.setTabBarListener(this)
+        tabsSession?.setTabBarListener(this)
     }
 
     override fun onResume() {
@@ -63,8 +63,8 @@ class TimeTableFragment : BaseFragment(), ITimeTableContract.View, MMTabBar.TabB
     override fun onDestroyView() {
         mDialog?.dismiss()
 
-        tabBarToday.release()
-        tabsSession.release()
+        tabBarToday?.release()
+        tabsSession?.release()
 
         reViewVideos?.adapter?.also {
             if (it is SchedulerAdapter)
@@ -91,7 +91,7 @@ class TimeTableFragment : BaseFragment(), ITimeTableContract.View, MMTabBar.TabB
     }
 
     override fun onTabChanged(stringID: String) {
-        updateRecyclerView(mPresenter?.onGetSessionVideo(tabBarToday.getState(), tabsSession.getState()))
+        updateRecyclerView(mPresenter?.onGetSessionVideo(tabBarToday?.getState().orEmpty(), tabsSession?.getState().orEmpty()))
     }
 
     override fun onClick(item: SessionVideo) {
@@ -99,14 +99,13 @@ class TimeTableFragment : BaseFragment(), ITimeTableContract.View, MMTabBar.TabB
     }
 
     override fun setupUI(data: ArrayList<SessionVideo>?) {
-        if (data != null && data.size > 0)
-            setupRecyclerView(data)
+        if (data != null && data.size > 0) setupRecyclerView(list = data)
 
-        updateDisplayingSwipeRightMoreOptionView(data?.size ?: 0)
+        updateDisplayingSwipeRightMoreOptionView(itemCount = data?.size ?: 0)
     }
 
     override fun showDialog(message: String, buttonColor: Int) {
-        clProgressBar.visibility = View.GONE
+        clProgressBar?.visibility = View.GONE
         context?.let {
             mDialog?.dismiss()
             mDialog = DialogUtil.createDialogOnlyOneButton(context = it,
@@ -120,7 +119,7 @@ class TimeTableFragment : BaseFragment(), ITimeTableContract.View, MMTabBar.TabB
     }
 
     override fun showDialog(message: String) {
-        clProgressBar.visibility = View.GONE
+        clProgressBar?.visibility = View.GONE
         context?.let {
             mDialog?.dismiss()
             mDialog = DialogUtil.createDialogOnlyOneButton(context = it,
@@ -142,27 +141,27 @@ class TimeTableFragment : BaseFragment(), ITimeTableContract.View, MMTabBar.TabB
         context?.also {
             when (PreferenceHelper.getInstance(it).getBoolean(ConstantPreference.IS_SHOW_BUTTON_PREVIOUS, false)) {
                 true -> {
-                    btnPrevious.visibility = View.VISIBLE
+                    btnPrevious?.visibility = View.VISIBLE
                     PreferenceHelper.getInstance(it).delete(ConstantPreference.IS_SHOW_BUTTON_PREVIOUS)
                 }
                 false -> {
-                    btnPrevious.text = it.getString(R.string.btn_title_back)
-                    btnPrevious.visibility = View.VISIBLE
+                    btnPrevious?.text = it.getString(R.string.btn_title_back)
+                    btnPrevious?.visibility = View.VISIBLE
                 }
             }
         }
 
-        btnPrevious.setOnClickListener {
+        btnPrevious?.setOnClickListener {
             onBackPressed(it)
         }
     }
 
     private fun setupButtonRefresh() {
-        icRefresh.setOnClickListener {
-            icRefresh.isEnabled = false
+        icRefresh?.setOnClickListener {icon ->
+            icon.isEnabled = false
             ViewUtil.hideRefreshView(icRefresh, tvRetry)
             mPresenter?.onGetTimetable()
-            icRefresh.isEnabled = true
+            icon.isEnabled = true
         }
     }
 
@@ -170,37 +169,35 @@ class TimeTableFragment : BaseFragment(), ITimeTableContract.View, MMTabBar.TabB
         if (reViewVideos == null || btnSwipeRight == null) return
 
         val rowNumber = 4
-        reViewVideos.layoutManager = GridLayoutManager(context, rowNumber, RecyclerView.HORIZONTAL, false)
-        reViewVideos.setHasFixedSize(true)
+        reViewVideos?.layoutManager = GridLayoutManager(context, rowNumber, RecyclerView.HORIZONTAL, false)
+        reViewVideos?.setHasFixedSize(true)
 
         val itemDecoration = ItemDecorationGridHorizontalLayout(null, 0, rowNumber)
-        itemDecoration.margin = resources.getDimensionPixelSize(R.dimen.margin)
+        itemDecoration.margin = context?.resources?.getDimensionPixelSize(R.dimen.margin)?:0
         reViewVideos.addItemDecoration(itemDecoration)
 
         val adapter = SchedulerAdapter(this)
         adapter.setList(list)
 
-        reViewVideos.adapter = adapter
+        reViewVideos?.adapter = adapter
     }
 
     private fun updateDisplayingSwipeRightMoreOptionView(itemCount: Int) {
         if (itemCount > 12)
-            btnSwipeRight.visibility = View.VISIBLE
+            btnSwipeRight?.visibility = View.VISIBLE
         else
-            btnSwipeRight?.let {
-                it.visibility = View.INVISIBLE
-            }
+            btnSwipeRight?.visibility = View.INVISIBLE
     }
 
     private fun updateRecyclerView(list: ArrayList<SessionVideo>?) {
-        val adapter = reViewVideos.adapter
+        val adapter = reViewVideos?.adapter
         if (adapter == null) {
             setupRecyclerView(list ?: arrayListOf())
         } else if (adapter is SchedulerAdapter) {
             adapter.setList(list ?: arrayListOf())
         }
 
-        updateDisplayingSwipeRightMoreOptionView(list?.size ?: 0)
+        updateDisplayingSwipeRightMoreOptionView(itemCount = list?.size ?: 0)
     }
 
     override fun onRequestFailed() {
@@ -227,8 +224,8 @@ class TimeTableFragment : BaseFragment(), ITimeTableContract.View, MMTabBar.TabB
      * call from {@link #setupUI()}
      */
     private fun initValues() {
-        normalTextSize = resources.getDimensionPixelSize(R.dimen.text_size_today_tomorrow_time_table_normal).toFloat()
-        expandedTextSize = resources.getDimensionPixelSize(R.dimen.text_size_today_tomorrow_time_table_expanded).toFloat()
+        normalTextSize = context?.resources?.getDimensionPixelSize(R.dimen.text_size_today_tomorrow_time_table_normal)?.toFloat()?:0f
+        expandedTextSize = context?.resources?.getDimensionPixelSize(R.dimen.text_size_today_tomorrow_time_table_expanded)?.toFloat()?:0f
     }
 
 }

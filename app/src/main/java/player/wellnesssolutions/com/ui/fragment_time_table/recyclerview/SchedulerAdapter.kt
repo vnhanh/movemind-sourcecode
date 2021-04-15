@@ -7,10 +7,15 @@ import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.network.models.response.SessionVideo
 
 class SchedulerAdapter(private var listener: OnClickItemListener?) : RecyclerView.Adapter<SchedulerItemVH>() {
+    private var list = ArrayList<SessionVideo>()
+    private val viewholders = ArrayList<SchedulerItemVH>()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SchedulerItemVH {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.viewholder_timetable, parent, false)
+        val viewholder = SchedulerItemVH(view)
+        viewholders.add(viewholder)
 
-        return SchedulerItemVH(view)
+        return viewholder
     }
 
     override fun getItemCount(): Int = list.size
@@ -20,8 +25,6 @@ class SchedulerAdapter(private var listener: OnClickItemListener?) : RecyclerVie
         holder.bind(list[position])
     }
 
-    private var list = ArrayList<SessionVideo>()
-
 
     fun setList(_list: ArrayList<SessionVideo>) {
         list = _list
@@ -30,6 +33,10 @@ class SchedulerAdapter(private var listener: OnClickItemListener?) : RecyclerVie
 
     fun release() {
         listener = null
+        viewholders.forEach {
+            it.release()
+        }
+        viewholders.clear()
     }
 
     interface OnClickItemListener {

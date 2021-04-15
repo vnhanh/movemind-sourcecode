@@ -43,9 +43,13 @@ object StringUtil {
         }
     }
 
-    fun getTypefaceMadeEvolveSans(context: Context): Typeface {
-        val fontName = context.getString(player.wellnesssolutions.fontsizelibrary.R.string.font_made_evolve_sans)
-        return Typeface.createFromAsset(context.assets, fontName)
+    fun getTypefaceMadeEvolveSans(context: Context?): Typeface {
+        return if (context == null) {
+            Typeface.DEFAULT
+        } else {
+            val fontName = context.getString(player.wellnesssolutions.fontsizelibrary.R.string.font_made_evolve_sans)
+            Typeface.createFromAsset(context.assets, fontName)
+        }
     }
 
     fun setupFontMadeESNormal(textView: TextView) {

@@ -33,6 +33,6 @@ class SearchDurationVH(view: View, private var listener: ISearchDurationContract
     override fun bind(data: MMDuration) {
         super.bind(data)
 
-        itemView.tvTimeNumber.text = data.title ?: Constant.SHARP
+        itemView.tvTimeNumber?.text = data.title ?: Constant.SHARP
     }
 }

@@ -24,13 +24,13 @@ class SearchVideosByImageVH(view: View) : SearchVideosByVH(view) {
         super.bind(data)
 
         val title: String = data.title
-        itemView.tvNameSVBItem.text = title
+        itemView.tvNameSVBItem?.text = title
 
         if (data is SearchByOptionImage)
             loadImage(itemView.imgSVBItem, data)
     }
 
-    private fun loadImage(imageView: MMCircleImageView, data: SearchByOptionImage) {
+    private fun loadImage(imageView: MMCircleImageView?, data: SearchByOptionImage) {
         val imgResId: Int = data.imageResId
         val innerStyle: StyleEnumInner = data.innerStyle
         val bgColorStr: String = data.bgColorStr
@@ -38,25 +38,27 @@ class SearchVideosByImageVH(view: View) : SearchVideosByVH(view) {
         if (imgResId == -1 || bgColorStr.isEmpty() || bgColorStr.length < 2) return
 
         // set padding inner
-        imageView.setInnerStyle(innerStyle)
+        imageView?.also { imgView ->
+            imgView.setInnerStyle(innerStyle)
+            imgView.bgColor = Color.parseColor(bgColorStr)
+            imgView.setupBackground()
 
-        imageView.bgColor = Color.parseColor(bgColorStr)
-        imageView.setupBackground()
+            when (innerStyle) {
+                StyleEnumInner.CIRCLE_FIT_INNER -> {
+                    Glide.with(imgView).load(data.imageResId)
+                            .override(mLoadSize).circleCrop()
+                            .transition(DrawableTransitionOptions.withCrossFade())
+                            .placeholder(R.drawable.bg_circle_white).error(R.drawable.bg_circle_white).into(imgView)
+                }
 
-        when (innerStyle) {
-            StyleEnumInner.CIRCLE_FIT_INNER -> {
-                Glide.with(imageView).load(data.imageResId)
-                        .override(mLoadSize).circleCrop()
-                        .transition(DrawableTransitionOptions.withCrossFade())
-                        .placeholder(R.drawable.bg_circle_white).error(R.drawable.bg_circle_white).into(imageView)
-            }
-
-            StyleEnumInner.SQUARE_INNER_CIRCLE -> {
-                Glide.with(imageView).load(imgResId)
-                        .override(mLoadSize)
-                        .transition(DrawableTransitionOptions.withCrossFade())
-                        .into(imageView)
+                StyleEnumInner.SQUARE_INNER_CIRCLE -> {
+                    Glide.with(imgView).load(imgResId)
+                            .override(mLoadSize)
+                            .transition(DrawableTransitionOptions.withCrossFade())
+                            .into(imgView)
+                }
             }
         }
+
     }
 }

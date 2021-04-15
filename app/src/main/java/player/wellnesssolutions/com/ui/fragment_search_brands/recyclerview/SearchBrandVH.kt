@@ -23,16 +23,18 @@ class SearchBrandVH(view: View, var imageSize: Int, private var presenter: ISear
     }
 
     private fun setupImageDimens() {
-        val innerSize: Int = imageSize - itemView.imgBrand.paddingLeft * 2
+        itemView.imgBrand?.also { imageView ->
+            val innerSize: Int = imageSize - imageView.paddingLeft * 2
 
-        mImageSize = (innerSize / 1.42f).toInt()
-        val padding: Int = (imageSize - mImageSize) / 2
+            mImageSize = (innerSize / 1.42f).toInt()
+            val padding: Int = (imageSize - mImageSize) / 2
 
-        itemView.imgBrand.setPadding(padding, padding, padding, padding)
+            imageView.setPadding(padding, padding, padding, padding)
+        }
     }
 
     private fun setupOnClickListener() {
-        itemView.imgBrand.setOnClickListener {
+        itemView.imgBrand?.setOnClickListener {
             data?.also { data ->
                 it.isEnabled = false
                 itemView.imgBrand?.changeBgColorOnClick()
@@ -45,13 +47,13 @@ class SearchBrandVH(view: View, var imageSize: Int, private var presenter: ISear
     }
 
     private fun setupTextFontDesciption() {
-        itemView.tvBrandDesc.typeface = StringUtil.getTypefaceMadeEvolveSans(itemView.context)
+        itemView.tvBrandDesc?.typeface = StringUtil.getTypefaceMadeEvolveSans(itemView.context)
     }
 
     fun bind(data: MMBrand, position: Int) {
         super.bind(data)
 
-        itemView.tvBrandName.text = data.helperText
+        itemView.tvBrandName?.text = data.helperText
 //        itemView.tvBrandDesc.text = data.helperText
 
 
@@ -77,19 +79,20 @@ class SearchBrandVH(view: View, var imageSize: Int, private var presenter: ISear
                 }
 
         if (!strBgColor.isEmpty()) {
-            itemView.imgBrand.bgColor = Color.parseColor(strBgColor)
-            itemView.imgBrand.setupBackground()
+            itemView.imgBrand?.bgColor = Color.parseColor(strBgColor)
+            itemView.imgBrand?.setupBackground()
         }
     }
 
     private fun loadImage() {
         if (mImageSize <= 0) return
         data?.also { data ->
-
-            Glide.with(itemView).load(data.image)
-                    .override(mImageSize, mImageSize).centerInside()
-                    .diskCacheStrategy(DiskCacheStrategy.DATA)
-                    .into(itemView.imgBrand)
+            itemView.imgBrand?.also { imageView ->
+                Glide.with(imageView).load(data.image)
+                        .override(mImageSize, mImageSize).centerInside()
+                        .diskCacheStrategy(DiskCacheStrategy.DATA)
+                        .into(imageView)
+            }
         }
     }
 

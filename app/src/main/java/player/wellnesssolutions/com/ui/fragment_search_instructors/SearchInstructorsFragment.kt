@@ -67,7 +67,7 @@ class SearchInstructorsFragment : BaseFragment(), ISearchInstructorContract.View
     }
 
     private fun setupButtonPrevious() {
-        btnPrevious.setOnClickListener { view ->
+        btnPrevious?.setOnClickListener { view ->
             activity?.also { activity ->
                 view.isEnabled = false
                 if (activity is MainActivity) {
@@ -78,7 +78,7 @@ class SearchInstructorsFragment : BaseFragment(), ISearchInstructorContract.View
     }
 
     private fun setupButtonRefresh() {
-        icRefresh.setOnClickListener {
+        icRefresh?.setOnClickListener {
             it.isEnabled = false
             ViewUtil.hideRefreshView(icRefresh, tvRetry)
             mPresenter?.loadData(this)
@@ -87,8 +87,8 @@ class SearchInstructorsFragment : BaseFragment(), ISearchInstructorContract.View
     }
 
     private fun setupTextTitle() {
-        tvTitle.text = getString(R.string.screen_presenter_tv_title)
-        tvTitle2.text = getString(R.string.screen_presenter_choose_a_presenter)
+        tvTitle?.text = context?.getString(R.string.screen_presenter_tv_title).orEmpty()
+        tvTitle2?.text = context?.getString(R.string.screen_presenter_choose_a_presenter).orEmpty()
     }
 
     override fun onStart() {
@@ -102,7 +102,7 @@ class SearchInstructorsFragment : BaseFragment(), ISearchInstructorContract.View
             mPresenter?.onReshowUI(this)
             mIsJustBeDestroyed = false
         } else {
-            tvTitle.postDelayed(Runnable {
+            tvTitle?.postDelayed(Runnable {
                 mPresenter?.onAttach(this@SearchInstructorsFragment)
             }, 300L)
         }
@@ -159,17 +159,17 @@ class SearchInstructorsFragment : BaseFragment(), ISearchInstructorContract.View
         if (tvTitle2 == null) return
 
         if (data.size == 0) {
-            val title2 = getString(R.string.no_presenter)
-            tvTitle2.text = title2
+            val title2 = context?.getString(R.string.no_presenter).orEmpty()
+            tvTitle2?.text = title2
 
-            val message = getString(R.string.this_brand_has_no_presenter, brandName)
+            val message = context?.getString(R.string.this_brand_has_no_presenter, brandName).orEmpty()
             DialogUtil.createDialogOnlyOneButton(context = tvTitle2.context, message = message, titleButton = R.string.btn_ok, dialogClickListener = null).show()
 
             return
         }
 
         if (data.size < Constant.MAX_PRESENTER_ITEMS_COUNT_IN_ROW) {
-            val itemSize = resources.getDimensionPixelSize(R.dimen.vh_search_item_size_presenter)
+            val itemSize = context?.resources?.getDimensionPixelSize(R.dimen.vh_search_item_size_presenter)?:210
             RecyclerViewCustom.alignCenterHorizontal(rvPresenters, data.size, rootSearchPresenter, btnPrevious, itemSize)
         }
 
@@ -190,23 +190,27 @@ class SearchInstructorsFragment : BaseFragment(), ISearchInstructorContract.View
     }
 
     private fun showSwipeText() {
+        rvPresenters?.also { recyclerview ->
+            txtSwipeRightForMoreOptions?.also { textViewSwipeRight ->
+                val set = ConstraintSet()
+                set.clone(rootSearchPresenter)
+                set.connect(recyclerview.id, ConstraintSet.BOTTOM, textViewSwipeRight.id, ConstraintSet.TOP)
+                set.applyTo(rootSearchPresenter)
 
-        val set = ConstraintSet()
-        set.clone(rootSearchPresenter)
-
-        set.connect(rvPresenters.id, ConstraintSet.BOTTOM, txtSwipeRightForMoreOptions.id, ConstraintSet.TOP)
-        set.applyTo(rootSearchPresenter)
-        txtSwipeRightForMoreOptions.visibility = View.VISIBLE
+                textViewSwipeRight.visibility = View.VISIBLE
+            }
+        }
     }
 
     private fun hideSwipeText() {
+        rvPresenters?.also { recyclerview ->
+            val set = ConstraintSet()
+            set.clone(rootSearchPresenter)
 
-        val set = ConstraintSet()
-        set.clone(rootSearchPresenter)
-
-        set.connect(rvPresenters.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
-        set.applyTo(rootSearchPresenter)
-        txtSwipeRightForMoreOptions.visibility = View.GONE
+            set.connect(recyclerview.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+            set.applyTo(rootSearchPresenter)
+        }
+        txtSwipeRightForMoreOptions?.visibility = View.GONE
     }
 
     override fun onRequestFailed(message: String) {

@@ -29,16 +29,16 @@ class SchedulerItemVH(view: View) : RecyclerView.ViewHolder(view) {
     private var mData: SessionVideo? = null
     private var mExtraCollectionViews: ArrayList<TextView>? = null
 
-    private val mView = view
+    private var mView: View? = view
 
     init {
         itemView.tvSchedulerStart.setTypeface(null, Typeface.BOLD_ITALIC)
 
-        if (THUMBNAIL_WIDTH == 0) THUMBNAIL_WIDTH = itemView.resources.getDimensionPixelSize(R.dimen.width_thumbnail_video_time_table)
-        if (THUMBNAIL_HEIGHT == 0) THUMBNAIL_HEIGHT = itemView.resources.getDimensionPixelSize(R.dimen.height_thumbnail_video_time_table)
-        if (TYPE_BRAND_ICON_WIDTH == 0) TYPE_BRAND_ICON_WIDTH = itemView.resources.getDimensionPixelSize(R.dimen.vh_search_result_ic_type_logo_width)
-        if (TYPE_BRAND_ICON_HEIGHT == 0) TYPE_BRAND_ICON_HEIGHT = itemView.resources.getDimensionPixelSize(R.dimen.vh_search_result_ic_type_logo_height)
-        if (MARGIN == 0) MARGIN = view.resources.getDimensionPixelSize(R.dimen.margin)
+        if (THUMBNAIL_WIDTH == 0) THUMBNAIL_WIDTH = itemView.resources?.getDimensionPixelSize(R.dimen.width_thumbnail_video_time_table)?:0
+        if (THUMBNAIL_HEIGHT == 0) THUMBNAIL_HEIGHT = itemView.resources?.getDimensionPixelSize(R.dimen.height_thumbnail_video_time_table)?:0
+        if (TYPE_BRAND_ICON_WIDTH == 0) TYPE_BRAND_ICON_WIDTH = itemView.resources?.getDimensionPixelSize(R.dimen.vh_search_result_ic_type_logo_width)?:0
+        if (TYPE_BRAND_ICON_HEIGHT == 0) TYPE_BRAND_ICON_HEIGHT = itemView.resources?.getDimensionPixelSize(R.dimen.vh_search_result_ic_type_logo_height)?:0
+        if (MARGIN == 0) MARGIN = view.resources?.getDimensionPixelSize(R.dimen.margin)?:0
 
         resizeWidthHeightItem(itemView)
 
@@ -46,25 +46,27 @@ class SchedulerItemVH(view: View) : RecyclerView.ViewHolder(view) {
     }
 
     private fun resizeWidthHeightItem(itemView: View) {
-        val density = mView.resources.displayMetrics.density
-        if (density == 1.5f) {
-            try {
-                val dm = DisplayMetrics()
-                (mView.context as MainActivity).windowManager.defaultDisplay.getMetrics(dm)
-                if (dm.xdpi == 480.0f) {
-                    val params = itemView.parentViewSchedulerItem.layoutParams
-                    params.height = params.height - 30
-                    itemView.parentViewSchedulerItem.layoutParams = params
+        mView?.also {
+            val density = it.resources.displayMetrics.density
+            if (density == 1.5f) {
+                try {
+                    val dm = DisplayMetrics()
+                    (it.context as MainActivity).windowManager.defaultDisplay.getMetrics(dm)
+                    if (dm.xdpi == 480.0f) {
+                        val params = itemView.parentViewSchedulerItem.layoutParams
+                        params.height = params.height - 30
+                        itemView.parentViewSchedulerItem.layoutParams = params
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
             }
         }
     }
 
     private fun setupTitleVideo() {
         val tf: Typeface = TypefaceUtil.getTypeface(itemView.context, itemView.context.getString(R.string.font_made_evolve_sans))
-        itemView.tvVideoTitle.setTypeface(tf, Typeface.ITALIC)
+        itemView.tvVideoTitle?.setTypeface(tf, Typeface.ITALIC)
     }
 
     fun bind(item: SessionVideo) {
@@ -80,8 +82,8 @@ class SchedulerItemVH(view: View) : RecyclerView.ViewHolder(view) {
 
     private fun loadThumbnail(thumbVideo: ImageView?, thumbnail657: String?) {
         if (thumbVideo == null || thumbnail657.isNullOrEmpty()) return
-        val corner = itemView.resources.getDimensionPixelSize(R.dimen.corner_4dp)
-        Glide.with(itemView.context).load(thumbnail657)
+        val corner = itemView.resources?.getDimensionPixelSize(R.dimen.corner_4dp)?:0
+        Glide.with(thumbVideo.context).load(thumbnail657)
                 .transform(CenterCrop(), RoundedCorners(corner))
                 .override(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT)
                 .placeholder(R.drawable.bg_rectangle_ltgray_corner_4dp)
@@ -91,26 +93,32 @@ class SchedulerItemVH(view: View) : RecyclerView.ViewHolder(view) {
 
     private fun displayIconBrandAndCollections(item: SessionVideo) {
         loadBrandTypeLogo(itemView.icTypeBrand, item.logo)
-        mExtraCollectionViews = SearchCollectionUtil.displayCollections(parentView = itemView.groupIconBrandAndCollections, leftView = itemView.icTypeBrand,
-                collections = item.collections, collectionCountMax = 2, extraCollectionTextViews = mExtraCollectionViews)
+        mExtraCollectionViews = SearchCollectionUtil.displayCollections(
+                parentView = itemView.groupIconBrandAndCollections,
+                leftView = itemView.icTypeBrand,
+                collections = item.collections,
+                collectionCountMax = 2,
+                extraCollectionTextViews = mExtraCollectionViews
+        )
     }
 
-    private fun loadBrandTypeLogo(icCollection: ImageView, logo: String?) {
-        Glide.with(itemView.context).load(logo)
-                .override(TYPE_BRAND_ICON_WIDTH, TYPE_BRAND_ICON_HEIGHT)
-                .placeholder(R.drawable.bg_rectangle_gray_corner_2dp).error(R.drawable.bg_rectangle_gray_corner_2dp)
-                .into(icCollection)
+    private fun loadBrandTypeLogo(icCollection: ImageView?, logo: String?) {
+        icCollection?.also { imageView ->
+            Glide.with(imageView.context).load(logo)
+                    .override(TYPE_BRAND_ICON_WIDTH, TYPE_BRAND_ICON_HEIGHT)
+                    .placeholder(R.drawable.bg_rectangle_gray_corner_2dp).error(R.drawable.bg_rectangle_gray_corner_2dp)
+                    .into(imageView)
+        }
     }
 
     private fun displayTextViews(item: SessionVideo) {
-        itemView.tvVideoTitle.text = item.nameOfVideo
-        itemView.tvSchedulerStart.text = item.getTime()
-        itemView.tvVideoDuration.text = item.getDurationValue()
+        itemView.tvVideoTitle?.text = item.nameOfVideo
+        itemView.tvSchedulerStart?.text = item.getTime()
+        itemView.tvVideoDuration?.text = item.getDurationValue()
 
         displayLevels(item.levels)
 
-        itemView.tvVideoInstructor.text = item.instructorName
-
+        itemView.tvVideoInstructor?.text = item.instructorName
     }
 
     private fun displayLevels(levels: ArrayList<MMTinyCategory>?) {
@@ -125,8 +133,12 @@ class SchedulerItemVH(view: View) : RecyclerView.ViewHolder(view) {
             false -> {
                 itemView.icLevel?.visibility = View.VISIBLE
                 itemView.tvVideoLevel?.visibility = View.VISIBLE
-                itemView.tvVideoLevel.text = firstLevelName
+                itemView.tvVideoLevel?.text = firstLevelName
             }
         }
+    }
+
+    fun release(){
+        mView = null
     }
 }

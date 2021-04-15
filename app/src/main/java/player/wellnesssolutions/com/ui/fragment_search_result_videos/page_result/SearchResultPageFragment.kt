@@ -91,7 +91,7 @@ class SearchResultPageFragment : Fragment(), ISearchResultPageContract.View {
     }
 
     override fun onDestroyView() {
-        rvVideoSearchResult.release()
+        rvVideoSearchResult?.release()
         super.onDestroyView()
     }
 
@@ -124,11 +124,17 @@ class SearchResultPageFragment : Fragment(), ISearchResultPageContract.View {
     override fun showUI(inputData: ArrayList<MMVideo>) {
         view?.also {
             val adapter = VideosSearchResultPageAdapter(inputData, mPresenter)
-            rvVideoSearchResult.layoutManager = GridLayoutManager(context, Constant.COL_COUNT_SCREEN_SEARCH_RESULT,
-                    RecyclerView.VERTICAL, false)
-            rvVideoSearchResult.setHasFixedSize(true)
-            rvVideoSearchResult.setRowCount(Constant.ROW_COUNT_SCREEN_SEARCH_RESULT)
-            rvVideoSearchResult.setVideosSearchResultPageAdapter(adapter)
+            rvVideoSearchResult?.also { recyclerview ->
+                recyclerview.layoutManager = GridLayoutManager(
+                        context,
+                        Constant.COL_COUNT_SCREEN_SEARCH_RESULT,
+                        RecyclerView.VERTICAL,
+                        false
+                )
+                recyclerview.setHasFixedSize(true)
+                recyclerview.setRowCount(Constant.ROW_COUNT_SCREEN_SEARCH_RESULT)
+                recyclerview.setVideosSearchResultPageAdapter(adapter)
+            }
 
             mAdapter = adapter
 

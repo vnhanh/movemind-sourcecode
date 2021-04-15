@@ -25,8 +25,8 @@ class SearchBrandsAdapter(listener: ISearchBrandsContract.Presenter?, items: Arr
 
         val imageSize =
                 when (list.size) {
-                    in 0..3 -> parent.resources.getDimensionPixelSize(R.dimen.size_item_circle_for_1_to_3_items_search_in_row)
-                    else -> parent.resources.getDimensionPixelSize(R.dimen.vh_search_screen_4_items)
+                    in 0..3 -> parent.resources?.getDimensionPixelSize(R.dimen.size_item_circle_for_1_to_3_items_search_in_row)?:300
+                    else -> parent.resources?.getDimensionPixelSize(R.dimen.vh_search_screen_4_items)?:242
                 }
 
         val view = LayoutInflater.from(parent.context).inflate(layout, parent, false)

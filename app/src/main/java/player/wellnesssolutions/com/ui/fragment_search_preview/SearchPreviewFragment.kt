@@ -104,28 +104,33 @@ class SearchPreviewFragment : BaseFragment(), ISearchPreviewContract.View {
     }
 
     private fun setupTextTitle() {
-        if (SearchCollectionUtil.isSkipAndSearchChoose && SearchCollectionUtil.isCollectionChoose && !nameCollectionChoose.isNullOrEmpty()) {
-            tvTitle.text = nameCollectionChoose
-            tvTitle3.text = context?.getString(R.string.title_search_preview)
-            tvTitle3.visibility = View.VISIBLE
-            tvTitle2.visibility = View.VISIBLE
-            imgCollectionLogoOnTop.let {
-                it.visibility = View.VISIBLE
-                if (!mPresenter?.getItemSearchOption()?.imgStrokeColor!!.isEmpty()) {
-                    it.setStrokeColor(Color.parseColor(mPresenter?.getItemSearchOption()?.imgStrokeColor))
-                }
-                Glide.with(it.context).load(mPresenter?.getItemSearchOption()?.imgCollection)
-                        .override(60, 60)
-                        .placeholder(R.drawable.bg_sp_deault_collection)
-                        .fallback(R.drawable.bg_sp_deault_collection)
-                        .error(R.drawable.bg_sp_deault_collection)
-                        .into(it)
-            }
-            val set = ConstraintSet()
-            set.clone(ctlTvTitle)
+        try {
+            if (SearchCollectionUtil.isSkipAndSearchChoose && SearchCollectionUtil.isCollectionChoose && !nameCollectionChoose.isNullOrEmpty()) {
+                tvTitle?.text = nameCollectionChoose
+                tvTitle3?.text = context?.getString(R.string.title_search_preview)
+                tvTitle3?.visibility = View.VISIBLE
+                tvTitle2?.visibility = View.VISIBLE
 
-            set.connect(tvTitle.id, ConstraintSet.START, imgCollectionLogoOnTop.id, ConstraintSet.END)
-            set.applyTo(ctlTvTitle)
+                imgCollectionLogoOnTop?.let {
+                    it.visibility = View.VISIBLE
+                    if (!mPresenter?.getItemSearchOption()?.imgStrokeColor!!.isEmpty()) {
+                        it.setStrokeColor(Color.parseColor(mPresenter?.getItemSearchOption()?.imgStrokeColor))
+                    }
+                    Glide.with(it.context).load(mPresenter?.getItemSearchOption()?.imgCollection)
+                            .override(60, 60)
+                            .placeholder(R.drawable.bg_sp_deault_collection)
+                            .fallback(R.drawable.bg_sp_deault_collection)
+                            .error(R.drawable.bg_sp_deault_collection)
+                            .into(it)
+                }
+                val set = ConstraintSet()
+                set.clone(ctlTvTitle)
+
+                set.connect(tvTitle.id, ConstraintSet.START, imgCollectionLogoOnTop.id, ConstraintSet.END)
+                set.applyTo(ctlTvTitle)
+            }
+        } catch (e: Exception){
+            e.printStackTrace()
         }
     }
 
@@ -150,10 +155,10 @@ class SearchPreviewFragment : BaseFragment(), ISearchPreviewContract.View {
     }
 
     private fun onClickedIconRefresh() {
-        icRefresh.isEnabled = false
+        icRefresh?.isEnabled = false
         ViewUtil.hideRefreshView(icRefresh, tvRetry)
         mPresenter?.loadData(view = this)
-        icRefresh.isEnabled = true
+        icRefresh?.isEnabled = true
     }
 
     override fun onStart() {

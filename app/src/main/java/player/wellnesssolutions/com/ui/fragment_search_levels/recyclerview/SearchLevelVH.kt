@@ -28,8 +28,8 @@ class SearchLevelVH(view: View, private var listener: ISearchLevelsContract.Pres
     override fun bind(data: MMLevel) {
         super.bind(data)
 
-        itemView.tvLevel.text = data.level
-        itemView.tvName.text = data.name ?: Constant.SHARP
+        itemView.tvLevel?.text = data.level
+        itemView.tvName?.text = data.name ?: Constant.SHARP
     }
 
     override fun release() {

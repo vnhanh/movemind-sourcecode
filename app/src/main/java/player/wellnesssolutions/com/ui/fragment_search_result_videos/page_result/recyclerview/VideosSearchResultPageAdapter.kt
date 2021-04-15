@@ -23,9 +23,9 @@ class VideosSearchResultPageAdapter(val list: ArrayList<MMVideo>, private var li
     override fun onCreateViewHolder(parent: ViewGroup, itemType: Int): VideosSearchResultPageVH {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.vh_search_result, parent, false)
         setupLayoutForVHItem(view)
-        val vh = VideosSearchResultPageVH(view, mItemWidth, mItemHeight, listener)
-        mHolders?.add(vh)
-        return vh
+        val viewholder = VideosSearchResultPageVH(view, mItemWidth, mItemHeight, listener)
+        mHolders?.add(viewholder)
+        return viewholder
     }
 
     private fun setupLayoutForVHItem(view: View) {

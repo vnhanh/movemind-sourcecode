@@ -44,8 +44,8 @@ class SplashFragment : BaseFragment(), ISplashContract.View, View.OnClickListene
     }
 
     private fun setupUI() {
-        icRefresh.setOnClickListener(this)
-        tvRetry.setOnClickListener(this)
+        icRefresh?.setOnClickListener(this)
+        tvRetry?.setOnClickListener(this)
 
         MAX_PROGRESS_BEFORE_RECEIVE_RESPONSE = 60 * progressLoadBrand.max / 100 // max 60 % loading
     }
@@ -72,7 +72,7 @@ class SplashFragment : BaseFragment(), ISplashContract.View, View.OnClickListene
         tvRetry?.visibility = View.GONE
 
         view.isEnabled = false
-        progressLoadBrand.progress = 0
+        progressLoadBrand?.progress = 0
         handler.postDelayed(runnableLoading, PERIOD)
         progressLoadBrand?.visibility = View.VISIBLE
         mPresenter?.loadApi()

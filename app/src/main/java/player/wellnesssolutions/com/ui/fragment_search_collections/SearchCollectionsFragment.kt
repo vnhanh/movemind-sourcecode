@@ -64,7 +64,7 @@ class SearchCollectionsFragment : BaseFragment(), ISearchCollectionContract.View
     }
 
     private fun setupButtonRefresh() {
-        icRefresh.setOnClickListener {
+        icRefresh?.setOnClickListener {
             it.isEnabled = false
             ViewUtil.hideRefreshView(icRefresh, tvRetry)
             mPresenter?.loadData(this)
@@ -73,8 +73,8 @@ class SearchCollectionsFragment : BaseFragment(), ISearchCollectionContract.View
     }
 
     private fun setupTitleText() {
-        tvTitle.text = getString(R.string.screen_collection_tv_title)
-        tvTitle2.text = getString(R.string.screen_collection_tv_title_choose_a_collection)
+        tvTitle?.text = context?.getString(R.string.screen_collection_tv_title).orEmpty()
+        tvTitle2?.text = context?.getString(R.string.screen_collection_tv_title_choose_a_collection).orEmpty()
     }
 
     private fun setupButtonPrevious() {
@@ -156,9 +156,9 @@ class SearchCollectionsFragment : BaseFragment(), ISearchCollectionContract.View
         rootCollection?.also {
             if (data.size == 0) {
                 mDialog?.dismiss()
-                tvTitle2.text = getString(R.string.no_collection)
+                tvTitle2?.text = it.context.getString(R.string.no_collection)
 
-                val message = getString(R.string.this_brand_has_no_collection, brandName)
+                val message = it.context.getString(R.string.this_brand_has_no_collection, brandName)
                 mDialog = DialogUtil.createDialogOnlyOneButton(context = tvTitle2.context, message = message, titleButton = R.string.btn_ok, dialogClickListener = null).also {
                     it.show()
                 }
@@ -187,23 +187,30 @@ class SearchCollectionsFragment : BaseFragment(), ISearchCollectionContract.View
     }
 
     private fun showSwipeText() {
-
-        val set = ConstraintSet()
-        set.clone(rootCollection)
-
-        set.connect(rvSearchCollections.id, ConstraintSet.BOTTOM, txtSwipeRightForMoreOptions.id, ConstraintSet.TOP)
-        set.applyTo(rootCollection)
-        txtSwipeRightForMoreOptions.visibility = View.VISIBLE
+        rootCollection?.also { rootView ->
+            txtSwipeRightForMoreOptions?.also { textViewSwipeRight ->
+                rvSearchCollections?.also { recyclerview ->
+                    val set = ConstraintSet()
+                    set.clone(rootView)
+                    set.connect(recyclerview.id, ConstraintSet.BOTTOM, textViewSwipeRight.id, ConstraintSet.TOP)
+                    set.applyTo(rootView)
+                }
+                textViewSwipeRight.visibility = View.VISIBLE
+            }
+        }
     }
 
     private fun hideSwipeText() {
+        rootCollection?.also { rootView ->
+            rvSearchCollections?.also { recyclerview ->
+                val set = ConstraintSet()
+                set.clone(rootCollection)
 
-        val set = ConstraintSet()
-        set.clone(rootCollection)
-
-        set.connect(rvSearchCollections.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
-        set.applyTo(rootCollection)
-        txtSwipeRightForMoreOptions.visibility = View.GONE
+                set.connect(recyclerview.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+                set.applyTo(rootCollection)
+            }
+        }
+        txtSwipeRightForMoreOptions?.visibility = View.GONE
     }
 
     override fun onRequestFailed(message: String) {

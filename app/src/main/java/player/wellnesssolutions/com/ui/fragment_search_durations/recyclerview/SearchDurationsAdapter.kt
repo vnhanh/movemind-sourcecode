@@ -16,7 +16,7 @@ class SearchDurationsAdapter(listener: ISearchDurationContract.Presenter?, list:
 
         setupLayoutForItemView(view, view.viewWrapper)
 
-        val vh = SearchDurationVH(view, listener, itemWidth, itemHeight, countItemInRow)
+        val vh = SearchDurationVH(view = view, listener = listener, itemWidth = itemWidth, itemHeight = itemHeight, itemCountInRow = countItemInRow)
         mHolders?.add(vh)
 
         return vh

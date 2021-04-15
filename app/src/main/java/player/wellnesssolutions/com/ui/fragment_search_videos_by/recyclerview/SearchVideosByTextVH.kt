@@ -11,11 +11,11 @@ class SearchVideosByTextVH(view: View) : SearchVideosByVH(view) {
         super.bind(data)
 
         val title = data.title
-        itemView.tvNameSVBItem.text = title
+        itemView.tvNameSVBItem?.text = title
 
         if (data is SearchByOptionText) {
             val content = data.content
-            itemView.tvContentSVB.text = content
+            itemView.tvContentSVB?.text = content
         }
     }
 }

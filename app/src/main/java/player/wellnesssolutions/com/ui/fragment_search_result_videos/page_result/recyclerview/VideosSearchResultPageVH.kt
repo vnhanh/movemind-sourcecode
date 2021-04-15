@@ -17,7 +17,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import kotlinx.android.synthetic.main.vh_search_result.view.*
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.utils.search_util.SearchCollectionUtil
-import player.wellnesssolutions.com.common.constant.Constant
+import player.wellnesssolutions.com.common.constant.Constant.DEF_SECONDARY_COLOR
 import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
@@ -51,18 +51,23 @@ class VideosSearchResultPageVH(view: View, val mItemWidth: Int, val mItemHeight:
     init {
         when (mItemWidth == 0 || mItemHeight == 0) {
             true -> {
-                mThumbnailWidth = itemView.resources.getDimensionPixelSize(R.dimen.vh_search_result_thumbnail_width)
-                mThumbnailHeight = itemView.resources.getDimensionPixelSize(R.dimen.vh_search_result_thumbnail_height)
+                mThumbnailWidth = itemView.resources?.getDimensionPixelSize(R.dimen.vh_search_result_thumbnail_width)
+                        ?: 0
+                mThumbnailHeight = itemView.resources?.getDimensionPixelSize(R.dimen.vh_search_result_thumbnail_height)
+                        ?: 0
             }
 
             false -> {
-                val density = view.resources.displayMetrics.density
-                val itemPadding = itemView.resources.getDimensionPixelSize(R.dimen.vh_search_result_padding)
+                val density = view.resources?.displayMetrics?.density ?: 0
+                val itemPadding = itemView.resources?.getDimensionPixelSize(R.dimen.vh_search_result_padding)
+                        ?: 0
                 mThumbnailWidth = mItemWidth - itemPadding * 2
                 mThumbnailHeight = if (density == 1.5f) {
                     try {
                         val dm = DisplayMetrics()
-                        (view.context as MainActivity).windowManager.defaultDisplay.getMetrics(dm)
+                        view.context?.also { context ->
+                            if (context is MainActivity) context.windowManager.defaultDisplay.getMetrics(dm)
+                        }
                         when (dm.xdpi) {
                             240.0f -> mThumbnailWidth * 5 / 12
                             480.0f -> mThumbnailWidth * 5 / 14
@@ -78,21 +83,27 @@ class VideosSearchResultPageVH(view: View, val mItemWidth: Int, val mItemHeight:
             }
         }
 
-        val thumbnailParams: ConstraintLayout.LayoutParams = itemView.videoThumbnail.layoutParams as ConstraintLayout.LayoutParams
-        thumbnailParams.width = mThumbnailWidth
-        thumbnailParams.height = mThumbnailHeight
-        itemView.videoThumbnail.layoutParams = thumbnailParams
+        itemView.videoThumbnail?.also { thumbnail ->
+            val thumbnailParams: ConstraintLayout.LayoutParams = thumbnail.layoutParams as ConstraintLayout.LayoutParams
+            thumbnailParams.width = mThumbnailWidth
+            thumbnailParams.height = mThumbnailHeight
+            thumbnail.layoutParams = thumbnailParams
+        }
 
-        mTypeLogoWidth = itemView.resources.getDimensionPixelSize(R.dimen.vh_search_result_ic_type_logo_width)
-        mTypeLogoHeight = itemView.resources.getDimensionPixelSize(R.dimen.vh_search_result_ic_type_logo_height)
+        mTypeLogoWidth = itemView.resources?.getDimensionPixelSize(R.dimen.vh_search_result_ic_type_logo_width)
+                ?: 0
+        mTypeLogoHeight = itemView.resources?.getDimensionPixelSize(R.dimen.vh_search_result_ic_type_logo_height)
+                ?: 0
 
         if (mDownloadButtonSize == 0) {
-            val buttonSize = itemView.resources.getDimensionPixelSize(R.dimen.size_btn_download_item_video_result_search)
-            val buttonPadding = itemView.resources.getDimensionPixelSize(R.dimen.padding_btn_download_item_video_result_search)
+            val buttonSize = itemView.resources?.getDimensionPixelSize(R.dimen.size_btn_download_item_video_result_search)
+                    ?: 0
+            val buttonPadding = itemView.resources?.getDimensionPixelSize(R.dimen.padding_btn_download_item_video_result_search)
+                    ?: 0
             mDownloadButtonSize = buttonSize - buttonPadding * 2
         }
 
-        itemView.videoThumbnail.setOnClickListener(this)
+        itemView.videoThumbnail?.setOnClickListener(this)
 
         setupThumbnailSelectedView()
 
@@ -104,21 +115,29 @@ class VideosSearchResultPageVH(view: View, val mItemWidth: Int, val mItemHeight:
     }
 
     private fun setupTitleVideo() {
-        val tf: Typeface = TypefaceUtil.getTypeface(itemView.context, itemView.context.getString(R.string.font_made_evolve_sans))
-        itemView.tvVideoTitle.setTypeface(tf, Typeface.ITALIC)
-        itemView.tvVideoTitle.setOnClickListener(this)
+        itemView.tvVideoTitle?.also { textView ->
+            val tf: Typeface = TypefaceUtil.getTypeface(textView.context, textView.context.getString(R.string.font_made_evolve_sans))
+            textView.setTypeface(tf, Typeface.ITALIC)
+            textView.setOnClickListener(this)
+        }
     }
 
     private fun setupThumbnailSelectedView() {
-        val shape: GradientDrawable = GradientDrawable().also {
-            it.shape = GradientDrawable.RECTANGLE
-            it.color = ColorStateList.valueOf(Color.TRANSPARENT)
-            it.cornerRadius = itemView.resources.getDimensionPixelSize(R.dimen.corner_2dp) * 1f
-            val itemSize = Math.min(mItemWidth, mItemHeight)
-            val strokeWidth = (itemSize * 0.02f).toInt()
-            it.setStroke(strokeWidth, Color.parseColor(PreferenceHelper.getInstance(itemView.context).getString(ConstantPreference.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)))
+        try {
+            val shape: GradientDrawable = GradientDrawable().also {
+                it.shape = GradientDrawable.RECTANGLE
+                it.color = ColorStateList.valueOf(Color.TRANSPARENT)
+                it.cornerRadius = (itemView.resources?.getDimensionPixelSize(R.dimen.corner_2dp)
+                        ?: 0) * 1f
+                val itemSize = Math.min(mItemWidth, mItemHeight)
+                val strokeWidth = (itemSize * 0.02f).toInt()
+                it.setStroke(strokeWidth, Color.parseColor(PreferenceHelper.getInstance()?.getString(ConstantPreference.SECONDARY_COLOR, DEF_SECONDARY_COLOR)
+                        ?: DEF_SECONDARY_COLOR))
+            }
+            itemView.thumbnailSelectedView?.background = shape
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-        itemView.thumbnailSelectedView.background = shape
     }
 
     fun release() {
@@ -131,30 +150,34 @@ class VideosSearchResultPageVH(view: View, val mItemWidth: Int, val mItemHeight:
 
     override fun onClick(view: View) {
         when (view.id) {
-            itemView.videoThumbnail.id, itemView.tvVideoTitle.id -> {
+            itemView.videoThumbnail?.id, itemView.tvVideoTitle?.id -> {
                 toggleSelectVideo()
             }
 
             else -> {
-                itemView.blurThumbnail.visibility = View.VISIBLE
+                itemView.blurThumbnail?.visibility = View.VISIBLE
                 presenter?.onClickedResultItem(mVideo)
                 view.postDelayed({
-                    itemView.blurThumbnail.visibility = View.GONE
+                    itemView.blurThumbnail?.visibility = View.GONE
                 }, 200L)
             }
         }
     }
 
     private fun loadDownloadIcon() {
-        Glide.with(itemView.btnDownload).load(R.drawable.ic_download)
-                .override(mDownloadButtonSize).into(itemView.btnDownload)
+        itemView.btnDownload?.also { button ->
+            Glide.with(button).load(R.drawable.ic_download)
+                    .override(mDownloadButtonSize).into(button)
+        }
     }
 
     // show TRAILER VIDEO PREVIEW icon
     private fun loadPreviewIcon() {
-        itemView.btnPreview.setOnClickListener(this)
-        Glide.with(itemView.btnPreview).load(R.drawable.ic_preview_trailer)
-                .override(mDownloadButtonSize).into(itemView.btnPreview)
+        itemView.btnPreview?.also { button ->
+            button.setOnClickListener(this)
+            Glide.with(button).load(R.drawable.ic_preview_trailer)
+                    .override(mDownloadButtonSize).into(button)
+        }
     }
 
     fun bind(data: MMVideo) {
@@ -183,28 +206,38 @@ class VideosSearchResultPageVH(view: View, val mItemWidth: Int, val mItemHeight:
             mVideosToPlay.forEach {
                 if (it.id == data.id) {
                     mIsSelected = true
-                    itemView.tvVideoTitle.setTextColor(Color.parseColor(PreferenceHelper.getInstance(itemView.context).getString(ConstantPreference.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)))
-                    itemView.thumbnailSelectedView.visibility = View.VISIBLE
+                    itemView.tvVideoTitle?.setTextColor(
+                            Color.parseColor(
+                                    PreferenceHelper.getInstance()?.getString(ConstantPreference.SECONDARY_COLOR, DEF_SECONDARY_COLOR)
+                                            ?: DEF_SECONDARY_COLOR
+                            )
+                    )
+                    itemView.thumbnailSelectedView?.visibility = View.VISIBLE
                 }
             }
         }
     }
 
-    private fun loadBrandTypeLogo(icTypeLogo: ImageView, brandTypeLogo: String?) {
-        Glide.with(icTypeLogo).load(brandTypeLogo)
-                .override(mTypeLogoWidth, mTypeLogoHeight)
-                .into(icTypeLogo)
+    private fun loadBrandTypeLogo(icTypeLogo: ImageView?, brandTypeLogo: String?) {
+        icTypeLogo?.also { imageView ->
+            Glide.with(imageView).load(brandTypeLogo)
+                    .override(mTypeLogoWidth, mTypeLogoHeight)
+                    .into(imageView)
+        }
     }
 
     private fun displayContent(data: MMVideo) {
         // thumbnail video
-        Glide.with(itemView).load(data.thumbnailMediumUrl)
-                .override(mThumbnailWidth, mThumbnailHeight)
-                .transform(CenterCrop(), RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.corner_4dp)))
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .placeholder(R.drawable.bg_rectangle_ltgray_corner_4dp)
-                .error(R.drawable.bg_rectangle_ltgray_corner_4dp)
-                .into(itemView.videoThumbnail)
+        itemView.videoThumbnail?.also { thumbnail ->
+            Glide.with(thumbnail).load(data.thumbnailMediumUrl)
+                    .override(mThumbnailWidth, mThumbnailHeight)
+                    .transform(CenterCrop(), RoundedCorners(itemView.resources?.getDimensionPixelSize(R.dimen.corner_4dp)
+                            ?: 4))
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .placeholder(R.drawable.bg_rectangle_ltgray_corner_4dp)
+                    .error(R.drawable.bg_rectangle_ltgray_corner_4dp)
+                    .into(thumbnail)
+        }
 
         // displaying icon type logo
         loadBrandTypeLogo(itemView.icTypeLogo, data.brandTypeLogo)
@@ -213,9 +246,9 @@ class VideosSearchResultPageVH(view: View, val mItemWidth: Int, val mItemHeight:
         //mDownloadButtonManager.setVideoData(data)
 
         // displaying video title
-        itemView.tvVideoTitle.text = data.getVideoTitle()
+        itemView.tvVideoTitle?.text = data.getVideoTitle()
 
-        itemView.tvVideoDuration.text = data.getDurationValue()
+        itemView.tvVideoDuration?.text = data.getDurationValue()
 
         showCollections(itemView.icTypeLogo, data.collections)
 
@@ -253,21 +286,32 @@ class VideosSearchResultPageVH(view: View, val mItemWidth: Int, val mItemHeight:
         }
     }
 
-    private fun showCollections(icTypeLogo: ImageView, collections: ArrayList<MMTinyCategory>?) {
-        if (itemView is ConstraintLayout)
-            mExtraViews = SearchCollectionUtil.displayCollections(parentView = itemView.groupCollections, leftView = icTypeLogo, collections = collections,
-                    collectionCountMax = 2, extraCollectionTextViews = mExtraViews)
+    private fun showCollections(icTypeLogo: ImageView?, collections: ArrayList<MMTinyCategory>?) {
+        val layout: View? = itemView
+        layout?.also { view ->
+            if (view is ConstraintLayout)
+                mExtraViews = SearchCollectionUtil.displayCollections(
+                        parentView = view.groupCollections,
+                        leftView = icTypeLogo,
+                        collections = collections,
+                        collectionCountMax = 2,
+                        extraCollectionTextViews = mExtraViews
+                )
+        }
     }
 
     fun toggleSelectVideo() {
         when (mIsSelected) {
             true -> {
-                itemView.tvVideoTitle.setTextColor(Color.BLACK)
-                itemView.thumbnailSelectedView.visibility = View.INVISIBLE
+                itemView.tvVideoTitle?.setTextColor(Color.BLACK)
+                itemView.thumbnailSelectedView?.visibility = View.INVISIBLE
             }
             false -> {
-                itemView.tvVideoTitle.setTextColor(Color.parseColor(PreferenceHelper.getInstance(itemView.context).getString(ConstantPreference.SECONDARY_COLOR, Constant.DEF_SECONDARY_COLOR)))
-                itemView.thumbnailSelectedView.visibility = View.VISIBLE
+                itemView.tvVideoTitle?.setTextColor(
+                        Color.parseColor(PreferenceHelper.getInstance()?.getString(ConstantPreference.SECONDARY_COLOR, DEF_SECONDARY_COLOR)
+                                ?: DEF_SECONDARY_COLOR)
+                )
+                itemView.thumbnailSelectedView?.visibility = View.VISIBLE
             }
         }
 

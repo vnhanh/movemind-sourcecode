@@ -19,30 +19,32 @@ class SPCollectionVH(view: View) : BaseVH<MMCollection>(view) {
     fun bind(collection: MMCollection, isSelected: Boolean) {
         super.bind(collection)
 
-        itemView.tvCollectionName.text = collection.name
+        itemView.tvCollectionName?.text = collection.name
         displayLogoCollection(itemView.imgCollectionLogo, collection.image, collection.getColorStr())
 
         select(isSelected)
     }
 
-    private fun displayLogoCollection(imageView: MMCircleImageView, url: String?, color: String) {
-        if (color.isNotEmpty() && color.length > 1)
-            imageView.setStrokeColor(Color.parseColor(color))
+    private fun displayLogoCollection(imageView: MMCircleImageView?, url: String?, color: String) {
+        imageView?.also { imgView ->
+            if (color.isNotEmpty() && color.length > 1)
+                imgView.setStrokeColor(Color.parseColor(color))
 
-        if (mImageLoadSize == 0) {
-            val size: Int = imageView.resources.getDimensionPixelSize(R.dimen.search_option_item_image_size)
-            mImageLoadSize = (size * (1 - Constant.RATIO_STROKE_BORDER) / Constant.RATIO_SQUARE_INNER_CIRCLE).toInt()
+            if (mImageLoadSize == 0) {
+                val size: Int = imgView.resources?.getDimensionPixelSize(R.dimen.search_option_item_image_size)?:130
+                mImageLoadSize = (size * (1 - Constant.RATIO_STROKE_BORDER) / Constant.RATIO_SQUARE_INNER_CIRCLE).toInt()
+            }
+
+            Glide.with(imgView).load(url)
+                    .apply(RequestOptions().fitCenter().override(mImageLoadSize, mImageLoadSize)
+                            .placeholder(R.drawable.bg_sp_deault_collection)
+                            .fallback(R.drawable.bg_sp_deault_collection)
+                            .error(R.drawable.bg_sp_deault_collection))
+                    .into(imgView)
         }
-
-        Glide.with(imageView).load(url)
-                .apply(RequestOptions().fitCenter().override(mImageLoadSize, mImageLoadSize)
-                        .placeholder(R.drawable.bg_sp_deault_collection)
-                        .fallback(R.drawable.bg_sp_deault_collection)
-                        .error(R.drawable.bg_sp_deault_collection))
-                .into(imageView)
     }
 
     fun select(isSelected: Boolean) {
-        itemView.imgCollectionLogo.isSelect(isSelected)
+        itemView.imgCollectionLogo?.isSelect(isSelected)
     }
 }

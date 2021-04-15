@@ -17,8 +17,8 @@ object ViewUtil {
         }
     }
 
-    fun <T> setupButton(button: View?, func: (T) -> Unit, param: T) {
-        if (button == null) return
+    fun <T> setupButton(button: View?, func: (T) -> Unit, param: T?) {
+        if (button == null || param == null) return
 
         button.setOnClickListener {
             it.isEnabled = false

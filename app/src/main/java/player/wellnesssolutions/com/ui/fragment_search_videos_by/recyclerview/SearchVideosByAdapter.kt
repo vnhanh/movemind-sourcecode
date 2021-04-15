@@ -13,9 +13,9 @@ import player.wellnesssolutions.com.ui.fragment_search_videos_by.ISearchVideosBy
 class SearchVideosByAdapter(private var presenter: ISearchVideosByContract.Presenter?, var list: ArrayList<SearchByOption>) : RecyclerView.Adapter<SearchVideosByVH>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchVideosByVH {
-        val vh: SearchVideosByVH
+        val viewholder: SearchVideosByVH
 
-        vh = when (viewType) {
+        viewholder = when (viewType) {
             TYPE_IMAGE -> {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.vh_search_videos_by_image, parent, false)
                 SearchVideosByImageVH(view)
@@ -27,17 +27,17 @@ class SearchVideosByAdapter(private var presenter: ISearchVideosByContract.Prese
             }
         }
 
-        vh.itemView.setOnClickListener {
-            vh.data?.also { data ->
+        viewholder.itemView.setOnClickListener {
+            viewholder.data?.also { data ->
                 it.isEnabled = false
                 when (viewType) {
                     TYPE_IMAGE -> {
-                        vh.itemView.imgSVBItem.changeBgColorOnClick()
+                        viewholder.itemView.imgSVBItem.changeBgColorOnClick()
                         SearchCollectionUtil.isCollectionChoose = data.title == "Collection"
                     }
 
                     else -> {
-                        vh.itemView.tvWrapperCircleItem.changeBgColorOnClick()
+                        viewholder.itemView.tvWrapperCircleItem.changeBgColorOnClick()
                     }
                 }
                 presenter?.onChooseItem(data)
@@ -46,7 +46,7 @@ class SearchVideosByAdapter(private var presenter: ISearchVideosByContract.Prese
             }
         }
 
-        return vh
+        return viewholder
     }
 
     override fun onBindViewHolder(holder: SearchVideosByVH, position: Int) {

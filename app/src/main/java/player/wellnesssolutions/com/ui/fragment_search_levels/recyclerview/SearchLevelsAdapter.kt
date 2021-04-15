@@ -17,6 +17,6 @@ class SearchLevelsAdapter(listener: ISearchLevelsContract.Presenter?, list: Arra
 
         setupLayoutForItemView(view, view.viewWrapper)
 
-        return SearchLevelVH(view, listener, itemWidth, itemHeight, itemCountInRow)
+        return SearchLevelVH(view = view, listener = listener, itemWidth = itemWidth, itemHeight = itemHeight, itemCountInRow = itemCountInRow)
     }
 }

@@ -21,10 +21,12 @@ class SearchResultRootVH(view: View) : RecyclerView.ViewHolder(view) {
 
     private fun displayView() {
         val adapter = VideosSearchResultPageAdapter(this.mListVideo, mPresenter)
-        itemView.rvVideoSearchResult.layoutManager = GridLayoutManager(itemView.context, Constant.COL_COUNT_SCREEN_SEARCH_RESULT, RecyclerView.VERTICAL, false)
-        itemView.rvVideoSearchResult.setHasFixedSize(true)
-        itemView.rvVideoSearchResult.setRowCount(Constant.ROW_COUNT_SCREEN_SEARCH_RESULT)
-        itemView.rvVideoSearchResult.setVideosSearchResultPageAdapter(adapter)
+        itemView.rvVideoSearchResult?.also { recyclerview ->
+            recyclerview.layoutManager = GridLayoutManager(itemView.context, Constant.COL_COUNT_SCREEN_SEARCH_RESULT, RecyclerView.VERTICAL, false)
+            recyclerview.setHasFixedSize(true)
+            recyclerview.setRowCount(Constant.ROW_COUNT_SCREEN_SEARCH_RESULT)
+            recyclerview.setVideosSearchResultPageAdapter(adapter)
+        }
 
         mAdapter = adapter
 

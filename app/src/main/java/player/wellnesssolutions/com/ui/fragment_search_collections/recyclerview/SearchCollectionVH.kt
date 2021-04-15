@@ -20,14 +20,16 @@ class SearchCollectionVH(view: View, private var listener: ISearchCollectionCont
         ViewUtil.setupOnClicked(view.imgCollectionLogo, this)
         ViewUtil.setupOnClicked(view.tvCollectionName, this)
 
-        val size: Int = itemView.resources.getDimensionPixelSize(R.dimen.vh_search_item_circle_item_size_large)
-        val padding: Int = itemView.resources.getDimensionPixelSize(R.dimen.vh_search_screen_cicle_item_for_5_items_or_more_padding)
-        mLoadSize = size - padding * 2
+        itemView.resources?.also { resources ->
+            val size: Int = resources.getDimensionPixelSize(R.dimen.vh_search_item_circle_item_size_large)
+            val padding: Int = resources.getDimensionPixelSize(R.dimen.vh_search_screen_cicle_item_for_5_items_or_more_padding)
+            mLoadSize = size - padding * 2
+        }
     }
 
     override fun onClick(view: View) {
         data?.also { data ->
-            itemView.imgCollectionLogo.changeBgColorOnClick()
+            itemView.imgCollectionLogo?.changeBgColorOnClick()
             view.isEnabled = false
 
             listener?.onChooseItem(data)
@@ -39,7 +41,7 @@ class SearchCollectionVH(view: View, private var listener: ISearchCollectionCont
     override fun bind(data: MMCollection) {
         super.bind(data)
 
-        itemView.tvCollectionName.text = data.name
+        itemView.tvCollectionName?.text = data.name
 
         loadImage(data)
     }
@@ -48,16 +50,17 @@ class SearchCollectionVH(view: View, private var listener: ISearchCollectionCont
         val strokeColor: String = data.getColorStr()
 
         if (!strokeColor.isEmpty() && strokeColor.length > 1) {
-            itemView.imgCollectionLogo.setStrokeColor(Color.parseColor(strokeColor))
+            itemView.imgCollectionLogo?.setStrokeColor(Color.parseColor(strokeColor))
         }
 
-
-        Glide.with(itemView).load(data.image)
-                .override(mLoadSize, mLoadSize)
-                .placeholder(R.drawable.bg_sp_deault_collection)
-                .fallback(R.drawable.bg_sp_deault_collection)
-                .error(R.drawable.bg_sp_deault_collection)
-                .into(itemView.imgCollectionLogo)
+        itemView.imgCollectionLogo?.also { imageView ->
+            Glide.with(imageView).load(data.image)
+                    .override(mLoadSize, mLoadSize)
+                    .placeholder(R.drawable.bg_sp_deault_collection)
+                    .fallback(R.drawable.bg_sp_deault_collection)
+                    .error(R.drawable.bg_sp_deault_collection)
+                    .into(imageView)
+        }
     }
 
     override fun release() {

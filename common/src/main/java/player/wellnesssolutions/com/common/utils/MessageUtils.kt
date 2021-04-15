@@ -36,15 +36,18 @@ object MessageUtils {
         return toast
     }
 
-    fun showSnackBar(snackView: View, @StringRes messageRes: Int, @ColorRes colorRes: Int, isOnPresentation: Boolean = false) {
+    fun showSnackBar(snackView: View?, @StringRes messageRes: Int, @ColorRes colorRes: Int, isOnPresentation: Boolean = false) {
+        if (snackView == null) return
         showSnackBar(snackView, snackView.resources.getString(messageRes), colorRes, isLongTime = false, isOnPresentation = isOnPresentation)
     }
 
-    fun showSnackBar(snackView: View, message: String, @ColorRes colorRes: Int, isLongTime: Boolean = true, isOnPresentation: Boolean = false) {
+    fun showSnackBar(snackView: View?, message: String, @ColorRes colorRes: Int, isLongTime: Boolean = true, isOnPresentation: Boolean = false) {
+        if (snackView == null) return
         createSnack(snackView = snackView, message = message, colorRes = colorRes, isLongTime = isLongTime, isOnPresentation = isOnPresentation).show()
     }
 
-    fun showSnackBar(snackView: View, message: String, @ColorRes colorRes: Int, @StringRes btnRes: Int, isLongTime: Boolean = true) {
+    fun showSnackBar(snackView: View?, message: String, @ColorRes colorRes: Int, @StringRes btnRes: Int, isLongTime: Boolean = true) {
+        if (snackView == null) return
         showSnackBar(
                 snackView = snackView,
                 message = message,
@@ -55,7 +58,8 @@ object MessageUtils {
         )
     }
 
-    fun showSnackBar(snackView: View, @StringRes msgRes: Int, @ColorRes colorRes: Int, @StringRes btnRes: Int, isLongTime: Boolean = true) {
+    fun showSnackBar(snackView: View?, @StringRes msgRes: Int, @ColorRes colorRes: Int, @StringRes btnRes: Int, isLongTime: Boolean = true) {
+        if (snackView == null) return
         showSnackBar(
                 snackView = snackView,
                 message = snackView.context.getString(msgRes),

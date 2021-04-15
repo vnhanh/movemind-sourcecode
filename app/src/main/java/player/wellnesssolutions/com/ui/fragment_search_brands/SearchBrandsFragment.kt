@@ -42,7 +42,9 @@ class SearchBrandsFragment : BaseFragment(), ISearchBrandsContract.View {
 
         readArguments()
 
-        mSlideToRightAnimationPosition = resources.displayMetrics.widthPixels.toFloat()
+        context?.resources?.also { resources ->
+            mSlideToRightAnimationPosition = resources.displayMetrics.widthPixels.toFloat()
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -58,7 +60,7 @@ class SearchBrandsFragment : BaseFragment(), ISearchBrandsContract.View {
     }
 
     private fun setupUI() {
-        btnPrevious.setOnClickListener {
+        btnPrevious?.setOnClickListener {
             onBackPressed(it)
         }
     }

@@ -98,42 +98,47 @@ object SearchCollectionUtil {
      * -----------------------
      */
 
-    fun displayCollections(parentView: LinearLayout, leftView: View, collections: ArrayList<MMTinyCategory>?, collectionCountMax: Int,
+    fun displayCollections(parentView: LinearLayout?,
+                           leftView: View?,
+                           collections: ArrayList<MMTinyCategory>?,
+                           collectionCountMax: Int,
                            extraCollectionTextViews: ArrayList<TextView>?): ArrayList<TextView>? {
-
-        extraCollectionTextViews?.also { list ->
-            while (list.size > 0) {
-                parentView.removeView(list.get(0))
-                list.removeAt(0)
+        parentView?.also { rootView ->
+            extraCollectionTextViews?.also { list ->
+                while (list.size > 0) {
+                    rootView.removeView(list.get(0))
+                    list.removeAt(0)
+                }
             }
+
+            if (collections == null || collections.size == 0) {
+                return extraCollectionTextViews
+            }
+
+            var newListViews = extraCollectionTextViews
+            if (newListViews == null) newListViews = ArrayList()
+
+            if (MARGIN == 0) MARGIN = rootView.resources?.getDimensionPixelSize(R.dimen.margin)?:0
+
+            var prevTv = leftView
+
+            val lastIndex = Math.min(collections.size - 1, collectionCountMax)
+
+            for (i: Int in 0..lastIndex) {
+                val content = if (i < collectionCountMax) collections.get(i).name
+                        ?: "" else Constant.DOUBLE_DOTS
+                val colorStr = collections.get(i).getColor()
+
+                prevTv = addExtraSmallView(rootView, leftView, content, colorStr, MARGIN)
+                newListViews.add(prevTv)
+            }
+            return newListViews
         }
 
-        if (collections == null || collections.size == 0) {
-            return extraCollectionTextViews
-        }
-
-        var newListViews = extraCollectionTextViews
-        if (newListViews == null) newListViews = ArrayList()
-
-        if (MARGIN == 0) MARGIN = parentView.resources.getDimensionPixelSize(R.dimen.margin)
-
-        var prevTv = leftView
-
-        val lastIndex = Math.min(collections.size - 1, collectionCountMax)
-
-        for (i: Int in 0..lastIndex) {
-            val content = if (i < collectionCountMax) collections.get(i).name
-                    ?: "" else Constant.DOUBLE_DOTS
-            val colorStr = collections.get(i).getColor()
-
-            prevTv = addExtraSmallView(parentView, leftView, content, colorStr, MARGIN)
-            newListViews.add(prevTv)
-        }
-
-        return newListViews
+        return null
     }
 
-    private fun addExtraSmallView(parentView: LinearLayout, leftView: View, name: String, colorStr: String?, leftMargin: Int): TextView {
+    private fun addExtraSmallView(parentView: LinearLayout, leftView: View?, name: String, colorStr: String?, leftMargin: Int): TextView {
         val tv = TextView(parentView.context)
         if (mTvCollectionHeight == 0) mTvCollectionHeight = parentView.resources.getDimensionPixelSize(R.dimen.vh_now_playing_title_collection_height)
 

@@ -18,7 +18,13 @@ class TypefaceUtil {
             }
         }
 
-        fun getTypeface(context: Context, fontName:String) : Typeface = Typeface.createFromAsset(context.assets, fontName)
+        fun getTypeface(context: Context?, fontName:String="") : Typeface {
+            return if(context == null || fontName.isBlank()){
+                Typeface.DEFAULT
+            }else{
+                Typeface.createFromAsset(context.assets, fontName)
+            }
+        }
     }
 
 }

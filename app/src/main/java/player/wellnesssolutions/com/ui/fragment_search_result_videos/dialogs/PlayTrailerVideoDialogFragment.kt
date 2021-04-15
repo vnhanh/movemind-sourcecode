@@ -89,12 +89,14 @@ class PlayTrailerVideoDialogFragment : DialogFragment(), IPlayVideoContract.Mana
     }
 
     private fun setupLayoutForTitleView() {
-        val leftMargin = resources.getDimensionPixelSize(R.dimen.margin_left_tv_title_video_dialog_playing_video_search_result)
-        val topMargin = resources.getDimensionPixelSize(R.dimen.margin_top_tv_title_video_dialog_playing_video_search_result)
+        val leftMargin = context?.resources?.getDimensionPixelSize(R.dimen.margin_left_tv_title_video_dialog_playing_video_search_result)?:0
+        val topMargin = context?.resources?.getDimensionPixelSize(R.dimen.margin_top_tv_title_video_dialog_playing_video_search_result)?:0
 
-        val params = tvTitleVideo.layoutParams as RelativeLayout.LayoutParams
-        params.setMargins(leftMargin, topMargin, 0, 0)
-        tvTitleVideo.layoutParams = params
+        tvTitleVideo?.also { textView ->
+            val params = textView.layoutParams as RelativeLayout.LayoutParams
+            params.setMargins(leftMargin, topMargin, 0, 0)
+            textView.layoutParams = params
+        }
     }
 
     private fun setupDimensions() {
@@ -119,28 +121,28 @@ class PlayTrailerVideoDialogFragment : DialogFragment(), IPlayVideoContract.Mana
     }
 
     private fun setupVolumeButton() {
-        frameExoVoumeSeebar.visibility = View.GONE
+        frameExoVoumeSeebar?.visibility = View.GONE
 
         ViewUtil.setupButton(exo_volume, this::changeDisplayVolumeView)
 
-        exoVolumeSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        exoVolumeSeekbar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekbar: SeekBar?, progress: Int, p3: Boolean) {
                 mPlayerManager?.onChangedVolume(progress)
 
                 when (progress) {
                     0 -> {
                         if (mLatestVolumeLevel != EnumVolumeLevel.MUTE)
-                            exo_volume.setImageResource(R.drawable.ic_volume_mute_white_24dp)
+                            exo_volume?.setImageResource(R.drawable.ic_volume_mute_white_24dp)
                         mLatestVolumeLevel = EnumVolumeLevel.MUTE
                     }
                     in 1..70 -> {
                         if (mLatestVolumeLevel != EnumVolumeLevel.DOWN)
-                            exo_volume.setImageResource(R.drawable.ic_volume_down_white_24dp)
+                            exo_volume?.setImageResource(R.drawable.ic_volume_down_white_24dp)
                         mLatestVolumeLevel = EnumVolumeLevel.DOWN
                     }
                     else -> {
                         if (mLatestVolumeLevel != EnumVolumeLevel.UP)
-                            exo_volume.setImageResource(R.drawable.ic_volume_up_white_24dp)
+                            exo_volume?.setImageResource(R.drawable.ic_volume_up_white_24dp)
                         mLatestVolumeLevel = EnumVolumeLevel.UP
                     }
                 }
@@ -157,10 +159,12 @@ class PlayTrailerVideoDialogFragment : DialogFragment(), IPlayVideoContract.Mana
     }
 
     private fun changeDisplayVolumeView() {
-        if (frameExoVoumeSeebar.visibility != View.GONE) {
-            frameExoVoumeSeebar.visibility = View.GONE
-        } else {
-            frameExoVoumeSeebar.visibility = View.VISIBLE
+        frameExoVoumeSeebar?.also { frameLayout ->
+            if (frameLayout.visibility != View.GONE) {
+                frameLayout.visibility = View.GONE
+            } else {
+                frameLayout.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -171,10 +175,10 @@ class PlayTrailerVideoDialogFragment : DialogFragment(), IPlayVideoContract.Mana
     private fun onClickedFullScreenButton() {
         if (mIsFullscreen) {
             setupNormalDimensDialog()
-            exo_fullscreen.setImageResource(R.drawable.ic_fullscreen_white_24dp)
+            exo_fullscreen?.setImageResource(R.drawable.ic_fullscreen_white_24dp)
         } else {
             setupFullscreenDialog()
-            exo_fullscreen.setImageResource(R.drawable.ic_fullscreen_exit_white_24dp)
+            exo_fullscreen?.setImageResource(R.drawable.ic_fullscreen_exit_white_24dp)
         }
         mIsFullscreen = !mIsFullscreen
     }
@@ -187,8 +191,8 @@ class PlayTrailerVideoDialogFragment : DialogFragment(), IPlayVideoContract.Mana
     }
 
     private fun setupNormalDimensDialog() {
-        val width = resources.getDimensionPixelSize(R.dimen.width_normal_screen_playing_video_search_result)
-        val height = resources.getDimensionPixelSize(R.dimen.height_normal_screen_playing_video_search_result)
+        val width = context?.resources?.getDimensionPixelSize(R.dimen.width_normal_screen_playing_video_search_result)?:0
+        val height = context?.resources?.getDimensionPixelSize(R.dimen.height_normal_screen_playing_video_search_result)?:0
         dialog?.window?.setLayout(width, height)
         dialog?.window?.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
     }
@@ -231,7 +235,7 @@ class PlayTrailerVideoDialogFragment : DialogFragment(), IPlayVideoContract.Mana
             }
 
             Player.STATE_READY -> {
-                val isControllerVisible = videoPlayer.isControllerVisible
+                val isControllerVisible = videoPlayer?.isControllerVisible?:false
 
                 PlayVideoDisplayHelper.displayOnReady(isControllerVisible, playWhenReady, progressLoading, btnPlayVideoSR, btnPauseVideoSR)
             }
@@ -249,51 +253,49 @@ class PlayTrailerVideoDialogFragment : DialogFragment(), IPlayVideoContract.Mana
 
     @SuppressLint("WrongConstant")
     override fun onPlayerInitialized(players: SimpleExoPlayer) {
-        if (videoPlayer == null) return
-
-
-        if (android.os.Build.VERSION.SDK_INT >= 28) {
-            val attAudio = AudioAttributes.Builder()
-                    .setUsage(C.USAGE_ALARM)
-                    .setContentType(C.STREAM_TYPE_NOTIFICATION)
-                    .build()
-            players.setAudioAttributes(attAudio, false)
-
-        } else {
-            val attAudio = AudioAttributes.Builder()
-                    .setUsage(C.STREAM_TYPE_NOTIFICATION)
-                    .setContentType(C.STREAM_TYPE_NOTIFICATION)
-                    .build()
-            players.setAudioAttributes(attAudio, false)
-
-        }
-
-        exoVolumeSeekbar.progress = (players.volume * 100).toInt()
-        if (players.volume == 0f) exo_volume.setImageResource(R.drawable.ic_volume_mute_white_24dp)
-
-        videoPlayer.player = players
-
-
-        //player.audioStreamType = C.STREAM_TYPE_ALARM
-        // show video name
-        mVideoName?.also {
-            tvTitleVideo.text = StringBuilder(it).append(Constant.WHITE_SPACE).toString()
-        }
-
-        videoPlayer.setControllerVisibilityListener {
-            if (it == View.VISIBLE && progressLoading != null && progressLoading.visibility != View.VISIBLE) {
-                // not play failed and isPlayWhenReady -> true
-                val isPlaying = (false == mPlayerManager?.isPlayerError()) && videoPlayer.player.playWhenReady
-                val state = videoPlayer.player.playbackState
-
-                if (state == Player.STATE_ENDED)
-                    PlayVideoDisplayHelper.displayOnEnded(progressLoading, btnPlayVideoSR, btnPauseVideoSR)
-                else
-                    displayButtonPlayPauseVideo(isPlaying)
+        videoPlayer?.also { vidPlayer ->
+            if (android.os.Build.VERSION.SDK_INT >= 28) {
+                val attAudio = AudioAttributes.Builder()
+                        .setUsage(C.USAGE_ALARM)
+                        .setContentType(C.STREAM_TYPE_NOTIFICATION)
+                        .build()
+                players.setAudioAttributes(attAudio, false)
 
             } else {
-                hideButtonPlayPauseVideo()
-                frameExoVoumeSeebar.visibility = View.GONE
+                val attAudio = AudioAttributes.Builder()
+                        .setUsage(C.STREAM_TYPE_NOTIFICATION)
+                        .setContentType(C.STREAM_TYPE_NOTIFICATION)
+                        .build()
+                players.setAudioAttributes(attAudio, false)
+
+            }
+
+            exoVolumeSeekbar?.progress = (players.volume * 100).toInt()
+            if (players.volume == 0f) exo_volume?.setImageResource(R.drawable.ic_volume_mute_white_24dp)
+
+            vidPlayer.player = players
+
+            //player.audioStreamType = C.STREAM_TYPE_ALARM
+            // show video name
+            mVideoName?.also {
+                tvTitleVideo?.text = StringBuilder(it).append(Constant.WHITE_SPACE).toString()
+            }
+
+            vidPlayer.setControllerVisibilityListener {
+                if (it == View.VISIBLE && progressLoading != null && progressLoading.visibility != View.VISIBLE) {
+                    // not play failed and isPlayWhenReady -> true
+                    val isPlaying = (false == mPlayerManager?.isPlayerError()) && vidPlayer.player.playWhenReady
+                    val state = vidPlayer.player.playbackState
+
+                    if (state == Player.STATE_ENDED)
+                        PlayVideoDisplayHelper.displayOnEnded(progressLoading, btnPlayVideoSR, btnPauseVideoSR)
+                    else
+                        displayButtonPlayPauseVideo(isPlaying)
+
+                } else {
+                    hideButtonPlayPauseVideo()
+                    frameExoVoumeSeebar?.visibility = View.GONE
+                }
             }
         }
     }

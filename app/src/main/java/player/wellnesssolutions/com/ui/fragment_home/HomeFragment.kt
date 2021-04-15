@@ -249,7 +249,7 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
     override fun onNoClassVideosForNow(scheduleVideos: ArrayList<MMVideo>, message: String, @ColorRes msgColor: Int, isClickedFromBtnBottom: Boolean) {
         if (btnGetStarted == null) return
         if (message == Constant.ERROR_CANT_CONNECT_SERVER) {
-            val text = String.format("%s %s", getString(R.string.request_class_video_failed), message)
+            val text = String.format("%s %s", context?.getString(R.string.request_class_video_failed).orEmpty(), message)
             MessageUtils.showSnackBar(btnGetStarted, text, msgColor)
         }else if(scheduleVideos.size > 0){
             playVideoPresentationable(scheduleVideos)
@@ -261,7 +261,7 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
     override fun onHaveClassVideos(scheduleVideos: ArrayList<MMVideo>, isClickedFromBtnBottom: Boolean) {
         activity?.also { activity ->
             if (activity is MainActivity && activity.isPresentationAvailable()) {
-                MessageUtils.showSnackBar(snackView = btnGetStarted, message = getString(R.string.now_playing_class), colorRes = R.color.white)
+                MessageUtils.showSnackBar(snackView = btnGetStarted, message = context?.getString(R.string.now_playing_class).orEmpty(), colorRes = R.color.white)
                 activity.playVideo(PlayMode.SCHEDULE, scheduleVideos)
                 loadControlScreen()
             } else {

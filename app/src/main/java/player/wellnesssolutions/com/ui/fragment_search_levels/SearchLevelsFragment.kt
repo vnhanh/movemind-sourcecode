@@ -69,14 +69,14 @@ class SearchLevelsFragment : BaseFragment(), ISearchLevelsContract.View {
     }
 
     private fun setupButtonPrevious() {
-        btnPrevious.setOnClickListener {
+        btnPrevious?.setOnClickListener {
             it.isEnabled = false
             FragmentUtil.onBackPressedActivity(activity)
         }
     }
 
     private fun setupButtonRefresh() {
-        icRefresh.setOnClickListener {
+        icRefresh?.setOnClickListener {
             it.isEnabled = false
             ViewUtil.hideRefreshView(icRefresh, tvRetry)
             mPrensenter?.loadData(view = this)
@@ -85,8 +85,8 @@ class SearchLevelsFragment : BaseFragment(), ISearchLevelsContract.View {
     }
 
     private fun setupTextTitle() {
-        tvTitle.text = getString(R.string.screen_level_tv_title)
-        tvTitle2.text = getString(R.string.screen_level_choose_a_level)
+        tvTitle?.text = getString(R.string.screen_level_tv_title)
+        tvTitle2?.text = getString(R.string.screen_level_choose_a_level)
     }
 
     override fun onStart() {
@@ -100,7 +100,7 @@ class SearchLevelsFragment : BaseFragment(), ISearchLevelsContract.View {
             mPrensenter?.onReshowUI(this)
             mIsJustBeDestroyed = false
         } else {
-            tvTitle.postDelayed(Runnable {
+            tvTitle?.postDelayed(Runnable {
                 mPrensenter?.onAttach(this@SearchLevelsFragment)
             }, 400L)
         }
@@ -164,7 +164,13 @@ class SearchLevelsFragment : BaseFragment(), ISearchLevelsContract.View {
             parentFragment?.childFragmentManager?.also { fm ->
                 val nextFragment = SearchPreviewFragment.getInstance(brand, Constant.SEARCH_LEVEL, level.id, level.name, "", "")
                 val newTag = SearchPreviewFragment.TAG
-                FragmentUtil.replaceFragment(fm = fm, newFragment = nextFragment, newFragmentTag = newTag, frameId = R.id.frameLayoutControl, isAddToBackStack = true)
+                FragmentUtil.replaceFragment(
+                        fm = fm,
+                        newFragment = nextFragment,
+                        newFragmentTag = newTag,
+                        frameId = R.id.frameLayoutControl,
+                        isAddToBackStack = true
+                )
 
                 if (parent is ControlFragment)
                     parent.mCurrentChildScreenTag = newTag
@@ -180,11 +186,12 @@ class SearchLevelsFragment : BaseFragment(), ISearchLevelsContract.View {
 
             tvTitle2.text = getString(R.string.screen_level_tv_title2_no_item)
 
-            val message = getString(R.string.this_brand_has_no_levels, brandName)
+            val message = context?.getString(R.string.this_brand_has_no_levels, brandName).orEmpty()
             mDialog = DialogUtil.createDialogOnlyOneButton(context = tvTitle2.context, message = message, titleButton = R.string.btn_ok, dialogClickListener = null).also { it.show() }
 
             return
         }
+
         rvLevels?.also {
             val itemCountInRow = Math.min(Constant.DEFAULT_MAX_ITEMS_COUNT_IN_ROW, data.size)
             val adapter = SearchLevelsAdapter(mPrensenter, data, itemCountInRow).apply {
@@ -213,23 +220,27 @@ class SearchLevelsFragment : BaseFragment(), ISearchLevelsContract.View {
     }
 
     private fun showSwipeText() {
+        txtSwipeRightForMoreOptions?.also { textViewSwipeRight ->
+            rvLevels?.also { recyclerviewLevels ->
+                val set = ConstraintSet()
+                set.clone(rootSearchLevel)
 
-        val set = ConstraintSet()
-        set.clone(rootSearchLevel)
-
-        set.connect(rvLevels.id, ConstraintSet.BOTTOM, txtSwipeRightForMoreOptions.id, ConstraintSet.TOP)
-        set.applyTo(rootSearchLevel)
-        txtSwipeRightForMoreOptions.visibility = View.VISIBLE
+                set.connect(recyclerviewLevels.id, ConstraintSet.BOTTOM, textViewSwipeRight.id, ConstraintSet.TOP)
+                set.applyTo(rootSearchLevel)
+                textViewSwipeRight.visibility = View.VISIBLE
+            }
+        }
     }
 
     private fun hideSwipeText() {
+        rvLevels?.also { recyclerviewLevels ->
+            val set = ConstraintSet()
+            set.clone(rootSearchLevel)
 
-        val set = ConstraintSet()
-        set.clone(rootSearchLevel)
-
-        set.connect(rvLevels.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
-        set.applyTo(rootSearchLevel)
-        txtSwipeRightForMoreOptions.visibility = View.GONE
+            set.connect(recyclerviewLevels.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+            set.applyTo(rootSearchLevel)
+        }
+        txtSwipeRightForMoreOptions?.visibility = View.GONE
     }
 
     override fun onRequestFailed(message: String) {

@@ -30,8 +30,8 @@ class SearchInstructorVH(view: View, private var listener: ISearchInstructorCont
 //        ViewUtil.setupOnClicked(itemView.imageCover, this)
         ViewUtil.setupOnClicked(itemView.btnShowInfoItemSearchInstructor, this)
 
-        val size = itemView.resources.getDimensionPixelSize(R.dimen.vh_search_presenter_avatar_size)
-        val padding = itemView.resources.getDimensionPixelSize(R.dimen.padding_circle_item_for_6_items_search_in_row)
+        val size = itemView.resources?.getDimensionPixelSize(R.dimen.vh_search_presenter_avatar_size)?:130
+        val padding = itemView.resources?.getDimensionPixelSize(R.dimen.padding_circle_item_for_6_items_search_in_row)?:10
         mLoadSize = size - padding * 2
         setPaddingImage(padding)
         setMarginForPivotView(padding)
@@ -39,7 +39,7 @@ class SearchInstructorVH(view: View, private var listener: ISearchInstructorCont
     }
 
     private fun setPaddingImage(padding: Int) {
-        itemView.imgAvatar.setPadding(padding, padding, padding, padding)
+        itemView.imgAvatar?.setPadding(padding, padding, padding, padding)
     }
 
     private fun drawStroke(padding: Int) {
@@ -48,7 +48,7 @@ class SearchInstructorVH(view: View, private var listener: ISearchInstructorCont
             it.color = ColorStateList.valueOf(Color.WHITE)
             it.setStroke(padding, ContextCompat.getColor(itemView.context, R.color.instructorStroke))
         }
-        itemView.imgAvatar.background = strokeBg
+        itemView.imgAvatar?.background = strokeBg
     }
 
     override fun onClick(view: View) {
@@ -57,10 +57,10 @@ class SearchInstructorVH(view: View, private var listener: ISearchInstructorCont
             view.isEnabled = false
 
             when (view.id) {
-                itemView.tvName.id, itemView.imgAvatar.id -> {
+                itemView.tvName?.id, itemView.imgAvatar?.id -> {
                     listener?.onClickInstructorItem(data)
                 }
-                itemView.btnShowInfoItemSearchInstructor.id -> {
+                itemView.btnShowInfoItemSearchInstructor?.id -> {
                     listener?.onClickShowInfoInstructor(data)
                 }
             }
@@ -72,43 +72,48 @@ class SearchInstructorVH(view: View, private var listener: ISearchInstructorCont
     private var mAvatarDrawable: Drawable? = null
 
     private fun changeAvatarBgColorOnClick() {
-        mAvatarDrawable = itemView.imgAvatar.background
+        itemView.imgAvatar?.also { imageAvatar ->
+            mAvatarDrawable = imageAvatar.drawable
+            val coverDrawable: GradientDrawable = GradientDrawable().also {
+                it.shape = GradientDrawable.OVAL
+                it.color = ColorStateList.valueOf(Color.LTGRAY)
+                it.alpha = 200
+            }
 
-        val coverDrawable: GradientDrawable = GradientDrawable().also {
-            it.shape = GradientDrawable.OVAL
-            it.color = ColorStateList.valueOf(Color.LTGRAY)
-            it.alpha = 200
+            imageAvatar.background = null
+            imageAvatar.background = LayerDrawable(arrayOf(mAvatarDrawable, coverDrawable))
+
+            imageAvatar.postDelayed({
+                imageAvatar.background = mAvatarDrawable
+            }, 200L)
         }
-
-        itemView.imgAvatar.background = null
-        itemView.imgAvatar.background = LayerDrawable(arrayOf(mAvatarDrawable, coverDrawable))
-
-        itemView.postDelayed({
-            itemView.imgAvatar.background = mAvatarDrawable
-        }, 200L)
     }
 
     override fun bind(data: MMInstructor) {
         super.bind(data)
 
-        itemView.tvName.text = String.format(" %s ", data.name ?: Constant.SHARP)
+        itemView.tvName?.text = String.format(" %s ", data.name ?: Constant.SHARP)
 
         loadAvatar(data)
     }
 
     private fun setMarginForPivotView(imagePadding: Int) {
-        val params = itemView.viewPivotTopRight.layoutParams as ConstraintLayout.LayoutParams
-        params.rightMargin = imagePadding
-        params.topMargin = (imagePadding * 2.8f).toInt()
+        itemView.viewPivotTopRight?.also { viewPivot ->
+            val params = viewPivot.layoutParams as ConstraintLayout.LayoutParams
+            params.rightMargin = imagePadding
+            params.topMargin = (imagePadding * 2.8f).toInt()
+        }
     }
 
     private fun loadAvatar(data: MMInstructor) {
         if (!data.image.isNullOrEmpty()) {
-
-            Glide.with(itemView).load(data.image).override(mLoadSize, mLoadSize).circleCrop()
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .placeholder(R.drawable.ic_no_instructor).error(R.drawable.ic_no_instructor)
-                    .into(itemView.imgAvatar)
+            itemView.imgAvatar?.also { imgAvatar ->
+                Glide.with(imgAvatar).load(data.image)
+                        .override(mLoadSize, mLoadSize).circleCrop()
+                        .transition(DrawableTransitionOptions.withCrossFade())
+                        .placeholder(R.drawable.ic_no_instructor).error(R.drawable.ic_no_instructor)
+                        .into(imgAvatar)
+            }
         }
     }
 }

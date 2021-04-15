@@ -64,8 +64,8 @@ class SearchDurationsFragment : BaseFragment(), ISearchDurationContract.View {
     }
 
     private fun setupTextTitle() {
-        tvTitle.text = getString(R.string.screen_time_tv_title)
-        tvTitle2.text = getString(R.string.tv_choose_a_time)
+        tvTitle?.text = context?.getString(R.string.screen_time_tv_title).orEmpty()
+        tvTitle2?.text = context?.getString(R.string.tv_choose_a_time).orEmpty()
     }
 
     private fun setupButtonPrevious() {
@@ -73,7 +73,7 @@ class SearchDurationsFragment : BaseFragment(), ISearchDurationContract.View {
     }
 
     private fun setupButtonRefresh() {
-        icRefresh.setOnClickListener {
+        icRefresh?.setOnClickListener {
             icRefresh.isEnabled = false
             ViewUtil.hideRefreshView(icRefresh, tvRetry)
             mPresenter?.loadData(view = this)
@@ -92,7 +92,7 @@ class SearchDurationsFragment : BaseFragment(), ISearchDurationContract.View {
             mPresenter?.onReShowUI(this)
             mIsJustBeDestroyed = false
         } else {
-            tvTitle.postDelayed(Runnable {
+            tvTitle?.postDelayed(Runnable {
                 mPresenter?.onAttach(this@SearchDurationsFragment)
             }, 400L)
         }
@@ -173,9 +173,9 @@ class SearchDurationsFragment : BaseFragment(), ISearchDurationContract.View {
         if (tvTitle2 == null) return
 
         if (data.size == 0) {
-            tvTitle2.text = getString(R.string.no_time)
+            tvTitle2.text = context?.getString(R.string.no_time).orEmpty()
 
-            val message = getString(R.string.this_brand_has_no_time, brandName)
+            val message = context?.getString(R.string.this_brand_has_no_time, brandName).orEmpty()
             DialogUtil.createDialogOnlyOneButton(context = tvTitle2.context, message = message, titleButton = R.string.btn_ok, dialogClickListener = null).show()
 
             return
@@ -202,23 +202,27 @@ class SearchDurationsFragment : BaseFragment(), ISearchDurationContract.View {
     }
 
     private fun showSwipeText() {
+        rvDuration?.also { recyclerview ->
+            txtSwipeRightForMoreOptions?.also { textViewSwipeRight ->
+                val set = ConstraintSet()
+                set.clone(rootSearchDuration)
 
-        val set = ConstraintSet()
-        set.clone(rootSearchDuration)
-
-        set.connect(rvDuration.id, ConstraintSet.BOTTOM, txtSwipeRightForMoreOptions.id, ConstraintSet.TOP)
-        set.applyTo(rootSearchDuration)
-        txtSwipeRightForMoreOptions.visibility = View.VISIBLE
+                set.connect(recyclerview.id, ConstraintSet.BOTTOM, textViewSwipeRight.id, ConstraintSet.TOP)
+                set.applyTo(rootSearchDuration)
+                textViewSwipeRight.visibility = View.VISIBLE
+            }
+        }
     }
 
     private fun hideSwipeText() {
+        rvDuration?.also { recyclerview ->
+            val set = ConstraintSet()
+            set.clone(rootSearchDuration)
 
-        val set = ConstraintSet()
-        set.clone(rootSearchDuration)
-
-        set.connect(rvDuration.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
-        set.applyTo(rootSearchDuration)
-        txtSwipeRightForMoreOptions.visibility = View.GONE
+            set.connect(recyclerview.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+            set.applyTo(rootSearchDuration)
+        }
+        txtSwipeRightForMoreOptions?.visibility = View.GONE
     }
 
     override fun onRequestFailed(message: String) {

@@ -230,7 +230,7 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View, IRouter
     }
 
     private fun setupBtnSelectAll() {
-        btnSelectAll.setOnClickListener {
+        btnSelectAll?.setOnClickListener {
             when (mPresenter?.isAllVideosSelected()) {
                 true -> {
                     mPresenter?.unselectAllVideos()
@@ -238,7 +238,7 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View, IRouter
                     mPresenter?.getVideos()?.also { videos ->
                         if (videos.size > 0) {
                             btnSelectAll.text = getString(R.string.select_all)
-                            btnDownloadAllSelectedVideos.deactivate()
+                            btnDownloadAllSelectedVideos?.deactivate()
                         }
                     }
                 }
@@ -279,7 +279,7 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View, IRouter
     }
 
     private fun setupBtnPrevious() {
-        btnPrevious.setOnClickListener {
+        btnPrevious?.setOnClickListener {
             SPDBUtil.deleteAllFromTag(getTagOfChosen())
             HMCDataHelper.deleteALlFromTag(getTagOfHMCForDB())
             mVideosToPlay.clear()
@@ -288,7 +288,7 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View, IRouter
     }
 
     private fun setupBtnRefresh() {
-        icRefresh.setOnClickListener {
+        icRefresh?.setOnClickListener {
             icRefresh.isEnabled = false
             ViewUtil.hideRefreshView(icRefresh, tvRetry)
             mPresenter?.loadData(view = this)
@@ -371,15 +371,15 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View, IRouter
             }
 
             // display top title
-            tvTitleSR.text = getString(R.string.screen_search_result_tv_title_video_number, searchList.size)
+            tvTitleSR?.text = getString(R.string.screen_search_result_tv_title_video_number, searchList.size)
 
             if (resultViewPager.visibility != View.VISIBLE)
                 resultViewPager.visibility = View.VISIBLE
             resultViewPager.adapter?.let {
                 if (it.itemCount <= 1) {
-                    txtSwipeRightForMoreOptions.visibility = View.INVISIBLE
+                    txtSwipeRightForMoreOptions?.visibility = View.INVISIBLE
                 } else {
-                    txtSwipeRightForMoreOptions.visibility = View.VISIBLE
+                    txtSwipeRightForMoreOptions?.visibility = View.VISIBLE
                 }
             }
 
@@ -443,7 +443,7 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View, IRouter
                         }
 
                 FragmentUtil.replaceFragment(
-                        fm = activity?.supportFragmentManager,
+                        fm = activity.supportFragmentManager,
                         newFragment = fragment,
                         newFragmentTag = tag,
                         frameId = R.id.frameLayoutHome,
@@ -456,7 +456,7 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View, IRouter
 
     override fun onRequestFailed(message: String) {
         hideLoadingProgress()
-        tvTitleSR.text = getString(R.string.screen_search_result_tv_title_video_number, 0)
+        tvTitleSR?.text = getString(R.string.screen_search_result_tv_title_video_number, 0)
         ViewUtil.showRefreshView(icRefresh, tvRetry)
         context?.also {
             mDialog?.dismiss()

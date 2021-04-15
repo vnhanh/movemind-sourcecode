@@ -13,7 +13,7 @@ interface ITimeTableContract {
     }
 
     interface Presenter : ILifeCycle.Presenter<View> {
-        fun onGetSessionVideo(typeDay: String, typeSession: String): ArrayList<SessionVideo>?
+        fun onGetSessionVideo(typeDay: String = "", typeSession: String = ""): ArrayList<SessionVideo>?
         fun onGetTimetable()
     }
 }

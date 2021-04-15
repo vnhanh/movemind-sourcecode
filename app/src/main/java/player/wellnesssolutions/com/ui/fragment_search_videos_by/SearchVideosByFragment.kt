@@ -66,7 +66,7 @@ class SearchVideosByFragment : BaseFragment(), ISearchVideosByContract.View {
             mPresenter?.onReshowUI(this)
             mIsJustBeDestroyed = false
         } else {
-            imgBgSearchScreen.postDelayed(Runnable {
+            imgBgSearchScreen?.postDelayed(Runnable {
                 mPresenter?.onAttach(this@SearchVideosByFragment)
             }, 400L)
         }
@@ -78,7 +78,6 @@ class SearchVideosByFragment : BaseFragment(), ISearchVideosByContract.View {
     }
 
     override fun onDestroyView() {
-
         rvSearchVideosBy?.adapter?.also {
             if (it is SearchVideosByAdapter)
                 it.release()

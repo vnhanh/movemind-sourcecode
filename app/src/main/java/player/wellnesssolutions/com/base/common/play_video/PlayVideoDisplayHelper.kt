@@ -6,7 +6,7 @@ import android.widget.ProgressBar
 import player.wellnesssolutions.com.common.customize_views.MMProgressBar
 
 object PlayVideoDisplayHelper {
-    fun displayViewsOnBuffering(progress: ProgressBar, btnPlay: View?, btnPause: View?) {
+    fun displayViewsOnBuffering(progress: ProgressBar?, btnPlay: View?, btnPause: View?) {
         displayLoading(progress = progress, isDisplayed = true)
         hideAllButtons(btnPlay, btnPause)
     }

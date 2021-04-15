@@ -78,9 +78,9 @@ object SearchPreviewDisplayHelper {
             }
         }
         if (isScroll == 1) {
-            rootView.txtSwipeRightForMoreOptions.visibility = View.VISIBLE
+            rootView.txtSwipeRightForMoreOptions?.visibility = View.VISIBLE
         } else {
-            rootView.txtSwipeRightForMoreOptions.visibility = View.INVISIBLE
+            rootView.txtSwipeRightForMoreOptions?.visibility = View.INVISIBLE
         }
     }
 
@@ -95,8 +95,8 @@ object SearchPreviewDisplayHelper {
 
         val marginTop: Int =
                 when (has2ImageList) {
-                    true -> rootView.resources.getDimensionPixelSize(R.dimen.screen_search_preview_rv_margin_top_small)
-                    false -> rootView.resources.getDimensionPixelSize(R.dimen.screen_search_preview_rv_margin_top_large)
+                    true -> rootView.resources?.getDimensionPixelSize(R.dimen.screen_search_preview_rv_margin_top_small)?:0
+                    false -> rootView.resources?.getDimensionPixelSize(R.dimen.screen_search_preview_rv_margin_top_large)?:0
                 }
 
         setupMargin(rootView, rootView.rv2, rootView.rv1, rootView.rv3, rootView.tvLabel2, marginTop)
@@ -104,8 +104,8 @@ object SearchPreviewDisplayHelper {
 
         val btnMainMarginTop: Int =
                 when (has2ImageList) {
-                    true -> rootView.resources.getDimensionPixelSize(R.dimen.screen_search_preview_btn_main_margin_top_small)
-                    false -> rootView.resources.getDimensionPixelSize(R.dimen.screen_search_preview_btn_main_margin_top_large)
+                    true -> rootView.resources?.getDimensionPixelSize(R.dimen.screen_search_preview_btn_main_margin_top_small)?:0
+                    false -> rootView.resources?.getDimensionPixelSize(R.dimen.screen_search_preview_btn_main_margin_top_large)?:0
                 }
 
         setupMarginForMainButons(rootView, btnMainMarginTop)

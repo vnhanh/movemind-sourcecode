@@ -14,32 +14,34 @@ class SPInstructorVH(view: View) : BaseVH<MMInstructor>(view) {
     fun bind(data: MMInstructor, isSelected: Boolean) {
         super.bind(data)
 
-        itemView.tvPresenterName.text = data.name
+        itemView.tvPresenterName?.text = data.name
         loadAvatar(itemView.imgPresenterAvatar, data.image)
 
         select(isSelected)
     }
 
-    private fun loadAvatar(imageView: MMCircleImageView, image: String?) {
-        val size = itemView.resources.getDimensionPixelSize(R.dimen.search_option_item_image_size)
+    private fun loadAvatar(imageView: MMCircleImageView?, image: String?) {
+        imageView?.also { imgView ->
+            val size = imgView.resources?.getDimensionPixelSize(R.dimen.search_option_item_image_size)?:130
 
-        if (imageView.mPadding == 0) {
-            val padding = (size * Constant.RATIO_STROKE_BORDER).toInt()
-            imageView.mPadding = padding
+            if (imgView.mPadding == 0) {
+                val padding = (size * Constant.RATIO_STROKE_BORDER).toInt()
+                imgView.mPadding = padding
+            }
+
+            val loadSize = size - imgView.mPadding * 2
+
+            Glide.with(imgView).load(image)
+                    .override(loadSize).circleCrop()
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .placeholder(R.drawable.bg_sp_no_instructor)
+                    .fallback(R.drawable.bg_sp_no_instructor)
+                    .error(R.drawable.bg_sp_no_instructor)
+                    .into(imgView)
         }
-
-        val loadSize = size - imageView.mPadding * 2
-
-        Glide.with(imageView).load(image)
-                .override(loadSize).circleCrop()
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .placeholder(R.drawable.bg_sp_no_instructor)
-                .fallback(R.drawable.bg_sp_no_instructor)
-                .error(R.drawable.bg_sp_no_instructor)
-                .into(imageView)
     }
 
     fun select(isSelected: Boolean) {
-        itemView.imgPresenterAvatar.isSelect(isSelected)
+        itemView.imgPresenterAvatar?.isSelect(isSelected)
     }
 }

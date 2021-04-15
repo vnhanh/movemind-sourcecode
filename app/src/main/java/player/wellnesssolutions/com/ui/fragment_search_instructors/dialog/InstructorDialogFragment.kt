@@ -38,8 +38,8 @@ class InstructorDialogFragment : androidx.fragment.app.DialogFragment() {
     }
 
     private fun setupDimensions() {
-        val width = resources.getDimensionPixelSize(R.dimen.width_instructor_dialog_in_search_screen)
-        val height = resources.getDimensionPixelSize(R.dimen.height_instructor_dialog_in_search_screen)
+        val width = context?.resources?.getDimensionPixelSize(R.dimen.width_instructor_dialog_in_search_screen)?:600
+        val height = context?.resources?.getDimensionPixelSize(R.dimen.height_instructor_dialog_in_search_screen)?:540
         dialog?.window?.setLayout(width, height)
     }
 
@@ -65,36 +65,40 @@ class InstructorDialogFragment : androidx.fragment.app.DialogFragment() {
 
         loadInstructorAvatar(data.image)
 
-        btnShowVideosByPresenter.text = getString(R.string.title_btn_show_videos_by_presenter_dialog, data.name?.toUpperCase())
+        btnShowVideosByPresenter?.text = context?.getString(R.string.title_btn_show_videos_by_presenter_dialog, data.name?.toUpperCase()).orEmpty()
     }
 
     private fun showInstructorInfo(data: MMInstructor) {
-        tvName.text = data.name
+        tvName?.text = data.name
 
-        val tf: Typeface = TypefaceUtil.getTypeface(tvName.context, getString(R.string.font_made_evolve_sans))
-        tvDescription.setTypeface(tf, Typeface.ITALIC)
-        tvDescription.text = data.profileInformation
+        val tf: Typeface = TypefaceUtil.getTypeface(tvName?.context, getString(R.string.font_made_evolve_sans))
+        tvDescription?.setTypeface(tf, Typeface.ITALIC)
+        tvDescription?.text = data.profileInformation
     }
 
     private fun loadInstructorAvatar(image: String?) {
-        val imageSize = resources.getDimensionPixelSize(R.dimen.dialog_presenter_avatar_size_default)
-        val padding = resources.getDimensionPixelSize(R.dimen.padding_for_small_size_wrapper_item_search)
-        val loadSize = imageSize - padding * 2
+        avatar?.also { imageView ->
+            context?.resources?.also { resources ->
+                val imageSize = resources.getDimensionPixelSize(R.dimen.dialog_presenter_avatar_size_default)
+                val padding = resources.getDimensionPixelSize(R.dimen.padding_for_small_size_wrapper_item_search)
+                val loadSize = imageSize - padding * 2
 
-        Glide.with(avatar).load(image)
-                .override(loadSize).circleCrop()
-                .placeholder(R.drawable.bg_sp_no_instructor).error(R.drawable.bg_sp_no_instructor)
-                .into(avatar)
+                Glide.with(imageView).load(image)
+                        .override(loadSize).circleCrop()
+                        .placeholder(R.drawable.bg_sp_no_instructor).error(R.drawable.bg_sp_no_instructor)
+                        .into(imageView)
+            }
+        }
     }
 
     private fun setupUI() {
         loadCloseIcon()
 
-        btnCloseDialog.setOnClickListener {
+        btnCloseDialog?.setOnClickListener {
             dialog?.dismiss()
         }
 
-        btnShowVideosByPresenter.setOnClickListener {
+        btnShowVideosByPresenter?.setOnClickListener {
             dialog?.dismiss()
             parentFragment?.also {
                 if (it is SearchInstructorsFragment) {
@@ -105,11 +109,15 @@ class InstructorDialogFragment : androidx.fragment.app.DialogFragment() {
     }
 
     private fun loadCloseIcon() {
-        val closeIconSize = resources.getDimensionPixelSize(R.dimen.dialog_presenter_button_close_size)
-        val closeIconPadding = resources.getDimensionPixelSize(R.dimen.margin)
-        val loadCloseSize = closeIconSize - closeIconPadding
-        Glide.with(btnCloseDialog).load(R.drawable.ic_close)
-                .override(loadCloseSize).into(btnCloseDialog)
+        btnCloseDialog?.also { button ->
+            context?.resources?.also { resources ->
+                val closeIconSize = resources.getDimensionPixelSize(R.dimen.dialog_presenter_button_close_size)
+                val closeIconPadding = resources.getDimensionPixelSize(R.dimen.margin)
+                val loadCloseSize = closeIconSize - closeIconPadding
+                Glide.with(button).load(R.drawable.ic_close)
+                        .override(loadCloseSize).into(button)
+            }
+        }
     }
 
 

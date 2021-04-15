@@ -9,11 +9,11 @@ class OptionSearchPreviewVH(view: View) : BaseVH<SearchedOption>(view) {
     fun bind(value: SearchedOption, isSelected: Boolean = false) {
         super.bind(value)
 
-        itemView.tvOptionTitle.text = value.name
+        itemView.tvOptionTitle?.text = value.name
         select(isSelected)
     }
 
     fun select(selected: Boolean) {
-        itemView.tvOptionTitle.setSelect(selected)
+        itemView.tvOptionTitle?.setSelect(selected)
     }
 }

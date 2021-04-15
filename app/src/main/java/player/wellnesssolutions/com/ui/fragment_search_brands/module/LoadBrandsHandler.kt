@@ -15,15 +15,15 @@ import player.wellnesssolutions.com.ui.fragment_search_levels.SearchLevelsFragme
 import player.wellnesssolutions.com.ui.fragment_search_videos_by.SearchVideosByFragment
 
 class LoadBrandsHandler(callback: ILoadBrandHandler.Callback) : BaseResponseObserver<ArrayList<MMBrand>>(), ILoadBrandHandler {
-    private val mCallback: ILoadBrandHandler.Callback = callback
+    private var mCallback: ILoadBrandHandler.Callback? = callback
     private var mBrandApi: BrandApi = BrandApi()
     private var mFlowTag = ""
 
     override fun loadBrands(tag: String) {
         mFlowTag = tag
 
-        mCallback.getViewContext()?.also { context ->
-            val headerData: HeaderData = CheckHeaderApiUtil.checkData(PreferenceHelper.getInstance(context), mCallback.getFragment())
+        mCallback?.getViewContext()?.also { context ->
+            val headerData: HeaderData = CheckHeaderApiUtil.checkData(PreferenceHelper.getInstance(context), mCallback?.getFragment())
                     ?: return
 
             val (token: String, deviceId: String) = headerData
@@ -33,7 +33,7 @@ class LoadBrandsHandler(callback: ILoadBrandHandler.Callback) : BaseResponseObse
     }
 
     private fun loadApi(token: String, deviceId: String) {
-        mCallback.onLoadingBrands()
+        mCallback?.onLoadingBrands()
         mBrandApi.getAllBrands(token, deviceId)
                 .subscribe(this)
     }
@@ -60,11 +60,11 @@ class LoadBrandsHandler(callback: ILoadBrandHandler.Callback) : BaseResponseObse
                             SearchBrandsFragment.TAG -> SearchVideosByFragment.TAG
                             else -> mFlowTag
                         }
-                mCallback.onGetOnlyOneBrand(brand = brands[0], nextScreenTag = searchBrandFlowTag)
+                mCallback?.onGetOnlyOneBrand(brand = brands[0], nextScreenTag = searchBrandFlowTag)
             }
 
             else -> {
-                mCallback.onGetBrands(brands = data.data, searchBrandFlowTag = mFlowTag)
+                mCallback?.onGetBrands(brands = data.data, searchBrandFlowTag = mFlowTag)
             }
         }
 
@@ -75,7 +75,7 @@ class LoadBrandsHandler(callback: ILoadBrandHandler.Callback) : BaseResponseObse
 
         when (message == null) {
             true -> onShowRequestApiFalse(R.string.load_brands_failed)
-            false -> mCallback.onLoadBrandsFailed(message)
+            false -> mCallback?.onLoadBrandsFailed(message)
         }
     }
 
@@ -84,28 +84,33 @@ class LoadBrandsHandler(callback: ILoadBrandHandler.Callback) : BaseResponseObse
     }
 
     override fun onComplete() {
-        mCallback.onEndLoadingBrands()
+        mCallback?.onEndLoadingBrands()
     }
 
     private fun onShowRequestApiFalse(@StringRes msgResId: Int) {
-        mCallback.getViewContext()?.also { context ->
-            mCallback.onLoadBrandsFailed(context.getString(msgResId))
+        mCallback?.getViewContext()?.also { context ->
+            mCallback?.onLoadBrandsFailed(context.getString(msgResId))
         }
     }
 
     override fun onExpired(error: String) {
-        if (mCallback is BaseFragment) {
-            mCallback.onExpired(error)
+        mCallback?.also { callback ->
+            if (callback is BaseFragment) {
+                callback.onExpired(error)
+            }
         }
     }
 
     override fun onExpiredUnauthenticated(error: String) {
-        if (mCallback is BaseFragment) {
-            mCallback.onExpiredUnAuth(error)
+        mCallback?.also { callback ->
+            if (callback is BaseFragment) {
+                callback.onExpiredUnAuth(error)
+            }
         }
     }
 
     override fun release() {
+        mCallback = null
         disposable.dispose()
     }
 }

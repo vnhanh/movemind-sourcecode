@@ -112,29 +112,31 @@ class RecyclerViewCustom : androidx.recyclerview.widget.RecyclerView {
 
     companion object {
 
-        fun alignCenterHorizontal(rv: RecyclerViewCustom, itemCount: Int, parentView: ConstraintLayout, aboveView: View, itemSize: Int = 0) {
-            val resources = rv.resources
+        fun alignCenterHorizontal(rv: RecyclerViewCustom?, itemCount: Int, parentView: ConstraintLayout, aboveView: View, itemSize: Int = 0) {
+            rv?.also { recyclerViewCustom ->
+                val resources = recyclerViewCustom.resources
 
-            val size: Int =
-                    when (itemSize) {
-                        0 -> resources.getDimensionPixelSize(R.dimen.vh_search_item_size_default)
-                        else -> itemSize
-                    }
+                val size: Int =
+                        when (itemSize) {
+                            0 -> resources.getDimensionPixelSize(R.dimen.vh_search_item_size_default)
+                            else -> itemSize
+                        }
 
-            val width = size * itemCount
-            rv.layoutParams = ConstraintLayout.LayoutParams(width, 0)
+                val width = size * itemCount
+                recyclerViewCustom.layoutParams = ConstraintLayout.LayoutParams(width, 0)
 
-            val set = ConstraintSet()
-            set.clone(parentView)
+                val set = ConstraintSet()
+                set.clone(parentView)
 
-            set.connect(rv.id, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
-            set.connect(rv.id, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
-            set.connect(rv.id, ConstraintSet.TOP, aboveView.id, ConstraintSet.BOTTOM)
-            set.connect(rv.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+                set.connect(recyclerViewCustom.id, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
+                set.connect(recyclerViewCustom.id, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
+                set.connect(recyclerViewCustom.id, ConstraintSet.TOP, aboveView.id, ConstraintSet.BOTTOM)
+                set.connect(recyclerViewCustom.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
 
-            set.applyTo(parentView)
+                set.applyTo(parentView)
 
-            rv.isCustomed = false
+                recyclerViewCustom.isCustomed = false
+            }
         }
     }
 

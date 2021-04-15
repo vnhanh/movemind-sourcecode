@@ -54,8 +54,8 @@ class NoClassFragment : BaseFragment(), INoClassContract.View {
     }
 
     private fun setupUI() {
-        btnHelpMeChoose.setOnClickListener { clickedHelpMeChooseButton() }
-        btnSkipSearch.setOnClickListener { clickedSkipAndSearchButton() }
+        btnHelpMeChoose?.setOnClickListener { clickedHelpMeChooseButton() }
+        btnSkipSearch?.setOnClickListener { clickedSkipAndSearchButton() }
     }
 
     private fun clickedSkipAndSearchButton() {
@@ -105,14 +105,14 @@ class NoClassFragment : BaseFragment(), INoClassContract.View {
     }
 
     private fun setCenterButtonHelpMeChoose() {
-        view?.also {
+        btnHelpMeChoose?.also { button ->
             val set = ConstraintSet()
             set.clone(rootCollection)
-            set.connect(btnHelpMeChoose.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+            set.connect(button.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
             set.applyTo(rootCollection)
-            val newLayoutParams: ConstraintLayout.LayoutParams = btnHelpMeChoose.layoutParams as ConstraintLayout.LayoutParams
+            val newLayoutParams: ConstraintLayout.LayoutParams = button.layoutParams as ConstraintLayout.LayoutParams
             newLayoutParams.topMargin = 0
-            btnHelpMeChoose.layoutParams = newLayoutParams
+            button.layoutParams = newLayoutParams
         }
     }
 
@@ -141,7 +141,7 @@ class NoClassFragment : BaseFragment(), INoClassContract.View {
                         } else {
                             it.setOnClickListener { null }
                             it.setOnClickListener { clickedSkipAndSearchButton() }
-                            it.text = getString(R.string.text_button_search)
+                            it.text = context?.getString(R.string.text_button_search).orEmpty()
                             setCenterButtonHelpMeChoose()
                         }
                     }
@@ -160,11 +160,11 @@ class NoClassFragment : BaseFragment(), INoClassContract.View {
                 }
 
                 false -> {
-                    if (btnHelpMeChoose.visibility != View.GONE)
-                        btnHelpMeChoose.visibility = View.GONE
+                    if (btnHelpMeChoose?.visibility != View.GONE)
+                        btnHelpMeChoose?.visibility = View.GONE
 
-                    if (tvHelperHelpMeChoose.visibility != View.GONE)
-                        tvHelperHelpMeChoose.visibility = View.GONE
+                    if (tvHelperHelpMeChoose?.visibility != View.GONE)
+                        tvHelperHelpMeChoose?.visibility = View.GONE
                 }
             }
         }
