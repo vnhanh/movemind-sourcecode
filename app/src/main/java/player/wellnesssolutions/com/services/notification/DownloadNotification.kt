@@ -37,12 +37,16 @@ class DownloadNotification(private var context: Context?) : DownloadTask.Callbac
 
     override fun onDownloadUpdate(id: Int?, name: String?, progress: Int) {
         //create(progress, name)
-        mLayout?.let {
-            context?.also { context ->
-                it.setTextViewText(R.id.tvProgress, context.getString(R.string.progress, progress))
-                if (mBuilder == null) return
-                mNotiManager?.notify(NOTI_ID, mBuilder!!.build())
+        try {
+            mLayout?.let {
+                context?.also { context ->
+                    it.setTextViewText(R.id.tvProgress, context.getString(R.string.progress, progress))
+                    if (mBuilder == null) return
+                    mNotiManager?.notify(NOTI_ID, mBuilder!!.build())
+                }
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
         //Log.e("onDownloadUpdate", "onDownloadUpdate" + progress.toString())
     }
@@ -137,7 +141,7 @@ class DownloadNotification(private var context: Context?) : DownloadTask.Callbac
         mNotiManager?.cancel(NOTI_ID)
     }
 
-    fun release(){
+    fun release() {
         context = null
     }
 }
