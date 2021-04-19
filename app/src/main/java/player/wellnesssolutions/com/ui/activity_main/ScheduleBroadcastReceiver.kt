@@ -151,8 +151,12 @@ class ScheduleBroadcastReceiver : BroadcastReceiver() {
     }
 
     fun removeListener(listener: ScheduleListener) {
-        for (item in mScheduleListeners) {
-            if (item == listener) mScheduleListeners.remove(listener)
+        val iterator = mScheduleListeners.iterator()
+        while (iterator.hasNext()){
+            val item = iterator.next()
+            if(item == listener){
+                iterator.remove()
+            }
         }
     }
 

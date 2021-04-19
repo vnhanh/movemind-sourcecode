@@ -32,12 +32,12 @@ class SearchVideosByAdapter(private var presenter: ISearchVideosByContract.Prese
                 it.isEnabled = false
                 when (viewType) {
                     TYPE_IMAGE -> {
-                        viewholder.itemView.imgSVBItem.changeBgColorOnClick()
+                        viewholder.itemView.imgSVBItem?.changeBgColorOnClick()
                         SearchCollectionUtil.isCollectionChoose = data.title == "Collection"
                     }
 
                     else -> {
-                        viewholder.itemView.tvWrapperCircleItem.changeBgColorOnClick()
+                        viewholder.itemView.tvWrapperCircleItem?.changeBgColorOnClick()
                     }
                 }
                 presenter?.onChooseItem(data)

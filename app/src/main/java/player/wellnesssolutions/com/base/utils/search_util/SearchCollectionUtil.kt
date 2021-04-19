@@ -129,7 +129,7 @@ object SearchCollectionUtil {
                         ?: "" else Constant.DOUBLE_DOTS
                 val colorStr = collections.get(i).getColor()
 
-                prevTv = addExtraSmallView(rootView, leftView, content, colorStr, MARGIN)
+                prevTv = addExtraSmallView(rootView, content, colorStr, MARGIN)
                 newListViews.add(prevTv)
             }
             return newListViews
@@ -138,9 +138,9 @@ object SearchCollectionUtil {
         return null
     }
 
-    private fun addExtraSmallView(parentView: LinearLayout, leftView: View?, name: String, colorStr: String?, leftMargin: Int): TextView {
+    private fun addExtraSmallView(parentView: LinearLayout, name: String, colorStr: String?, leftMargin: Int): TextView {
         val tv = TextView(parentView.context)
-        if (mTvCollectionHeight == 0) mTvCollectionHeight = parentView.resources.getDimensionPixelSize(R.dimen.vh_now_playing_title_collection_height)
+        if (mTvCollectionHeight == 0) mTvCollectionHeight = parentView.resources?.getDimensionPixelSize(R.dimen.vh_now_playing_title_collection_height)?:15
 
         tv.id = ViewCompat.generateViewId()
         tv.setTypeface(null, Typeface.BOLD_ITALIC)

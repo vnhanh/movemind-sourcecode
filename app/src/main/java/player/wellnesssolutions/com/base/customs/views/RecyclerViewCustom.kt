@@ -112,7 +112,8 @@ class RecyclerViewCustom : androidx.recyclerview.widget.RecyclerView {
 
     companion object {
 
-        fun alignCenterHorizontal(rv: RecyclerViewCustom?, itemCount: Int, parentView: ConstraintLayout, aboveView: View, itemSize: Int = 0) {
+        fun alignCenterHorizontal(rv: RecyclerViewCustom?, itemCount: Int, parentView: ConstraintLayout?, aboveView: View?, itemSize: Int = 0) {
+            if(parentView == null || aboveView == null) return
             rv?.also { recyclerViewCustom ->
                 val resources = recyclerViewCustom.resources
 

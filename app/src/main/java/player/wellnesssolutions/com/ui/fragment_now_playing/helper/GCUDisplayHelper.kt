@@ -24,7 +24,12 @@ import java.util.*
  * GCU: Group Coming Up next
  */
 object GCUDisplayHelper {
-    fun showPlayingVideoInfo(rootView: ConstraintLayout, videoData: MMVideo, extraCollectionView: ArrayList<TextView>?, presenter: IComingUpNextClickListener? = null, isPresentation: Boolean = false): ArrayList<TextView>? {
+    fun showPlayingVideoInfo(rootView: ConstraintLayout?,
+                             videoData: MMVideo,
+                             extraCollectionView: ArrayList<TextView>?,
+                             presenter: IComingUpNextClickListener? = null,
+                             isPresentation: Boolean = false): ArrayList<TextView>? {
+        if(rootView == null) return null
         if (isPresentation) {
             rootView.btnDownloadPlaying?.visibility = View.GONE
         }
@@ -90,7 +95,8 @@ object GCUDisplayHelper {
     private var mThumbnailWidth = 0
     private var mThumbnailHeight = 0
 
-    private fun loadThumbnail(thunmailUrl: String?, thumbnailVideo: ImageView) {
+    private fun loadThumbnail(thunmailUrl: String?, thumbnailVideo: ImageView?) {
+        if(thumbnailVideo == null) return
         initThumbnailValues(thumbnailVideo.resources)
 
         Glide.with(thumbnailVideo).load(thunmailUrl)
@@ -105,7 +111,9 @@ object GCUDisplayHelper {
         if (mThumbnailCorner == 0) mThumbnailCorner = resources.getDimensionPixelSize(R.dimen.corner_4dp)
     }
 
-    fun showVideosComingUpNext(videos: MutableList<MMVideo>, recyclerview: androidx.recyclerview.widget.RecyclerView?, presenter: IComingUpNextClickListener?,
+    fun showVideosComingUpNext(videos: MutableList<MMVideo>,
+                               recyclerview: androidx.recyclerview.widget.RecyclerView?,
+                               presenter: IComingUpNextClickListener?,
                                isPresentation: Boolean = false) {
         if (recyclerview == null) return
 

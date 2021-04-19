@@ -104,7 +104,6 @@ class SearchDurationsFragment : BaseFragment(), ISearchDurationContract.View {
     }
 
     override fun onDestroyView() {
-
         rvDuration?.release()
         mPresenter?.onStop()
         MMOptionTextView.isChangeBG = false
@@ -202,25 +201,29 @@ class SearchDurationsFragment : BaseFragment(), ISearchDurationContract.View {
     }
 
     private fun showSwipeText() {
-        rvDuration?.also { recyclerview ->
-            txtSwipeRightForMoreOptions?.also { textViewSwipeRight ->
-                val set = ConstraintSet()
-                set.clone(rootSearchDuration)
+        rootSearchDuration?.also { layoutSearchDuration ->
+            rvDuration?.also { recyclerview ->
+                txtSwipeRightForMoreOptions?.also { textViewSwipeRight ->
+                    val set = ConstraintSet()
+                    set.clone(layoutSearchDuration)
 
-                set.connect(recyclerview.id, ConstraintSet.BOTTOM, textViewSwipeRight.id, ConstraintSet.TOP)
-                set.applyTo(rootSearchDuration)
-                textViewSwipeRight.visibility = View.VISIBLE
+                    set.connect(recyclerview.id, ConstraintSet.BOTTOM, textViewSwipeRight.id, ConstraintSet.TOP)
+                    set.applyTo(layoutSearchDuration)
+                    textViewSwipeRight.visibility = View.VISIBLE
+                }
             }
         }
     }
 
     private fun hideSwipeText() {
-        rvDuration?.also { recyclerview ->
-            val set = ConstraintSet()
-            set.clone(rootSearchDuration)
+        rootSearchDuration?.also { layoutSearchDuration ->
+            rvDuration?.also { recyclerview ->
+                val set = ConstraintSet()
+                set.clone(layoutSearchDuration)
 
-            set.connect(recyclerview.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
-            set.applyTo(rootSearchDuration)
+                set.connect(recyclerview.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+                set.applyTo(layoutSearchDuration)
+            }
         }
         txtSwipeRightForMoreOptions?.visibility = View.GONE
     }

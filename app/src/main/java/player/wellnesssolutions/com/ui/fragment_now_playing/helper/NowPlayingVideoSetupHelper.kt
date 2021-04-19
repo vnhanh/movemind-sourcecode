@@ -221,18 +221,19 @@ object NowPlayingVideoSetupHelper {
      * call from {@link #setupToggleFullScreenButton()}
      */
     private fun setFullScreenPlayerVideo(parenView: View?, videoPlayer: PlayerView?, btnExoFullScreen: ImageView?, barBottom: View?) {
-        parenView?.also {
-            if (it is ConstraintLayout) {
-                val set = ConstraintSet()
-                set.clone(it)
-                set.connect(videoPlayer?.id
-                        ?: 0, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
-                set.applyTo(it)
+        parenView?.also { layout ->
+            videoPlayer?.also { vidPlayer ->
+                if (layout is ConstraintLayout) {
+                    val set = ConstraintSet()
+                    set.clone(layout)
+                    set.connect(vidPlayer.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+                    set.applyTo(layout)
 
-                barBottom?.visibility = View.GONE
+                    barBottom?.visibility = View.GONE
 
-                btnExoFullScreen?.setImageResource(R.drawable.ic_fullscreen_exit_white_28dp)
+                }
             }
+            btnExoFullScreen?.setImageResource(R.drawable.ic_fullscreen_exit_white_28dp)
         }
     }
 
@@ -240,17 +241,18 @@ object NowPlayingVideoSetupHelper {
      * call from {@link #setupToggleFullScreenButton()}
      */
     private fun setNormalViewPlayerVideo(parenView: View?, videoPlayer: PlayerView?, btnExoFullScreen: ImageView?, viewBottomVideoPlayer: View?, barBottom: View?) {
-        parenView?.also {
-            if (it is ConstraintLayout) {
-                barBottom?.visibility = View.VISIBLE
+        parenView?.also { layout->
+            videoPlayer?.also { vidPlayer ->
+                if (layout is ConstraintLayout) {
+                    barBottom?.visibility = View.VISIBLE
 
-                val set = ConstraintSet()
-                set.clone(it)
-                set.connect(videoPlayer?.id ?: 0, ConstraintSet.BOTTOM, viewBottomVideoPlayer?.id
-                        ?: 0, ConstraintSet.TOP)
-                set.applyTo(it)
+                    val set = ConstraintSet()
+                    set.clone(layout)
+                    set.connect(vidPlayer.id, ConstraintSet.BOTTOM, viewBottomVideoPlayer?.id ?: 0, ConstraintSet.TOP)
+                    set.applyTo(layout)
 
-                btnExoFullScreen?.setImageResource(R.drawable.ic_fullscreen_white_28dp)
+                    btnExoFullScreen?.setImageResource(R.drawable.ic_fullscreen_white_28dp)
+                }
             }
         }
     }
@@ -259,7 +261,7 @@ object NowPlayingVideoSetupHelper {
     private var mRvTouchedY = 0f
 
     fun setupComingUpNext(view: View, menuSetupHelper: NowPlayingFloatMenuHelper? = null, presenter: IComingUpNextClickListener? = null) {
-        view.groupViewsComingUpNext.rvComingUpNext.setOnTouchListener { v, event ->
+        view.groupViewsComingUpNext?.rvComingUpNext?.setOnTouchListener { v, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     mRvTouchedX = event.x
@@ -278,8 +280,8 @@ object NowPlayingVideoSetupHelper {
             return@setOnTouchListener false
         }
 
-        val wrapperVideoNowPlaying: MMVideoNowPlayingView = view.groupViewsComingUpNext.containerNowPlayingGCU
-        val bgNowPlayingItemVideo: View = view.groupViewsComingUpNext.barTopWrapperVideoNowPlayingGroupComingUpNext
+        val wrapperVideoNowPlaying: MMVideoNowPlayingView? = view.groupViewsComingUpNext?.containerNowPlayingGCU
+        val bgNowPlayingItemVideo: View? = view.groupViewsComingUpNext?.barTopWrapperVideoNowPlayingGroupComingUpNext
 
         setBackgroundForVideoNowPlaying(wrapperVideoNowPlaying = wrapperVideoNowPlaying, bgNowPlayingItemViedeo = bgNowPlayingItemVideo)
 
@@ -290,11 +292,11 @@ object NowPlayingVideoSetupHelper {
         view.btnComingUpNext?.setOnClickListener {
             it.isEnabled = false
             if (isClicked) {
-                constraintLayoutUp.visibility = View.VISIBLE
-                constraintLayoutDown.visibility = View.INVISIBLE
+                constraintLayoutUp?.visibility = View.VISIBLE
+                constraintLayoutDown?.visibility = View.INVISIBLE
             } else {
-                constraintLayoutUp.visibility = View.INVISIBLE
-                constraintLayoutDown.visibility = View.VISIBLE
+                constraintLayoutUp?.visibility = View.INVISIBLE
+                constraintLayoutDown?.visibility = View.VISIBLE
             }
             // reverse
             isClicked = !isClicked
@@ -325,7 +327,8 @@ object NowPlayingVideoSetupHelper {
         bgNowPlayingItemViedeo.background = gd
     }
 
-    private fun clickedBtnComingUpNext(groupViewsComingUpNext: View) {
+    private fun clickedBtnComingUpNext(groupViewsComingUpNext: View?) {
+        if(groupViewsComingUpNext == null) return
         val wasDisplaying = groupViewsComingUpNext.visibility == View.VISIBLE
         if (wasDisplaying) {
             groupViewsComingUpNext.visibility = View.GONE

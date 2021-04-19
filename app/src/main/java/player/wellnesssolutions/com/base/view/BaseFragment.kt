@@ -3,6 +3,7 @@ package player.wellnesssolutions.com.base.view
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +18,7 @@ import player.wellnesssolutions.com.ui.activity_main.MainActivity
 
 abstract class BaseFragment : Fragment(), ILifeCycle.View {
     protected var mIsJustBeDestroyed = false
+    protected val handler = Handler()
 
     protected open fun onBackPressed(view: View) {
         view.isEnabled = false

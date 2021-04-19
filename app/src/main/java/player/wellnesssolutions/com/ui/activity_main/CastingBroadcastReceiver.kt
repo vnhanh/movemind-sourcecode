@@ -55,11 +55,18 @@ class CastingBroadcastReceiver : BroadcastReceiver() {
     private val mTVListeners: ArrayList<TVListener> = ArrayList()
 
     fun addListener(listener: TVListener) {
+        if(mTVListeners.contains(listener)) return
         mTVListeners.add(listener)
     }
 
     fun removeListener(listener: TVListener) {
-        mTVListeners.remove(listener)
+        val iterator = mTVListeners.iterator()
+        while (iterator.hasNext()){
+            if(listener == iterator.next()){
+                iterator.remove()
+            }
+        }
+//        mTVListeners.remove(listener)
     }
 
     fun addListener(listener: UIListener) {

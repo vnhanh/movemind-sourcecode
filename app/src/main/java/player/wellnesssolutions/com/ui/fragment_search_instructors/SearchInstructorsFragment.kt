@@ -42,7 +42,7 @@ class SearchInstructorsFragment : BaseFragment(), ISearchInstructorContract.View
         val brand: MMBrand? = arguments?.getParcelable(SearchDurationsFragment.KEY_BRAND)
 
         when (brand == null) {
-            true -> showMessage(getString(R.string.error_not_get_chosen_brand), R.color.red)
+            true -> showMessage(context?.getString(R.string.error_not_get_chosen_brand).orEmpty(), R.color.red)
             false -> mPresenter?.setChosenBrand(brand)
         }
 
@@ -148,6 +148,7 @@ class SearchInstructorsFragment : BaseFragment(), ISearchInstructorContract.View
             }
             return
         }
+
         parentFragment?.childFragmentManager?.also { fm ->
             val nextFragment = SearchPreviewFragment.getInstance(brand, Constant.SEARCH_PRESENTER, instructor.id, instructor.name, "", "")
             val newTag = SearchPreviewFragment.TAG
@@ -170,7 +171,7 @@ class SearchInstructorsFragment : BaseFragment(), ISearchInstructorContract.View
 
         if (data.size < Constant.MAX_PRESENTER_ITEMS_COUNT_IN_ROW) {
             val itemSize = context?.resources?.getDimensionPixelSize(R.dimen.vh_search_item_size_presenter)?:210
-            RecyclerViewCustom.alignCenterHorizontal(rvPresenters, data.size, rootSearchPresenter, btnPrevious, itemSize)
+            RecyclerViewCustom.alignCenterHorizontal(rv = rvPresenters, itemCount = data.size, parentView = rootSearchPresenter, aboveView = btnPrevious, itemSize = itemSize)
         }
 
         val itemCountInRow = min(data.size, Constant.MAX_PRESENTER_ITEMS_COUNT_IN_ROW)
@@ -190,26 +191,31 @@ class SearchInstructorsFragment : BaseFragment(), ISearchInstructorContract.View
     }
 
     private fun showSwipeText() {
-        rvPresenters?.also { recyclerview ->
-            txtSwipeRightForMoreOptions?.also { textViewSwipeRight ->
-                val set = ConstraintSet()
-                set.clone(rootSearchPresenter)
-                set.connect(recyclerview.id, ConstraintSet.BOTTOM, textViewSwipeRight.id, ConstraintSet.TOP)
-                set.applyTo(rootSearchPresenter)
+        rootSearchPresenter?.also { layoutSearchInstructors ->
+            rvPresenters?.also { recyclerview ->
+                txtSwipeRightForMoreOptions?.also { textViewSwipeRight ->
+                    val set = ConstraintSet()
+                    set.clone(layoutSearchInstructors)
+                    set.connect(recyclerview.id, ConstraintSet.BOTTOM, textViewSwipeRight.id, ConstraintSet.TOP)
+                    set.applyTo(layoutSearchInstructors)
 
-                textViewSwipeRight.visibility = View.VISIBLE
+                    textViewSwipeRight.visibility = View.VISIBLE
+                }
             }
         }
     }
 
     private fun hideSwipeText() {
-        rvPresenters?.also { recyclerview ->
-            val set = ConstraintSet()
-            set.clone(rootSearchPresenter)
+        rootSearchPresenter?.also { layoutSearchInstructors ->
+            rvPresenters?.also { recyclerview ->
+                val set = ConstraintSet()
+                set.clone(layoutSearchInstructors)
 
-            set.connect(recyclerview.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
-            set.applyTo(rootSearchPresenter)
+                set.connect(recyclerview.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+                set.applyTo(layoutSearchInstructors)
+            }
         }
+
         txtSwipeRightForMoreOptions?.visibility = View.GONE
     }
 

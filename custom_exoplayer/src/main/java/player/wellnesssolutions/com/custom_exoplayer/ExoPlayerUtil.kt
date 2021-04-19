@@ -2,13 +2,11 @@ package player.wellnesssolutions.com.custom_exoplayer
 
 import android.content.Context
 import android.net.Uri
-import android.widget.Toast
+import android.util.Log
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.Format
 import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.database.DatabaseProvider
-import com.google.android.exoplayer2.database.ExoDatabaseProvider
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.extractor.mp4.Mp4Extractor
 import com.google.android.exoplayer2.source.MediaSource
@@ -19,13 +17,12 @@ import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.TrackSelection
-import com.google.android.exoplayer2.upstream.*
-import com.google.android.exoplayer2.upstream.cache.NoOpCacheEvictor
-import com.google.android.exoplayer2.upstream.cache.SimpleCache
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
+import com.google.android.exoplayer2.upstream.FileDataSource
 import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.exoplayer2.util.Util
-import java.io.File
-import java.security.MessageDigest
 
 
 /**
@@ -74,7 +71,6 @@ object ExoPlayerUtil {
                          volume: Float, typeVideo: EnumTypeViewVideo, isPlayOffline: Boolean, fileDataSource: FileDataSource): SimpleExoPlayer {
         val videoTrackSelectionFactory: TrackSelection.Factory = AdaptiveTrackSelection.Factory()
         val trackSelector = DefaultTrackSelector(videoTrackSelectionFactory)
-
 //        val defaultParameter = trackSelector.buildUponParameters()
 //                .setMaxVideoBitrate(BITRATE_1080)
 //                .setForceHighestSupportedBitrate(true)
@@ -92,6 +88,7 @@ object ExoPlayerUtil {
 
         val endIndex = mediaUrl.lastIndexOf(EXT_M3U8) + 5
         val s = mediaUrl.substring(0, endIndex)
+        Log.d("LOG", this.javaClass.simpleName + " s: $s")
 
         val mediaSource: MediaSource?
 

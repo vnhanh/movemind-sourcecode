@@ -138,7 +138,7 @@ class HelpMeChooseFragment : BaseFragment(), IHelpMeChooseContract.View {
     override fun showTextByRemote(configData: MMConfigData) {
         tvTitleHMC?.also {
             var configText = configData.helpmeChooseButtonText.toUpperCase()
-            if (configText.isEmpty()) configText = getString(R.string.title_help_me_choose)
+            if (configText.isEmpty()) configText = it.context.getString(R.string.title_help_me_choose)
 
             it.text = configText
         }
@@ -146,13 +146,17 @@ class HelpMeChooseFragment : BaseFragment(), IHelpMeChooseContract.View {
 
     override fun showLoadedData(loadedData: ArrayList<MMHelpMeChooseQuestion>, hmcText: String?) {
         questionsContainer?.also {
-            btnPrevious.visibility = View.VISIBLE
+            btnPrevious?.visibility = View.VISIBLE
             if (view == null || !(view is ConstraintLayout)) {
                 showError(R.string.error_can_not_display_data)
                 return
             }
-            mAdapters = HelpMeChooseDisplayHelper.showQuestionsAndAnswersFromLoadedData(presenter = mPresenter, data = loadedData,
-                    hmcButtonText = hmcText ?: Constant.EMPTY, parentView = it)
+            mAdapters = HelpMeChooseDisplayHelper.showQuestionsAndAnswersFromLoadedData(
+                    presenter = mPresenter,
+                    data = loadedData,
+                    hmcButtonText = hmcText ?: Constant.EMPTY,
+                    parentView = it
+            )
         }
     }
 

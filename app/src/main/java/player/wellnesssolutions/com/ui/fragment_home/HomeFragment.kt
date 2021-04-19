@@ -44,7 +44,6 @@ import player.wellnesssolutions.com.ui.fragment_search_result_videos.SearchResul
 
 class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
     private var presenter: IHomeContract.Presenter? = null
-    private val handler = Handler()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

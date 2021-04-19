@@ -48,7 +48,8 @@ class SearchVideosByImageVH(view: View) : SearchVideosByVH(view) {
                     Glide.with(imgView).load(data.imageResId)
                             .override(mLoadSize).circleCrop()
                             .transition(DrawableTransitionOptions.withCrossFade())
-                            .placeholder(R.drawable.bg_circle_white).error(R.drawable.bg_circle_white).into(imgView)
+                            .placeholder(R.drawable.bg_circle_white).error(R.drawable.bg_circle_white)
+                            .into(imgView)
                 }
 
                 StyleEnumInner.SQUARE_INNER_CIRCLE -> {

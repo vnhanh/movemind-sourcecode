@@ -46,7 +46,7 @@ class VideosSearchResultPageVH(view: View, val mItemWidth: Int, val mItemHeight:
     // flag check if this item is selected or not
     private var mIsSelected = false
 
-    private val mView = view
+    private var mView:View? = view
 
     init {
         when (mItemWidth == 0 || mItemHeight == 0) {
@@ -142,6 +142,7 @@ class VideosSearchResultPageVH(view: View, val mItemWidth: Int, val mItemHeight:
 
     fun release() {
         //mDownloadButtonManager.release()
+        mView = null
         presenter = null
         mVideo = null
         mExtraViews?.clear()
@@ -257,31 +258,33 @@ class VideosSearchResultPageVH(view: View, val mItemWidth: Int, val mItemHeight:
     }
 
     private fun resizeWidthHeightItem(itemView: View) {
-        val density = mView.resources.displayMetrics.density
-        if (density == 1.5f) {
-            try {
-                val dm = DisplayMetrics()
-                (mView.context as MainActivity).windowManager.defaultDisplay.getMetrics(dm)
-                if (dm.xdpi == 480.0f) {
+        mView?.also { view->
+            val density = view.resources.displayMetrics.density
+            if (density == 1.5f) {
+                try {
+                    val dm = DisplayMetrics()
+                    (view.context as MainActivity).windowManager.defaultDisplay.getMetrics(dm)
+                    if (dm.xdpi == 480.0f) {
 
-                    val paramsTv = itemView.tvVideoDuration.layoutParams
-                    paramsTv.height = mView.context.resources.getDimensionPixelSize(R.dimen.dip_39)
-                    paramsTv.width = mView.context.resources.getDimensionPixelSize(R.dimen.dip_39)
-                    itemView.tvVideoDuration.layoutParams = paramsTv
+                        val paramsTv = itemView.tvVideoDuration.layoutParams
+                        paramsTv.height = view.context.resources.getDimensionPixelSize(R.dimen.dip_39)
+                        paramsTv.width = view.context.resources.getDimensionPixelSize(R.dimen.dip_39)
+                        itemView.tvVideoDuration.layoutParams = paramsTv
 
-                    val paramsBtnDownload = itemView.btnDownload.layoutParams
-                    paramsBtnDownload.height = mView.context.resources.getDimensionPixelSize(R.dimen.dip_35)
-                    paramsBtnDownload.width = mView.context.resources.getDimensionPixelSize(R.dimen.dip_35)
-                    itemView.btnDownload.layoutParams = paramsBtnDownload
+                        val paramsBtnDownload = itemView.btnDownload.layoutParams
+                        paramsBtnDownload.height = view.context.resources.getDimensionPixelSize(R.dimen.dip_35)
+                        paramsBtnDownload.width = view.context.resources.getDimensionPixelSize(R.dimen.dip_35)
+                        itemView.btnDownload.layoutParams = paramsBtnDownload
 
-                    val paramsBtnPreview = itemView.btnPreview.layoutParams
-                    paramsBtnPreview.height = mView.context.resources.getDimensionPixelSize(R.dimen.dip_35)
-                    paramsBtnPreview.width = mView.context.resources.getDimensionPixelSize(R.dimen.dip_35)
-                    itemView.btnPreview.layoutParams = paramsBtnPreview
+                        val paramsBtnPreview = itemView.btnPreview.layoutParams
+                        paramsBtnPreview.height = view.context.resources.getDimensionPixelSize(R.dimen.dip_35)
+                        paramsBtnPreview.width = view.context.resources.getDimensionPixelSize(R.dimen.dip_35)
+                        itemView.btnPreview.layoutParams = paramsBtnPreview
 
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
             }
         }
     }

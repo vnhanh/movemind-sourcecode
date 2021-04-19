@@ -39,7 +39,7 @@ class SearchLevelsFragment : BaseFragment(), ISearchLevelsContract.View {
     private fun readArguments() {
         val brand: MMBrand? = arguments?.getParcelable(KEY_BRAND)
         if (brand == null) {
-            showError(getString(R.string.error_not_get_chosen_brand))
+            showError(context?.getString(R.string.error_not_get_chosen_brand).orEmpty())
             return
         }
         mPrensenter?.setChosenBrand(brand)
@@ -48,7 +48,8 @@ class SearchLevelsFragment : BaseFragment(), ISearchLevelsContract.View {
 
 
     private fun showError(string: String) {
-        MessageUtils.showToast(tvTitle.context, string, R.color.red)?.show()
+        if(string.isNotBlank())
+            MessageUtils.showToast(tvTitle?.context, string, R.color.red)?.show()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -85,8 +86,8 @@ class SearchLevelsFragment : BaseFragment(), ISearchLevelsContract.View {
     }
 
     private fun setupTextTitle() {
-        tvTitle?.text = getString(R.string.screen_level_tv_title)
-        tvTitle2?.text = getString(R.string.screen_level_choose_a_level)
+        tvTitle?.text = context?.getString(R.string.screen_level_tv_title).orEmpty()
+        tvTitle2?.text = context?.getString(R.string.screen_level_choose_a_level).orEmpty()
     }
 
     override fun onStart() {
@@ -133,7 +134,8 @@ class SearchLevelsFragment : BaseFragment(), ISearchLevelsContract.View {
     }
 
     override fun showMessage(message: String, color: Int) {
-        MessageUtils.showToast(context, message, color)?.show()
+        if(message.isNotBlank())
+            MessageUtils.showToast(context, message, color)?.show()
     }
 
     override fun showLoadingProgress() {
@@ -184,10 +186,15 @@ class SearchLevelsFragment : BaseFragment(), ISearchLevelsContract.View {
         if (data.size == 0) {
             mDialog?.dismiss()
 
-            tvTitle2.text = getString(R.string.screen_level_tv_title2_no_item)
+            tvTitle2.text = context?.getString(R.string.screen_level_tv_title2_no_item).orEmpty()
 
             val message = context?.getString(R.string.this_brand_has_no_levels, brandName).orEmpty()
-            mDialog = DialogUtil.createDialogOnlyOneButton(context = tvTitle2.context, message = message, titleButton = R.string.btn_ok, dialogClickListener = null).also { it.show() }
+            mDialog = DialogUtil.createDialogOnlyOneButton(
+                    context = tvTitle2.context,
+                    message = message,
+                    titleButton = R.string.btn_ok,
+                    dialogClickListener = null
+            ).also { it.show() }
 
             return
         }
@@ -220,26 +227,31 @@ class SearchLevelsFragment : BaseFragment(), ISearchLevelsContract.View {
     }
 
     private fun showSwipeText() {
-        txtSwipeRightForMoreOptions?.also { textViewSwipeRight ->
-            rvLevels?.also { recyclerviewLevels ->
-                val set = ConstraintSet()
-                set.clone(rootSearchLevel)
+        rootSearchLevel?.also { layoutSearchLevel ->
+            txtSwipeRightForMoreOptions?.also { textViewSwipeRight ->
+                rvLevels?.also { recyclerviewLevels ->
+                    val set = ConstraintSet()
+                    set.clone(layoutSearchLevel)
 
-                set.connect(recyclerviewLevels.id, ConstraintSet.BOTTOM, textViewSwipeRight.id, ConstraintSet.TOP)
-                set.applyTo(rootSearchLevel)
-                textViewSwipeRight.visibility = View.VISIBLE
+                    set.connect(recyclerviewLevels.id, ConstraintSet.BOTTOM, textViewSwipeRight.id, ConstraintSet.TOP)
+                    set.applyTo(layoutSearchLevel)
+                    textViewSwipeRight.visibility = View.VISIBLE
+                }
             }
         }
     }
 
     private fun hideSwipeText() {
-        rvLevels?.also { recyclerviewLevels ->
-            val set = ConstraintSet()
-            set.clone(rootSearchLevel)
+        rootSearchLevel?.also { layoutSearchLevel ->
+            rvLevels?.also { recyclerviewLevels ->
+                val set = ConstraintSet()
+                set.clone(layoutSearchLevel)
 
-            set.connect(recyclerviewLevels.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
-            set.applyTo(rootSearchLevel)
+                set.connect(recyclerviewLevels.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+                set.applyTo(layoutSearchLevel)
+            }
         }
+
         txtSwipeRightForMoreOptions?.visibility = View.GONE
     }
 

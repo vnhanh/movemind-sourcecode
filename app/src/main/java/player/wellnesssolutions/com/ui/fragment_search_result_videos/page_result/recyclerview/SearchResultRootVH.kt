@@ -12,11 +12,11 @@ class SearchResultRootVH(view: View) : RecyclerView.ViewHolder(view) {
     private var mListVideo: ArrayList<MMVideo> = ArrayList()
     private var mPresenter: ISearchResultPageContract.Presenter? = null
     private var mAdapter: VideosSearchResultPageAdapter? = null
+
     fun bind(data: ArrayList<MMVideo>, mPresenter: ISearchResultPageContract.Presenter?) {
         this.mListVideo = data
         this.mPresenter = mPresenter
         displayView()
-
     }
 
     private fun displayView() {

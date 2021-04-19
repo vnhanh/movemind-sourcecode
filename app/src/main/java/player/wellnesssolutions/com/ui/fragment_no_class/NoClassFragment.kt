@@ -105,14 +105,16 @@ class NoClassFragment : BaseFragment(), INoClassContract.View {
     }
 
     private fun setCenterButtonHelpMeChoose() {
-        btnHelpMeChoose?.also { button ->
-            val set = ConstraintSet()
-            set.clone(rootCollection)
-            set.connect(button.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
-            set.applyTo(rootCollection)
-            val newLayoutParams: ConstraintLayout.LayoutParams = button.layoutParams as ConstraintLayout.LayoutParams
-            newLayoutParams.topMargin = 0
-            button.layoutParams = newLayoutParams
+        rootCollection?.also { layoutCollection ->
+            btnHelpMeChoose?.also { button ->
+                val set = ConstraintSet()
+                set.clone(layoutCollection)
+                set.connect(button.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+                set.applyTo(layoutCollection)
+                val newLayoutParams: ConstraintLayout.LayoutParams = button.layoutParams as ConstraintLayout.LayoutParams
+                newLayoutParams.topMargin = 0
+                button.layoutParams = newLayoutParams
+            }
         }
     }
 

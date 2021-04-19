@@ -122,10 +122,12 @@ class TimeTableFragment : BaseFragment(), ITimeTableContract.View, MMTabBar.TabB
         clProgressBar?.visibility = View.GONE
         context?.let {
             mDialog?.dismiss()
-            mDialog = DialogUtil.createDialogOnlyOneButton(context = it,
+            mDialog = DialogUtil.createDialogOnlyOneButton(
+                    context = it,
                     message = message,
                     titleButton = R.string.btn_ok,
-                    dialogClickListener = null).also { alert ->
+                    dialogClickListener = null
+            ).also { alert ->
                 alert.show()
             }
         }

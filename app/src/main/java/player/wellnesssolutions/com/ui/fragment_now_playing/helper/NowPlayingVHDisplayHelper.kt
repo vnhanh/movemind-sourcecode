@@ -17,10 +17,12 @@ object NowPlayingVHDisplayHelper {
     private var mThumbnailWidth = 0
     private var mThumbnailHeight = 0
 
-    fun displayTimeStart(tvTimeStart: MMTextView, playTime: String) {
-        tvTimeStart.visibility = View.VISIBLE
-        val timeStr = playTime.convertToStrDateFormat12hrs().toUpperCase()
-        tvTimeStart.text = StringBuilder(timeStr).append(Constant.WHITE_SPACE).toString()
+    fun displayTimeStart(tvTimeStart: MMTextView?, playTime: String) {
+        tvTimeStart?.also { textView ->
+            textView.visibility = View.VISIBLE
+            val timeStr = playTime.convertToStrDateFormat12hrs().toUpperCase()
+            textView.text = StringBuilder(timeStr).append(Constant.WHITE_SPACE).toString()
+        }
     }
 
     fun displayThumbnail(thumbnailVideo: ImageView?, url: String?) {

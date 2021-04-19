@@ -124,16 +124,22 @@ object MessageUtils {
     }
 
     fun getAppUsableScreenSize(context: Context): Point {
-        val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val point = Point()
-        windowManager.defaultDisplay.getSize(point)
-        return point
+        val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
+        if(windowManager != null){
+            val point = Point()
+            windowManager.defaultDisplay.getSize(point)
+            return point
+        }
+        return Point()
     }
 
     fun getRealScreenSize(context: Context): Point {
-        val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val point = Point()
-        windowManager.defaultDisplay.getRealSize(point)
-        return point
+        val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager
+        if(windowManager != null) {
+            val point = Point()
+            windowManager.defaultDisplay.getRealSize(point)
+            return point
+        }
+        return Point()
     }
 }

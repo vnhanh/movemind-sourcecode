@@ -22,11 +22,13 @@ import player.wellnesssolutions.com.ui.activity_main.ScheduleBroadcastReceiver
 open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleContract.View, ScheduleBroadcastReceiver.ScheduleListener {
     private var schedulePresenter: IScheduleContract.Presenter? = null
     protected var isNewScreen = true
+    protected var isTransitioningScreen = false
     protected var dialog: Dialog? = null
     protected var isStartedOpenNewScreen = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         isNewScreen = true
+        isTransitioningScreen = true
         isStartedOpenNewScreen = false
         schedulePresenter = SchedulePresenter(context)
         registerScheduleBroadcast()
@@ -69,7 +71,7 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
     override fun onResume() {
         super.onResume()
 //        Log.d("LOG", this.javaClass.simpleName + " onResume()")
-
+        isTransitioningScreen = false
         schedulePresenter?.onAttach(this)
     }
 
@@ -83,6 +85,9 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
         super.onDestroyView()
         Log.d("LOG", this.javaClass.simpleName + " onDestroyView()")
         unregisterScheduleBroadcast()
+        handler.removeCallbacks(runnablePlayScheduledVideo)
+        handler.removeCallbacks(runnableResetSchedule)
+        handler.removeCallbacks(runnableUpdateSchedule)
         isNewScreen = true
         schedulePresenter?.onDestroy()
     }
@@ -114,23 +119,50 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
     /**
      * ------------------------------------------------------------------------------------------------------------------------
      */
+    private val runnablePlayScheduledVideo = Runnable {
+        schedulePresenter?.onTimePlaySchedule()
+    }
+
+    private val runnableResetSchedule = Runnable {
+        schedulePresenter?.onLoadSchedule(this, false, true)
+    }
+
+    private val runnableUpdateSchedule = Runnable {
+        updateScheduleFromUI()
+    }
 
     override fun onReceivePlayVideoScheduleFromUI() {
         Log.d("LOG", this.javaClass.simpleName + " onReceivePlayVideoScheduleFromUI()")
 //        AlarmManagerSchedule.cancelAlarmScheduleTime()
 //                showMessage("Search Screen found schedule video", R.color.white)
-        schedulePresenter?.onTimePlaySchedule()
+        if(isTransitioningScreen){
+            handler.postDelayed(runnablePlayScheduledVideo, Constant.TIME_POST_DELAY_DEFAULT)
+        }else{
+            schedulePresenter?.onTimePlaySchedule()
+        }
     }
 
     override fun onReceiveResetScheduleFromUI() {
         Log.d("LOG", this.javaClass.simpleName + " onReceiveResetScheduleFromUI()")
         AlarmManagerSchedule.cancelAlarmScheduleTime()
-        schedulePresenter?.onLoadSchedule(this, false, true)
+        if(isTransitioningScreen){
+            handler.postDelayed(runnableResetSchedule, Constant.TIME_POST_DELAY_DEFAULT)
+        }else{
+            schedulePresenter?.onLoadSchedule(this, false, true)
+        }
     }
 
     override fun onReceiveUpdateScheduleFromUI() {
         Log.d("LOG", this.javaClass.simpleName + " onReceiveUpdateScheduleFromUI() | schedulePresenter: $schedulePresenter")
         AlarmManagerSchedule.cancelAlarmScheduleTime()
+        if(isTransitioningScreen){
+            handler.postDelayed(runnableUpdateSchedule, Constant.TIME_POST_DELAY_DEFAULT)
+        }else{
+            updateScheduleFromUI()
+        }
+    }
+
+    private fun updateScheduleFromUI() {
         val _context = context
         when {
             _context == null -> {
@@ -152,7 +184,6 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
                 ).apply { show() }
             }
         }
-
     }
 
     override fun onReceiveChangeApiBackToHome() {

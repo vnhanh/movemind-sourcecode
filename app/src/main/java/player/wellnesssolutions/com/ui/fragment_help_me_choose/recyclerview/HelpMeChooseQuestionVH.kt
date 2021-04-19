@@ -30,17 +30,17 @@ class HelpMeChooseQuestionVH(view: View, private var presenter: IHelpMeChooseCon
     }
 
     private fun selectView() {
-        itemView.tvOptionTitle.setSelect(true)
+        itemView.tvOptionTitle?.setSelect(true)
     }
 
     private fun unSelectView() {
-        itemView.tvOptionTitle.setSelect(false)
+        itemView.tvOptionTitle?.setSelect(false)
     }
 
     fun bind(data: MMHelpMeChooseAnswer, isSelected: Boolean) {
         this.data = data
 
         displayView(isSelected)
-        itemView.tvOptionTitle.text = data.answer
+        itemView.tvOptionTitle?.text = data.answer
     }
 }

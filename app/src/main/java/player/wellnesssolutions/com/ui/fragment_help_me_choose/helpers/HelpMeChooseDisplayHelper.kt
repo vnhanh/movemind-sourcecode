@@ -26,7 +26,9 @@ import player.wellnesssolutions.com.ui.fragment_help_me_choose.recyclerview.Help
 
 object HelpMeChooseDisplayHelper {
     // parentView is a ConstraintLayout in a ScrollView
-    fun showQuestionsAndAnswersFromLoadedData(presenter: IHelpMeChooseContract.Presenter?, data: ArrayList<MMHelpMeChooseQuestion>, hmcButtonText: String,
+    fun showQuestionsAndAnswersFromLoadedData(presenter: IHelpMeChooseContract.Presenter?,
+                                              data: ArrayList<MMHelpMeChooseQuestion>,
+                                              hmcButtonText: String,
                                               parentView: ConstraintLayout): ArrayList<HelpMeChooseQuestionsAdapter> {
         if (presenter == null) return ArrayList()
 

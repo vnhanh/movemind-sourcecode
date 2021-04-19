@@ -25,7 +25,6 @@ class SplashFragment : BaseFragment(), ISplashContract.View, View.OnClickListene
     private var MAX_PROGRESS_BEFORE_RECEIVE_RESPONSE = 60
     private var isStopProgressBar = false
     private var dialog: AlertDialog? = null
-    private val handler = Handler()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

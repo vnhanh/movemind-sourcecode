@@ -123,11 +123,19 @@ class SearchPreviewFragment : BaseFragment(), ISearchPreviewContract.View {
                             .error(R.drawable.bg_sp_deault_collection)
                             .into(it)
                 }
-                val set = ConstraintSet()
-                set.clone(ctlTvTitle)
 
-                set.connect(tvTitle.id, ConstraintSet.START, imgCollectionLogoOnTop.id, ConstraintSet.END)
-                set.applyTo(ctlTvTitle)
+                ctlTvTitle?.also { layoutTextViewTitle ->
+                    tvTitle?.id?.also { idTextViewTitle ->
+                        imgCollectionLogoOnTop?.id?.also { idImageLogoCollection ->
+                            val set = ConstraintSet()
+                            set.clone(layoutTextViewTitle)
+
+                            set.connect(idTextViewTitle, ConstraintSet.START, idImageLogoCollection, ConstraintSet.END)
+                            set.applyTo(layoutTextViewTitle)
+
+                        }
+                    }
+                }
             }
         } catch (e: Exception){
             e.printStackTrace()

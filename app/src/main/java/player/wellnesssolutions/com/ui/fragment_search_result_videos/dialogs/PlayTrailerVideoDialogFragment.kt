@@ -112,12 +112,12 @@ class PlayTrailerVideoDialogFragment : DialogFragment(), IPlayVideoContract.Mana
         if (mPlayerManager?.getPlaybackState() == Player.STATE_ENDED) {
             mPlayerManager?.replay()
         } else {
-            exo_play.performClick()
+            exo_play?.performClick()
         }
     }
 
     private fun onClickedPauseButton() {
-        exo_pause.performClick()
+        exo_pause?.performClick()
     }
 
     private fun setupVolumeButton() {
@@ -191,8 +191,8 @@ class PlayTrailerVideoDialogFragment : DialogFragment(), IPlayVideoContract.Mana
     }
 
     private fun setupNormalDimensDialog() {
-        val width = context?.resources?.getDimensionPixelSize(R.dimen.width_normal_screen_playing_video_search_result)?:0
-        val height = context?.resources?.getDimensionPixelSize(R.dimen.height_normal_screen_playing_video_search_result)?:0
+        val width = context?.resources?.getDimensionPixelSize(R.dimen.width_normal_screen_playing_video_search_result)?:1
+        val height = context?.resources?.getDimensionPixelSize(R.dimen.height_normal_screen_playing_video_search_result)?:1
         dialog?.window?.setLayout(width, height)
         dialog?.window?.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
     }
@@ -200,7 +200,7 @@ class PlayTrailerVideoDialogFragment : DialogFragment(), IPlayVideoContract.Mana
     override fun onStart() {
         super.onStart()
         // playedVideoPosition = -1L: play video from playing position itself
-        when (videoPlayer.player != null) {
+        when (videoPlayer?.player != null) {
             true -> {
                 // do nothing
             }
@@ -217,7 +217,7 @@ class PlayTrailerVideoDialogFragment : DialogFragment(), IPlayVideoContract.Mana
     }
 
     override fun onDestroyView() {
-        videoPlayer.setControllerVisibilityListener(null)
+        videoPlayer?.setControllerVisibilityListener(null)
         mPlayerManager?.onDestroy()
         mPlayerManager = null
         super.onDestroyView()

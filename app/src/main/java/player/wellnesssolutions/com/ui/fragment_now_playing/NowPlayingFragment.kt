@@ -288,30 +288,32 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
             NowPlayingVideoSetupHelper.setupViewsForPlayer(parentView, presenter)
             NowPlayingVideoSetupHelper.setupComingUpNext(parentView, mMenuSetupHelper, presenter)
 
-            presenter?.getPlayMode()?.also { mode ->
-                when (mode) {
-                    PlayMode.SCHEDULE -> {
-                        videoPlayer.exo_play?.setOnClickListener(null)
-                        videoPlayer.exo_pause?.setOnClickListener(null)
-                        videoPlayer.exo_progress?.wasEnable = false
-                    }
+            videoPlayer?.also { vidPlayer ->
+                presenter?.getPlayMode()?.also { mode ->
+                    when (mode) {
+                        PlayMode.SCHEDULE -> {
+                            vidPlayer.exo_play?.setOnClickListener(null)
+                            vidPlayer.exo_pause?.setOnClickListener(null)
+                            vidPlayer.exo_progress?.wasEnable = false
+                        }
 
-                    PlayMode.ON_DEMAND -> {
-                        videoPlayer.exo_play?.setOnClickListener {
-                            if (mCheckVideoPositionRunnable?.isStop() == true && presenter?.isPlayingCC() == true) {
-                                postDelayCheckVideoPosition()
-                            }
+                        PlayMode.ON_DEMAND -> {
+                            vidPlayer.exo_play?.setOnClickListener {
+                                if (mCheckVideoPositionRunnable?.isStop() == true && presenter?.isPlayingCC() == true) {
+                                    postDelayCheckVideoPosition()
+                                }
 //                            if(mTimer.isCancel()) scheduleCheckVideoEndedTask()
 
-                            presenter?.resumeOrReplay()
-                        }
+                                presenter?.resumeOrReplay()
+                            }
 
-                        videoPlayer.exo_pause?.setOnClickListener {
-                            presenter?.pauseVideo()
-                            mCheckVideoPositionRunnable?.stopTask()
-                        }
+                            vidPlayer.exo_pause?.setOnClickListener {
+                                presenter?.pauseVideo()
+                                mCheckVideoPositionRunnable?.stopTask()
+                            }
 
-                        videoPlayer.exo_progress?.wasEnable = true
+                            vidPlayer.exo_progress?.wasEnable = true
+                        }
                     }
                 }
             }
@@ -362,88 +364,90 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
     }
 
     private fun setupVideoPlayerController() {
-        presenter?.setSubtitleController(ClosedCaptionController(playerControllerView, videoPlayer.exo_subtitles))
-        videoPlayer.setOnTouchListener { _, event ->
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    mVideoPlayerTouchedX = event.x
-                    mVideoPlayerTouchedY = event.y
-                }
-
-                MotionEvent.ACTION_UP -> {
-                    val translatedX: Float = event.x - mVideoPlayerTouchedX
-                    val translatedY: Float = event.y - mVideoPlayerTouchedY
-                    if (translatedX < 10f && translatedY < 10f) {
-                        hideGroupViewComingUpNext()
+        videoPlayer?.also { vidPlayer ->
+            presenter?.setSubtitleController(ClosedCaptionController(playerControllerView, vidPlayer.exo_subtitles))
+            vidPlayer.setOnTouchListener { _, event ->
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        mVideoPlayerTouchedX = event.x
+                        mVideoPlayerTouchedY = event.y
                     }
-                }
-            }
 
-            return@setOnTouchListener false
-        }
-
-        videoPlayer.exo_subtitles.setFixedTextSize(TypedValue.COMPLEX_UNIT_DIP,
-                NowPlayingVideoSetupHelper.SUBTITLES_TEXTSIZE * 1f)
-
-        videoPlayer.setControllerVisibilityListener { visibleId ->
-
-            val playerState: PlayerState? = presenter?.getPlayerState()
-            val isPreparingOnDemandVideo = presenter?.getPlayMode() == PlayMode.ON_DEMAND &&
-                    (playerState == PlayerState.NOTHING || playerState == PlayerState.COUNTDOWN)
-            val isLoadingVideo = progressLoadingVideo?.visibility == View.VISIBLE
-
-            when (visibleId) {
-                View.VISIBLE -> {
-                    showVideoTitleAndCollections()
-
-                    if (isLoadingVideo || isPreparingOnDemandVideo) {
-                        PlayVideoDisplayHelper.hideAllButtons(btnPlayVideo, btnPauseVideo)
-                        videoPlayer.hideController()
-                    } else {
-                        videoPlayer.player?.let { players ->
-                            when (players.playbackState) {
-                                Player.STATE_IDLE -> {
-                                    // do nothing
-                                }
-                                Player.STATE_ENDED -> {
-                                    PlayVideoDisplayHelper.displayOnEnded(progressLoadingVideo, btnPlayVideo, btnPauseVideo)
-                                    hideGroupViewComingUpNext()
-                                    btnComingUpNext.visibility = View.INVISIBLE
-                                    constraintArrowDown.visibility = View.INVISIBLE
-                                    constraintArrowUp.visibility = View.INVISIBLE
-                                    if (presenter?.getPlayMode() == PlayMode.SCHEDULE) {
-
-                                    } else if (presenter?.getPlayMode() == PlayMode.ON_DEMAND && presenter?.getAllVideos()?.size ?: 0 == 0) {
-                                        // TODO: check case play searched videos from control screen
-                                        btnPrevious?.performClick()
-                                    } else {
-
-                                    }
-                                }
-                                else -> {
-                                    val isPlaying: Boolean = players.playWhenReady
-                                    PlayVideoDisplayHelper.displayControllerPlayViews(isPlaying, btnPlayVideo, btnPauseVideo)
-                                }
-                            }
+                    MotionEvent.ACTION_UP -> {
+                        val translatedX: Float = event.x - mVideoPlayerTouchedX
+                        val translatedY: Float = event.y - mVideoPlayerTouchedY
+                        if (translatedX < 10f && translatedY < 10f) {
+                            hideGroupViewComingUpNext()
                         }
                     }
                 }
 
-                else -> {
-                    frameExoVoume?.also { layout ->
-                        if (layout.visibility != View.GONE)
-                            layout.visibility = View.GONE
-                    }
+                return@setOnTouchListener false
+            }
 
-                    if (isLoadingVideo || isPreparingOnDemandVideo) {
+            vidPlayer.exo_subtitles?.setFixedTextSize(TypedValue.COMPLEX_UNIT_DIP,
+                    NowPlayingVideoSetupHelper.SUBTITLES_TEXTSIZE * 1f)
+
+            vidPlayer.setControllerVisibilityListener { visibleId ->
+
+                val playerState: PlayerState? = presenter?.getPlayerState()
+                val isPreparingOnDemandVideo = presenter?.getPlayMode() == PlayMode.ON_DEMAND &&
+                        (playerState == PlayerState.NOTHING || playerState == PlayerState.COUNTDOWN)
+                val isLoadingVideo = progressLoadingVideo?.visibility == View.VISIBLE
+
+                when (visibleId) {
+                    View.VISIBLE -> {
                         showVideoTitleAndCollections()
-                    } else {
-                        hideVideoTitleAndCollections()
+
+                        if (isLoadingVideo || isPreparingOnDemandVideo) {
+                            PlayVideoDisplayHelper.hideAllButtons(btnPlayVideo, btnPauseVideo)
+                            vidPlayer.hideController()
+                        } else {
+                            vidPlayer.player?.let { players ->
+                                when (players.playbackState) {
+                                    Player.STATE_IDLE -> {
+                                        // do nothing
+                                    }
+                                    Player.STATE_ENDED -> {
+                                        PlayVideoDisplayHelper.displayOnEnded(progressLoadingVideo, btnPlayVideo, btnPauseVideo)
+                                        hideGroupViewComingUpNext()
+                                        btnComingUpNext?.visibility = View.INVISIBLE
+                                        constraintArrowDown?.visibility = View.INVISIBLE
+                                        constraintArrowUp?.visibility = View.INVISIBLE
+                                        if (presenter?.getPlayMode() == PlayMode.SCHEDULE) {
+
+                                        } else if (presenter?.getPlayMode() == PlayMode.ON_DEMAND && presenter?.getAllVideos()?.size ?: 0 == 0) {
+                                            // TODO: check case play searched videos from control screen
+                                            btnPrevious?.performClick()
+                                        } else {
+
+                                        }
+                                    }
+                                    else -> {
+                                        val isPlaying: Boolean = players.playWhenReady
+                                        PlayVideoDisplayHelper.displayControllerPlayViews(isPlaying, btnPlayVideo, btnPauseVideo)
+                                    }
+                                }
+                            }
+                        }
                     }
 
-                    PlayVideoDisplayHelper.hideAllButtons(btnPlayVideo, btnPauseVideo)
+                    else -> {
+                        frameExoVoume?.also { layout ->
+                            if (layout.visibility != View.GONE)
+                                layout.visibility = View.GONE
+                        }
 
-                    playerControllerView.findViewById<View>(R.id.closedCaptionController)?.visibility = View.GONE
+                        if (isLoadingVideo || isPreparingOnDemandVideo) {
+                            showVideoTitleAndCollections()
+                        } else {
+                            hideVideoTitleAndCollections()
+                        }
+
+                        PlayVideoDisplayHelper.hideAllButtons(btnPlayVideo, btnPauseVideo)
+
+                        playerControllerView.findViewById<View>(R.id.closedCaptionController)?.visibility = View.GONE
+                    }
                 }
             }
         }
@@ -497,8 +501,8 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         parentView?.also { rootView ->
 
             NowPlayingVideoInfoDisplayHelper.setupVideo(rootView, player)
-            seekbarVolume.progress = (player.volume * 100).toInt()
-            if (player.volume == 0f) exo_volume.setImageResource(R.drawable.ic_volume_mute_white_28dp)
+            seekbarVolume?.progress = (player.volume * 100).toInt()
+            if (player.volume == 0f) exo_volume?.setImageResource(R.drawable.ic_volume_mute_white_28dp)
 
             if (presenter?.isPlayingCC() == true) {
                 postDelayCheckVideoPosition()
@@ -620,9 +624,11 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         parentView?.also { rootView ->
             // mMainDownloadButtonManager?.setVideoData(video)
 
-            NowPlayingVideoInfoDisplayHelper.displayPlayingVideo(rootView,
+            NowPlayingVideoInfoDisplayHelper.displayPlayingVideo(
+                    rootView,
                     groupMainCollections, video,
-                    mExtraMainCollectionViews).also {
+                    mExtraMainCollectionViews
+            ).also {
                 mExtraMainCollectionViews = it
             }
 
@@ -701,7 +707,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
 
     override fun onNoClassVideosForNow(scheduleVideos: ArrayList<MMVideo>, message: String, @ColorRes msgColor: Int, isClickedFromBtnBottom: Boolean) {
         Log.d("LOG", this.javaClass.simpleName + " onNoClassVideosForNow()")
-        btnLogoBottom.isEnabled = true
+        btnLogoBottom?.isEnabled = true
 
         var isCasted = false
         if(scheduleVideos.size > 0){
@@ -718,7 +724,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
                 handleMoveToNewScreenButUpdatingNewSchedule(isBackToHomeScreen = true, caseNotUpdating = {
                     Log.d("LOG", this.javaClass.simpleName + " onNoClassVideosForNow() | SCHEDULE | isClickedFromBtnBottom: $isClickedFromBtnBottom")
                     NowPlayingVideoSetupHelper
-                            .openHomeFragmentWithNotLoadScheduleAndShowPopup(fm = activity?.supportFragmentManager, message = getString(R.string.no_class_now))
+                            .openHomeFragmentWithNotLoadScheduleAndShowPopup(fm = activity?.supportFragmentManager, message = context?.getString(R.string.no_class_now).orEmpty())
                     activity?.let {
                         if (it is MainActivity) {
                             it.getApiConfigData()
@@ -732,7 +738,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
                 videoPlayer?.context?.let {
                     dialog?.dismiss()
                     context?.also { context ->
-                        dialog = DialogUtil.createDialogTwoButtons(context, getString(R.string.confirm_stop_video_and_navigate_to_screen_get_started), R.string.cancel,
+                        dialog = DialogUtil.createDialogTwoButtons(context, it.getString(R.string.confirm_stop_video_and_navigate_to_screen_get_started), R.string.cancel,
                                 object : DialogInterface.OnClickListener {
                                     override fun onClick(dialogInterface: DialogInterface?, p1: Int) {
                                         dialogInterface?.dismiss()
@@ -764,7 +770,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
     }
 
     override fun onHaveClassVideos(scheduleVideos: ArrayList<MMVideo>, isClickedFromBtnBottom: Boolean) {
-        btnLogoBottom.isEnabled = true
+        btnLogoBottom?.isEnabled = true
 //        Log.d("LOG", this.javaClass.simpleName + " onHaveClassVideos() | videos number: ${scheduleVideos.size} | play mode: ${mPresenter?.getPlayMode()}")
         hideLoadingProgress()
         var isCasted = false
@@ -808,8 +814,11 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         activity?.also { activity ->
             if (activity is MainActivity && activity.isPresentationAvailable()) {
                 Log.d("LOG", this.javaClass.simpleName + " switchToCurrentClass() | case presentation")
-                MessageUtils.showSnackBar(snackView = btnLogoBottom, message = getString(R.string.now_playing_class),
-                        colorRes = R.color.white)
+                MessageUtils.showSnackBar(
+                        snackView = btnLogoBottom,
+                        message = activity.getString(R.string.now_playing_class),
+                        colorRes = R.color.white
+                )
                 activity.playVideo(PlayMode.SCHEDULE, scheduleVideos)
                 backToHomeScreenWithNotLoadSchedule()
             } else {
@@ -829,15 +838,15 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
     override fun setupViewFloatMenu(configData: MMConfigData) {
         when (configData.hasHelpMeChoose) {
             0 -> {
-                menuItemHelpMeChoose.visibility = View.GONE
+                menuItemHelpMeChoose?.visibility = View.GONE
             }
 
             1 -> {
-                menuItemHelpMeChoose.visibility = View.VISIBLE
+                menuItemHelpMeChoose?.visibility = View.VISIBLE
 
                 val buttonText: String = configData.helpmeChooseButtonText
                 if (buttonText.isNotEmpty())
-                    menuItemHelpMeChoose.text = buttonText
+                    menuItemHelpMeChoose?.text = buttonText
             }
         }
     }
@@ -865,14 +874,18 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         val lastPosition: Long? = presenter?.getPlayerManager()?.getCurrentPosition()
         presenter?.getPlayerManager()?.getCurrentPosition()?.let {
             if (it > 0) {
-                PresentationDataHelper.save(context = activity, mode = presenter?.getPlayMode(),
-                        videos = videos, currentPosition = lastPosition,
-                        timeCountDown = mCountDownNumber)
+                PresentationDataHelper.save(
+                        context = activity,
+                        mode = presenter?.getPlayMode(),
+                        videos = videos,
+                        currentPosition = lastPosition,
+                        timeCountDown = mCountDownNumber
+                )
             }
         }
 
         view?.also {
-            MessageUtils.showSnackBar(snackView = it, message = getString(R.string.detect_connecting_to_tv),
+            MessageUtils.showSnackBar(snackView = it, message = it.context?.getString(R.string.detect_connecting_to_tv).orEmpty(),
                     colorRes = R.color.white, isLongTime = true, btnRes = R.string.btn_ok)
         }
         openNoClassSearchScreen(null)
@@ -927,19 +940,26 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
             }
 
             Player.STATE_READY -> {
-                if (!videoPlayer.isControllerVisible)
-                    hideVideoTitleAndCollections()
+                videoPlayer?.also { vidPlayer ->
+                    if (!vidPlayer.isControllerVisible)
+                        hideVideoTitleAndCollections()
 
-                videoPlayer.player?.let { _ ->
-                    val isControllerVisible = videoPlayer.isControllerVisible
+                    vidPlayer.player?.let { _ ->
+                        val isControllerVisible = vidPlayer.isControllerVisible
 
-                    PlayVideoDisplayHelper.displayOnReady(isControllerVisible, playWhenReady,
-                            progressLoadingVideo, btnPlayVideo, btnPauseVideo)
+                        PlayVideoDisplayHelper.displayOnReady(
+                                isControllerVisible = isControllerVisible,
+                                playWhenReady = playWhenReady,
+                                progressLoading = progressLoadingVideo,
+                                btnPlayVideo = btnPlayVideo,
+                                btnPauseVideo = btnPauseVideo
+                        )
+                    }
                 }
             }
 
             Player.STATE_ENDED -> {
-                PlayVideoDisplayHelper.displayOnEnded(progressLoadingVideo, btnPlayVideo, btnPauseVideo)
+                PlayVideoDisplayHelper.displayOnEnded(progressLoading = progressLoadingVideo, btnPlayVideo = btnPlayVideo, btnPauseVideo = btnPauseVideo)
             }
 
             Player.STATE_IDLE -> {

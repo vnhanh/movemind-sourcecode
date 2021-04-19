@@ -30,8 +30,10 @@ class SearchInstructorVH(view: View, private var listener: ISearchInstructorCont
 //        ViewUtil.setupOnClicked(itemView.imageCover, this)
         ViewUtil.setupOnClicked(itemView.btnShowInfoItemSearchInstructor, this)
 
-        val size = itemView.resources?.getDimensionPixelSize(R.dimen.vh_search_presenter_avatar_size)?:130
-        val padding = itemView.resources?.getDimensionPixelSize(R.dimen.padding_circle_item_for_6_items_search_in_row)?:10
+        val size = itemView.resources?.getDimensionPixelSize(R.dimen.vh_search_presenter_avatar_size)
+                ?: 130
+        val padding = itemView.resources?.getDimensionPixelSize(R.dimen.padding_circle_item_for_6_items_search_in_row)
+                ?: 10
         mLoadSize = size - padding * 2
         setPaddingImage(padding)
         setMarginForPivotView(padding)
@@ -43,12 +45,16 @@ class SearchInstructorVH(view: View, private var listener: ISearchInstructorCont
     }
 
     private fun drawStroke(padding: Int) {
-        val strokeBg = GradientDrawable().also {
-            it.shape = GradientDrawable.OVAL
-            it.color = ColorStateList.valueOf(Color.WHITE)
-            it.setStroke(padding, ContextCompat.getColor(itemView.context, R.color.instructorStroke))
+        try {
+            val strokeBg = GradientDrawable().also {
+                it.shape = GradientDrawable.OVAL
+                it.color = ColorStateList.valueOf(Color.WHITE)
+                it.setStroke(padding, ContextCompat.getColor(itemView.context, R.color.instructorStroke))
+            }
+            itemView.imgAvatar?.background = strokeBg
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-        itemView.imgAvatar?.background = strokeBg
     }
 
     override fun onClick(view: View) {

@@ -35,8 +35,8 @@ abstract class BaseResponseObserver<T> : Observer<Response<ResponseValue<T>>> {
     }
 
     override fun onNext(response: Response<ResponseValue<T>>) {
-        Log.d("LOG", this.javaClass.simpleName + " onNext() | error body message: ${response.errorBody()?.string()} | " +
-                "body message ${response.body()?.message} | code: ${response.code()}")
+//        Log.d("LOG", this.javaClass.simpleName + " onNext() | error body message: ${response.errorBody()?.string()} | " +
+//                "body message ${response.body()?.message} | code: ${response.code()}")
         this.response = response
         val strBodyError = response.errorBody()?.string()
         val bodyError = CommonUtility.getErrorBody(strBodyError)

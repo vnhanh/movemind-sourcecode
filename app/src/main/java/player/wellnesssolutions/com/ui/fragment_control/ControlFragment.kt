@@ -188,7 +188,7 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
 
         activity?.also { activity ->
             if (activity is MainActivity && activity.isPresentationAvailable()) {
-                MessageUtils.showSnackBar(snackView = btnLogoBottom, message = getString(R.string.now_playing_class),
+                MessageUtils.showSnackBar(snackView = btnLogoBottom, message = activity.getString(R.string.now_playing_class),
                         colorRes = R.color.white)
                 activity.playVideo(PlayMode.SCHEDULE, scheduleVideos)
 
@@ -321,15 +321,15 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     override fun setupViewFloatMenu(configData: MMConfigData) {
         when (configData.hasHelpMeChoose) {
             0 -> {
-                menuItemHelpMeChoose.visibility = View.GONE
+                menuItemHelpMeChoose?.visibility = View.GONE
             }
 
             1 -> {
-                menuItemHelpMeChoose.visibility = View.VISIBLE
+                menuItemHelpMeChoose?.visibility = View.VISIBLE
 
                 configData.helpmeChooseButtonText.also {
                     if (it.isNotEmpty())
-                        menuItemHelpMeChoose.text = it
+                        menuItemHelpMeChoose?.text = it
                 }
             }
         }
@@ -421,13 +421,13 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     }
 
     private fun onClickedButtonLogo() {
-        btnLogoBottom.isEnabled = false
+        btnLogoBottom?.isEnabled = false
 
         activity?.also { act ->
             if ((act as MainActivity).isPresentationAvailable()) {
                 val isPlayingSearchVideos: Boolean = act.isPlayingSearchedVideos()
                 if (isPlayingSearchVideos) {
-                    val message: String = getString(player.wellnesssolutions.com.R.string.confirm_stop_video_and_navigate_to_screen_get_started)
+                    val message: String = act.getString(player.wellnesssolutions.com.R.string.confirm_stop_video_and_navigate_to_screen_get_started)
 
                     val yesBtnListener = DialogInterface.OnClickListener { _, _ ->
                         loadSchedule(true)
@@ -447,18 +447,18 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     }
 
     private fun setupButtonFloatMenu() {
-        mMenuWidth = resources.getDimensionPixelSize(player.wellnesssolutions.com.R.dimen.width_btn_menu_float)
-        mMenuHeight = resources.getDimensionPixelSize(player.wellnesssolutions.com.R.dimen.height_btn_menu_float)
+        mMenuWidth = context?.resources?.getDimensionPixelSize(player.wellnesssolutions.com.R.dimen.width_btn_menu_float)?:42
+        mMenuHeight = context?.resources?.getDimensionPixelSize(player.wellnesssolutions.com.R.dimen.height_btn_menu_float)?:39
 
-        wrapperMenuFloat.setOnClickListener {
+        wrapperMenuFloat?.setOnClickListener {
             onClickedButtonMenuFloat()
         }
 
-        btnMenuFloat.setOnClickListener {
+        btnMenuFloat?.setOnClickListener {
             onClickedButtonMenuFloat()
         }
 
-        btnCloseMenuFloat.setOnClickListener {
+        btnCloseMenuFloat?.setOnClickListener {
             onClickedButtonMenuFloat()
         }
     }
@@ -478,67 +478,67 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     }
 
     private fun handleClickedFloatMenu() {
-        frameOverlay.setOnClickListener {
+        frameOverlay?.setOnClickListener {
             openNewScreenByMenuItem(it)
         }
 
-        menuFloat.setOnTouchListener { _, _ ->
+        menuFloat?.setOnTouchListener { _, _ ->
             hideFloatMenu()
             false
         }
 
-        viewBgGroupControllers.setOnClickListener {
+        viewBgGroupControllers?.setOnClickListener {
             if (mIsShownMenu)
                 openNewScreenByMenuItem(it)
         }
 
-        menuFloat.setOnClickListener {
+        menuFloat?.setOnClickListener {
             openNewScreenByMenuItem(it)
         }
 
-        menuFloat.menuItemHelpMeChoose.setOnClickListener {
+        menuFloat?.menuItemHelpMeChoose?.setOnClickListener {
             handleSearchFlow(it, HelpMeChooseFragment.TAG)
             //mVideosToPlay.clear()
             //SPDBUtil.deleteAllFromTag(SearchResultFragment.getTagOfChosen())
             //HMCDataHelper.deleteALlFromTag(SearchResultFragment.getTagOfHMCForDB())
         }
 
-        menuFloat.menuItemFindClass.setOnClickListener {
+        menuFloat?.menuItemFindClass?.setOnClickListener {
             handleSearchFlow(it, SearchBrandsFragment.TAG)
             //mVideosToPlay.clear()
             //SPDBUtil.deleteAllFromTag(SearchResultFragment.getTagOfChosen())
             //HMCDataHelper.deleteALlFromTag(SearchResultFragment.getTagOfHMCForDB())
         }
 
-        menuFloat.menuItemSearchByInstructor.setOnClickListener {
+        menuFloat?.menuItemSearchByInstructor?.setOnClickListener {
             handleSearchFlow(it, SearchInstructorsFragment.TAG)
             //mVideosToPlay.clear()
             //SPDBUtil.deleteAllFromTag(SearchResultFragment.getTagOfChosen())
             //HMCDataHelper.deleteALlFromTag(SearchResultFragment.getTagOfHMCForDB())
         }
 
-        menuFloat.menuItemSearchByCollection.setOnClickListener {
+        menuFloat?.menuItemSearchByCollection?.setOnClickListener {
             handleSearchFlow(it, SearchCollectionsFragment.TAG)
             //mVideosToPlay.clear()
             //SPDBUtil.deleteAllFromTag(SearchResultFragment.getTagOfChosen())
             //HMCDataHelper.deleteALlFromTag(SearchResultFragment.getTagOfHMCForDB())
         }
 
-        menuFloat.menuItemSearchByLevel.setOnClickListener {
+        menuFloat?.menuItemSearchByLevel?.setOnClickListener {
             handleSearchFlow(it, SearchLevelsFragment.TAG)
             //mVideosToPlay.clear()
             //SPDBUtil.deleteAllFromTag(SearchResultFragment.getTagOfChosen())
             //HMCDataHelper.deleteALlFromTag(SearchResultFragment.getTagOfHMCForDB())
         }
 
-        menuFloat.menuItemSearchByDuration.setOnClickListener {
+        menuFloat?.menuItemSearchByDuration?.setOnClickListener {
             handleSearchFlow(it, SearchDurationsFragment.TAG)
             //mVideosToPlay.clear()
             //SPDBUtil.deleteAllFromTag(SearchResultFragment.getTagOfChosen())
             //HMCDataHelper.deleteALlFromTag(SearchResultFragment.getTagOfHMCForDB())
         }
 
-        menuFloat.menuItemTimeTable.setOnClickListener {
+        menuFloat?.menuItemTimeTable?.setOnClickListener {
             menuFloat.menuItemTimeTable.changeColorOnClick()
             //mVideosToPlay.clear()
             //SPDBUtil.deleteAllFromTag(SearchResultFragment.getTagOfChosen())
@@ -642,7 +642,7 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
         activity?.also { activity ->
             if (activity is MainActivity && activity.isPresentationAvailable()) {
                 val scheduleVideos = VideoDBUtil.getScheduleVideos(isDelete = false)
-                MessageUtils.showSnackBar(snackView = btnLogoBottom, message = getString(R.string.now_playing_class),
+                MessageUtils.showSnackBar(snackView = btnLogoBottom, message = activity.getString(R.string.now_playing_class),
                         colorRes = R.color.white)
                 activity.playVideo(PlayMode.SCHEDULE, scheduleVideos)
 
@@ -738,7 +738,7 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     private fun setupButtonPlaylist() {
         //mNowPlayingDownloadButtonManager = DownloadButtonManager(groupViewsComingUpNext.btnDownloadPlaying)
         // var isClicked = false
-        groupViewsComingUpNext.tag = false
+        groupViewsComingUpNext?.tag = false
         btnPlaylistPresentation?.setOnClickListener {
             groupViewsComingUpNext.tag?.also { isVisible ->
                 if (isVisible is Boolean) {
@@ -754,11 +754,11 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
                 }
             }
             if (isClicked) {
-                constraintArrowUp.visibility = View.VISIBLE
-                constraintArrowDown.visibility = View.INVISIBLE
+                constraintArrowUp?.visibility = View.VISIBLE
+                constraintArrowDown?.visibility = View.INVISIBLE
             } else {
-                constraintArrowUp.visibility = View.INVISIBLE
-                constraintArrowDown.visibility = View.VISIBLE
+                constraintArrowUp?.visibility = View.INVISIBLE
+                constraintArrowDown?.visibility = View.VISIBLE
             }
             isClicked = !isClicked
         }
@@ -832,13 +832,13 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     }
 
     private fun setWidthTimeTVByMinuteUnit() {
-        val width: Int = resources.getDimensionPixelSize(player.wellnesssolutions.com.R.dimen.playlist_video_time_minute_length)
+        val width: Int = context?.resources?.getDimensionPixelSize(player.wellnesssolutions.com.R.dimen.playlist_video_time_minute_length)?:36
 
         setWidthForTimeTV(width)
     }
 
     private fun setWidthTimeTVByHourUnit() {
-        val width: Int = resources.getDimensionPixelSize(player.wellnesssolutions.com.R.dimen.playlist_video_time_hour_length)
+        val width: Int = context?.resources?.getDimensionPixelSize(player.wellnesssolutions.com.R.dimen.playlist_video_time_hour_length)?:54
 
         setWidthForTimeTV(width)
     }
@@ -925,8 +925,6 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     private fun showPauseVideoUIOnPlaylist() {
         btnPlayVideoPlaying?.visibility = View.GONE
         btnPauseVideoPlaying?.visibility = View.VISIBLE
-
-
     }
 
     private fun showTranslateToAnotherVideoUIOnPlaylist() {

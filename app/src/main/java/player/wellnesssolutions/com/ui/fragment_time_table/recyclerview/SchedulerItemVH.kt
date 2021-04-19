@@ -47,15 +47,16 @@ class SchedulerItemVH(view: View) : RecyclerView.ViewHolder(view) {
 
     private fun resizeWidthHeightItem(itemView: View) {
         mView?.also {
-            val density = it.resources.displayMetrics.density
+            val density = it.resources?.displayMetrics?.density?:0f
             if (density == 1.5f) {
                 try {
                     val dm = DisplayMetrics()
-                    (it.context as MainActivity).windowManager.defaultDisplay.getMetrics(dm)
+                    (it.context as MainActivity).windowManager?.defaultDisplay?.getMetrics(dm)
                     if (dm.xdpi == 480.0f) {
-                        val params = itemView.parentViewSchedulerItem.layoutParams
-                        params.height = params.height - 30
-                        itemView.parentViewSchedulerItem.layoutParams = params
+                        itemView.parentViewSchedulerItem?.layoutParams?.also { params ->
+                            params.height = params.height - 30
+                            itemView.parentViewSchedulerItem.layoutParams = params
+                        }
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()

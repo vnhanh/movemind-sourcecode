@@ -97,7 +97,7 @@ class SearchBrandsFragment : BaseFragment(), ISearchBrandsContract.View {
         // close dialog
         mDialog?.dismiss()
 
-        rvBrands.release()
+        rvBrands?.release()
         mPresenter?.onStop()
 
         super.onDestroyView()

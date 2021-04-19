@@ -47,19 +47,23 @@ class SearchCollectionVH(view: View, private var listener: ISearchCollectionCont
     }
 
     private fun loadImage(data: MMCollection) {
-        val strokeColor: String = data.getColorStr()
+        try {
+            val strokeColor: String = data.getColorStr()
 
-        if (!strokeColor.isEmpty() && strokeColor.length > 1) {
-            itemView.imgCollectionLogo?.setStrokeColor(Color.parseColor(strokeColor))
-        }
+            if (!strokeColor.isEmpty() && strokeColor.length > 1) {
+                itemView.imgCollectionLogo?.setStrokeColor(Color.parseColor(strokeColor))
+            }
 
-        itemView.imgCollectionLogo?.also { imageView ->
-            Glide.with(imageView).load(data.image)
-                    .override(mLoadSize, mLoadSize)
-                    .placeholder(R.drawable.bg_sp_deault_collection)
-                    .fallback(R.drawable.bg_sp_deault_collection)
-                    .error(R.drawable.bg_sp_deault_collection)
-                    .into(imageView)
+            itemView.imgCollectionLogo?.also { imageView ->
+                Glide.with(imageView).load(data.image)
+                        .override(mLoadSize, mLoadSize)
+                        .placeholder(R.drawable.bg_sp_deault_collection)
+                        .fallback(R.drawable.bg_sp_deault_collection)
+                        .error(R.drawable.bg_sp_deault_collection)
+                        .into(imageView)
+            }
+        } catch (e: Exception){
+            e.printStackTrace()
         }
     }
 

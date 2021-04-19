@@ -24,7 +24,7 @@ class NowPlayingComingUpNextVH(view: View, private var presenter: IComingUpNextC
 
     init {
         ViewUtil.setupButton(view, this::onClickedItemView)
-        if (isPresentation) itemView.btnDownload.visibility = View.GONE
+        if (isPresentation) itemView.btnDownload?.visibility = View.GONE
     }
 
     private fun onClickedItemView() {
@@ -70,16 +70,21 @@ class NowPlayingComingUpNextVH(view: View, private var presenter: IComingUpNextC
         tvTitleVideo?.text = videoName
     }
 
-    private fun displayTypeLogo(typeLogo: String?, iconView: ImageView) {
+    private fun displayTypeLogo(typeLogo: String?, iconView: ImageView?) {
         NowPlayingVideoInfoDisplayHelper.displayTypeLogoBrand(typeLogo, iconView)
     }
 
-    private fun displayCollections(collections: ArrayList<MMTinyCategory>?, icTypeLogo: ImageView) {
+    private fun displayCollections(collections: ArrayList<MMTinyCategory>?, icTypeLogo: ImageView?) {
         if (itemView !is ConstraintLayout) return
 
         mExtraCollectionViews =
-                SearchCollectionUtil.displayCollections(parentView = itemView.lineCollections, leftView = icTypeLogo,
-                        collections = collections, collectionCountMax = 2, extraCollectionTextViews = mExtraCollectionViews)
+                SearchCollectionUtil.displayCollections(
+                        parentView = itemView.lineCollections,
+                        leftView = icTypeLogo,
+                        collections = collections,
+                        collectionCountMax = 2,
+                        extraCollectionTextViews = mExtraCollectionViews
+                )
     }
 
     fun release() {
