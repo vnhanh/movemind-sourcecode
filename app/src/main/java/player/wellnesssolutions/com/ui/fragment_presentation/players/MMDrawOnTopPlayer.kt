@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.SurfaceHolder
 import android.view.ViewGroup
@@ -71,7 +72,9 @@ class MMDrawOnTopPlayer(context: Context) : MMLocalPlayer(context), SurfaceHolde
     }
 
     override fun play(mode: PlayMode, item: ArrayList<*>, lastPosition: Long) {
+        Log.d("LOG", this.javaClass.simpleName + " play()")
         if (ParameterUtils.isClearVideoOnPresentation) {
+            Log.d("LOG", this.javaClass.simpleName + " play() | is clear videos | call setupPlayVideo() on TV")
             mPresentation?.setupPlayVideo(mode, item as ArrayList<MMVideo>, lastPosition)
         }
     }

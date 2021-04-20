@@ -290,6 +290,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         }
         val currentPosition: Long = PreferenceHelper.getInstance(this).getLong(ConstantPreference.LAST_PLAYED_VIDEO_POSITION,
                 0L)
+        ParameterUtils.isClearVideoOnPresentation = true
         mSessionManager.add(mode = mode, videos = videos, playedPosition = currentPosition)
     }
 

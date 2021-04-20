@@ -132,8 +132,9 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
      */
     // process in case no class videos (no schedule) after loading schedule
     override fun onNoClassVideosForNow(scheduleVideos: ArrayList<MMVideo>, message: String, @ColorRes msgColor: Int, isClickedFromBtnBottom: Boolean) {
+        Log.d("LOG", this.javaClass.simpleName + " onNoClassVideoForNow() | message: $message | schedule videos number: ${scheduleVideos.size}")
         btnLogoBottom?.isEnabled = true
-//        if (message.isNotEmpty()) {
+//        if (message.contains("Request failed")) {
 //            MessageUtils.showSnackBar(btnLogoBottom, message, R.color.yellow)
 //        }
 //        else {
@@ -177,6 +178,13 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
                             frameId = R.id.frameLayoutHome, isAddToBackStack = false, isRemoveOlds = true)
                 }
 
+            }
+
+            else -> {
+                val messageLowerCase = message.toLowerCase()
+                if (messageLowerCase.contains("request failed")) {
+                    MessageUtils.showSnackBar(btnLogoBottom, message, R.color.yellow)
+                }
             }
         }
 

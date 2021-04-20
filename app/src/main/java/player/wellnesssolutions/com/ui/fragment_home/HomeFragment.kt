@@ -250,8 +250,10 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
             val text = String.format("%s %s", context?.getString(R.string.request_class_video_failed).orEmpty(), message)
             MessageUtils.showSnackBar(btnGetStarted, text, msgColor)
         } else if (scheduleVideos.size > 0) {
-            playVideoPresentationable(scheduleVideos)
-            loadControlScreen()
+            val isCasted = playVideoPresentationable(scheduleVideos)
+            if(isCasted){
+                loadControlScreen()
+            }
         }
         //loadNoClassScreen()
     }
