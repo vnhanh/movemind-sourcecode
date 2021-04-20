@@ -195,18 +195,18 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
                 count = input.read(bytes)
             }
 //            closeAll()
-        }catch (exOOM: OutOfMemoryError){
+        } catch (exOOM: OutOfMemoryError) {
             exOOM.printStackTrace()
-            Log.d("LOG", this.javaClass.simpleName +" saveFileInternal() | error: ${exOOM.message}")
-            Log.e("LOG", this.javaClass.simpleName +" saveFileInternal() | error: ${exOOM.message}")
+            Log.d("LOG", this.javaClass.simpleName + " saveFileInternal() | error: ${exOOM.message}")
+            Log.e("LOG", this.javaClass.simpleName + " saveFileInternal() | error: ${exOOM.message}")
             isEncounteredOOM = true
             mReason = Constant.ERROR_OUT_OF_MEMORY
             return CODE_FAILED
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.d("LOG", this.javaClass.simpleName +" saveFileInternal() | error: ${e.message}")
-            Log.e("LOG", this.javaClass.simpleName +" saveFileInternal() | error: ${e.message}")
-            if(!isEncounteredOOM){
+            Log.d("LOG", this.javaClass.simpleName + " saveFileInternal() | error: ${e.message}")
+            Log.e("LOG", this.javaClass.simpleName + " saveFileInternal() | error: ${e.message}")
+            if (!isEncounteredOOM) {
                 mReason =
                         when (isNetworkDisconnected()) {
                             true -> ERR_NETWORK_DISCONNECTED
@@ -214,7 +214,7 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
                         }
                 return CODE_FAILED
             }
-        }finally {
+        } finally {
             closeAll()
         }
         return CODE_COMPLETED
@@ -299,19 +299,19 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
                 aesCipherDataSink.write(bytes, 0, count)
                 count = input.read(bytes)
             }
-        }catch (oom: OutOfMemoryError){
+        } catch (oom: OutOfMemoryError) {
             oom.printStackTrace()
-            Log.d("LOG", this.javaClass.simpleName +" saveFileExternal() | error: ${oom.message}")
-            Log.e("LOG", this.javaClass.simpleName +" saveFileExternal() | error: ${oom.message}")
+            Log.d("LOG", this.javaClass.simpleName + " saveFileExternal() | error: ${oom.message}")
+            Log.e("LOG", this.javaClass.simpleName + " saveFileExternal() | error: ${oom.message}")
             isEncounteredOOM = true
             mReason = Constant.ERROR_OUT_OF_MEMORY
             return CODE_FAILED
 
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.d("LOG", this.javaClass.simpleName +" saveFileExternal() | error: ${e.message}")
-            Log.e("LOG", this.javaClass.simpleName +" saveFileExternal() | error: ${e.message}")
-            if(!isEncounteredOOM){
+            Log.d("LOG", this.javaClass.simpleName + " saveFileExternal() | error: ${e.message}")
+            Log.e("LOG", this.javaClass.simpleName + " saveFileExternal() | error: ${e.message}")
+            if (!isEncounteredOOM) {
                 mReason =
                         when (isNetworkDisconnected()) {
                             true -> ERR_NETWORK_DISCONNECTED
@@ -319,7 +319,7 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
                         }
                 return CODE_FAILED
             }
-        }finally {
+        } finally {
             closeAll()
         }
         return CODE_COMPLETED
@@ -353,7 +353,7 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
         return false
     }
 
-    fun release(){
+    fun release() {
         context = null
     }
 

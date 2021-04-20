@@ -182,7 +182,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
                 extras.containsKey(Constant.BUNDLE_SCHEDULE) -> {
                     val videos: ArrayList<MMVideo> = VideoDBUtil.getScheduleVideos(false)
                     Log.d("LOG", this.javaClass.simpleName + " onCreate() | read arguments | SCHEDULE | videos number: ${videos.size}")
-                    when{
+                    when {
                         presenter == null -> presenter = NowPlayingPresenter(
                                 context = context,
                                 playMode = PlayMode.SCHEDULE
@@ -196,7 +196,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
                 extras.containsKey(BUNDLE_VIDEO_SEARCHED) -> {
                     val videos: ArrayList<MMVideo> = VideoDBUtil.getVideosFromDB(TAG, false)
                     Log.d("LOG", this.javaClass.simpleName + " readArguments() | PLAY VIDEO SEARCHED | videos number: ${videos.size}")
-                    when{
+                    when {
                         presenter == null -> presenter = NowPlayingPresenter(
                                 context = context,
                                 playMode = PlayMode.ON_DEMAND
@@ -710,11 +710,11 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         btnLogoBottom?.isEnabled = true
 
         var isCasted = false
-        if(scheduleVideos.size > 0){
+        if (scheduleVideos.size > 0) {
             isCasted = playVideoPresentationable(scheduleVideos)
         }
 
-        if(isCasted){
+        if (isCasted) {
             backToHomeScreenWithNotLoadSchedule()
             return
         }
@@ -774,10 +774,10 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
 //        Log.d("LOG", this.javaClass.simpleName + " onHaveClassVideos() | videos number: ${scheduleVideos.size} | play mode: ${mPresenter?.getPlayMode()}")
         hideLoadingProgress()
         var isCasted = false
-        if(scheduleVideos.size > 0){
+        if (scheduleVideos.size > 0) {
             isCasted = playVideoPresentationable(scheduleVideos)
         }
-        if(isCasted){
+        if (isCasted) {
             backToHomeScreenWithNotLoadSchedule()
             return
         }
@@ -798,7 +798,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
 //                        DialogUtil.createDialogTwoButtons(context = it, message = message, titleLeftButton = R.string.btn_no,
 //                                leftButtonClickListener = cancelButtonListener, titleRightButton = R.string.btn_yes, rightButtonClickListener = okButtonListener).show()
 //                    } else {
-                        switchToCurrentClass(scheduleVideos)
+                    switchToCurrentClass(scheduleVideos)
 //                    }
                 }
             }

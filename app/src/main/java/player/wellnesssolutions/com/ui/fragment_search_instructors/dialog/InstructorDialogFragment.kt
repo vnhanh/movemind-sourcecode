@@ -38,8 +38,10 @@ class InstructorDialogFragment : androidx.fragment.app.DialogFragment() {
     }
 
     private fun setupDimensions() {
-        val width = context?.resources?.getDimensionPixelSize(R.dimen.width_instructor_dialog_in_search_screen)?:600
-        val height = context?.resources?.getDimensionPixelSize(R.dimen.height_instructor_dialog_in_search_screen)?:540
+        val width = context?.resources?.getDimensionPixelSize(R.dimen.width_instructor_dialog_in_search_screen)
+                ?: 600
+        val height = context?.resources?.getDimensionPixelSize(R.dimen.height_instructor_dialog_in_search_screen)
+                ?: 540
         dialog?.window?.setLayout(width, height)
     }
 

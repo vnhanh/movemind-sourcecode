@@ -241,14 +241,15 @@ object NowPlayingVideoSetupHelper {
      * call from {@link #setupToggleFullScreenButton()}
      */
     private fun setNormalViewPlayerVideo(parenView: View?, videoPlayer: PlayerView?, btnExoFullScreen: ImageView?, viewBottomVideoPlayer: View?, barBottom: View?) {
-        parenView?.also { layout->
+        parenView?.also { layout ->
             videoPlayer?.also { vidPlayer ->
                 if (layout is ConstraintLayout) {
                     barBottom?.visibility = View.VISIBLE
 
                     val set = ConstraintSet()
                     set.clone(layout)
-                    set.connect(vidPlayer.id, ConstraintSet.BOTTOM, viewBottomVideoPlayer?.id ?: 0, ConstraintSet.TOP)
+                    set.connect(vidPlayer.id, ConstraintSet.BOTTOM, viewBottomVideoPlayer?.id
+                            ?: 0, ConstraintSet.TOP)
                     set.applyTo(layout)
 
                     btnExoFullScreen?.setImageResource(R.drawable.ic_fullscreen_white_28dp)
@@ -328,7 +329,7 @@ object NowPlayingVideoSetupHelper {
     }
 
     private fun clickedBtnComingUpNext(groupViewsComingUpNext: View?) {
-        if(groupViewsComingUpNext == null) return
+        if (groupViewsComingUpNext == null) return
         val wasDisplaying = groupViewsComingUpNext.visibility == View.VISIBLE
         if (wasDisplaying) {
             groupViewsComingUpNext.visibility = View.GONE
@@ -388,20 +389,20 @@ object NowPlayingVideoSetupHelper {
     }
 
     fun openHomeFragmentWithNotLoadScheduleAndShowPopup(fm: FragmentManager?, message: String) {
-        try{
+        try {
             openHomeScreenNotLoadScheduleAndShowPopUp(fm, message)
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
             Observable.timer(500, TimeUnit.MILLISECONDS)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe{
+                    .subscribe {
                         openHomeScreenNotLoadScheduleAndShowPopUp(fm, message)
                     }
         }
     }
 
-    private fun openHomeScreenNotLoadScheduleAndShowPopUp(fm: FragmentManager?, message: String){
+    private fun openHomeScreenNotLoadScheduleAndShowPopUp(fm: FragmentManager?, message: String) {
         fm?.also { _fm ->
             Log.d("LOG", this.javaClass.simpleName + " openHomeFragmentWithNotLoadSchedule()")
             val tag = HomeFragment.TAG
@@ -421,12 +422,12 @@ object NowPlayingVideoSetupHelper {
         Log.d("LOG", this.javaClass.simpleName + " openNowPlayingWithSchedule()")
         try {
             openNowPlayingPlaySchedule(fm)
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
             Observable.timer(500, TimeUnit.MILLISECONDS)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe{ _->
+                    .subscribe { _ ->
                         Log.d("LOG", this.javaClass.simpleName + " openNowPlayingWithSchedule() | trans again")
                         openNowPlayingPlaySchedule(fm)
                     }
@@ -434,7 +435,7 @@ object NowPlayingVideoSetupHelper {
         }
     }
 
-    fun openNowPlayingPlaySchedule(fm:FragmentManager?){
+    fun openNowPlayingPlaySchedule(fm: FragmentManager?) {
         fm?.also { _fm ->
             val tag = NowPlayingFragment.TAG
             var fragment = _fm.findFragmentByTag(tag)

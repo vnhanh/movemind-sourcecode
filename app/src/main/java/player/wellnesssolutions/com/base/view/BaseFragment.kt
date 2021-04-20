@@ -84,7 +84,7 @@ abstract class BaseFragment : Fragment(), ILifeCycle.View {
         }
     }
 
-    protected fun playVideoPresentationable(scheduleVideos: ArrayList<MMVideo>) : Boolean{
+    protected fun playVideoPresentationable(scheduleVideos: ArrayList<MMVideo>): Boolean {
         activity?.also { activity ->
             if (activity is MainActivity && activity.isPresentationAvailable() == true) {
                 activity.playVideo(PlayMode.SCHEDULE, scheduleVideos)

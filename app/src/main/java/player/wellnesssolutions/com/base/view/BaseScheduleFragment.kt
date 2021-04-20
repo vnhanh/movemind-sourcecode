@@ -135,9 +135,9 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
         Log.d("LOG", this.javaClass.simpleName + " onReceivePlayVideoScheduleFromUI()")
 //        AlarmManagerSchedule.cancelAlarmScheduleTime()
 //                showMessage("Search Screen found schedule video", R.color.white)
-        if(isTransitioningScreen){
+        if (isTransitioningScreen) {
             handler.postDelayed(runnablePlayScheduledVideo, Constant.TIME_POST_DELAY_DEFAULT)
-        }else{
+        } else {
             schedulePresenter?.onTimePlaySchedule()
         }
     }
@@ -145,9 +145,9 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
     override fun onReceiveResetScheduleFromUI() {
         Log.d("LOG", this.javaClass.simpleName + " onReceiveResetScheduleFromUI()")
         AlarmManagerSchedule.cancelAlarmScheduleTime()
-        if(isTransitioningScreen){
+        if (isTransitioningScreen) {
             handler.postDelayed(runnableResetSchedule, Constant.TIME_POST_DELAY_DEFAULT)
-        }else{
+        } else {
             schedulePresenter?.onLoadSchedule(this, false, true)
         }
     }
@@ -155,9 +155,9 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
     override fun onReceiveUpdateScheduleFromUI() {
         Log.d("LOG", this.javaClass.simpleName + " onReceiveUpdateScheduleFromUI() | schedulePresenter: $schedulePresenter")
         AlarmManagerSchedule.cancelAlarmScheduleTime()
-        if(isTransitioningScreen){
+        if (isTransitioningScreen) {
             handler.postDelayed(runnableUpdateSchedule, Constant.TIME_POST_DELAY_DEFAULT)
-        }else{
+        } else {
             updateScheduleFromUI()
         }
     }

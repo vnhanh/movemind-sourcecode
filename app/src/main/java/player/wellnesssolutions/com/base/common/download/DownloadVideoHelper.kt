@@ -43,7 +43,7 @@ object DownloadVideoHelper {
     }
 
     fun sendDownloadStatusToServer(context: Context, status: String) {
-        try{
+        try {
             val tokenAu: String = PreferenceHelper.getInstance(context).getString(ConstantPreference.TOKEN, "")
             val deviceId = PreferenceHelper.getInstance(context).getString(ConstantPreference.DEVICE_ID, "")
             DownloadApi().sendDownloadVideoStatusToServer(tokenAu, status, deviceId)
@@ -55,14 +55,14 @@ object DownloadVideoHelper {
                         }
 
                     })
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
             Log.e("DOWNLOAD", "catched error uploading downloaded video status to server: ${e.message}")
         }
     }
 
     fun senStorageStatusToServer(context: Context, availableSpace: Long, totalSpace: Long, sdAvailableSpace: Long, sdTotalSpace: Long) {
-        try{
+        try {
             val tokenAu: String = PreferenceHelper.getInstance(context).getString(ConstantPreference.TOKEN, "")
             val deviceId = PreferenceHelper.getInstance(context).getString(ConstantPreference.DEVICE_ID, "")
             Log.d("LOG", this.javaClass.simpleName + " senStorageStatusToServer() | tokenAu: $tokenAu | deviceId: $deviceId")
@@ -75,7 +75,7 @@ object DownloadVideoHelper {
                         }
 
                     })
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
             Log.e("DOWNLOAD", "catched error uploading storage status to server: ${e.message}")
         }

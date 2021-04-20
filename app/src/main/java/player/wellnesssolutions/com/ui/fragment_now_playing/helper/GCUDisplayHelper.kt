@@ -29,7 +29,7 @@ object GCUDisplayHelper {
                              extraCollectionView: ArrayList<TextView>?,
                              presenter: IComingUpNextClickListener? = null,
                              isPresentation: Boolean = false): ArrayList<TextView>? {
-        if(rootView == null) return null
+        if (rootView == null) return null
         if (isPresentation) {
             rootView.btnDownloadPlaying?.visibility = View.GONE
         }
@@ -96,7 +96,7 @@ object GCUDisplayHelper {
     private var mThumbnailHeight = 0
 
     private fun loadThumbnail(thunmailUrl: String?, thumbnailVideo: ImageView?) {
-        if(thumbnailVideo == null) return
+        if (thumbnailVideo == null) return
         initThumbnailValues(thumbnailVideo.resources)
 
         Glide.with(thumbnailVideo).load(thunmailUrl)

@@ -38,7 +38,7 @@ class ScheduleBroadcastReceiver : BroadcastReceiver() {
             }
         }
 
-        fun release(){
+        fun release() {
             this.removeMessages(1)
             scheduleBroadcastReceiver = null
         }
@@ -152,9 +152,9 @@ class ScheduleBroadcastReceiver : BroadcastReceiver() {
 
     fun removeListener(listener: ScheduleListener) {
         val iterator = mScheduleListeners.iterator()
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             val item = iterator.next()
-            if(item == listener){
+            if (item == listener) {
                 iterator.remove()
             }
         }

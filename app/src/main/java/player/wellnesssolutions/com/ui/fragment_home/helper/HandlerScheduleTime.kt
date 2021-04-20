@@ -6,7 +6,6 @@ import player.wellnesssolutions.com.base.common.load_scheduled_videos.ICallBackN
 import player.wellnesssolutions.com.base.utils.ParameterUtils
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.network.datasource.time_network.IRequestTimeNetworkListener
-import player.wellnesssolutions.com.network.datasource.time_network.RequestTimeServer
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.com.services.AlarmManagerSchedule
 import player.wellnesssolutions.com.ui.fragment_now_playing.helper.HandlerTimeScheduleHelper
@@ -90,7 +89,7 @@ class HandlerScheduleTime(private var context: Context?, private var listener: I
 
     }
 
-    private fun setupAlarmTaskForCaseWaitSchedule(index: Int, timePlay:Long, callback: ICallBackNextScheduleVideo){
+    private fun setupAlarmTaskForCaseWaitSchedule(index: Int, timePlay: Long, callback: ICallBackNextScheduleVideo) {
         setupAlarmTask(timePlay)
         callback.onResult(index, timePlay)
     }
@@ -108,7 +107,7 @@ class HandlerScheduleTime(private var context: Context?, private var listener: I
                     STATE_TIME_PLAY_SCHEDULE.TIME_PLAY -> {
                         Log.d("LOG", this.javaClass.simpleName + " handleNextScheduleVideo() | TIME_PLAY | timePlay: $timePlay | " +
                                 "video name: ${videoHandle.videoName} | videos number: ${videos.size}")
-                        when{
+                        when {
                             timePlay <= Constant.TIME_CHANGE_SCREEN -> {
                                 Log.d("LOG", this.javaClass.simpleName + " handleNextScheduleVideo() | TIME_WAIT | timePlay: $timePlay | " +
                                         "video name: ${videoHandle.videoName} | videos number: ${videos.size}")

@@ -51,7 +51,7 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
                             return
                         }
                         Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | mListDownloadFailure is not empty: ${mListDownloadFailure.size}")
-                        
+
                         DownloadManagerCustomized.getInstance(context).queueTask(
                                 videoId = v.id!!.toInt(),
                                 url = v.downloadUrl,

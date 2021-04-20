@@ -86,12 +86,12 @@ class SearchInstructorsPresenter : BaseResponseObserver<ArrayList<MMInstructor>>
     override fun onRequestError(message: String?) {
 //        val msg = message?:mView?.getViewContext()?.getString(R.string.request_failed)?: Constant.MSG_REQUEST_FAILED
 
-        if(mView == null){
+        if (mView == null) {
             isMustShowUIOnAttach = true
             mData = null
             return
         }
-        bufferMessageError =mView?.getViewContext()?.getString(R.string.request_failed)
+        bufferMessageError = mView?.getViewContext()?.getString(R.string.request_failed)
                 ?: MSG_REQUEST_FAILED
 
         mView?.onRequestFailed(bufferMessageError)
@@ -102,7 +102,7 @@ class SearchInstructorsPresenter : BaseResponseObserver<ArrayList<MMInstructor>>
         super.onResponseFailed(code, message)
 //        val msg = message?:mView?.getViewContext()?.getString(R.string.request_failed)?: Constant.MSG_REQUEST_FAILED
 
-        if(mView == null){
+        if (mView == null) {
             isMustShowUIOnAttach = true
             mData = null
             return
@@ -124,7 +124,7 @@ class SearchInstructorsPresenter : BaseResponseObserver<ArrayList<MMInstructor>>
 
         mData = loadedData
 
-        if(mView == null){
+        if (mView == null) {
             isMustShowUIOnAttach = true
             return
         }

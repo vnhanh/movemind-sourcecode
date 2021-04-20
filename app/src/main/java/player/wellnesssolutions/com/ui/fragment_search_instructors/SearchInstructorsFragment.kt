@@ -170,7 +170,8 @@ class SearchInstructorsFragment : BaseFragment(), ISearchInstructorContract.View
         }
 
         if (data.size < Constant.MAX_PRESENTER_ITEMS_COUNT_IN_ROW) {
-            val itemSize = context?.resources?.getDimensionPixelSize(R.dimen.vh_search_item_size_presenter)?:210
+            val itemSize = context?.resources?.getDimensionPixelSize(R.dimen.vh_search_item_size_presenter)
+                    ?: 210
             RecyclerViewCustom.alignCenterHorizontal(rv = rvPresenters, itemCount = data.size, parentView = rootSearchPresenter, aboveView = btnPrevious, itemSize = itemSize)
         }
 

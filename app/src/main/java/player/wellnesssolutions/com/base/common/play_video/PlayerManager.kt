@@ -29,7 +29,7 @@ import java.io.File
 import java.net.ConnectException
 
 
-class PlayerManager(callback: IPlayVideoContract.Manager.Callback,private var context: Context?) :
+class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var context: Context?) :
         BaseResponseObserver<VideoViewResponse>(), IPlayVideoContract.Manager, Player.EventListener {
     companion object {
         const val CODE_NO_ERROR = -1

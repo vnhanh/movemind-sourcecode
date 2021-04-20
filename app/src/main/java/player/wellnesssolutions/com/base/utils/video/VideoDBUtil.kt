@@ -3,7 +3,10 @@ package player.wellnesssolutions.com.base.utils.video
 import android.util.Log
 import io.realm.Realm
 import io.realm.RealmList
-import player.wellnesssolutions.com.base.utils.video.mapper.*
+import player.wellnesssolutions.com.base.utils.video.mapper.DVideosToRealmObjectsMapper
+import player.wellnesssolutions.com.base.utils.video.mapper.RealmObjectsToDVideosMapper
+import player.wellnesssolutions.com.base.utils.video.mapper.RealmObjectsToVideosMapper
+import player.wellnesssolutions.com.base.utils.video.mapper.VideosToRealmObjectsMapper
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.database.model.video.RealmDVideo
@@ -30,13 +33,13 @@ object VideoDBUtil {
         return list
     }
 
-    fun getVideosFromDBAndSort(tag: String, isDelete: Boolean = true, fieldNameSort:String): ArrayList<MMVideo> {
+    fun getVideosFromDBAndSort(tag: String, isDelete: Boolean = true, fieldNameSort: String): ArrayList<MMVideo> {
         val realm = Realm.getDefaultInstance()
         var list = ArrayList<MMVideo>()
         try {
             realm.beginTransaction()
             var result = realm.where(VideoEntity::class.java).equalTo("tag", tag).findAll()
-            when{
+            when {
                 fieldNameSort.isNotBlank() -> result = result.sort(fieldNameSort)
             }
             list = RealmObjectsToVideosMapper.mapList(result)

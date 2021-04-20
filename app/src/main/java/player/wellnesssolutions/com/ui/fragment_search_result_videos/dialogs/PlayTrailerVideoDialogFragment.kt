@@ -89,8 +89,10 @@ class PlayTrailerVideoDialogFragment : DialogFragment(), IPlayVideoContract.Mana
     }
 
     private fun setupLayoutForTitleView() {
-        val leftMargin = context?.resources?.getDimensionPixelSize(R.dimen.margin_left_tv_title_video_dialog_playing_video_search_result)?:0
-        val topMargin = context?.resources?.getDimensionPixelSize(R.dimen.margin_top_tv_title_video_dialog_playing_video_search_result)?:0
+        val leftMargin = context?.resources?.getDimensionPixelSize(R.dimen.margin_left_tv_title_video_dialog_playing_video_search_result)
+                ?: 0
+        val topMargin = context?.resources?.getDimensionPixelSize(R.dimen.margin_top_tv_title_video_dialog_playing_video_search_result)
+                ?: 0
 
         tvTitleVideo?.also { textView ->
             val params = textView.layoutParams as RelativeLayout.LayoutParams
@@ -191,8 +193,10 @@ class PlayTrailerVideoDialogFragment : DialogFragment(), IPlayVideoContract.Mana
     }
 
     private fun setupNormalDimensDialog() {
-        val width = context?.resources?.getDimensionPixelSize(R.dimen.width_normal_screen_playing_video_search_result)?:1
-        val height = context?.resources?.getDimensionPixelSize(R.dimen.height_normal_screen_playing_video_search_result)?:1
+        val width = context?.resources?.getDimensionPixelSize(R.dimen.width_normal_screen_playing_video_search_result)
+                ?: 1
+        val height = context?.resources?.getDimensionPixelSize(R.dimen.height_normal_screen_playing_video_search_result)
+                ?: 1
         dialog?.window?.setLayout(width, height)
         dialog?.window?.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
     }
@@ -235,7 +239,7 @@ class PlayTrailerVideoDialogFragment : DialogFragment(), IPlayVideoContract.Mana
             }
 
             Player.STATE_READY -> {
-                val isControllerVisible = videoPlayer?.isControllerVisible?:false
+                val isControllerVisible = videoPlayer?.isControllerVisible ?: false
 
                 PlayVideoDisplayHelper.displayOnReady(isControllerVisible, playWhenReady, progressLoading, btnPlayVideoSR, btnPauseVideoSR)
             }

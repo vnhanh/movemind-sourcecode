@@ -22,7 +22,8 @@ class SPInstructorVH(view: View) : BaseVH<MMInstructor>(view) {
 
     private fun loadAvatar(imageView: MMCircleImageView?, image: String?) {
         imageView?.also { imgView ->
-            val size = imgView.resources?.getDimensionPixelSize(R.dimen.search_option_item_image_size)?:130
+            val size = imgView.resources?.getDimensionPixelSize(R.dimen.search_option_item_image_size)
+                    ?: 130
 
             if (imgView.mPadding == 0) {
                 val padding = (size * Constant.RATIO_STROKE_BORDER).toInt()

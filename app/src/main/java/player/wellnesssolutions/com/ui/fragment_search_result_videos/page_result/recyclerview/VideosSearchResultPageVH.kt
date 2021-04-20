@@ -46,7 +46,7 @@ class VideosSearchResultPageVH(view: View, val mItemWidth: Int, val mItemHeight:
     // flag check if this item is selected or not
     private var mIsSelected = false
 
-    private var mView:View? = view
+    private var mView: View? = view
 
     init {
         when (mItemWidth == 0 || mItemHeight == 0) {
@@ -258,7 +258,7 @@ class VideosSearchResultPageVH(view: View, val mItemWidth: Int, val mItemHeight:
     }
 
     private fun resizeWidthHeightItem(itemView: View) {
-        mView?.also { view->
+        mView?.also { view ->
             val density = view.resources.displayMetrics.density
             if (density == 1.5f) {
                 try {

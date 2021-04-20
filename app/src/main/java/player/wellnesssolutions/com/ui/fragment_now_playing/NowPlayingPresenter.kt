@@ -29,7 +29,6 @@ import player.wellnesssolutions.com.ui.fragment_home.helper.HandlerScheduleTime
 import player.wellnesssolutions.com.ui.fragment_now_playing.helper.HandlerTimeScheduleHelper
 import player.wellnesssolutions.com.ui.fragment_search_brands.module.ILoadBrandHandler
 import player.wellnesssolutions.com.ui.fragment_search_brands.module.LoadBrandsHandler
-import java.lang.RuntimeException
 import java.util.concurrent.TimeUnit
 
 class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
@@ -168,7 +167,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
 
             mPlayerState == PlayerState.COUNTDOWN -> {
                 Log.d("LOG", this.javaClass.simpleName + " resumeOrReplay() | case COUNTDOWN")
-                when{
+                when {
                     mCountDownTimerPlayVideo == null -> runCountDownTimer()
                     else -> {
                         Log.d("LOG", this.javaClass.simpleName + " resumeOrReplay() | case COUNTDOWN | start count down timer again")
@@ -185,7 +184,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
     }
 
     override fun pausePlayer() {
-        when{
+        when {
             playedMode == PlayMode.SCHEDULE -> {
                 mPlayerManager.onReleasePlayer(false, true)
             }
@@ -201,15 +200,15 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
     override fun setVideos(videos: ArrayList<MMVideo>, playMode: PlayMode) {
         Log.d("LOG", this.javaClass.simpleName + " setVideos() | videos number: ${videos.size}")
         this.isOnCountDown = false
-        try{
+        try {
             this.mCountDownTimerPlayVideo?.cancel()
-        }catch (e: RuntimeException){
+        } catch (e: RuntimeException) {
             e.printStackTrace()
             Log.e("CountDownTimer", " NowPlayingPresenter - " + e.message)
         }
         this.mCountDownTimerPlayVideo = null
         this.videos = videos
-        this.playedMode  = playMode
+        this.playedMode = playMode
         mPlayerState = PlayerState.NOTHING
         isStopPlayNext = false
         isRenderedData = false
@@ -288,20 +287,20 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
                 }
 
         initCountDownTimer()
-        try{
+        try {
             mCountDownTimerPlayVideo?.start()
             mPlayerState = PlayerState.COUNTDOWN
-        }catch (e: RuntimeException){
+        } catch (e: RuntimeException) {
             e.printStackTrace()
             Log.e("CountDownTimer", this.javaClass.simpleName + " runCountDownTimer - error: ${e.message}")
             Observable.timer(200, TimeUnit.MILLISECONDS)
                     .subscribeOn(Schedulers.single())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe {
-                        try{
+                        try {
                             mCountDownTimerPlayVideo?.start()
                             mPlayerState = PlayerState.COUNTDOWN
-                        }catch (e:RuntimeException){
+                        } catch (e: RuntimeException) {
                             e.printStackTrace()
                             Log.e("CountDownTimer", this.javaClass.simpleName + " runCountDownTimer again - error: ${e.message}")
                             mView?.showMessage(R.string.can_not_show_count_down, R.color.yellow)
@@ -403,7 +402,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
             mPlayerState = PlayerState.NOTHING
             isRenderedData = false
         }
-        if(!isStopPlayNext){
+        if (!isStopPlayNext) {
             checkPlayMode()
         }
     }
@@ -419,6 +418,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
     override fun onCookieExpired() {
         mView?.onCookieExpired()
     }
+
     private var isKeepPlayerVideoSearchedAfterNetworkReconnect = false
     override fun onReconnectNetwork() {
         if (mPlayerManager.isPlayerError()) {
@@ -494,7 +494,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
                         "isCastableOnTV: ${mView?.isCastableOnTV()}")
                 mView?.hideLoadingProgress()
                 val video = videos[0]
-                PreferenceHelper.getInstance()?.putInt(Constant.SCHEDULE_CURRENT_ID, video.id?:-1)
+                PreferenceHelper.getInstance()?.putInt(Constant.SCHEDULE_CURRENT_ID, video.id ?: -1)
                 PreferenceHelper.getInstance()?.putString(Constant.SCHEDULE_CURRENT_TIME_START, video.getStartTime())
                 Log.d("LOG", this.javaClass.simpleName + " onHaveNowPlayingVideo() | saved current video ")
                 mCountDownTimerPlayVideo?.cancel()

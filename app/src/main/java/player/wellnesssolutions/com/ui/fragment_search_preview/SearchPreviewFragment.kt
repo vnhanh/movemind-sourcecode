@@ -137,7 +137,7 @@ class SearchPreviewFragment : BaseFragment(), ISearchPreviewContract.View {
                     }
                 }
             }
-        } catch (e: Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }

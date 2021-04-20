@@ -62,7 +62,7 @@ class SearchCollectionVH(view: View, private var listener: ISearchCollectionCont
                         .error(R.drawable.bg_sp_deault_collection)
                         .into(imageView)
             }
-        } catch (e: Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }

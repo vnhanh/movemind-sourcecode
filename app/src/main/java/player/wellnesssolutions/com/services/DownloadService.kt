@@ -136,7 +136,7 @@ class DownloadService : Service(), IProgressListener, DownloadBinder.BinderDownl
     }
 
     private fun startDownload() {
-        Observable.fromCallable {  }.subscribeOn(Schedulers.io())
+        Observable.fromCallable { }.subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.trampoline())
                 .subscribe {
                     mBinder.getListDoesNotDownloaded(this, true)

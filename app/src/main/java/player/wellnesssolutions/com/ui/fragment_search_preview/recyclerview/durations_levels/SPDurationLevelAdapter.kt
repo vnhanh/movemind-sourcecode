@@ -17,7 +17,8 @@ class SPDurationLevelAdapter(list: ArrayList<SearchedOption>, presenter: ISearch
 
     override fun onCreateViewHolder(parent: ViewGroup, typeItem: Int): OptionSearchPreviewVH {
         if (padding == 0) {
-            padding = parent.resources?.getDimensionPixelSize(R.dimen.screen_hmc_item_answer_margin)?:20
+            padding = parent.resources?.getDimensionPixelSize(R.dimen.screen_hmc_item_answer_margin)
+                    ?: 20
         }
 
         val view = LayoutInflater.from(parent.context).inflate(R.layout.viewholder_selectable_option_text, parent, false)

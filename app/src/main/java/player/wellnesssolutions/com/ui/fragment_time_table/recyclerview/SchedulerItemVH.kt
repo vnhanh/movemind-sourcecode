@@ -34,11 +34,15 @@ class SchedulerItemVH(view: View) : RecyclerView.ViewHolder(view) {
     init {
         itemView.tvSchedulerStart.setTypeface(null, Typeface.BOLD_ITALIC)
 
-        if (THUMBNAIL_WIDTH == 0) THUMBNAIL_WIDTH = itemView.resources?.getDimensionPixelSize(R.dimen.width_thumbnail_video_time_table)?:0
-        if (THUMBNAIL_HEIGHT == 0) THUMBNAIL_HEIGHT = itemView.resources?.getDimensionPixelSize(R.dimen.height_thumbnail_video_time_table)?:0
-        if (TYPE_BRAND_ICON_WIDTH == 0) TYPE_BRAND_ICON_WIDTH = itemView.resources?.getDimensionPixelSize(R.dimen.vh_search_result_ic_type_logo_width)?:0
-        if (TYPE_BRAND_ICON_HEIGHT == 0) TYPE_BRAND_ICON_HEIGHT = itemView.resources?.getDimensionPixelSize(R.dimen.vh_search_result_ic_type_logo_height)?:0
-        if (MARGIN == 0) MARGIN = view.resources?.getDimensionPixelSize(R.dimen.margin)?:0
+        if (THUMBNAIL_WIDTH == 0) THUMBNAIL_WIDTH = itemView.resources?.getDimensionPixelSize(R.dimen.width_thumbnail_video_time_table)
+                ?: 0
+        if (THUMBNAIL_HEIGHT == 0) THUMBNAIL_HEIGHT = itemView.resources?.getDimensionPixelSize(R.dimen.height_thumbnail_video_time_table)
+                ?: 0
+        if (TYPE_BRAND_ICON_WIDTH == 0) TYPE_BRAND_ICON_WIDTH = itemView.resources?.getDimensionPixelSize(R.dimen.vh_search_result_ic_type_logo_width)
+                ?: 0
+        if (TYPE_BRAND_ICON_HEIGHT == 0) TYPE_BRAND_ICON_HEIGHT = itemView.resources?.getDimensionPixelSize(R.dimen.vh_search_result_ic_type_logo_height)
+                ?: 0
+        if (MARGIN == 0) MARGIN = view.resources?.getDimensionPixelSize(R.dimen.margin) ?: 0
 
         resizeWidthHeightItem(itemView)
 
@@ -47,7 +51,7 @@ class SchedulerItemVH(view: View) : RecyclerView.ViewHolder(view) {
 
     private fun resizeWidthHeightItem(itemView: View) {
         mView?.also {
-            val density = it.resources?.displayMetrics?.density?:0f
+            val density = it.resources?.displayMetrics?.density ?: 0f
             if (density == 1.5f) {
                 try {
                     val dm = DisplayMetrics()
@@ -83,7 +87,7 @@ class SchedulerItemVH(view: View) : RecyclerView.ViewHolder(view) {
 
     private fun loadThumbnail(thumbVideo: ImageView?, thumbnail657: String?) {
         if (thumbVideo == null || thumbnail657.isNullOrEmpty()) return
-        val corner = itemView.resources?.getDimensionPixelSize(R.dimen.corner_4dp)?:0
+        val corner = itemView.resources?.getDimensionPixelSize(R.dimen.corner_4dp) ?: 0
         Glide.with(thumbVideo.context).load(thumbnail657)
                 .transform(CenterCrop(), RoundedCorners(corner))
                 .override(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT)
@@ -139,7 +143,7 @@ class SchedulerItemVH(view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    fun release(){
+    fun release() {
         mView = null
     }
 }

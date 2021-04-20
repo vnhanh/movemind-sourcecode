@@ -48,7 +48,7 @@ class SearchLevelsFragment : BaseFragment(), ISearchLevelsContract.View {
 
 
     private fun showError(string: String) {
-        if(string.isNotBlank())
+        if (string.isNotBlank())
             MessageUtils.showToast(tvTitle?.context, string, R.color.red)?.show()
     }
 
@@ -134,7 +134,7 @@ class SearchLevelsFragment : BaseFragment(), ISearchLevelsContract.View {
     }
 
     override fun showMessage(message: String, color: Int) {
-        if(message.isNotBlank())
+        if (message.isNotBlank())
             MessageUtils.showToast(context, message, color)?.show()
     }
 

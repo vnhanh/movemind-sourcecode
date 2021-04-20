@@ -41,14 +41,16 @@ object NowPlayingVideoInfoDisplayHelper {
     }
 
     fun displayTypeLogoBrand(typeLogo: String?, iconView: ImageView?) {
-        if(iconView == null) return
+        if (iconView == null) return
         if (mTypeLogoWidth == 0 || mTypeLogoHeight == 0) initTypeLogoDimens(iconView)
 
         Glide.with(iconView).load(typeLogo).override(mTypeLogoWidth, mTypeLogoHeight).into(iconView)
     }
 
     private fun initTypeLogoDimens(iconView: ImageView) {
-        mTypeLogoWidth = iconView.resources?.getDimensionPixelSize(R.dimen.vh_search_result_ic_type_logo_width)?:50
-        mTypeLogoHeight = iconView.resources?.getDimensionPixelSize(R.dimen.vh_search_result_ic_type_logo_height)?:16
+        mTypeLogoWidth = iconView.resources?.getDimensionPixelSize(R.dimen.vh_search_result_ic_type_logo_width)
+                ?: 50
+        mTypeLogoHeight = iconView.resources?.getDimensionPixelSize(R.dimen.vh_search_result_ic_type_logo_height)
+                ?: 16
     }
 }

@@ -159,7 +159,7 @@ class TimeTableFragment : BaseFragment(), ITimeTableContract.View, MMTabBar.TabB
     }
 
     private fun setupButtonRefresh() {
-        icRefresh?.setOnClickListener {icon ->
+        icRefresh?.setOnClickListener { icon ->
             icon.isEnabled = false
             ViewUtil.hideRefreshView(icRefresh, tvRetry)
             mPresenter?.onGetTimetable()
@@ -175,7 +175,7 @@ class TimeTableFragment : BaseFragment(), ITimeTableContract.View, MMTabBar.TabB
         reViewVideos?.setHasFixedSize(true)
 
         val itemDecoration = ItemDecorationGridHorizontalLayout(null, 0, rowNumber)
-        itemDecoration.margin = context?.resources?.getDimensionPixelSize(R.dimen.margin)?:0
+        itemDecoration.margin = context?.resources?.getDimensionPixelSize(R.dimen.margin) ?: 0
         reViewVideos.addItemDecoration(itemDecoration)
 
         val adapter = SchedulerAdapter(this)
@@ -226,8 +226,10 @@ class TimeTableFragment : BaseFragment(), ITimeTableContract.View, MMTabBar.TabB
      * call from {@link #setupUI()}
      */
     private fun initValues() {
-        normalTextSize = context?.resources?.getDimensionPixelSize(R.dimen.text_size_today_tomorrow_time_table_normal)?.toFloat()?:0f
-        expandedTextSize = context?.resources?.getDimensionPixelSize(R.dimen.text_size_today_tomorrow_time_table_expanded)?.toFloat()?:0f
+        normalTextSize = context?.resources?.getDimensionPixelSize(R.dimen.text_size_today_tomorrow_time_table_normal)?.toFloat()
+                ?: 0f
+        expandedTextSize = context?.resources?.getDimensionPixelSize(R.dimen.text_size_today_tomorrow_time_table_expanded)?.toFloat()
+                ?: 0f
     }
 
 }

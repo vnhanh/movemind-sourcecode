@@ -143,7 +143,7 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
 
         val isCasted = playVideoPresentationable(scheduleVideos)
 
-        when{
+        when {
             !isCasted -> {
                 activity?.also { act ->
                     if (act is MainActivity && act.isPresentationAvailable() && ParameterUtils.isClearVideoOnPresentation) {
@@ -154,10 +154,10 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
                 }
 
                 // old flow
-        //        childFragmentManager.also { fm ->
-        //            ChildFragmentManager.createOrInputNewDataForFragment(fm, R.id.frameLayoutControl, NoClassFragment.TAG, null)
-        //            mCurrentChildScreenTag = NoClassFragment.TAG
-        //        }
+                //        childFragmentManager.also { fm ->
+                //            ChildFragmentManager.createOrInputNewDataForFragment(fm, R.id.frameLayoutControl, NoClassFragment.TAG, null)
+                //            mCurrentChildScreenTag = NoClassFragment.TAG
+                //        }
 
                 activity?.let {
                     if (it is MainActivity) {
@@ -447,8 +447,10 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     }
 
     private fun setupButtonFloatMenu() {
-        mMenuWidth = context?.resources?.getDimensionPixelSize(player.wellnesssolutions.com.R.dimen.width_btn_menu_float)?:42
-        mMenuHeight = context?.resources?.getDimensionPixelSize(player.wellnesssolutions.com.R.dimen.height_btn_menu_float)?:39
+        mMenuWidth = context?.resources?.getDimensionPixelSize(player.wellnesssolutions.com.R.dimen.width_btn_menu_float)
+                ?: 42
+        mMenuHeight = context?.resources?.getDimensionPixelSize(player.wellnesssolutions.com.R.dimen.height_btn_menu_float)
+                ?: 39
 
         wrapperMenuFloat?.setOnClickListener {
             onClickedButtonMenuFloat()
@@ -832,13 +834,15 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     }
 
     private fun setWidthTimeTVByMinuteUnit() {
-        val width: Int = context?.resources?.getDimensionPixelSize(player.wellnesssolutions.com.R.dimen.playlist_video_time_minute_length)?:36
+        val width: Int = context?.resources?.getDimensionPixelSize(player.wellnesssolutions.com.R.dimen.playlist_video_time_minute_length)
+                ?: 36
 
         setWidthForTimeTV(width)
     }
 
     private fun setWidthTimeTVByHourUnit() {
-        val width: Int = context?.resources?.getDimensionPixelSize(player.wellnesssolutions.com.R.dimen.playlist_video_time_hour_length)?:54
+        val width: Int = context?.resources?.getDimensionPixelSize(player.wellnesssolutions.com.R.dimen.playlist_video_time_hour_length)
+                ?: 54
 
         setWidthForTimeTV(width)
     }

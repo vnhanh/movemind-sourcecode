@@ -14,7 +14,6 @@ import android.util.Patterns
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import com.google.gson.Gson
-import okhttp3.ResponseBody
 import player.wellnesssolutions.com.common.R
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference

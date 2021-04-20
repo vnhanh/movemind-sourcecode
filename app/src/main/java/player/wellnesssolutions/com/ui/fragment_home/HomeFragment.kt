@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -203,7 +202,7 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
 
                         override fun onResponseSuccess(data: ResponseValue<ArrayList<MMVideo>>?) {
                             super.onResponseSuccess(data)
-                            Log.d("LOG",  "HomeFragment - getAllVideosForDownload() | current thread: ${Thread.currentThread()} | name: ${Thread.currentThread().name}")
+                            Log.d("LOG", "HomeFragment - getAllVideosForDownload() | current thread: ${Thread.currentThread()} | name: ${Thread.currentThread().name}")
                             if (data == null) return
                             VideoDBUtil.saveDVideosToDB(data = data.data, tag = Constant.TAG_VIDEO_DOWNLOAD)
                             PreferenceHelper.getInstance(context).putBoolean(ConstantPreference.IS_DOWNLOAD_VIDEOS, false)
@@ -250,7 +249,7 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
         if (message == Constant.ERROR_CANT_CONNECT_SERVER) {
             val text = String.format("%s %s", context?.getString(R.string.request_class_video_failed).orEmpty(), message)
             MessageUtils.showSnackBar(btnGetStarted, text, msgColor)
-        }else if(scheduleVideos.size > 0){
+        } else if (scheduleVideos.size > 0) {
             playVideoPresentationable(scheduleVideos)
             loadControlScreen()
         }

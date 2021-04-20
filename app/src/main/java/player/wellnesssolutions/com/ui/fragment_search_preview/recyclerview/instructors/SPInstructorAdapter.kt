@@ -26,11 +26,13 @@ class SPInstructorAdapter(list: ArrayList<MMInstructor>, presenter: ISearchPrevi
             nameTextSize =
                     when (presenter?.isHaveCollectionsAndInstructors() ?: true) {
                         true -> {
-                            view.resources?.getDimensionPixelSize(R.dimen.screen_search_preview_rv_item_name_text_size_small)?.toFloat()?:16f
+                            view.resources?.getDimensionPixelSize(R.dimen.screen_search_preview_rv_item_name_text_size_small)?.toFloat()
+                                    ?: 16f
                         }
 
                         false -> {
-                            view.resources?.getDimensionPixelSize(R.dimen.screen_search_preview_rv_item_name_text_size_large)?.toFloat()?:20f
+                            view.resources?.getDimensionPixelSize(R.dimen.screen_search_preview_rv_item_name_text_size_large)?.toFloat()
+                                    ?: 20f
                         }
                     }
         }
@@ -40,7 +42,8 @@ class SPInstructorAdapter(list: ArrayList<MMInstructor>, presenter: ISearchPrevi
 
     override fun onCreateViewHolder(parent: ViewGroup, itemType: Int): SPInstructorVH {
         if (padding == 0) {
-            padding = parent.resources?.getDimensionPixelSize(R.dimen.vh_sp_collection_padding)?:26
+            padding = parent.resources?.getDimensionPixelSize(R.dimen.vh_sp_collection_padding)
+                    ?: 26
         }
 
         val view = LayoutInflater.from(parent.context).inflate(R.layout.vh_sp_presenter, parent, false)
