@@ -2,6 +2,7 @@ package player.wellnesssolutions.com.base.common.play_video
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
@@ -258,6 +259,7 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
     }
 
     override fun playVideoAt(index: Int) {
+        Log.d("LOG", this.javaClass.simpleName + " playVideoAt() | index: $index | videos number: ${mVideos?.size?:0}")
         if (index <= 0 || mVideos == null || mVideos!!.size <= 1) return
         // removeAllVideosBeforeAt() must run before onReleasePlayer() to avoid bug
         removeAllVideosBeforeAt(index)
@@ -339,6 +341,7 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
 
         when (playbackState) {
             Player.STATE_ENDED -> {
+                Log.d("LOG", this.javaClass.simpleName + " onPlayerStateChanged() | STATE_ENDED | mHasSubtitle: $mHasSubtitle")
                 if (!mHasSubtitle) {
                     handleOnEnded()
                 }
@@ -363,6 +366,7 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
     }
 
     override fun handleOnEnded() {
+        Log.d("LOG", this.javaClass.simpleName + " handleOnEnded()")
         mClosedCaptionController?.resetData()
         if (mVideos?.size ?: 0 <= 1) return
         playVideoAt(index = 1)

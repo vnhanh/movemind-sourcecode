@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.TextView
 import androidx.annotation.ColorRes
 import androidx.core.graphics.ColorUtils
@@ -93,7 +94,7 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
         registerRouterChangedListener()
         registerCastingTVBroadcast()
         super.onCreateView(inflater, container, savedInstanceState)
-
+        Log.d("LOG", this.javaClass.simpleName + " onCreateView() | thread: ${Thread.currentThread()}")
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_control, container, false)
     }
@@ -666,7 +667,7 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
         btnPlaylistPresentation?.visibility = View.INVISIBLE
         constraintArrowUp?.visibility = View.INVISIBLE
         constraintArrowDown?.visibility = View.INVISIBLE
-        prgTimebarPlaying?.visibility = View.GONE
+        prgTimebarPlaying?.visibility = View.INVISIBLE
         onHandleSchedule()
     }
 
@@ -797,10 +798,12 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     /**
      * @interface CastingBroadcastReceiver.Callback
      */
-    private var mVideoPlayingDuration = 1L
+    private val DURATION_DEFAULT = 1L
+    private var mVideoPlayingDuration = DURATION_DEFAULT
     private var mIsVideoPlayingTimebarMinute = true
 
     override fun onPlayerReady(isShowPlayPauseButton: Boolean, isPlaying: Boolean, currentPosition: Long, duration: Long) {
+        Log.d("LOG", this.javaClass.simpleName + " onPlayerRead()")
         // show the pause button in PLAYLIST
         if (isShowPlayPauseButton)
             renderButtonPlayPausePlaylist(isPlaying)
@@ -808,12 +811,6 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
             hidePlayPauseButtonInPlaylist()
 
         setHeighForGroupViewComingUpNextHasTimebar()
-
-        this.mVideoPlayingDuration = if (duration > 0) duration else 1L
-        prgTimebarPlaying?.also { progressBar ->
-            progressBar.progress = (currentPosition * 100 / mVideoPlayingDuration).toInt()
-            progressBar.visibility = View.VISIBLE
-        }
 
         val strDuration: String = StrUtil.convertTimeValueToString(value = duration / 1000L)
         when (strDuration.length) {
@@ -838,7 +835,11 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
         tvVideoPlayingPlaylistDuration?.visibility = View.VISIBLE
         tvVideoPlayingPlaylistDuration?.text = StrUtil.convertTimeValueToString(value = duration / 1000L)
 
-
+        this.mVideoPlayingDuration = if (duration > 0) duration else 1L
+        prgTimebarPlaying?.also { progressBar ->
+            progressBar.progress = (currentPosition * 100 / mVideoPlayingDuration).toInt()
+            progressBar.visibility = View.VISIBLE
+        }
     }
 
     private fun setWidthTimeTVByMinuteUnit() {
@@ -870,14 +871,36 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     }
 
     override fun onUpdateProgress(isShowPlayPauseButton: Boolean, isPlaying: Boolean, position: Long) {
+        Log.d("LOG", this.javaClass.simpleName + " onUpdateProgress() | prgTimebarPlaying is null: ${prgTimebarPlaying == null}")
         if (isShowPlayPauseButton)
             renderButtonPlayPausePlaylist(isPlaying)
         else
             hidePlayPauseButtonInPlaylist()
 
-        if (mVideoPlayingDuration <= 0L) mVideoPlayingDuration = 1L
-        prgTimebarPlaying?.progress = (position * 100 / mVideoPlayingDuration).toInt()
-        tvVideoPlayingPlaylistPosition?.text = StrUtil.convertTimeValueToString(value = position / 1000L)
+        var durationVideo = mVideoPlayingDuration
+        if(durationVideo <= DURATION_DEFAULT){
+            durationVideo = PreferenceHelper.getInstance()?.getLong(CastingBroadcastReceiver.EXTRA_DURATION_VIDEO_ON_TV, DURATION_DEFAULT)?:DURATION_DEFAULT
+            mVideoPlayingDuration = durationVideo
+        }
+
+        if(durationVideo > DURATION_DEFAULT) {
+            prgTimebarPlaying?.also { progressTimePlayingVideo ->
+                tvVideoPlayingPlaylistPosition?.text = StrUtil.convertTimeValueToString(value = position / 1000L)
+                if (progressTimePlayingVideo.visibility != View.VISIBLE) {
+                    if (tvVideoPlayingPlaylistPosition?.text.isNullOrBlank() == false) tvVideoPlayingPlaylistPosition?.visibility = View.VISIBLE
+
+                    if (tvVideoPlayingPlaylistDuration?.text.isNullOrBlank() == true) {
+                        tvVideoPlayingPlaylistDuration?.text = StrUtil.convertTimeValueToString(value = durationVideo / 1000L)
+                    }
+                    tvVideoPlayingPlaylistDuration?.visibility = View.VISIBLE
+
+                    progressTimePlayingVideo.visibility = View.VISIBLE
+                }
+                progressTimePlayingVideo.progress = (position * 100 / mVideoPlayingDuration).toInt()
+            }
+        }else{
+            tvVideoPlayingPlaylistDuration?.visibility = View.GONE
+        }
     }
 
     override fun onUpdateLoadingVideoState() {

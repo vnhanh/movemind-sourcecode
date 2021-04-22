@@ -230,6 +230,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
     }
 
     override fun onClickedComingUpNextVideo(position: Int) {
+        Log.d("LOG", this.javaClass.simpleName + " onClickedComingUpNextVideo() | position: $position")
         mView?.hideGroupViewsComingUpNext()
         if (playedMode == PlayMode.ON_DEMAND)
             mPlayerManager.playVideoAt(position + 1)
@@ -428,6 +429,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
     }
 
     override fun onPlayerEnded(videoId: Int?) {
+        Log.d("LOG", this.javaClass.simpleName + " onPlayerEnded() | videos number: ${videos.size}")
         if (videoId == null || videos.size == 0) return
         val video: MMVideo = videos[0]
         if (video.id != videoId) return

@@ -136,8 +136,7 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
     }
 
     fun onCreate() {
-        Log.d("LOG", this.javaClass.simpleName + " onCreate()")
-        val type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val type: Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
         } else {
             WindowManager.LayoutParams.TYPE_SYSTEM_ALERT
@@ -160,6 +159,7 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
         mContext = mService.applicationContext.createDisplayContext(mDisplay!!)
         val wm: WindowManager = mContext!!.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         wm.addView(mView, params)
+
 
         listener.onCreateNotificationRemote()
 
@@ -632,6 +632,7 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
         intent.putExtra(CastingBroadcastReceiver.EXTRA_READY_VIDEO_STATE_ON_TV, isPlaying)
         intent.putExtra(CastingBroadcastReceiver.EXTRA_UPDATE_PROGRESS, videoPlayer.player?.currentPosition
                 ?: 0L)
+        PreferenceHelper.getInstance()?.putLong(CastingBroadcastReceiver.EXTRA_DURATION_VIDEO_ON_TV, videoPlayer.player?.duration?:0L)
         intent.putExtra(CastingBroadcastReceiver.EXTRA_DURATION_VIDEO_ON_TV, videoPlayer.player?.duration
                 ?: 0L)
         mService.sendBroadcast(intent)

@@ -393,12 +393,6 @@ object NowPlayingVideoSetupHelper {
             openHomeScreenNotLoadScheduleAndShowPopUp(fm, message)
         } catch (e: Exception) {
             e.printStackTrace()
-            Observable.timer(500, TimeUnit.MILLISECONDS)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe {
-                        openHomeScreenNotLoadScheduleAndShowPopUp(fm, message)
-                    }
         }
     }
 
@@ -420,19 +414,7 @@ object NowPlayingVideoSetupHelper {
 
     fun openNowPlayingWithSchedule(fm: FragmentManager?) {
         Log.d("LOG", this.javaClass.simpleName + " openNowPlayingWithSchedule()")
-        try {
-            openNowPlayingPlaySchedule(fm)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Observable.timer(500, TimeUnit.MILLISECONDS)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe { _ ->
-                        Log.d("LOG", this.javaClass.simpleName + " openNowPlayingWithSchedule() | trans again")
-                        openNowPlayingPlaySchedule(fm)
-                    }
-
-        }
+        openNowPlayingPlaySchedule(fm)
     }
 
     fun openNowPlayingPlaySchedule(fm: FragmentManager?) {

@@ -103,6 +103,7 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
     override fun onDestroyView() {
         super.onDestroyView()
         handler.removeCallbacks(runnableAttachPresenterFirstTime)
+        handler.removeCallbacks(runnableOpenNowPlayingWithSchedule)
     }
 
     override fun onDestroy() {
@@ -286,14 +287,17 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
                 isAddToBackStack = false
         )
     }
-
+    private val runnableOpenNowPlayingWithSchedule = Runnable {
+        activity?.supportFragmentManager?.also { fm ->
+            if (!isStartedOpenNewScreen) {
+                isStartedOpenNewScreen = true
+                NowPlayingVideoSetupHelper.openNowPlayingWithSchedule(fm)
+            }
+        }
+    }
     private fun loadNowPlayingScreen() {
         Log.d("LOG", this.javaClass.simpleName + " loadNowPlayingScreen() | isStartedOpenNewScreen: $isStartedOpenNewScreen")
-        if (isStartedOpenNewScreen) return
-        activity?.supportFragmentManager?.also { fm ->
-            isStartedOpenNewScreen = true
-            NowPlayingVideoSetupHelper.openNowPlayingWithSchedule(fm)
-        }
+        handler.post(runnableOpenNowPlayingWithSchedule)
     }
 
     override fun showMessage(message: String, color: Int) {

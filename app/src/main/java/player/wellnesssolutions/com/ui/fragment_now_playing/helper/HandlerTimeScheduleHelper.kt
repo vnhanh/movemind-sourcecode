@@ -45,7 +45,7 @@ object HandlerTimeScheduleHelper {
                             callback.onResult(STATE_TIME_PLAY_SCHEDULE.TIME_WAIT, -1 * timePlay)
                         }
                         else -> {
-                            if (timePlay <= TIME_PLAY_MAX_ROUND) timePlay = 0L
+                            if (timePlay < TIME_PLAY_MAX_ROUND) timePlay = 0L
                             callback.onResult(STATE_TIME_PLAY_SCHEDULE.TIME_PLAY, timePlay)
                         }
                     }

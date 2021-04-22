@@ -22,13 +22,11 @@ import player.wellnesssolutions.com.ui.activity_main.ScheduleBroadcastReceiver
 open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleContract.View, ScheduleBroadcastReceiver.ScheduleListener {
     private var schedulePresenter: IScheduleContract.Presenter? = null
     protected var isNewScreen = true
-    protected var isTransitioningScreen = false
     protected var dialog: Dialog? = null
     protected var isStartedOpenNewScreen = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         isNewScreen = true
-        isTransitioningScreen = true
         isStartedOpenNewScreen = false
         schedulePresenter = SchedulePresenter(context)
         registerScheduleBroadcast()
@@ -71,7 +69,6 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
     override fun onResume() {
         super.onResume()
 //        Log.d("LOG", this.javaClass.simpleName + " onResume()")
-        isTransitioningScreen = false
         schedulePresenter?.onAttach(this)
     }
 
@@ -135,30 +132,30 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
         Log.d("LOG", this.javaClass.simpleName + " onReceivePlayVideoScheduleFromUI()")
 //        AlarmManagerSchedule.cancelAlarmScheduleTime()
 //                showMessage("Search Screen found schedule video", R.color.white)
-        if (isTransitioningScreen) {
-            handler.postDelayed(runnablePlayScheduledVideo, Constant.TIME_POST_DELAY_DEFAULT)
-        } else {
-            schedulePresenter?.onTimePlaySchedule()
+        try {
+            handler.post(runnablePlayScheduledVideo)
+        }catch (e:Exception){
+            e.printStackTrace()
         }
     }
 
     override fun onReceiveResetScheduleFromUI() {
         Log.d("LOG", this.javaClass.simpleName + " onReceiveResetScheduleFromUI()")
         AlarmManagerSchedule.cancelAlarmScheduleTime()
-        if (isTransitioningScreen) {
-            handler.postDelayed(runnableResetSchedule, Constant.TIME_POST_DELAY_DEFAULT)
-        } else {
-            schedulePresenter?.onLoadSchedule(this, false, true)
+        try {
+            handler.post(runnableResetSchedule)
+        }catch (e:Exception){
+            e.printStackTrace()
         }
     }
 
     override fun onReceiveUpdateScheduleFromUI() {
         Log.d("LOG", this.javaClass.simpleName + " onReceiveUpdateScheduleFromUI() | schedulePresenter: $schedulePresenter")
         AlarmManagerSchedule.cancelAlarmScheduleTime()
-        if (isTransitioningScreen) {
-            handler.postDelayed(runnableUpdateSchedule, Constant.TIME_POST_DELAY_DEFAULT)
-        } else {
-            updateScheduleFromUI()
+        try {
+            handler.post(runnableUpdateSchedule)
+        }catch (e:Exception){
+            e.printStackTrace()
         }
     }
 

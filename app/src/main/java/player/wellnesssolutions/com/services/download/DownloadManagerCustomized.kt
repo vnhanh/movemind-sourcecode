@@ -150,7 +150,7 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
                             isSuccess = true,
                             message = "")
                 }
-                Log.d("LOG", this.javaClass.simpleName + " onDownloadCompleted() | context: $context")
+//                Log.d("LOG", this.javaClass.simpleName + " onDownloadCompleted() | context: $context")
                 context?.let {
                     Log.d("LOG", this.javaClass.simpleName + " onDownloadCompleted() | send storage info to server")
                     DownloadVideoHelper.senStorageStatusToServer(it,
@@ -250,7 +250,7 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
         try {
             deleteIfExist(fileName = fileName)
             Observable.fromCallable {
-                Log.d("LOG", this.javaClass.simpleName + " addTask() | current thread: ${Thread.currentThread()} | name: ${Thread.currentThread().name}")
+//                Log.d("LOG", this.javaClass.simpleName + " addTask() | current thread: ${Thread.currentThread()} | name: ${Thread.currentThread().name}")
                 val connection: HttpURLConnection = URL(url).openConnection() as HttpURLConnection
                 connection.setRequestProperty("Cookie", mCookieValue)
                 connection.contentLength.toLong()
@@ -443,14 +443,14 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
                     }
                     DownloadVideoHelper.sendDownloadStatusToServer(context, Constant.DOWNLOAD_DOWNLOADING)
                 }
-//                Log.d("LOG", this.javaClass.simpleName + " addDownloadTask() | status: ${mDownloadTask?.status}")
+                Log.d("LOG", this.javaClass.simpleName + " addDownloadTask() | status: ${mDownloadTask?.status}")
 
                 mIsDownloading = true
                 mDownloadTask?.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, downloadData)
             }
         } catch (e: Exception) {
             e.printStackTrace()
-//            Log.d("LOG", this.javaClass.simpleName + " addDownloadTask() | error: ${e.message}")
+            Log.d("LOG", this.javaClass.simpleName + " addDownloadTask() | error: ${e.message}")
             mIsDownloading = false
             onDownloadFailed((downloadData.id
                     ?: 0L).toInt(), downloadData.name, e.message.orEmpty(), downloadData.url)
