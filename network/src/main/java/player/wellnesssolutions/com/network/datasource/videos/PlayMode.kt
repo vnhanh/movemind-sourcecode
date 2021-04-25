@@ -1,6 +1,7 @@
 package player.wellnesssolutions.com.network.datasource.videos
 
 enum class PlayMode(var value:Int) {
+    UNKNOWN(-1),
     ON_DEMAND(0),
     SCHEDULE(1);
 

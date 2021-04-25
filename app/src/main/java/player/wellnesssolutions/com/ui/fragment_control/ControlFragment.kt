@@ -647,9 +647,6 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
         super.onMediaRouterConnected()
         AlarmManagerSchedule.cancelAlarmScheduleTime()
         Log.d("LOG", this.javaClass.simpleName + " onMediaRouterConnected()")
-        PreferenceHelper.getInstance()?.getBoolean(Constant.IS_CAST_DISCONNECT, true)?.also { isCastDisconnected ->
-            Log.d("LOG", this.javaClass.simpleName + " onMediaRouterConnected()")
-        }
         activity?.also { activity ->
             if (activity is MainActivity && activity.isPresentationAvailable()) {
                 val scheduleVideos = VideoDBUtil.getScheduleVideos(isDelete = false)

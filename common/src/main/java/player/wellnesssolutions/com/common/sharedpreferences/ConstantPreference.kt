@@ -33,13 +33,11 @@ object ConstantPreference {
 
     const val IS_SHOW_BUTTON_PREVIOUS = "IS_SHOW_BUTTON_PREVIOUS"
 
-    const val IS_SAVE_TYPE_VIDEO_RESULT = "save_type_video_result"
-
     const val LAST_TIME_COUNT_DOWN = "lastTimeCountDown"
     const val IS_SEND_DEVICE_TOKEN = "isSendDeviceToken"
     const val IS_DOWNLOAD_VIDEOS = "isDownloadVideos"
     const val DOWNLOAD_VIDEOS_SUBS_ID = "downloadVideosSubsID"
-    const val IS_SET_TIME_EVERY_DAY = "isSetTimeEveryDay"
 
-    const val IS_HAVE_CLASS_VIDEOS = "IS_HAVE_CLASS_VIDEOS"
+    const val TOTAL_VIDEO_PRESENTATION = "TOTAL_VIDEO_PRESENTATION"
+    const val NUMBER_REMAIN_VIDEO_PRESENTATION = "TOTAL_VIDEO_PRESENTATION"
 }

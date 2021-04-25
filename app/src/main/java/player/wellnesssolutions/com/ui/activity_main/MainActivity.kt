@@ -7,13 +7,12 @@ import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
-import android.os.PowerManager
+import android.os.Handler
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
-import android.widget.TextView
 import androidx.annotation.ColorRes
 import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
@@ -34,7 +33,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.utils.FragmentUtil
 import player.wellnesssolutions.com.base.utils.ParameterUtils
-import player.wellnesssolutions.com.base.utils.ParameterUtils.mCountDownNumber
 import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
 import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.base.view.IGetNewToken
@@ -83,20 +81,18 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
     private var mEventReceiver: ComponentName? = null
     private var mMediaPendingIntent: PendingIntent? = null
 
-
     private var mIsReturnScanScreen = false
 
     //private var mDownloadingHelper: ActivityDownloadHelper? = null
 
     private var mPresentationId = -1
 
+    var appVisible = true
     private var mIsFirst = true
     private var mIsVisble = false
 
     private var mDisconnectDialog: AlertDialog? = null
     private var mBackToHomeDialog: AlertDialog? = null
-
-    private var tvNumberDownload: TextView? = null
 
     private var isShownDialogNotEnoughSpace = false
 
@@ -111,8 +107,6 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
 
     }
 
-    var appVisible = true
-
 
     /**
      * IRouterChangedListener
@@ -124,7 +118,11 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
     }
 
     fun removeRouterChangedListener(listener: IRouterChanged) {
-        mRouterChangedListeners.remove(listener)
+        val iterator = mRouterChangedListeners.iterator()
+        while (iterator.hasNext()) {
+            val item = iterator.next()
+            if (item == listener) iterator.remove()
+        }
     }
 
     private fun notifyRouterConnected() {
@@ -146,6 +144,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         @SuppressLint("RestrictedApi")
         override fun onProviderChanged(router: MediaRouter?, provider: MediaRouter.ProviderInfo?) {
             super.onProviderChanged(router, provider)
+            Log.d("LOG", "MainActivity - mMediaRouterCB - onProviderChanged() | router: $router")
             router?.selectedRoute?.also { route ->
                 val id: Int = route.presentationDisplayId
                 if (id > -1 && id != mPresentationId) {
@@ -155,11 +154,11 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
                     initRoute(route)
                 } else if (id == -1 && id != mPresentationId) {
                     mPresentationId = id
-                    PresentationDataHelper.save(context = this@MainActivity,
+                    PresentationDataHelper.save(
+                            context = this@MainActivity,
                             mode = mPlayer?.getMode(),
-                            videos = mPlayer?.getVideos(),
-                            currentPosition = mPlayer?.getLastPosition(),
-                            timeCountDown = mCountDownNumber)
+                            videos = mPlayer?.getVideos()
+                    )
                     releaseRoute()
                     notifyRouterDisconnected()
                 }
@@ -169,6 +168,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
 
     private fun initRoute(route: MediaRouter.RouteInfo) {
         // mPlayer : MMDrawOnTopPlayer
+        Log.d("LOG", this.javaClass.simpleName + " initRoute()")
         mPlayer = MMPlayer.create(context = this, route = route)
         mPlayer?.let { player ->
             player.updatePresentation(route)
@@ -193,6 +193,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
                 val playedModeValue = PreferenceHelper.getInstance(this).getInt(ConstantPreference.PRESENTATION_PLAYED_MODE,
                         PlayMode.ON_DEMAND.value)
                 PlayMode.valueOf(playedModeValue)?.also { mode ->
+                    Log.d("LOG", "MainActivity - openPresentationIfIsPlaying() | mode: $mode")
                     playVideo(mode = mode, videos = PresentationDataHelper.readVideos())
                 }
             }
@@ -218,6 +219,11 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         }
     }
 
+    private val handlerMain = Handler()
+    private val runnableSaveDataPresentationCurrent = Runnable {
+
+    }
+
     private val mSessionCallback = object : MMSessionManager.Callback {
 
         override fun onStatusChanged() {
@@ -227,9 +233,11 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         }
 
         override fun onUpdateVideos(nowPlayVideo: MMVideo, comingUpVideos: ArrayList<MMVideo>) {
+            Log.d("LOG", "MainActivity - mSessionCallback - onUpdateVideos() | video: ${nowPlayVideo.videoName}")
             for (listener: IRouterChanged in mRouterChangedListeners) {
                 listener.onUpdateVideos(nowPlayVideo, comingUpVideos)
             }
+            handlerMain.post(runnableSaveDataPresentationCurrent)
         }
 
         override fun onClearVideos() {
@@ -315,7 +323,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         PreferenceHelper.getInstance(this)
         PreferenceManager.clearSchedulePref()
         // clear cache of last videos for presentation (TV)
-        PresentationDataHelper.clearCacheLastVideos(this)
+        PresentationDataHelper.clearCacheLastVideos()
 
         setContentView(R.layout.activity_main)
 
@@ -620,6 +628,11 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
     }
 
     override fun onDestroy() {
+        try {
+            handlerMain.removeCallbacks(null)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
         VideoDBUtil.deleteVideosFromDB(Constant.MM_SCHEDULE) // clear all schedule
         mPlayer?.release()
         PreferenceHelper.getInstance(this).delete(ConstantPreference.TIME_DIFFS)

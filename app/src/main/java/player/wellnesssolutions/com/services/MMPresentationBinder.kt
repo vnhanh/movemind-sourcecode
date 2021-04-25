@@ -669,6 +669,7 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
     }
 
     override fun showUIForPlayingVideo(videoData: MMVideo, comingUpVideos: ArrayList<MMVideo>) {
+        Log.d("LOG", this.javaClass.simpleName + " showUIForPlayingVideo() | videos number: ${comingUpVideos.size}")
         this.mNowVideo = videoData
         this.mNowVideoLength = ((videoData.videoLength ?: 0f) * 1000).toLong()
         this.mComingUpVideos = comingUpVideos
@@ -771,21 +772,23 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
     private var mRunnable = object : Runnable {
         @SuppressLint("RestrictedApi")
         override fun run() {
+            Log.d("LOG", "MMPresentationBinder - runnable is running...")
             if (mRouter?.presentationDisplayId == -1 || mRouter?.presentationDisplay?.isValid == false) {
+                Log.d("LOG", "MMPresentationBinder - runnable - stopped service...")
                 // stop service and pause video
                 mService.stopSelf()
                 mPresenter?.pauseVideo()
 
-                mPresenter?.getCurrentPlayedPosition()?.let {
-                    if (it > 0) {
-                        PresentationDataHelper.save(context = mContext,
-                                mode = mPresenter?.getPlayMode(),
-                                videos = mPresenter?.getAllVideos(),
-                                currentPosition = mPresenter?.getCurrentPlayedPosition(),
-                                timeCountDown = null)
-                    }
-                }
-                // save the current data (videos, currentPlayedPosition, playedMode)
+//                mPresenter?.getCurrentPlayedPosition()?.let {
+//                    if (it > 0) {
+//                        PresentationDataHelper.save(
+//                                context = mContext,
+//                                mode = mPresenter?.getPlayMode(),
+//                                videos = mPresenter?.getAllVideos(),
+//                        )
+//                    }
+//                }
+//                // save the current data (videos, currentPlayedPosition, playedMode)
 
             } else if (mIsRunnableStop) {
                 mView?.postDelayed(this, 1000L)

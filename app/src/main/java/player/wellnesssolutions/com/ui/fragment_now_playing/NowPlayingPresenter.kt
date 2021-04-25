@@ -616,9 +616,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
 
     override fun onDestroy() {
         if (mPlayerManager.getCurrentPosition() > 0 && !isPlayNewList) {
-            PresentationDataHelper.save(context = context, mode = playedMode, videos = videos,
-                    currentPosition = mPlayerManager.getCurrentPosition(),
-                    timeCountDown = mCountDownNumber)
+            PresentationDataHelper.save(context = context, mode = playedMode, videos = videos)
         }
         context = null
         handlerScheduleTimePlay.release()

@@ -1,6 +1,7 @@
 package player.wellnesssolutions.com.ui.activity_main
 
 import android.content.Context
+import android.util.Log
 import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
 import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
@@ -10,14 +11,10 @@ import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 object PresentationDataHelper {
     const val VIDEO_TAG = "TV Presentation"
 
-    fun save(context: Context?, mode: PlayMode?, videos: ArrayList<MMVideo>?, currentPosition: Long?, timeCountDown: Long?) {
+    fun save(context: Context?, mode: PlayMode?, videos: ArrayList<MMVideo>?) {
+        Log.d("LOG", this.javaClass.simpleName + " save() | mode: $mode | videos number: ${videos?.size ?: 0}")
         if (context != null) {
-            PreferenceHelper.getInstance(context).putLong(ConstantPreference.LAST_PLAYED_VIDEO_POSITION, currentPosition
-                    ?: 0L)
-            PreferenceHelper.getInstance(context).putLong(ConstantPreference.LAST_TIME_COUNT_DOWN, timeCountDown
-                    ?: 0L)
-            PreferenceHelper.getInstance(context).putInt(ConstantPreference.PRESENTATION_PLAYED_MODE, mode?.value
-                    ?: PlayMode.ON_DEMAND.value)
+            PreferenceHelper.getInstance(context).putInt(ConstantPreference.PRESENTATION_PLAYED_MODE, mode?.value?: PlayMode.UNKNOWN.value)
         }
 
         // save videos to database
@@ -29,10 +26,7 @@ object PresentationDataHelper {
 
     fun readVideos(): ArrayList<MMVideo> = VideoDBUtil.getVideosFromDB(VIDEO_TAG)
 
-    fun clearCacheLastVideos(context: Context) {
-        PreferenceHelper.getInstance(context).delete(ConstantPreference.LAST_PLAYED_VIDEO_POSITION)
-        PreferenceHelper.getInstance(context).delete(ConstantPreference.PRESENTATION_PLAYED_MODE)
-        PreferenceHelper.getInstance(context).delete(ConstantPreference.LAST_TIME_COUNT_DOWN)
+    fun clearCacheLastVideos() {
         VideoDBUtil.deleteVideosFromDB(VIDEO_TAG)
     }
 }

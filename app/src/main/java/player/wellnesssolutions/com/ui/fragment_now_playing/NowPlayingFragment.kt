@@ -669,7 +669,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
     override fun openNoClassSearchScreen(isClickedFromBtnBottom: Boolean?) {
         Log.d("LOG", this.javaClass.simpleName + " openNoClassSearchScreen()")
 
-        handleMoveToNewScreenButUpdatingNewSchedule(true, {
+        handleMoveToNewScreenButUpdatingNewSchedule(isBackToHomeScreen = true, caseNotUpdating = {
             NowPlayingVideoSetupHelper.openHomeFragmentWithNotLoadSchedule(fm = activity?.supportFragmentManager)
         })
     }
@@ -863,7 +863,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
      */
 
     override fun onMediaRouterConnected() {
-        Log.d("LOG", this.javaClass.simpleName + " onMediaRouterConnected() ")
+        Log.d("LOG", this.javaClass.simpleName + " onMediaRouterConnected()")
 //        when{
 //            mPresenter?.getPlayMode() == PlayMode.ON_DEMAND -> {
 //
@@ -871,15 +871,12 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
 //        }
         val videos: ArrayList<MMVideo>? = presenter?.getAllVideos()
 
-        val lastPosition: Long? = presenter?.getPlayerManager()?.getCurrentPosition()
         presenter?.getPlayerManager()?.getCurrentPosition()?.let {
             if (it > 0) {
                 PresentationDataHelper.save(
                         context = activity,
                         mode = presenter?.getPlayMode(),
-                        videos = videos,
-                        currentPosition = lastPosition,
-                        timeCountDown = mCountDownNumber
+                        videos = videos
                 )
             }
         }
