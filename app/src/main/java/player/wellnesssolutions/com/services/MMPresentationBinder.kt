@@ -588,8 +588,13 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
                 mIsLoadingNewVideo = false
 
                 videoPlayer.player?.let { _ ->
-                    PlayVideoDisplayHelper.displayOnReady(videoPlayer.isControllerVisible,
-                            playWhenReady, progressLoadingVideo, btnPlayVideo, btnPauseVideo)
+                    PlayVideoDisplayHelper.displayOnReady(
+                            isControllerVisible = videoPlayer.isControllerVisible,
+                            playWhenReady = playWhenReady,
+                            progressLoading = progressLoadingVideo,
+                            btnPlayVideo = btnPlayVideo,
+                            btnPauseVideo = btnPauseVideo
+                    )
                 }
 
                 if (!videoPlayer.isControllerVisible) {
@@ -670,6 +675,7 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
 
     override fun showUIForPlayingVideo(videoData: MMVideo, comingUpVideos: ArrayList<MMVideo>) {
         Log.d("LOG", this.javaClass.simpleName + " showUIForPlayingVideo() | videos number: ${comingUpVideos.size}")
+        Log.d("LOG", this.javaClass.simpleName + " showUIForPlayingVideo() | video current: ${videoData.videoName} | video next: ${comingUpVideos[0].videoName}")
         this.mNowVideo = videoData
         this.mNowVideoLength = ((videoData.videoLength ?: 0f) * 1000).toLong()
         this.mComingUpVideos = comingUpVideos

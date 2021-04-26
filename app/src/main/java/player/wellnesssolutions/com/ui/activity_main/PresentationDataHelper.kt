@@ -24,8 +24,6 @@ object PresentationDataHelper {
         }
     }
 
-    fun readVideos(): ArrayList<MMVideo> = VideoDBUtil.getVideosFromDB(VIDEO_TAG)
-
     fun clearCacheLastVideos() {
         VideoDBUtil.deleteVideosFromDB(VIDEO_TAG)
     }

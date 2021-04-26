@@ -56,7 +56,7 @@ object VideoDBUtil {
         return list
     }
 
-    fun getScheduleVideos(isDelete: Boolean = true): ArrayList<MMVideo> = getVideosFromDBAndSort(Constant.MM_SCHEDULE, isDelete, "playTime")
+    fun getScheduleVideos(): ArrayList<MMVideo> = getVideosFromDBAndSort(tag = Constant.MM_SCHEDULE, isDelete = false, fieldNameSort = "playTime")
 
     fun saveVideosToDB(data: ArrayList<MMVideo>, tag: String) {
         val realm = Realm.getDefaultInstance()
@@ -75,7 +75,7 @@ object VideoDBUtil {
 
 
     fun createOrUpdateVideos(data: ArrayList<MMVideo>, tag: String) {
-        Log.d("LOG", this.javaClass.simpleName + " createOrUpdateVideos() | videos number: ${data.size}")
+        Log.d("LOG", this.javaClass.simpleName + " createOrUpdateVideos() | videos number: ${data.size} | tag: $tag")
         val realm = Realm.getDefaultInstance()
 
         try {
@@ -280,5 +280,19 @@ object VideoDBUtil {
         }
     }
 
+    fun deleteAllVideos() {
+        var realm: Realm? = null
+        try {
+            realm = Realm.getDefaultInstance()
+            realm.beginTransaction()
+            val result = realm.where(VideoEntity::class.java).findAll()
+            result.deleteAllFromRealm()
+            realm.commitTransaction()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            realm?.close()
+        }
+    }
 
 }

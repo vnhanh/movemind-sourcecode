@@ -29,7 +29,7 @@ import player.wellnesssolutions.com.network.models.screen_search.MMInstructor
 import player.wellnesssolutions.com.ui.activity_main.IRouterChanged
 import player.wellnesssolutions.com.ui.activity_main.MainActivity
 import player.wellnesssolutions.com.ui.fragment_help_me_choose.helpers.HMCDataHelper
-import player.wellnesssolutions.com.ui.fragment_now_playing.NowPlayingFragment
+import player.wellnesssolutions.com.ui.fragment_now_playing.helper.NowPlayingVideoSetupHelper
 import player.wellnesssolutions.com.ui.fragment_search_preview.helpers.SPDBUtil
 import player.wellnesssolutions.com.ui.fragment_search_preview.recyclerview.durations_levels.SPSearchedOption
 import player.wellnesssolutions.com.ui.fragment_search_result_videos.dialogs.PlayTrailerVideoDialogFragment
@@ -422,34 +422,9 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View, IRouter
                         //showMessage(R.string.videos_will_be_showned_in_tv_screen, R.color.white)
                     }
                 }
-
-                return
-            }
-
-            activity.supportFragmentManager.also { fm ->
-                val tag = NowPlayingFragment.TAG
-                var fragment = fm.findFragmentByTag(tag)
-                fragment =
-                        when (fragment != null && fragment is NowPlayingFragment) {
-                            true -> {
-                                fragment.apply {
-                                    arguments = NowPlayingFragment.getBundleBySearchedVideos(passData)
-                                }
-                            }
-
-                            false -> {
-                                NowPlayingFragment.getInstanceForSearchedVideos(passData)
-                            }
-                        }
-
-                FragmentUtil.replaceFragment(
-                        fm = activity.supportFragmentManager,
-                        newFragment = fragment,
-                        newFragmentTag = tag,
-                        frameId = R.id.frameLayoutHome,
-                        isAddToBackStack = true,
-                        isRemoveOlds = false
-                )
+                // return
+            }else{
+                NowPlayingVideoSetupHelper.openNowPlayingPlayVideoSearched(fragmentManager = activity.supportFragmentManager, videos = passData)
             }
         }
     }

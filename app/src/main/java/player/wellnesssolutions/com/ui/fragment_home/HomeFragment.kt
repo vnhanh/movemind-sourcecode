@@ -245,7 +245,7 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
         loadControlScreen()
     }
 
-    override fun onNoClassVideosForNow(scheduleVideos: ArrayList<MMVideo>, message: String, @ColorRes msgColor: Int, isClickedFromBtnBottom: Boolean) {
+    override fun onNoClassVideosForNow(scheduleVideos: ArrayList<MMVideo>, message: String, @ColorRes msgColor: Int, isLoadScheduleManually: Boolean) {
         if (btnGetStarted == null) return
         if (message == Constant.ERROR_CANT_CONNECT_SERVER) {
             val text = String.format("%s %s", context?.getString(R.string.request_class_video_failed).orEmpty(), message)

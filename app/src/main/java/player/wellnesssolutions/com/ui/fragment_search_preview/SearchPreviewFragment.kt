@@ -155,6 +155,7 @@ class SearchPreviewFragment : BaseFragment(), ISearchPreviewContract.View {
     }
 
     private fun clickedShowResult(isUseOptions: Boolean = false) {
+        Log.d("LOG", this.javaClass.simpleName + " requestResultVideos() | mPresenter is not null: ${mPresenter != null}")
         mPresenter?.requestResultVideos(isUseOptions)
     }
 

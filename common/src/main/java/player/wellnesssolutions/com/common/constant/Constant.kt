@@ -18,7 +18,6 @@ object Constant {
     const val DEF_SECONDARY_COLOR = "#00c3b3"
     const val DEF_COLLECTION_TEXT_COLOR = "#979797"
     const val DOUBLE_DOTS = ".."
-    const val QUESTION_MASK = "?"
     const val WHITE_SPACE = " "
     const val EMPTY = ""
 
@@ -75,7 +74,6 @@ object Constant {
     const val API_CHANGE_SUB_SERVICE = "api_change_sub_service"
 
     const val DOWNLOAD_START = "download_start"
-    const val DOWNLOAD_END = "download_end"
 
     const val DOWNLOAD_START_UI = "download_start_ui"
     const val DOWNLOAD_UPDATE_UI = "download_update_ui"
@@ -88,27 +86,10 @@ object Constant {
     const val subscriptionChanges = "subscriptionChanges"
     const val removedVideosChanges = "removedVideosChanges"
     const val addedVideosChanges = "addedVideosChanges"
-    const val eloquentSaved = "eloquentsaved"
-    const val eloquentcreated = "eloquentcreated"
-    const val eloquentdeleted = "eloquentdeleted"
 
 
     const val AppModel = "AppModel"
 
-    const val Brand = "Brand"
-    const val lBundle = "Bundle"
-    const val Collection = "Collection"
-    const val Duration = "Duration"
-    const val Instructor = "Instructor"
-    const val PlayerConfigAnswer = "PlayerConfigAnswer"
-    const val PlayerConfigButtonsDisplay = "PlayerConfigButtonsDisplay"
-    const val PlayerConfigQuestion = "PlayerConfigQuestion"
-    const val ScheduleDetail = "ScheduleDetail"
-    const val Video = "Video"
-    const val Workout = "Workout"
-    const val Series = "Series"
-    const val UserBranding = "UserBranding"
-    const val BundleVideo = "BundleVideo"
     const val TAG_VIDEO_DOWNLOAD = "DownloadTag"
 
     const val CANCEL_DOWNLOAD = "cancel_download"
@@ -119,13 +100,18 @@ object Constant {
     /**
      * SCHEDULE
      */
-    const val MM_SCHEDULE = "MM_SCHEDULE"
+    const val IS_LOADING_SCHEDULE = "IS_LOADING_SCHEDULE"
+    const val MM_SCHEDULE = "MM_SCHEDULE_LOADED"
+    const val MM_VIDEO_SEARCHED = "MM_VIDEO_SEARCHED"
     const val BUNDLE_SCHEDULE = "BUNDLE_SCHEDULE"
     const val BUNDLE_NOT_SETUP_NOW_SCHEDULE = "BUNDLE_NOT_SETUP_NEXT_SCHEDULE"
     const val BUNDLE_SOURCE_SCHEDULE = "BUNDLE_SOURCE_SCHEDULE"
     const val BUNDLE_SHOW_POPUP = "BUNDLE_SHOW_POPUP"
     const val SCHEDULE_CURRENT_ID = "SCHEDULE_CURRENT_ID"
     const val SCHEDULE_CURRENT_TIME_START = "SCHEDULE_CURRENT_TIME_START"
+
+    // CASTING
+    const val IS_PLAYING_VIDEO = "IS_PLAYING_VIDEO"
 
     /**
      * VIEW

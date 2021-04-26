@@ -29,11 +29,11 @@ import player.wellnesssolutions.com.ui.fragment_search_preview.SearchPreviewFrag
 
 
 class SearchDurationsFragment : BaseFragment(), ISearchDurationContract.View {
-    private var mPresenter: ISearchDurationContract.Presenter? = SearchDurationPresenter()
+    private var mPresenter: ISearchDurationContract.Presenter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        mPresenter = SearchDurationPresenter()
         readArguments()
     }
 

@@ -92,10 +92,13 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
     // help to check if playing video is ended or not
     private var mCheckVideoPositionRunnable: MonitorVideoAsyncTask? = null
 
+    private var isCasting = false
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         // Inflate the layout for this fragment
+        isCasting = false
         readArguments()
         return inflater.inflate(R.layout.fragment_now_playing, container, false)
     }
@@ -167,7 +170,9 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         mMenuSetupHelper.onRelease()
 
         destroyPresenters()
-
+        if(!isCasting){
+            VideoDBUtil.deleteVideosFromDB(Constant.MM_VIDEO_SEARCHED)
+        }
         super.onDestroy()
     }
 
@@ -180,8 +185,8 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         arguments?.also { extras ->
             when {
                 extras.containsKey(Constant.BUNDLE_SCHEDULE) -> {
-                    val videos: ArrayList<MMVideo> = VideoDBUtil.getScheduleVideos(false)
-                    Log.d("LOG", this.javaClass.simpleName + " onCreate() | read arguments | SCHEDULE | videos number: ${videos.size}")
+                    val videos: ArrayList<MMVideo> = VideoDBUtil.getScheduleVideos()
+                    Log.d("LOG", this.javaClass.simpleName + " onCreateView() | read arguments | SCHEDULE | videos number: ${videos.size}")
                     when {
                         presenter == null -> presenter = NowPlayingPresenter(
                                 context = context,
@@ -705,7 +710,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         }, playedPosition)
     }
 
-    override fun onNoClassVideosForNow(scheduleVideos: ArrayList<MMVideo>, message: String, @ColorRes msgColor: Int, isClickedFromBtnBottom: Boolean) {
+    override fun onNoClassVideosForNow(scheduleVideos: ArrayList<MMVideo>, message: String, @ColorRes msgColor: Int, isLoadScheduleManually: Boolean) {
         Log.d("LOG", this.javaClass.simpleName + " onNoClassVideosForNow()")
         btnLogoBottom?.isEnabled = true
 
@@ -722,7 +727,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         when (presenter?.getPlayMode()) {
             PlayMode.SCHEDULE -> {
                 handleMoveToNewScreenButUpdatingNewSchedule(isBackToHomeScreen = true, caseNotUpdating = {
-                    Log.d("LOG", this.javaClass.simpleName + " onNoClassVideosForNow() | SCHEDULE | isClickedFromBtnBottom: $isClickedFromBtnBottom")
+                    Log.d("LOG", this.javaClass.simpleName + " onNoClassVideosForNow() | SCHEDULE | isClickedFromBtnBottom: $isLoadScheduleManually")
                     NowPlayingVideoSetupHelper
                             .openHomeFragmentWithNotLoadScheduleAndShowPopup(fm = activity?.supportFragmentManager, message = context?.getString(R.string.no_class_now).orEmpty())
                     activity?.let {
@@ -735,10 +740,10 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
             }
 
             PlayMode.ON_DEMAND -> {
-                videoPlayer?.context?.let {
-                    dialog?.dismiss()
+                dialog?.dismiss()
+                if (isLoadScheduleManually){
                     context?.also { context ->
-                        dialog = DialogUtil.createDialogTwoButtons(context, it.getString(R.string.confirm_stop_video_and_navigate_to_screen_get_started), R.string.cancel,
+                        dialog = DialogUtil.createDialogTwoButtons(context, context.getString(R.string.confirm_stop_video_and_navigate_to_screen_get_started), R.string.cancel,
                                 object : DialogInterface.OnClickListener {
                                     override fun onClick(dialogInterface: DialogInterface?, p1: Int) {
                                         dialogInterface?.dismiss()
@@ -758,10 +763,11 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
                             show()
                         }
                     }
-                    activity?.let { ac ->
-                        if (ac is MainActivity) {
-                            ac.getApiConfigData()
-                        }
+                }
+
+                activity?.let { ac ->
+                    if (ac is MainActivity) {
+                        ac.getApiConfigData()
                     }
                 }
             }
@@ -869,18 +875,18 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
 //
 //            }
 //        }
-        val videos: ArrayList<MMVideo>? = presenter?.getAllVideos()
+//        val videos: ArrayList<MMVideo>? = presenter?.getAllVideos()
 
-        presenter?.getPlayerManager()?.getCurrentPosition()?.let {
-            if (it > 0) {
-                PresentationDataHelper.save(
-                        context = activity,
-                        mode = presenter?.getPlayMode(),
-                        videos = videos
-                )
-            }
-        }
-
+//        presenter?.getPlayerManager()?.getCurrentPosition()?.let {
+//            if (it > 0) {
+//                PresentationDataHelper.save(
+//                        context = activity,
+//                        mode = presenter?.getPlayMode(),
+//                        videos = videos
+//                )
+//            }
+//        }
+        isCasting = true
         view?.also {
             MessageUtils.showSnackBar(snackView = it, message = it.context?.getString(R.string.detect_connecting_to_tv).orEmpty(),
                     colorRes = R.color.white, isLongTime = true, btnRes = R.string.btn_ok)

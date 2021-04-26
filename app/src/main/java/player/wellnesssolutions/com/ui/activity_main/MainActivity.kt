@@ -61,7 +61,6 @@ import player.wellnesssolutions.com.services.AlarmManagerSchedule.setupAlarmTime
 import player.wellnesssolutions.com.services.DownloadService
 import player.wellnesssolutions.com.ui.activity_scan_barcode.ScanBarCodeActivity
 import player.wellnesssolutions.com.ui.fragment_home.HomeFragment
-import player.wellnesssolutions.com.ui.fragment_now_playing.NowPlayingFragment
 import player.wellnesssolutions.com.ui.fragment_presentation.MMDiscoveryFragment
 import player.wellnesssolutions.com.ui.fragment_presentation.MMSessionManager
 import player.wellnesssolutions.com.ui.fragment_presentation.players.MMPlayer
@@ -144,7 +143,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         @SuppressLint("RestrictedApi")
         override fun onProviderChanged(router: MediaRouter?, provider: MediaRouter.ProviderInfo?) {
             super.onProviderChanged(router, provider)
-            Log.d("LOG", "MainActivity - mMediaRouterCB - onProviderChanged() | router: $router")
+
             router?.selectedRoute?.also { route ->
                 val id: Int = route.presentationDisplayId
                 if (id > -1 && id != mPresentationId) {
@@ -154,11 +153,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
                     initRoute(route)
                 } else if (id == -1 && id != mPresentationId) {
                     mPresentationId = id
-                    PresentationDataHelper.save(
-                            context = this@MainActivity,
-                            mode = mPlayer?.getMode(),
-                            videos = mPlayer?.getVideos()
-                    )
+
                     releaseRoute()
                     notifyRouterDisconnected()
                 }
@@ -188,16 +183,28 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
     }
 
     private fun openPresentationIfIsPlaying() {
-        frameLayoutHome?.postDelayed({
-            if (isPresentationAvailable()) {
-                val playedModeValue = PreferenceHelper.getInstance(this).getInt(ConstantPreference.PRESENTATION_PLAYED_MODE,
-                        PlayMode.ON_DEMAND.value)
-                PlayMode.valueOf(playedModeValue)?.also { mode ->
-                    Log.d("LOG", "MainActivity - openPresentationIfIsPlaying() | mode: $mode")
-                    playVideo(mode = mode, videos = PresentationDataHelper.readVideos())
+        handlerMain.post {
+            PreferenceHelper.getInstance()?.getBoolean(Constant.IS_PLAYING_VIDEO, false)?.also { isPlayingVideo ->
+                if (isPlayingVideo){
+                    if (isPresentationAvailable()) {
+                        val playedModeValue = PreferenceHelper.getInstance(this).getInt(ConstantPreference.PRESENTATION_PLAYED_MODE,
+                                PlayMode.ON_DEMAND.value)
+
+                        PlayMode.valueOf(playedModeValue)?.also { mode ->
+                            Log.d("LOG", "MainActivity - openPresentationIfIsPlaying() | mode: $mode")
+                            val tagDB =
+                                    when (mode) {
+                                        PlayMode.ON_DEMAND -> Constant.MM_VIDEO_SEARCHED
+                                        PlayMode.SCHEDULE -> Constant.MM_SCHEDULE
+                                        else -> return@post
+                                    }
+                            playVideo(mode = mode, videos = VideoDBUtil.getVideosFromDB(tagDB))
+                        }
+                    }
                 }
-            }
-        }, 600L)
+            } // end block
+
+        }
     }
 
     private fun registerRemoteControlClient() {
@@ -220,9 +227,6 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
     }
 
     private val handlerMain = Handler()
-    private val runnableSaveDataPresentationCurrent = Runnable {
-
-    }
 
     private val mSessionCallback = object : MMSessionManager.Callback {
 
@@ -233,11 +237,24 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         }
 
         override fun onUpdateVideos(nowPlayVideo: MMVideo, comingUpVideos: ArrayList<MMVideo>) {
-            Log.d("LOG", "MainActivity - mSessionCallback - onUpdateVideos() | video: ${nowPlayVideo.videoName}")
+            Log.d("LOG", "MainActivity - mSessionCallback - onUpdateVideos() | video: ${nowPlayVideo.videoName} | video next: ${comingUpVideos[0].videoName}")
             for (listener: IRouterChanged in mRouterChangedListeners) {
                 listener.onUpdateVideos(nowPlayVideo, comingUpVideos)
             }
-            handlerMain.post(runnableSaveDataPresentationCurrent)
+
+//            PreferenceHelper.getInstance()?.getInt(ConstantPreference.PRESENTATION_PLAYED_MODE, PlayMode.UNKNOWN.value)?.also { modeCasting ->
+//                Log.d("LOG", "MainActivity - mSessionCallback - onUpdateVideos() | modeCasting: $modeCasting")
+//                if(modeCasting == PlayMode.ON_DEMAND.value){
+//                    Log.d("LOG", "MainActivity - mSessionCallback - onUpdateVideos() | mode searched video")
+//                    handlerMain.post(object:Runnable {
+//                        override fun run() {
+//                            Log.d("LOG", "MainActivity - mSessionCallback - onUpdateVideos() | run...")
+//                            VideoDBUtil.createOrUpdateVideos(comingUpVideos, PresentationDataHelper.VIDEO_TAG)
+//                        }
+//
+//                    })
+//                }
+//            }
         }
 
         override fun onClearVideos() {
@@ -287,10 +304,12 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
     }
 
     fun playVideo(mode: PlayMode, videos: ArrayList<MMVideo>) {
+        Log.d("LOG", this.javaClass.simpleName + " playVideo() | mode: $mode | videos number: ${videos.size}")
         mSessionManager.stop()
+        PreferenceHelper.getInstance(this).putInt(ConstantPreference.PRESENTATION_PLAYED_MODE, mode.value)
         when {
             mode == PlayMode.ON_DEMAND -> {
-                VideoDBUtil.createOrUpdateVideos(videos, NowPlayingFragment.BUNDLE_VIDEO_SEARCHED)
+                VideoDBUtil.createOrUpdateVideos(videos, Constant.MM_VIDEO_SEARCHED)
             }
 
             mode == PlayMode.SCHEDULE -> {
@@ -322,8 +341,8 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         if (!checkAuthorized()) return
         PreferenceHelper.getInstance(this)
         PreferenceManager.clearSchedulePref()
-        // clear cache of last videos for presentation (TV)
-        PresentationDataHelper.clearCacheLastVideos()
+        // clear database
+        VideoDBUtil.deleteAllVideos()
 
         setContentView(R.layout.activity_main)
 
@@ -633,10 +652,9 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        VideoDBUtil.deleteVideosFromDB(Constant.MM_SCHEDULE) // clear all schedule
         mPlayer?.release()
-        PreferenceHelper.getInstance(this).delete(ConstantPreference.TIME_DIFFS)
         unregisterReceivers()
+        VideoDBUtil.deleteAllVideos()
         super.onDestroy()
     }
 

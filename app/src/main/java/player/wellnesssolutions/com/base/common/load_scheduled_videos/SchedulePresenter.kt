@@ -61,6 +61,10 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
         performForNextSchedule()
     }
 
+    init {
+        PreferenceHelper.getInstance()?.putBoolean(Constant.IS_LOADING_SCHEDULE, false)
+    }
+
     override fun onAttach(view: IScheduleContract.View) {
         Log.d("LOG", this.javaClass.simpleName + " onAttach()")
         this.mView = view
@@ -122,6 +126,7 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
     private fun loadSchedule() {
         Log.d("LOG", this.javaClass.simpleName + " loadSchedule()")
         if (isLoading || mView == null) return
+        PreferenceHelper.getInstance()?.putBoolean(Constant.IS_LOADING_SCHEDULE, true)
         isLoading = true
 
         context?.also { context ->
@@ -159,6 +164,7 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
         scheduleVideos = loadedVideos
 
         handlerScheduleTime.setupScheduleForNowVideo(loadedVideos)
+        PreferenceHelper.getInstance()?.putBoolean(Constant.IS_LOADING_SCHEDULE, false)
     }
 
     override fun onResponseFailed(code: Int, message: String?) {
@@ -168,6 +174,7 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
         mView?.hideLoadingProgress()
         Log.d("LOG", this.javaClass.simpleName + " onResponseFalse() | message: $message")
         navigateToNoClass()
+        PreferenceHelper.getInstance()?.putBoolean(Constant.IS_LOADING_SCHEDULE, false)
     }
 
     override fun onRequestError(message: String?) {
@@ -184,6 +191,7 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
                 }
         VideoDBUtil.deleteVideosFromDB(Constant.MM_SCHEDULE)
         mView?.onNoClassVideosForNow(arrayListOf(), msg, R.color.red, isClickedFromBtnBottom)
+        PreferenceHelper.getInstance()?.putBoolean(Constant.IS_LOADING_SCHEDULE, false)
     }
 
     override fun onComplete() {
@@ -236,6 +244,8 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
         super.onHaveVideoAfter(playedPosition)
         Log.d("LOG", this.javaClass.simpleName + " onHaveVideoAfter() | isClickedButtonHome: $isClickedFromBtnBottom | " +
                 " videos number: ${scheduleVideos.size}")
+        VideoDBUtil.createOrUpdateVideos(scheduleVideos, Constant.MM_SCHEDULE)
+
         val view = mView
         when {
             view == null -> {
@@ -245,9 +255,7 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
             else -> {
                 view.hideLoadingProgress()
                 if (isPerformingNextScheduleVideo) return
-                scheduleVideos.also { videos ->
-                    VideoDBUtil.createOrUpdateVideos(videos, Constant.MM_SCHEDULE)
-                }
+
                 view.onNoClassVideosForNow(scheduleVideos, "", R.color.white, isClickedFromBtnBottom)
                 // do nothing more
             }
@@ -285,7 +293,7 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
                             else -> msg
                         }
 
-                view.onNoClassVideosForNow(arrayListOf(), message, isClickedFromBtnBottom = isClickedFromBtnBottom)
+                view.onNoClassVideosForNow(arrayListOf(), message, isLoadScheduleManually = isClickedFromBtnBottom)
             }
         }
     }
@@ -296,7 +304,7 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
         if (isUpdatingNewSchedule) return
 //        scheduleVideos = VideoDBUtil.getVideosFromDB(Constant.MM_SCHEDULE, false)
         if (scheduleVideos.size == 0) {
-            scheduleVideos = VideoDBUtil.getScheduleVideos(false)
+            scheduleVideos = VideoDBUtil.getScheduleVideos()
         }
         isPerformNextScheduleOnAttachView = false
         isPerformingNextScheduleVideo = false

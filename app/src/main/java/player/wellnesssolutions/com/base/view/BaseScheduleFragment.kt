@@ -13,14 +13,17 @@ import player.wellnesssolutions.com.base.common.load_scheduled_videos.SchedulePr
 import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.constant.SOURCE_LOAD_SCHEDULE
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference.PRESENTATION_PLAYED_MODE
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.common.utils.DialogUtil
+import player.wellnesssolutions.com.network.datasource.videos.PlayMode
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.com.services.AlarmManagerSchedule
 import player.wellnesssolutions.com.ui.activity_main.MainActivity
 import player.wellnesssolutions.com.ui.activity_main.ScheduleBroadcastReceiver
 
 open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleContract.View, ScheduleBroadcastReceiver.ScheduleListener {
-    private var schedulePresenter: IScheduleContract.Presenter? = null
+    protected var schedulePresenter: IScheduleContract.Presenter? = null
     protected var isNewScreen = true
     protected var dialog: Dialog? = null
     protected var isStartedOpenNewScreen = false
@@ -43,13 +46,13 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
                 }
 
                 isSetupNowSchedule -> {
-                    val videos: ArrayList<MMVideo> = VideoDBUtil.getScheduleVideos(false)
+                    val videos: ArrayList<MMVideo> = VideoDBUtil.getScheduleVideos()
                     Log.d("LOG", this.javaClass.simpleName + " onCreateView() | not setup next schedule | videos number: ${videos.size}")
                     schedulePresenter?.setScheduleCurrent(videos)
                 }
 
                 else -> {
-                    val videos: ArrayList<MMVideo> = VideoDBUtil.getScheduleVideos(false)
+                    val videos: ArrayList<MMVideo> = VideoDBUtil.getScheduleVideos()
                     Log.d("LOG", this.javaClass.simpleName + " onCreateView() | setup next schedule | videos number: ${videos.size}")
                     when {
                         videos.size > 0 -> schedulePresenter?.setScheduleCurrentAndWaitNextVideo(videos)
@@ -81,10 +84,12 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
     override fun onDestroyView() {
         super.onDestroyView()
         Log.d("LOG", this.javaClass.simpleName + " onDestroyView()")
-        unregisterScheduleBroadcast()
-        handler.removeCallbacks(runnablePlayScheduledVideo)
-        handler.removeCallbacks(runnableResetSchedule)
-        handler.removeCallbacks(runnableUpdateSchedule)
+        try {
+            unregisterScheduleBroadcast()
+            handler.removeCallbacks(null)
+        } catch (e: Exception){
+            e.printStackTrace()
+        }
         isNewScreen = true
         schedulePresenter?.onDestroy()
     }
@@ -109,15 +114,18 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
         isNewScreen = false
     }
 
-    protected fun onHandleSchedule() {
-        schedulePresenter?.onTimePlaySchedule()
-    }
-
     /**
      * ------------------------------------------------------------------------------------------------------------------------
      */
     private val runnablePlayScheduledVideo = Runnable {
         schedulePresenter?.onTimePlaySchedule()
+
+        activity?.also { activity ->
+            if(activity is MainActivity && activity.isPresentationAvailable()){
+                val scheduleViddeos = VideoDBUtil.getScheduleVideos()
+                schedulePresenter?.setScheduleCurrentAndWaitNextVideo(scheduleViddeos)
+            }
+        }
     }
 
     private val runnableResetSchedule = Runnable {

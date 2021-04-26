@@ -9,7 +9,7 @@ import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 
 interface IScheduleContract {
     interface View : ILifeCycle.View, IProgressView, IShowMessageView {
-        fun onNoClassVideosForNow(videos: ArrayList<MMVideo>, message: String = "", @ColorRes msgColor: Int = R.color.yellow, isClickedFromBtnBottom: Boolean) {}
+        fun onNoClassVideosForNow(videos: ArrayList<MMVideo>, message: String = "", @ColorRes msgColor: Int = R.color.yellow, isLoadScheduleManually: Boolean) {}
         fun onHaveClassVideos(scheduleVideos: ArrayList<MMVideo>, isClickedFromBtnBottom: Boolean) {}
         fun onTimePlaySchedule() {}
     }

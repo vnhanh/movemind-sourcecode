@@ -194,6 +194,7 @@ class SearchPreviewPresenter : BaseResponseObserver<MMSearchPreviewResponse>(), 
     }
 
     override fun requestResultVideos(isUseOptions: Boolean) {
+        Log.d("LOG", this.javaClass.simpleName + " requestResultVideos() | isUseOptions: $isUseOptions")
         val chosenOptions: SPSearchedOption? = mChosenOptions
         if (chosenOptions == null) {
             mView?.showMessage(R.string.error_data, R.color.red)

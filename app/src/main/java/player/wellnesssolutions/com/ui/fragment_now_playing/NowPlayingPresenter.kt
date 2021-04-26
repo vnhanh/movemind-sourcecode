@@ -2,6 +2,7 @@ package player.wellnesssolutions.com.ui.fragment_now_playing
 
 import android.content.Context
 import android.os.CountDownTimer
+import android.os.Handler
 import android.util.Log
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
@@ -24,7 +25,6 @@ import player.wellnesssolutions.com.custom_exoplayer.EnumTypeViewVideo
 import player.wellnesssolutions.com.custom_exoplayer.PlayerState
 import player.wellnesssolutions.com.network.datasource.videos.PlayMode
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
-import player.wellnesssolutions.com.ui.activity_main.PresentationDataHelper
 import player.wellnesssolutions.com.ui.fragment_home.helper.HandlerScheduleTime
 import player.wellnesssolutions.com.ui.fragment_now_playing.helper.HandlerTimeScheduleHelper
 import player.wellnesssolutions.com.ui.fragment_search_brands.module.ILoadBrandHandler
@@ -61,9 +61,8 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
 
     init {
         mPlayerManager.addListener(this)
-
         this.playedMode = playMode
-
+        PreferenceHelper.getInstance()?.putBoolean(Constant.IS_PLAYING_VIDEO, true)
         //initCountDownTimer()
     }
 
@@ -135,6 +134,8 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
         when (playedMode) {
             PlayMode.ON_DEMAND -> processPlayerBaseOnState()
             PlayMode.SCHEDULE -> scanScheduleVideos()
+            PlayMode.UNKNOWN -> {
+            } // do nothing
         }
     }
 
@@ -237,6 +238,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
     }
 
     private fun isPlayerInitialized(): Boolean = mPlayerManager.getPlayer() != null
+    private val handler = Handler()
 
     private fun processPlayerBaseOnState() {
         Log.d("LOG", this.javaClass.simpleName + " processPlayerBaseOnState() | videos number: ${videos.size} | mPlayerState: $mPlayerState")
@@ -249,6 +251,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
 
         when (mPlayerState) {
             PlayerState.NOTHING -> {
+                VideoDBUtil.createOrUpdateVideos(videos, Constant.MM_VIDEO_SEARCHED)
                 Log.d("LOG", this.javaClass.simpleName + " processPlayerBaseOnState() | player state nothing | context: $context")
                 mView?.onIntermediateStage()
                 mView?.hideCountDownTimer()
@@ -494,6 +497,11 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
             PlayMode.SCHEDULE -> {
                 Log.d("LOG", this.javaClass.simpleName + " onHaveNowPlayingVideo() | SCHEDULE | " +
                         "isCastableOnTV: ${mView?.isCastableOnTV()}")
+                PreferenceHelper.getInstance()?.getBoolean(Constant.IS_LOADING_SCHEDULE, false)?.also { isLoadingSchedule ->
+                    if(!isLoadingSchedule){
+                        VideoDBUtil.createOrUpdateVideos(videos, Constant.MM_SCHEDULE)
+                    }
+                }
                 mView?.hideLoadingProgress()
                 val video = videos[0]
                 PreferenceHelper.getInstance()?.putInt(Constant.SCHEDULE_CURRENT_ID, video.id ?: -1)
@@ -519,13 +527,13 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
             when {
                 // not for presentation screen
                 playedMode == PlayMode.SCHEDULE && playedPosition >= Constant.TIME_CHANGE_SCREEN -> {
-                    VideoDBUtil.createOrUpdateVideos(videos, Constant.MM_SCHEDULE)
+                    PreferenceHelper.getInstance()?.getBoolean(Constant.IS_LOADING_SCHEDULE, false)?.also { isLoadingSchedule ->
+                        if(!isLoadingSchedule){
+                            VideoDBUtil.createOrUpdateVideos(videos, Constant.MM_SCHEDULE)
+                        }
+                    }
                     mCountDownTimerPlayVideo?.cancel()
                     mView?.backToHomeScreenWithNotLoadSchedule()
-                }
-
-                playedMode == PlayMode.SCHEDULE && playedPosition < Constant.TIME_CHANGE_SCREEN -> {
-                    // do nothing
                 }
             }
 
@@ -615,12 +623,18 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
     }
 
     override fun onDestroy() {
-        if (mPlayerManager.getCurrentPosition() > 0 && !isPlayNewList) {
-            PresentationDataHelper.save(context = context, mode = playedMode, videos = videos)
-        }
+//        if (mPlayerManager.getCurrentPosition() > 0 && !isPlayNewList) {
+//            PresentationDataHelper.save(context = context, mode = playedMode, videos = videos)
+//        }
         context = null
+        try {
+            handler.removeCallbacks(null)
+            PreferenceHelper.getInstance()?.putBoolean(Constant.IS_PLAYING_VIDEO, false)
+            mPlayerManager.onDestroy()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
         handlerScheduleTimePlay.release()
-        mPlayerManager.onDestroy()
     }
 
     override fun showClosedCaptionView() {
