@@ -332,16 +332,18 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
                             Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | can not start downloading video | error: ${e.message}")
                             FirebaseCrashlytics.getInstance().recordException(RuntimeException("addTask(): create http connection failed ${e.message}"))
                             FirebaseCrashlytics.getInstance().log("download: error $name")
-                            FirebaseCrashlytics.getInstance().log("download: error: ${e.printStackTrace()}")
-                            FirebaseCrashlytics.getInstance().recordException(e)
                             notifyDownloadCannotStart(videoId, fileName)
                         }
 
                     })
         } catch (e: IOException) {
             e.printStackTrace()
+            FirebaseCrashlytics.getInstance().recordException(RuntimeException("addTask() IOException ${e.message}"))
+            FirebaseCrashlytics.getInstance().log("download: error $name")
         } catch (e: Exception) {
             e.printStackTrace()
+            FirebaseCrashlytics.getInstance().recordException(RuntimeException("addTask() Exception ${e.message}"))
+            FirebaseCrashlytics.getInstance().log("download: error $name")
         }
     }
 
