@@ -10,7 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.ColorRes
 import androidx.fragment.app.Fragment
+import kotlinx.android.synthetic.main.fragment_control.*
 import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.fragment_home.btnLogoBottom
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.common.download.DownloadVideoHelper
 import player.wellnesssolutions.com.base.utils.FragmentUtil
@@ -49,9 +51,9 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
         presenter = HomePresenter()
     }
 
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
@@ -80,14 +82,22 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
                 message.isNotBlank() -> presenter?.setupShowPopUpOnStartScreen(message)
             }
             bundle.remove(Constant.BUNDLE_SHOW_POPUP)
+
+            val messageSnackbar = bundle.getString(Constant.BUNDLE_SHOW_SNACKBAR, "").also { messageSnackbar ->
+                if(messageSnackbar.isNotBlank()){
+                    presenter?.setupShowSnackbarOnStartScreen(messageSnackbar)
+                }
+                bundle.remove(Constant.BUNDLE_SHOW_SNACKBAR)
+            }
         }
     }
 
     override fun onResume() {
         super.onResume()
+
         Log.d("LOG", this.javaClass.simpleName + " onResume() | isNewScreen: $isNewScreen")
         if (isNewScreen) {
-            handler.postDelayed(runnableAttachPresenterFirstTime, Constant.TIME_TRANSITION_SCREEN)
+            handler.post(runnableAttachPresenterFirstTime)
         } else {
             presenter?.onAttach(this)
         }
@@ -102,8 +112,11 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        handler.removeCallbacks(runnableAttachPresenterFirstTime)
-        handler.removeCallbacks(runnableOpenNowPlayingWithSchedule)
+        try {
+            handler.removeCallbacks(null)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     override fun onDestroy() {
@@ -112,16 +125,30 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
     }
 
     override fun showPopUp(messagePopUpOnStart: String) {
-        dialog?.dismiss()
-        context?.also { context ->
-            dialog = DialogUtil.createDialogOnlyOneButton(context, messagePopUpOnStart, R.string.btn_ok,
-                    object : DialogInterface.OnClickListener {
-                        override fun onClick(dialogInterface: DialogInterface?, p1: Int) {
-                            dialogInterface?.dismiss()
-                            dialog = null
-                        }
+        handler.post{
+            dialog?.dismiss()
+            context?.also { context ->
+                dialog = DialogUtil.createDialogOnlyOneButton(context, messagePopUpOnStart, R.string.btn_ok,
+                        object : DialogInterface.OnClickListener {
+                            override fun onClick(dialogInterface: DialogInterface?, p1: Int) {
+                                dialogInterface?.dismiss()
+                                dialog = null
+                            }
 
-                    }).apply { show() }
+                        }).apply { show() }
+            }
+        }
+    }
+
+    override fun showSnackbar(message: String) {
+        if(message.isNotBlank()){
+            handler.post{
+                MessageUtils.showSnackBar(
+                        snackView = btnLogoBottom,
+                        message = message,
+                        colorRes = R.color.white
+                )
+            }
         }
     }
 
@@ -130,8 +157,6 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
      */
 
     private val runnableAttachPresenterFirstTime = Runnable {
-        if (isNewScreen) return@Runnable
-
         if (ParameterUtils.isFragmentHomeOpen) {
             context?.let {
                 if (PreferenceHelper.getInstance(it).getBoolean(ConstantPreference.IS_DOWNLOAD_VIDEOS, true)) {
@@ -142,6 +167,7 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
             }
             ParameterUtils.isFragmentHomeOpen = false
         }
+        presenter?.onAttach(this)
     }
 
     private fun continueDownload(it: Context) {
@@ -192,6 +218,7 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
     }
 
     private fun getAllVideosForDownload(context: Context) {
+        Log.d("LOG", "HomeFragment - getAllVideosForDownload()")
         val tokenAu: String = PreferenceHelper.getInstance(context).getString(ConstantPreference.TOKEN, "")
         val deviceId = PreferenceHelper.getInstance(context).getString(ConstantPreference.DEVICE_ID, "")
         if (deviceId.isNotEmpty() && tokenAu.isNotEmpty()) {
@@ -252,7 +279,7 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
             MessageUtils.showSnackBar(btnGetStarted, text, msgColor)
         } else if (scheduleVideos.size > 0) {
             val isCasted = playVideoPresentationable(scheduleVideos)
-            if(isCasted){
+            if (isCasted) {
                 loadControlScreen()
             }
         }
@@ -287,6 +314,7 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
                 isAddToBackStack = false
         )
     }
+
     private val runnableOpenNowPlayingWithSchedule = Runnable {
         activity?.supportFragmentManager?.also { fm ->
             if (!isStartedOpenNewScreen) {
@@ -295,6 +323,7 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
             }
         }
     }
+
     private fun loadNowPlayingScreen() {
         Log.d("LOG", this.javaClass.simpleName + " loadNowPlayingScreen() | isStartedOpenNewScreen: $isStartedOpenNewScreen")
         handler.post(runnableOpenNowPlayingWithSchedule)
@@ -407,6 +436,13 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
             arguments = Bundle().apply {
                 putString(Constant.BUNDLE_SOURCE_SCHEDULE, SOURCE_LOAD_SCHEDULE.LOCAL.name)
                 putString(Constant.BUNDLE_SHOW_POPUP, message)
+            }
+        }
+
+        fun getInstanceNotLoadScheduleAndShowSnackbar(message: String): HomeFragment = HomeFragment().apply {
+            arguments = Bundle().apply {
+                putString(Constant.BUNDLE_SOURCE_SCHEDULE, SOURCE_LOAD_SCHEDULE.LOCAL.name)
+                putString(Constant.BUNDLE_SHOW_SNACKBAR, message)
             }
         }
 

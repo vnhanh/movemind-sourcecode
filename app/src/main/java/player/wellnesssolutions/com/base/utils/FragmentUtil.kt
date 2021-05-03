@@ -17,14 +17,14 @@ object FragmentUtil {
         if (fm == null) return
         val ft: FragmentTransaction = fm.beginTransaction()
 
-        if (isRemoveOlds) {
-            try {
-                fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-
-        }
+//        if (isRemoveOlds) {
+//            try {
+//                fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//            }
+//
+//        }
 
         // if open new fragment: enter_fragment for new one, exit_fragment for old one
         // if back: fade_in_left for new one, fade_out_right for old one
@@ -34,7 +34,7 @@ object FragmentUtil {
 
         if (isAddToBackStack) ft.addToBackStack(null)
 
-        ft.commit()
+        ft.commitAllowingStateLoss()
 
     }
 

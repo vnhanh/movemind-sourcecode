@@ -7,16 +7,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.common.load_scheduled_videos.IScheduleContract
 import player.wellnesssolutions.com.base.common.load_scheduled_videos.SchedulePresenter
 import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.constant.SOURCE_LOAD_SCHEDULE
-import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference.PRESENTATION_PLAYED_MODE
-import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.common.utils.DialogUtil
-import player.wellnesssolutions.com.network.datasource.videos.PlayMode
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.com.services.AlarmManagerSchedule
 import player.wellnesssolutions.com.ui.activity_main.MainActivity
@@ -27,6 +25,7 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
     protected var isNewScreen = true
     protected var dialog: Dialog? = null
     protected var isStartedOpenNewScreen = false
+    protected var isScreenVisible = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         isNewScreen = true
@@ -38,6 +37,7 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
         arguments?.also { bundle ->
             val sourceLoadSchedule = bundle.getString(Constant.BUNDLE_SOURCE_SCHEDULE).orEmpty()
             val isSetupNowSchedule = bundle.getBoolean(Constant.BUNDLE_NOT_SETUP_NOW_SCHEDULE, false)
+            val isRemoveVideoOnSetupNextSchedule = bundle.getBoolean(Constant.BUNDLE_NOT_REMOVE_VIDEO_SCHEDULE_ON_SETUP_NEXT, false)
             Log.d("LOG", this.javaClass.simpleName + " onCreateView() | sourceLoadSchedule: ${sourceLoadSchedule} | isSetupNextScheduleVideo: $isSetupNowSchedule")
             when {
                 sourceLoadSchedule == SOURCE_LOAD_SCHEDULE.REMOTE.toString() -> {
@@ -55,7 +55,7 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
                     val videos: ArrayList<MMVideo> = VideoDBUtil.getScheduleVideos()
                     Log.d("LOG", this.javaClass.simpleName + " onCreateView() | setup next schedule | videos number: ${videos.size}")
                     when {
-                        videos.size > 0 -> schedulePresenter?.setScheduleCurrentAndWaitNextVideo(videos)
+                        videos.size > 0 -> schedulePresenter?.setScheduleCurrentAndWaitNextVideo(videos, isRemoveVideoOnSetupNextSchedule)
                         else -> {
                             Log.d("LOG", this.javaClass.simpleName + " onCreateView() | isNewScreen | load remote schedule")
 //                            schedulePresenter?.setStateLoadScheduleOnStart()
@@ -71,19 +71,21 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
 
     override fun onResume() {
         super.onResume()
+        isScreenVisible = true
 //        Log.d("LOG", this.javaClass.simpleName + " onResume()")
         schedulePresenter?.onAttach(this)
     }
 
     override fun onPause() {
         super.onPause()
+        isScreenVisible = false
 //        Log.d("LOG", this.javaClass.simpleName + " onPause()")
         schedulePresenter?.onDetach()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.d("LOG", this.javaClass.simpleName + " onDestroyView()")
+//        Log.d("LOG", this.javaClass.simpleName + " onDestroyView()")
         try {
             unregisterScheduleBroadcast()
             handler.removeCallbacks(null)
@@ -123,7 +125,7 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
         activity?.also { activity ->
             if(activity is MainActivity && activity.isPresentationAvailable()){
                 val scheduleViddeos = VideoDBUtil.getScheduleVideos()
-                schedulePresenter?.setScheduleCurrentAndWaitNextVideo(scheduleViddeos)
+                schedulePresenter?.setScheduleCurrentAndWaitNextVideo(scheduleViddeos, true)
             }
         }
     }
@@ -219,6 +221,5 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
 
     }
 
-    protected fun isUpdatingNewSchedule(): Boolean = schedulePresenter?.isUpdatingNewSchedule()
-            ?: false
+    protected fun isUpdatingNewSchedule(): Boolean = schedulePresenter?.isUpdatingNewSchedule() ?: false
 }

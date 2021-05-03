@@ -14,7 +14,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
-        android:name="player.wellnesssolutions.com.base.application.MyApplication"
+        android:name="player.wellnesssolutions.com.base.application.MoveMindApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"

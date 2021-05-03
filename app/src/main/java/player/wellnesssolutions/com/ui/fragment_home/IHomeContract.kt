@@ -13,11 +13,13 @@ interface IHomeContract {
         fun showUI(loadedConfig: MMConfigData?)
         fun openNowPlayingScreen(videos: ArrayList<MMVideo>)
         fun showPopUp(messagePopUpOnStart: String)
+        fun showSnackbar(message: String)
     }
 
     interface Presenter : ILifeCycle.Presenter<View> {
         fun setScheduleCurrent(videos: ArrayList<MMVideo>)
         fun onTimePlayAlreadySchedule()
         fun setupShowPopUpOnStartScreen(message: String)
+        fun setupShowSnackbarOnStartScreen(message: String)
     }
 }

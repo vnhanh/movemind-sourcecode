@@ -12,7 +12,7 @@ import android.os.IBinder
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.base.application.MyApplication
+import player.wellnesssolutions.com.base.application.MoveMindApplication
 import player.wellnesssolutions.com.ui.fragment_presentation.services.NotificationButtonListener
 
 class MMPresentationService : Service(), MMPresentationBinder.BinderListener {
@@ -83,7 +83,7 @@ class MMPresentationService : Service(), MMPresentationBinder.BinderListener {
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notification = Notification.Builder(this, MyApplication.CHANNEL_ID)
+            val notification = Notification.Builder(this, MoveMindApplication.CHANNEL_ID)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentTitle(TITLE)
                     .setCustomContentView(remoteViews)
@@ -93,7 +93,7 @@ class MMPresentationService : Service(), MMPresentationBinder.BinderListener {
                 mManager?.notify(1, notification)
             } catch (e: Exception) {
                 e.printStackTrace()
-                val notification1 = Notification.Builder(this, MyApplication.CHANNEL_ID)
+                val notification1 = Notification.Builder(this, MoveMindApplication.CHANNEL_ID)
                         .setContentTitle(TITLE)
                         .setCustomContentView(remoteViews)
                         .setOngoing(true)
@@ -105,7 +105,7 @@ class MMPresentationService : Service(), MMPresentationBinder.BinderListener {
                 }
             }
         } else {
-            val notification = NotificationCompat.Builder(this, MyApplication.CHANNEL_ID)
+            val notification = NotificationCompat.Builder(this, MoveMindApplication.CHANNEL_ID)
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentTitle(TITLE)
@@ -116,7 +116,7 @@ class MMPresentationService : Service(), MMPresentationBinder.BinderListener {
                 mManager?.notify(1, notification)
             } catch (e: Exception) {
                 e.printStackTrace()
-                val notification1 = NotificationCompat.Builder(this, MyApplication.CHANNEL_ID)
+                val notification1 = NotificationCompat.Builder(this, MoveMindApplication.CHANNEL_ID)
                         .setPriority(NotificationCompat.PRIORITY_HIGH)
                         .setContentTitle(TITLE)
                         .setCustomContentView(remoteViews)

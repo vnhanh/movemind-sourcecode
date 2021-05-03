@@ -60,9 +60,9 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
     private var isStopPlayNext = false
 
     init {
+        PreferenceHelper.getInstance()?.putBoolean(Constant.IS_PLAYING_VIDEO, true)
         mPlayerManager.addListener(this)
         this.playedMode = playMode
-        PreferenceHelper.getInstance()?.putBoolean(Constant.IS_PLAYING_VIDEO, true)
         //initCountDownTimer()
     }
 
@@ -131,6 +131,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
 
     private fun checkPlayMode() {
         Log.d("LOG", this.javaClass.simpleName + " checkPlayMode() | mPlayedMode: $playedMode")
+        PreferenceHelper.getInstance()?.putInt(ConstantPreference.MODE_PLAY_VIDEO, playedMode.value)
         when (playedMode) {
             PlayMode.ON_DEMAND -> processPlayerBaseOnState()
             PlayMode.SCHEDULE -> scanScheduleVideos()
@@ -355,7 +356,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
 
     private fun initPlayer() {
         Log.d("LOG", this.javaClass.simpleName + " initPlayer() | playerState: $mPlayerState | positionPlayLast: $mInitPlayedPosition | " +
-                "player playback state: ${mPlayerManager.getPlaybackState()}")
+                "player playback state: ${mPlayerManager.getPlaybackState()} | mView: $mView | mode: $playedMode | videos number: ${videos.size}")
         if (playedMode != PlayMode.ON_DEMAND) return
         if (mView == null) return
 
@@ -737,6 +738,11 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
     override fun getCurrentPlayedPosition(): Long = mPlayerManager.getCurrentPosition()
 
     override fun isPlayingCC(): Boolean = mPlayerManager.isPlayingCC()
+
+    override fun onCastRouterConnected() {
+        PreferenceHelper.getInstance()?.putLong(ConstantPreference.LAST_PLAYED_VIDEO_POSITION, getCurrentPlayedPosition())
+        mView?.castingAndBackToHome()
+    }
 
     /**
      * LOAD BRANDS

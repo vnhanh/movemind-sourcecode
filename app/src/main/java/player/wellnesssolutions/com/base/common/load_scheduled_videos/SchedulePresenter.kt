@@ -3,6 +3,7 @@ package player.wellnesssolutions.com.base.common.load_scheduled_videos
 import android.content.Context
 import android.os.Handler
 import android.util.Log
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
 import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
@@ -16,8 +17,10 @@ import player.wellnesssolutions.com.network.datasource.now_playing.NowPlayingApi
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.com.network.models.response.ResponseValue
 import player.wellnesssolutions.com.ui.activity_main.MainActivity
+import player.wellnesssolutions.com.ui.fragment_home.helper.DataCachedVideoScheduleCalculated
 import player.wellnesssolutions.com.ui.fragment_home.helper.HandlerScheduleTime
 import player.wellnesssolutions.com.ui.fragment_home.helper.IListenerHandleScheduleTime
+import player.wellnesssolutions.com.ui.fragment_home.helper.STATE_CALCULATING_VIDEO_SCHEDULE_NOW
 
 class SchedulePresenter(private var context: Context?) : BaseResponseObserver<ArrayList<MMVideo>>(), IScheduleContract.Presenter,
         IListenerHandleScheduleTime {
@@ -41,6 +44,7 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
     private var isPerformingNextScheduleVideo = false
     private var isLoading = false
 
+    private var cacheVideoScheduleCalculated = DataCachedVideoScheduleCalculated()
 
     private val runnable = object : Runnable {
         override fun run() {
@@ -94,7 +98,7 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
             mustLoad -> {
                 Log.d("LOG", this.javaClass.simpleName + " onLoadSchedule() | clear calling | isUpdatingNewSchedule: $isUpdatingNewSchedule")
                 isUpdatingNewSchedule = true
-//                this.mCompoDisposable.dispose()
+//                disposable.clear()
                 isLoading = false
             }
 
@@ -125,7 +129,14 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
 
     private fun loadSchedule() {
         Log.d("LOG", this.javaClass.simpleName + " loadSchedule()")
-        if (isLoading || mView == null) return
+        if (isLoading){
+            return
+        }
+        if(mView == null){
+            isLoadScheduleOnStart = true
+            return
+        }
+
         PreferenceHelper.getInstance()?.putBoolean(Constant.IS_LOADING_SCHEDULE, true)
         isLoading = true
 
@@ -197,6 +208,7 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
     override fun onComplete() {
         super.onComplete()
         isUpdatingNewSchedule = false
+        isLoadScheduleOnStart = false
         isLoading = false
         mView?.hideLoadingProgress()
     }
@@ -206,27 +218,36 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
      */
     override fun onHaveNowPlayingVideo(playedPosition: Long) {
         Log.d("LOG", this.javaClass.simpleName + " onHaveNowPlayingVideo() | playedPosition: $playedPosition | videos number: ${scheduleVideos.size}")
-        if (scheduleVideos.size > 0) {
-            val view = mView
-            when {
-                view == null -> {
-                    // TODO: will have to perform the case view is null setup for now schedule
-                    if (isPerformingNextScheduleVideo) isPerformNextScheduleOnAttachView = true
-                }
-
-                else -> {
-                    view.hideLoadingProgress()
-                    VideoDBUtil.createOrUpdateVideos(scheduleVideos, Constant.MM_SCHEDULE)
-                    view.onHaveClassVideos(scheduleVideos, this.isClickedFromBtnBottom)
-                }
-            }
+        if (mView == null) {
+            cacheVideoScheduleCalculated = DataCachedVideoScheduleCalculated(STATE_CALCULATING_VIDEO_SCHEDULE_NOW.ON_PLAY_VIDEO_SCHEDULE_NOW, playedPosition)
         } else {
-            navigateToNoClass()
+            if (scheduleVideos.size > 0) {
+                val view = mView
+                when {
+                    view == null -> {
+                        // TODO: will have to perform the case view is null setup for now schedule
+                        if (isPerformingNextScheduleVideo) isPerformNextScheduleOnAttachView = true
+
+                    }
+
+                    else -> {
+                        view.hideLoadingProgress()
+                        VideoDBUtil.createOrUpdateVideos(scheduleVideos, Constant.MM_SCHEDULE)
+                        view.onHaveClassVideos(scheduleVideos, this.isClickedFromBtnBottom)
+                    }
+                }
+            } else {
+                navigateToNoClass()
+            }
         }
     }
 
     override fun onVideoExpiredTime() {
-        onDontHaveNowPlayingVideo(this.isClickedFromBtnBottom)
+        if (mView == null) {
+            cacheVideoScheduleCalculated = DataCachedVideoScheduleCalculated(STATE_CALCULATING_VIDEO_SCHEDULE_NOW.VIDEO_EXPIRED, 0L)
+        } else {
+            onDontHaveNowPlayingVideo(this.isClickedFromBtnBottom)
+        }
     }
 
     override fun onDontHaveNowPlayingVideo(isClickedButtonHome: Boolean?) {
@@ -236,7 +257,6 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
 //        if (activity?.isPresentationAvailable() == true) {
 //            activity.playVideo(PlayMode.SCHEDULE, scheduleVideos)
 //        }
-
         navigateToNoClass()
     }
 
@@ -244,20 +264,24 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
         super.onHaveVideoAfter(playedPosition)
         Log.d("LOG", this.javaClass.simpleName + " onHaveVideoAfter() | isClickedButtonHome: $isClickedFromBtnBottom | " +
                 " videos number: ${scheduleVideos.size}")
-        VideoDBUtil.createOrUpdateVideos(scheduleVideos, Constant.MM_SCHEDULE)
+        if (mView == null) {
+            cacheVideoScheduleCalculated = DataCachedVideoScheduleCalculated(STATE_CALCULATING_VIDEO_SCHEDULE_NOW.HAVE_VIDEO_AFTER, playedPosition)
+        } else {
+            VideoDBUtil.createOrUpdateVideos(scheduleVideos, Constant.MM_SCHEDULE)
 
-        val view = mView
-        when {
-            view == null -> {
-                return
-            }
+            val view = mView
+            when {
+                view == null -> {
+                    return
+                }
 
-            else -> {
-                view.hideLoadingProgress()
-                if (isPerformingNextScheduleVideo) return
+                else -> {
+                    view.hideLoadingProgress()
+                    if (isPerformingNextScheduleVideo) return
 
-                view.onNoClassVideosForNow(scheduleVideos, "", R.color.white, isClickedFromBtnBottom)
-                // do nothing more
+                    view.onNoClassVideosForNow(scheduleVideos, "", R.color.white, isClickedFromBtnBottom)
+                    // do nothing more
+                }
             }
         }
     }
@@ -266,7 +290,7 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
         val view = mView
         when {
             view == null -> {
-                return
+                cacheVideoScheduleCalculated = DataCachedVideoScheduleCalculated(STATE_CALCULATING_VIDEO_SCHEDULE_NOW.VIDEO_ERROR, 0L)
             }
 
             else -> {
@@ -317,10 +341,16 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
 
     override fun onDestroy() {
         context = null
-        handler.removeCallbacks(runnable)
-        handler.removeCallbacks(runnableHanldeTimeForSchedule)
-        handlerScheduleTime.release()
-        disposable.clear()
+        try {
+            handler.removeCallbacks(runnable)
+            handler.removeCallbacks(runnableHanldeTimeForSchedule)
+            handlerScheduleTime.release()
+            disposable.clear()
+        } catch (e: Exception){
+            e.printStackTrace()
+            FirebaseCrashlytics.getInstance().recordException(e)
+        }
+        cacheVideoScheduleCalculated = DataCachedVideoScheduleCalculated()
         isLoading = false
         isPerformNextScheduleOnAttachView = false
     }
@@ -352,13 +382,14 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
         this.isPerformingNextScheduleVideo = false
         this.isLoadScheduleOnStart = false
     }
-
-    override fun setScheduleCurrentAndWaitNextVideo(videos: ArrayList<MMVideo>) {
+    private var isRemoveVideoOnSetupNextSchedule = true
+    override fun setScheduleCurrentAndWaitNextVideo(videos: ArrayList<MMVideo>, isRemoveVideoOnSetupNextSchedule: Boolean) {
         this.scheduleVideos.clear()
         this.scheduleVideos = videos
         this.isPerformNextScheduleOnAttachView = false
         this.isPerformingNextScheduleVideo = true // setup schedule for next schedule on screen show
         this.isLoadScheduleOnStart = false
+        this.isRemoveVideoOnSetupNextSchedule = isRemoveVideoOnSetupNextSchedule
         if (mView == null) {
             this.isPerformNextScheduleOnAttachView = true
             return
@@ -371,49 +402,58 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
             isPerformNextScheduleOnAttachView = false
             return
         }
+        handlerScheduleTime.setupScheduleNextVideo(scheduleVideos, object : ICallBackNextScheduleVideo {
+            override fun onResult(index: Int, timeWait: Long) {
 
-        val scheduleCurrentID = PreferenceHelper.getInstance()?.getInt(Constant.SCHEDULE_CURRENT_ID, -1)
-                ?: -1
-        val scheduleCurrentTimeStart = PreferenceHelper.getInstance()?.getString(Constant.SCHEDULE_CURRENT_TIME_START, "").orEmpty()
-        Log.d("LOG", this.javaClass.simpleName + " setScheduleCurrentAndWaitNextVideo() | just played video: ${scheduleCurrentID} | just played video time start: ${scheduleCurrentTimeStart}")
-        when {
-            scheduleCurrentID == -1 || scheduleCurrentTimeStart.isBlank() -> {
-                handlerScheduleTime.setupScheduleNextVideo(scheduleVideos, object : ICallBackNextScheduleVideo {
-                    override fun onResult(index: Int, timeWait: Long) {
-
-                    }
-
-                    override fun onNotFound() {
-                        mView?.showMessage(R.string.can_not_calculate_time_play_next_schedule_video, R.color.yellow)
-                    }
-
-                })
             }
 
-            else -> {
-                var indexSchedulePlayeLast = -1
-                for (i in 0 until scheduleVideos.size) {
-                    val videoCurrent = scheduleVideos[i]
-                    if (videoCurrent.id == scheduleCurrentID && videoCurrent.playTime == scheduleCurrentTimeStart) {
-                        Log.d("LOG", this.javaClass.simpleName + " setScheduleCurrentAndWaitNextVideo() | find the just played schedule video item | index: $i")
-                        indexSchedulePlayeLast = i
-                        break
-                    }
-                }
-
-                when {
-                    indexSchedulePlayeLast > -1 -> {
-                        for (i in 0..indexSchedulePlayeLast) {
-                            scheduleVideos.removeAt(0)
-                            Log.d("LOG", this.javaClass.simpleName + " setScheduleCurrentAndWaitNextVideo() | remove first ele")
-                        }
-                    }
-                }
-                Log.d("LOG", this.javaClass.simpleName + " setScheduleCurrentAndWaitNextVideo() | indexScheduleJustPlayed: $indexSchedulePlayeLast | " +
-                        "schedule videos number: ${scheduleVideos.size}")
-                handlerScheduleTime.setupScheduleForNowVideo(scheduleVideos)
+            override fun onNotFound() {
+                mView?.showMessage(R.string.can_not_calculate_time_play_next_schedule_video, R.color.yellow)
             }
-        }
+
+        })
+
+//        val scheduleCurrentID = PreferenceHelper.getInstance()?.getInt(Constant.SCHEDULE_CURRENT_ID, -1)
+//                ?: -1
+//        val scheduleCurrentTimeStart = PreferenceHelper.getInstance()?.getString(Constant.SCHEDULE_CURRENT_TIME_START, "").orEmpty()
+//        Log.d("LOG", this.javaClass.simpleName + " setScheduleCurrentAndWaitNextVideo() | just played video: ${scheduleCurrentID} | just played video time start: ${scheduleCurrentTimeStart}")
+//        when {
+//            scheduleCurrentID == -1 || scheduleCurrentTimeStart.isBlank() -> {
+//                handlerScheduleTime.setupScheduleNextVideo(scheduleVideos, object : ICallBackNextScheduleVideo {
+//                    override fun onResult(index: Int, timeWait: Long) {
+//
+//                    }
+//
+//                    override fun onNotFound() {
+//                        mView?.showMessage(R.string.can_not_calculate_time_play_next_schedule_video, R.color.yellow)
+//                    }
+//
+//                })
+//            }
+
+//            else -> {
+//                var indexSchedulePlayedLast = -1
+//                for (i in 0 until scheduleVideos.size) {
+//                    val videoCurrent = scheduleVideos[i]
+//                    if (videoCurrent.id == scheduleCurrentID && videoCurrent.playTime == scheduleCurrentTimeStart) {
+//                        Log.d("LOG", this.javaClass.simpleName + " setScheduleCurrentAndWaitNextVideo() | find the just played schedule video item | index: $i")
+//                        indexSchedulePlayedLast = i
+//                        break
+//                    }
+//                }
+//
+//                when {
+//                    indexSchedulePlayedLast > -1 -> {
+//                        for (i in 0..indexSchedulePlayedLast) {
+//                            scheduleVideos.removeAt(0)
+//                            Log.d("LOG", this.javaClass.simpleName + " setScheduleCurrentAndWaitNextVideo() | remove first ele")
+//                        }
+//                    }
+//                }
+//                Log.d("LOG", this.javaClass.simpleName + " setScheduleCurrentAndWaitNextVideo() | indexScheduleJustPlayed: $indexSchedulePlayedLast | " +
+//                        "schedule videos number: ${scheduleVideos.size}")
+//            }
+//        }
 
         isPerformingNextScheduleVideo = false
     }

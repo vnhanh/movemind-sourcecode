@@ -366,12 +366,10 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
     }
 
     companion object {
-        const val CODE_START = -10
         const val CODE_COMPLETED = -100
         const val CODE_FAILED = -200
         const val ERR_NO_URL = "No downloaded url"
         const val ERR_CANCEL = "Download task is canceled"
-        const val ERR_FILE_DOWNLOAD_EXIST = "The downloaded file is exist"
         const val ERR_NETWORK_DISCONNECTED = "Network disconnected"
         const val ERR_INSUFFICIENT_SPACE = "Insufficient space"
         const val ERR_UNKNOWN = "Error unknown"

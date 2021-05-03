@@ -173,8 +173,8 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         registerRemoteControlClient()
 
         notifyRouterConnected()
-
-        openPresentationIfIsPlaying()
+        Log.d("LOG", this.javaClass.simpleName + " notified()")
+//        openPresentationIfIsPlaying()
     }
 
     fun releaseRoute() {
@@ -185,9 +185,9 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
     private fun openPresentationIfIsPlaying() {
         handlerMain.post {
             PreferenceHelper.getInstance()?.getBoolean(Constant.IS_PLAYING_VIDEO, false)?.also { isPlayingVideo ->
-                if (isPlayingVideo){
+                if (isPlayingVideo) {
                     if (isPresentationAvailable()) {
-                        val playedModeValue = PreferenceHelper.getInstance(this).getInt(ConstantPreference.PRESENTATION_PLAYED_MODE,
+                        val playedModeValue = PreferenceHelper.getInstance(this).getInt(ConstantPreference.MODE_PLAY_VIDEO,
                                 PlayMode.ON_DEMAND.value)
 
                         PlayMode.valueOf(playedModeValue)?.also { mode ->
@@ -241,20 +241,6 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
             for (listener: IRouterChanged in mRouterChangedListeners) {
                 listener.onUpdateVideos(nowPlayVideo, comingUpVideos)
             }
-
-//            PreferenceHelper.getInstance()?.getInt(ConstantPreference.PRESENTATION_PLAYED_MODE, PlayMode.UNKNOWN.value)?.also { modeCasting ->
-//                Log.d("LOG", "MainActivity - mSessionCallback - onUpdateVideos() | modeCasting: $modeCasting")
-//                if(modeCasting == PlayMode.ON_DEMAND.value){
-//                    Log.d("LOG", "MainActivity - mSessionCallback - onUpdateVideos() | mode searched video")
-//                    handlerMain.post(object:Runnable {
-//                        override fun run() {
-//                            Log.d("LOG", "MainActivity - mSessionCallback - onUpdateVideos() | run...")
-//                            VideoDBUtil.createOrUpdateVideos(comingUpVideos, PresentationDataHelper.VIDEO_TAG)
-//                        }
-//
-//                    })
-//                }
-//            }
         }
 
         override fun onClearVideos() {
@@ -306,7 +292,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
     fun playVideo(mode: PlayMode, videos: ArrayList<MMVideo>) {
         Log.d("LOG", this.javaClass.simpleName + " playVideo() | mode: $mode | videos number: ${videos.size}")
         mSessionManager.stop()
-        PreferenceHelper.getInstance(this).putInt(ConstantPreference.PRESENTATION_PLAYED_MODE, mode.value)
+        PreferenceHelper.getInstance(this).putInt(ConstantPreference.MODE_PLAY_VIDEO, mode.value)
         when {
             mode == PlayMode.ON_DEMAND -> {
                 VideoDBUtil.createOrUpdateVideos(videos, Constant.MM_VIDEO_SEARCHED)
@@ -382,7 +368,6 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         //AlarmManagerSchedule.setupTimeWakeSchedule(this, 20)
 
         window.setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
     }
 
     private fun checkSendTokenDeviceFCM(token: String) {
@@ -644,6 +629,11 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         mPlayer?.onAppViewInVisible()
         unregisterManagers()
         super.onPause()
+    }
+
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        Log.d("LOG", this.javaClass.simpleName + " onTrimMemory() | level: $level")
     }
 
     override fun onDestroy() {

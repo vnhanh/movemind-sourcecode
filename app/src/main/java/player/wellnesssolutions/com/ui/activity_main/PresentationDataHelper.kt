@@ -14,7 +14,7 @@ object PresentationDataHelper {
     fun save(context: Context?, mode: PlayMode?, videos: ArrayList<MMVideo>?) {
         Log.d("LOG", this.javaClass.simpleName + " save() | mode: $mode | videos number: ${videos?.size ?: 0}")
         if (context != null) {
-            PreferenceHelper.getInstance(context).putInt(ConstantPreference.PRESENTATION_PLAYED_MODE, mode?.value?: PlayMode.UNKNOWN.value)
+            PreferenceHelper.getInstance(context).putInt(ConstantPreference.MODE_PLAY_VIDEO, mode?.value?: PlayMode.UNKNOWN.value)
         }
 
         // save videos to database

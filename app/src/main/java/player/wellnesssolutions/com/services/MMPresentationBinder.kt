@@ -39,7 +39,6 @@ import player.wellnesssolutions.com.custom_exoplayer.PlayerState
 import player.wellnesssolutions.com.network.datasource.videos.PlayMode
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.com.ui.activity_main.CastingBroadcastReceiver
-import player.wellnesssolutions.com.ui.activity_main.PresentationDataHelper
 import player.wellnesssolutions.com.ui.fragment_now_playing.INowPlayingConstruct
 import player.wellnesssolutions.com.ui.fragment_now_playing.NowPlayingPresenter
 import player.wellnesssolutions.com.ui.fragment_now_playing.helper.GCUDisplayHelper
@@ -321,6 +320,8 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
 
     fun setupPlayVideo(mode: PlayMode, videos: ArrayList<MMVideo>, lastPosition: Long) {
         Log.d("LOG", this.javaClass.simpleName + " setupPlayVideo() | play mode: $mode | videos number: ${videos.size} | positionPlay: $lastPosition")
+        val videosPlay = ArrayList<MMVideo>()
+        videosPlay.addAll(videos)
         releasePresenters()
         mPresenter?.onDestroy()
 

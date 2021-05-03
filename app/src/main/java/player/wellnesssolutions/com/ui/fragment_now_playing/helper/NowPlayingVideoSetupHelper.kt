@@ -40,6 +40,7 @@ import player.wellnesssolutions.com.ui.fragment_home.HomeFragment
 import player.wellnesssolutions.com.ui.fragment_now_playing.INowPlayingConstruct
 import player.wellnesssolutions.com.ui.fragment_now_playing.NowPlayingFragment
 import player.wellnesssolutions.com.ui.fragment_now_playing.recyclerview.MMVideoNowPlayingView
+import java.lang.IllegalStateException
 
 
 object NowPlayingVideoSetupHelper {
@@ -356,16 +357,18 @@ object NowPlayingVideoSetupHelper {
         fm?.also { _fm ->
             val tag = HomeFragment.TAG
             var fragment = _fm.findFragmentByTag(tag)
-            fragment =
-                    when (fragment != null && fragment is HomeFragment) {
-                        true -> {
-                            HomeFragment.updateAlreadyInstanceWithLoadSchedule(fragment)
-//                            _fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
-//                            HomeFragment.getInstanceWithLoadSchedule()
-                        }
-                        false -> HomeFragment.getInstanceWithLoadSchedule()
-                    }
-            FragmentUtil.replaceFragment(fm = _fm, newFragment = fragment, newFragmentTag = tag, frameId = R.id.frameLayoutHome, isAddToBackStack = false, isRemoveOlds = true)
+//            fragment =
+//                    when (fragment != null && fragment is HomeFragment) {
+//                        true -> {
+//                            HomeFragment.updateAlreadyInstanceWithLoadSchedule(fragment)
+//                        }
+//                        false -> HomeFragment.getInstanceWithLoadSchedule()
+//                    }
+            if(fragment != null && fragment is HomeFragment){
+                fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
+            }
+            val newFragment = HomeFragment.getInstanceWithLoadSchedule()
+            FragmentUtil.replaceFragment(fm = _fm, newFragment = newFragment, newFragmentTag = tag, frameId = R.id.frameLayoutHome, isAddToBackStack = false, isRemoveOlds = true)
         }
     }
 
@@ -373,48 +376,73 @@ object NowPlayingVideoSetupHelper {
         fm?.also { _fm ->
             Log.d("LOG", this.javaClass.simpleName + " openHomeFragmentWithNotLoadSchedule()")
             val tag = HomeFragment.TAG
-            var fragment = _fm.findFragmentByTag(tag)
-            fragment =
-                    when (fragment != null && fragment is HomeFragment) {
-                        true -> {
-                            HomeFragment.updateAlreadyInstanceWithNotLoadSchedule(fragment)
-                        }
-                        false -> HomeFragment.getInstanceNotLoadSchedule()
-                    }
-            FragmentUtil.replaceFragment(fm = _fm, newFragment = fragment, newFragmentTag = tag, frameId = R.id.frameLayoutHome, isAddToBackStack = false, isRemoveOlds = true)
+            val fragment = _fm.findFragmentByTag(tag)
+//            fragment =
+//                    when (fragment != null && fragment is HomeFragment) {
+//                        true -> {
+//                            HomeFragment.updateAlreadyInstanceWithNotLoadSchedule(fragment)
+//                        }
+//                        false -> HomeFragment.getInstanceNotLoadSchedule()
+//                    }
+            if (fragment != null && fragment is HomeFragment){
+                fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
+            }
+            val newFragment = HomeFragment.getInstanceNotLoadSchedule()
+
+            FragmentUtil.replaceFragment(fm = _fm, newFragment = newFragment, newFragmentTag = tag, frameId = R.id.frameLayoutHome, isAddToBackStack = false, isRemoveOlds = true)
         }
     }
 
     fun openHomeFragmentWithNotLoadScheduleAndShowPopup(fm: FragmentManager?, message: String) {
-        try {
-            openHomeScreenNotLoadScheduleAndShowPopUp(fm, message)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    private fun openHomeScreenNotLoadScheduleAndShowPopUp(fm: FragmentManager?, message: String) {
         fm?.also { _fm ->
             Log.d("LOG", this.javaClass.simpleName + " openHomeFragmentWithNotLoadSchedule()")
             val tag = HomeFragment.TAG
-            var fragment = _fm.findFragmentByTag(tag)
-            fragment =
-                    when (fragment != null && fragment is HomeFragment) {
-                        true -> {
-                            HomeFragment.updateAlreadyInstanceWithNotLoadScheduleAndShowPopUp(fragment, message)
-                        }
-                        false -> HomeFragment.getInstanceNotLoadScheduleAndShowPopUp(message)
-                    }
-            FragmentUtil.replaceFragment(fm = _fm, newFragment = fragment, newFragmentTag = tag, frameId = R.id.frameLayoutHome, isAddToBackStack = false, isRemoveOlds = true)
+            val fragment = _fm.findFragmentByTag(tag)
+//            fragment =
+//                    when (fragment != null && fragment is HomeFragment) {
+//                        true -> {
+//                            HomeFragment.updateAlreadyInstanceWithNotLoadScheduleAndShowPopUp(fragment, message)
+//                        }
+//                        false -> HomeFragment.getInstanceNotLoadScheduleAndShowPopUp(message)
+//                    }
+            if (fragment != null && fragment is HomeFragment){
+                fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
+            }
+            val newFragment = HomeFragment.getInstanceNotLoadScheduleAndShowPopUp(message)
+            FragmentUtil.replaceFragment(
+                    fm = _fm,
+                    newFragment = newFragment,
+                    newFragmentTag = tag,
+                    frameId = R.id.frameLayoutHome,
+                    isAddToBackStack = false,
+                    isRemoveOlds = true
+            )
+        }
+    }
+
+    fun openHomeFragmentWithNotLoadScheduleAndShowSnackbar(fm: FragmentManager?, message:String) {
+        fm?.also { _fm ->
+            Log.d("LOG", this.javaClass.simpleName + " openHomeFragmentWithNotLoadSchedule()")
+            val tag = HomeFragment.TAG
+            val fragment = _fm.findFragmentByTag(tag)
+//            fragment =
+//                    when (fragment != null && fragment is HomeFragment) {
+//                        true -> {
+//                            HomeFragment.updateAlreadyInstanceWithNotLoadSchedule(fragment)
+//                        }
+//                        false -> HomeFragment.getInstanceNotLoadSchedule()
+//                    }
+            if (fragment != null && fragment is HomeFragment){
+                fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
+            }
+            val newFragment = HomeFragment.getInstanceNotLoadScheduleAndShowSnackbar(message)
+
+            FragmentUtil.replaceFragment(fm = _fm, newFragment = newFragment, newFragmentTag = tag, frameId = R.id.frameLayoutHome, isAddToBackStack = false, isRemoveOlds = true)
         }
     }
 
     fun openNowPlayingWithSchedule(fm: FragmentManager?) {
         Log.d("LOG", this.javaClass.simpleName + " openNowPlayingWithSchedule()")
-        openNowPlayingPlaySchedule(fm)
-    }
-
-    fun openNowPlayingPlaySchedule(fm: FragmentManager?) {
         fm?.also { _fm ->
             val tag = NowPlayingFragment.TAG
             var fragment = _fm.findFragmentByTag(tag)

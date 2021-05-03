@@ -1,6 +1,7 @@
 package player.wellnesssolutions.com.base.application
 
 import android.app.Application
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import player.wellnesssolutions.com.R
@@ -8,7 +9,8 @@ import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.fontsizelibrary.TypefaceUtil
 
-class MyApplication : Application() {
+
+class MoveMindApplication : Application() {
 
     companion object {
         const val CHANNEL_ID = "MyApplication_MoveMind"
@@ -19,7 +21,7 @@ class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-
+        FirebaseCrashlytics.getInstance().setUserId("12345")
         setupDB()
         setupDefaultFont()
     }

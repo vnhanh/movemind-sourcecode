@@ -37,6 +37,7 @@ interface INowPlayingConstruct {
         fun onLoadScheduleWhilePlaySearchedVideos() {}
         fun backToHomeScreenWithNotLoadSchedule() {}
         fun isCastableOnTV(): Boolean
+        fun castingAndBackToHome() {}
     }
 
     interface Presenter : ILifeCycle.Presenter<View>, IComingUpNextClickListener, IListenerHandleScheduleTime {
@@ -83,5 +84,6 @@ interface INowPlayingConstruct {
         fun startToPlayScheduleVideo() {}
         fun clickToCallServiceLoadSchedule()
         fun stopPlayNext()
+        fun onCastRouterConnected()
     }
 }

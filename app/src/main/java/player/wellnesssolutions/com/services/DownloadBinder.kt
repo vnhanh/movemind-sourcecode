@@ -220,7 +220,7 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
                                 dataSaveToDB.removeAt(i)
                             }
 
-                            VideoDBUtil.saveDVideosToDB(data = dataSaveToDB, tag = Constant.TAG_VIDEO_DOWNLOAD)
+                            VideoDBUtil.createOrUpdateVideos(data = dataSaveToDB, tag = Constant.TAG_VIDEO_DOWNLOAD)
                             DownloadManagerCustomized.getInstance(context).cancelDownloadService()
                             DownloadManagerCustomized.getInstance(context).stopNotify()
                             DownloadManagerCustomized.getInstance(context).clearQueue()

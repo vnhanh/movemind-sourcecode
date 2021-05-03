@@ -23,13 +23,16 @@ class MMDrawOnTopPlayer(context: Context) : MMLocalPlayer(context), SurfaceHolde
 
     private var mService: MMPresentationService? = null
     private var mBound: Boolean = false
+    private var modePlay = PlayMode.UNKNOWN
+    private val videosBuffer = ArrayList<MMVideo>()
+    private var lastPosition = 0L
 
     private val connection = object : ServiceConnection {
 
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
             mPresentation = service as MMPresentationBinder
-
+            Log.d("LOG", "MMDrawOnTopPlayer - onServiceConnected() | inited mPresentation")
             mPresentation?.addCallback(mPresentationCallback)
 
             mService = mPresentation!!.getService()
@@ -42,6 +45,10 @@ class MMDrawOnTopPlayer(context: Context) : MMLocalPlayer(context), SurfaceHolde
                 mPresentation?.setRouter(it)
             }
             mPresentation?.onCreate()
+
+            if(modePlay != PlayMode.UNKNOWN && videosBuffer.size > 0){
+                play(modePlay, videosBuffer, lastPosition)
+            }
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
@@ -74,8 +81,17 @@ class MMDrawOnTopPlayer(context: Context) : MMLocalPlayer(context), SurfaceHolde
     override fun play(mode: PlayMode, item: ArrayList<*>, lastPosition: Long) {
         Log.d("LOG", this.javaClass.simpleName + " play()")
         if (ParameterUtils.isClearVideoOnPresentation) {
-            Log.d("LOG", this.javaClass.simpleName + " play() | is clear videos | call setupPlayVideo() on TV")
-            mPresentation?.setupPlayVideo(mode, item as ArrayList<MMVideo>, lastPosition)
+            if(mPresentation != null){
+                Log.d("LOG", this.javaClass.simpleName + " play() | is clear videos | call setupPlayVideo() on TV | mPresentation: $mPresentation")
+                mPresentation?.setupPlayVideo(mode, item as ArrayList<MMVideo>, lastPosition)
+                modePlay = PlayMode.UNKNOWN
+                this.lastPosition = 0L
+            }else{
+                modePlay = mode
+                videosBuffer.addAll(item as ArrayList<MMVideo>)
+                this.lastPosition = 0L
+                Log.d("LOG", this.javaClass.simpleName + " play() | videosBuffer size: ${videosBuffer.size} | thread: ${Thread.currentThread()}")
+            }
         }
     }
 

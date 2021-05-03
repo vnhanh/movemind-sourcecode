@@ -7,6 +7,7 @@ import android.graphics.Point
 import android.os.Build
 import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.TextView
@@ -47,7 +48,7 @@ object MessageUtils {
     }
 
     fun showSnackBar(snackView: View?, message: String, @ColorRes colorRes: Int, @StringRes btnRes: Int, isLongTime: Boolean = true) {
-        if (snackView == null) return
+        if (snackView == null || message.isBlank()) return
         showSnackBar(
                 snackView = snackView,
                 message = message,

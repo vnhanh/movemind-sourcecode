@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.custom_controller_player_screen_now_playing.*
 import kotlinx.android.synthetic.main.custom_controller_player_screen_now_playing.view.*
 import kotlinx.android.synthetic.main.exo_simple_player_view.view.*
@@ -124,6 +125,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
 
     override fun onResume() {
         super.onResume()
+
         attachPresenter()
         setOldScreen()
     }
@@ -143,6 +145,13 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         unRegisterMediaRouterConnected()
 
         unregisterNetworkConnecting()
+
+        try {
+            handler.removeCallbacks(null)
+
+        } catch (e: Exception){
+            e.printStackTrace()
+        }
 
         //releaseDownloadButtonManager()
 
@@ -167,12 +176,12 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
     }
 
     override fun onDestroy() {
-        mMenuSetupHelper.onRelease()
-
-        destroyPresenters()
         if(!isCasting){
             VideoDBUtil.deleteVideosFromDB(Constant.MM_VIDEO_SEARCHED)
         }
+        mMenuSetupHelper.onRelease()
+        destroyPresenters()
+
         super.onDestroy()
     }
 
@@ -688,8 +697,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
                         isBackToHomeScreen -> R.string.app_is_updating_new_schedule_can_not_back_to_get_started_screen
                         else -> R.string.app_is_updating_new_schedule_can_not_move_to_new_screen
                     }
-                    Toast.makeText(context, resMessage, Toast.LENGTH_LONG)
-                            .show()
+                    Toast.makeText(context, resMessage, Toast.LENGTH_LONG).show()
                     Log.d("LOG", this.javaClass.simpleName + " handleMoveToNewScreenButUpdatingNewSchedule() | can not back to home screen")
                 }
             }
@@ -820,13 +828,16 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         activity?.also { activity ->
             if (activity is MainActivity && activity.isPresentationAvailable()) {
                 Log.d("LOG", this.javaClass.simpleName + " switchToCurrentClass() | case presentation")
-                MessageUtils.showSnackBar(
-                        snackView = btnLogoBottom,
-                        message = activity.getString(R.string.now_playing_class),
-                        colorRes = R.color.white
-                )
+//                MessageUtils.showSnackBar(
+//                        snackView = btnLogoBottom,
+//                        message = activity.getString(R.string.now_playing_class),
+//                        colorRes = R.color.white
+//                )
                 activity.playVideo(PlayMode.SCHEDULE, scheduleVideos)
-                backToHomeScreenWithNotLoadSchedule()
+                NowPlayingVideoSetupHelper.openHomeFragmentWithNotLoadScheduleAndShowSnackbar(
+                        fm = activity.supportFragmentManager,
+                        message = activity.getString(R.string.now_playing_class)
+                )
             } else {
                 rvComingUpNext?.adapter?.also {
                     if (it is NowPlayingComingUpNextAdapter)
@@ -887,11 +898,39 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
 //            }
 //        }
         isCasting = true
-        view?.also {
-            MessageUtils.showSnackBar(snackView = it, message = it.context?.getString(R.string.detect_connecting_to_tv).orEmpty(),
-                    colorRes = R.color.white, isLongTime = true, btnRes = R.string.btn_ok)
+        presenter?.onCastRouterConnected()
+    }
+
+    override fun castingAndBackToHome() {
+        handler.post{
+            activity?.also { activity ->
+                if (activity is MainActivity){
+                    PreferenceHelper.getInstance(activity).getInt(ConstantPreference.MODE_PLAY_VIDEO, PlayMode.UNKNOWN.value).also { modePlayValue ->
+                        Log.d("LOG", "NowPlayingFragment - onMediaRouterConnected() | modePlayValue: $modePlayValue")
+                        PlayMode.valueOf(modePlayValue)?.also { mode ->
+                            Log.d("LOG", "NowPlayingFragment - onMediaRouterConnected() | mode: $mode")
+                            val tagDB =
+                                    when (mode) {
+                                        PlayMode.ON_DEMAND -> Constant.MM_VIDEO_SEARCHED
+                                        PlayMode.SCHEDULE -> Constant.MM_SCHEDULE
+                                        else -> return@post
+                                    }
+                            activity.playVideo(mode = mode, videos = VideoDBUtil.getVideosFromDB(tagDB))
+
+                            NowPlayingVideoSetupHelper.openHomeFragmentWithNotLoadScheduleAndShowSnackbar(
+                                    fm = activity.supportFragmentManager,
+                                    message = activity.getString(R.string.detect_connecting_to_tv)
+                            )
+                        }
+                    }
+//                    activity.frameLayoutHome.also {
+//                        MessageUtils.showSnackBar(snackView = it, message = it.context?.getString(R.string.detect_connecting_to_tv).orEmpty(),
+//                                colorRes = R.color.white, isLongTime = true, btnRes = R.string.btn_ok)
+//                    }
+                }
+            }
+//            openNoClassSearchScreen(null)
         }
-        openNoClassSearchScreen(null)
     }
 
     private fun registerMediaRouterConnected() {

@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.AsyncTask
 import android.util.Log
 import android.webkit.MimeTypeMap
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
@@ -19,6 +20,7 @@ import player.wellnesssolutions.com.services.notification.DownloadNotification
 import player.wellnesssolutions.database.manager.IProgressListener
 import java.io.File
 import java.io.IOException
+import java.lang.RuntimeException
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -56,10 +58,12 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
     private var mIsDownloading = false
     private var mapNotifiedNotEnoughSpace = ArrayList<IProgressListener>()
 
-    private val mNotiManager = DownloadNotification(context)
+    private val mNotiManager = DownloadNotification(context?.applicationContext)
+    private var counterCrash = 0
 
     init {
         NetworkReceiver.getInstance().addListener(this)
+        FirebaseCrashlytics.getInstance().recordException(RuntimeException("Start downloading..."))
     }
 
     fun cancelDownloadService() {
@@ -69,9 +73,9 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
 
     override fun onChangedState(isConnected: Boolean) {
         Log.d("LOG", this.javaClass.simpleName + " onChangedState() | isConnected: ${isConnected}")
+        FirebaseCrashlytics.getInstance().log("download: change network state $isConnected")
         when (isConnected && ParameterUtils.isGoToMainActivity) {
             true -> {
-                Log.d("LOG", this.javaClass.simpleName + " onChangedState() | startDownload()")
                 reDownloadAfterReconnect()
             }
 
@@ -83,6 +87,7 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
     }
 
     private fun reDownloadAfterReconnect() {
+        FirebaseCrashlytics.getInstance().log("download: re-download after reconnected ${mQueue.size} videos | $mIsDownloading")
         if (mQueue.size > 0 && !mIsDownloading) {
             startDownload()
         } else {
@@ -93,7 +98,9 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
     override fun onDownloadStarted(id: Int?, name: String?) {
         Log.d("LOG", this.javaClass.simpleName + " onDownloadStarted() | fileName: ${name} | id: $id")
         if (id == null) return
-
+//        FirebaseCrashlytics.getInstance().recordException(RuntimeException("Testing Download...."))
+        FirebaseCrashlytics.getInstance().log("start download & notify $name")
+        Log.d("LOG", this.javaClass.simpleName + " onDownloadStarted() | log firebase done")
         for (listener: IProgressListener in mListeners) {
             listener.onDownloadStarted(id)
         }
@@ -104,6 +111,9 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
     }
 
     override fun onInsufficientSpace(videoId: Int?, name: String?, availableSpace: Long, fileSize: Long) {
+        FirebaseCrashlytics.getInstance().log("download: not enough space $name")
+        FirebaseCrashlytics.getInstance().log("download: ___| file size: $fileSize")
+        FirebaseCrashlytics.getInstance().log("download: ___| available space: $availableSpace")
         for (listener: IProgressListener in mListeners) {
             listener.onDoesNotEnoughMemory()
         }
@@ -111,6 +121,8 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
 
     override fun onDownloadFailed(id: Int?, name: String?, reason: String, url: String?) {
         Log.d("LOG", this.javaClass.simpleName + " onDownloadFailed() | fileName: ${name} | reason: $reason")
+        FirebaseCrashlytics.getInstance().log("failed download $name")
+        FirebaseCrashlytics.getInstance().log("failed reason $reason")
         if (id == null) return
         when (reason) {
             DownloadTask.ERR_NETWORK_DISCONNECTED -> {
@@ -140,6 +152,7 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
 
     override fun onDownloadCompleted(id: Int?, name: String?) {
         Log.d("LOG", this.javaClass.simpleName + " onDownloadCompleted() | fileName: ${name} | id: $id")
+        FirebaseCrashlytics.getInstance().log("download complete $name")
         if (id != null) {
             getDownloadDataByVideoId(id)?.also { data ->
                 resetDataNotDelete()
@@ -182,6 +195,7 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
     fun isDownloading(videoId: Int?): Boolean = mQueueMap[videoId] ?: false
 
     fun release() {
+        FirebaseCrashlytics.getInstance().log("download: release")
         mNotiManager.stop()
         mNotiManager.release()
         mDownloadTask?.release()
@@ -192,6 +206,7 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
     }
 
     fun stopNotify() {
+        FirebaseCrashlytics.getInstance().log("download: stop notify")
         mNotiManager.stop()
     }
 
@@ -205,12 +220,16 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
 
     fun queueTask(videoId: Int, url: String?, name: String?, folder: String, hasPermission: Boolean = true) {
 //        Log.d("LOG", this.javaClass.simpleName + " queueTask() | url: $url | name: $name")
+
+        FirebaseCrashlytics.getInstance().setCustomKey("download", "queueTask()")
+        FirebaseCrashlytics.getInstance().log("download: queue task $name")
         if (url.isNullOrEmpty() || name.isNullOrEmpty()) {
             return
         }
 
         // video downloading task exists
         if (checkIfTaskExist(videoId)) {
+            FirebaseCrashlytics.getInstance().log("download: exist this task")
             return
         }
         queueInit.add(ModelDataInit(videoId, url, name, folder, hasPermission))
@@ -224,6 +243,7 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
 
     private fun addTaskFromQueueInit() {
         Log.d("LOG", this.javaClass.simpleName + " addTaskFromQueueInit()")
+        FirebaseCrashlytics.getInstance().log("download: addTaskFromQueueInit()")
         if (queueInit.size == 0) return
         val dataInit = queueInit[0]
         addTask(dataInit.videoId, dataInit.url, dataInit.name, dataInit.folder, dataInit.hasPermission)
@@ -231,12 +251,14 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
 
     private fun addTask(videoId: Int, url: String?, name: String?, folder: String, hasPermission: Boolean = true) {
         Log.d("LOG", this.javaClass.simpleName + " addTask() | url: $url | name: $name")
+        FirebaseCrashlytics.getInstance().log("download: addTask() $name")
         if (url.isNullOrEmpty() || name.isNullOrEmpty()) {
             return
         }
 
         // video downloading task exists
         if (checkIfTaskExist(videoId)) {
+            FirebaseCrashlytics.getInstance().log("download: exist this download task")
             return
         }
 
@@ -264,6 +286,8 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
                         override fun onNext(fileLength: Long) {
                             Log.d("LOG", this.javaClass.simpleName + " addTask() | inited connection | current thread: ${Thread.currentThread()} | name: ${Thread.currentThread().name}")
                             val availableSpaceExternal = FileUtil.getAvailableExternalMemorySize(context = context)
+                            FirebaseCrashlytics.getInstance().log("download: fileLength: $fileLength")
+                            FirebaseCrashlytics.getInstance().log("download: availableSpaceExternal: $availableSpaceExternal")
 //                    Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | start to calculate free space on device | fileLength: $fileLength | availableSpaceExternal: $availableSpaceExternal")
                             when (fileLength < availableSpaceExternal) {
                                 true -> {
@@ -272,6 +296,7 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
                                 }
                                 false -> {
                                     val availableSpaceInternal: Long = FileUtil.getAvailableInternalMemorySize()
+                                    FirebaseCrashlytics.getInstance().log("download: availableSpaceInternal: $availableSpaceInternal")
                                     Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | start to calculate free space on device | fileLength: $fileLength | " +
                                             "availableSpaceInternal: $availableSpaceInternal | current thread: ${Thread.currentThread()}")
                                     when (fileLength < availableSpaceInternal) {
@@ -281,6 +306,7 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
                                         }
                                         false -> {
                                             Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | not enough space | emit listeners")
+                                            FirebaseCrashlytics.getInstance().log("download: not enough space")
                                             for (listener: IProgressListener in mListeners) {
                                                 if (!mapNotifiedNotEnoughSpace.contains(listener)) {
 //                                            Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | listener: ${listener}")
@@ -297,6 +323,9 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
 
                         override fun onError(e: Throwable) {
                             Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | can not start downloading video | error: ${e.message}")
+                            FirebaseCrashlytics.getInstance().log("download: error $name")
+                            FirebaseCrashlytics.getInstance().log("download: error: ${e.printStackTrace()}")
+                            FirebaseCrashlytics.getInstance().recordException(e)
                             notifyDownloadCannotStart(videoId, fileName)
                         }
 
@@ -309,12 +338,14 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
     }
 
     private fun notifyDownloadCannotStart(videoId: Int, fileName: String) {
+        mNotiManager.stop()
         nextDownload(videoId, fileName)
     }
 
     private fun createDownloadTask(videoId: Int, url: String, folder: String, hasPermission: Boolean = true,
                                    fileNameDownload: String, nameShowFile: String) {
 //        Log.d("LOG", this.javaClass.simpleName + " createDownloadTask() | queue size: ${mQueue.size}")
+        FirebaseCrashlytics.getInstance().log("download: createDownloadTask()")
         val data: DownloadData = DownloadData(videoId = videoId, url = url).also {
             it.folder = folder
             it.name = nameShowFile
@@ -357,6 +388,7 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
     private fun createDownloadTaskInternal(videoId: Int, url: String, folder: String, hasPermission: Boolean = true,
                                            fileNameDownload: String, nameShowFile: String) {
 //        Log.d("LOG", this.javaClass.simpleName + " createDownloadTaskInternal() | queue size: ${mQueue.size} | ")
+        FirebaseCrashlytics.getInstance().log("download: createDownloadTaskInternal()")
         val data: DownloadData = DownloadData(videoId = videoId, url = url).also {
             it.folder = folder
             it.name = nameShowFile
@@ -388,15 +420,18 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
                                     String.format("%s/%s", Constant.FOLDER_DOWNLOADED, fileName)).exists()) {
                         File(externalUrl[1],
                                 String.format("%s/%s", Constant.FOLDER_DOWNLOADED, fileName)).delete()
+                        FirebaseCrashlytics.getInstance().log("download: delete case 1")
                     } else if ((File(context.filesDir, String.format("%s/%s",
                                     Constant.FOLDER_DOWNLOADED, fileName)).exists())) {
                         File(context.filesDir, String.format("%s/%s",
                                 Constant.FOLDER_DOWNLOADED, fileName)).delete()
+                        FirebaseCrashlytics.getInstance().log("download: delete case 2")
                     }
                 } else if ((File(context.filesDir, String.format("%s/%s",
                                 Constant.FOLDER_DOWNLOADED, fileName)).exists())) {
                     File(context.filesDir, String.format("%s/%s",
                             Constant.FOLDER_DOWNLOADED, fileName)).delete()
+                    FirebaseCrashlytics.getInstance().log("download: delete case 3")
                 }
 
             } else {
@@ -404,6 +439,7 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
                                 Constant.FOLDER_DOWNLOADED, fileName)).exists())) {
                     File(context.filesDir, String.format("%s/%s",
                             Constant.FOLDER_DOWNLOADED, fileName)).delete()
+                    FirebaseCrashlytics.getInstance().log("download: delete case 4")
                 }
             }
         }
@@ -418,6 +454,7 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
 
     private fun startDownload() {
         Log.d("LOG", this.javaClass.simpleName + " startDownloadIfIdle() | mIsDownloading: $mIsDownloading | queue size: ${mQueue.size}")
+        FirebaseCrashlytics.getInstance().log("download: called startDownload()")
         if (mQueue.size == 0 || context == null) {
             for (listener: IProgressListener in mListeners) {
                 listener.onDownloaded()
@@ -444,13 +481,16 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
                     DownloadVideoHelper.sendDownloadStatusToServer(context, Constant.DOWNLOAD_DOWNLOADING)
                 }
                 Log.d("LOG", this.javaClass.simpleName + " addDownloadTask() | status: ${mDownloadTask?.status}")
-
+                FirebaseCrashlytics.getInstance().log("start download task")
                 mIsDownloading = true
                 mDownloadTask?.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, downloadData)
             }
         } catch (e: Exception) {
             e.printStackTrace()
             Log.d("LOG", this.javaClass.simpleName + " addDownloadTask() | error: ${e.message}")
+            FirebaseCrashlytics.getInstance().log("addDownloadTask() error: ${e.message}")
+            FirebaseCrashlytics.getInstance().recordException(e)
+            mNotiManager.stop()
             mIsDownloading = false
             onDownloadFailed((downloadData.id
                     ?: 0L).toInt(), downloadData.name, e.message.orEmpty(), downloadData.url)
@@ -510,6 +550,7 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
     }
 
     fun clearQueue() {
+        FirebaseCrashlytics.getInstance().log("download: clearQueue()")
         if (mQueue.size > 0) {
             mQueue.clear()
         }
@@ -520,4 +561,5 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
 
     // get stored file name by video id
     private fun getSavedFileName(name: String, extension: String): String = String.format("%s.%s", name, extension)
+
 }

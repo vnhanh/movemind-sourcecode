@@ -21,7 +21,7 @@ class DownloadService : Service(), IProgressListener, DownloadBinder.BinderDownl
         const val ACTION_DOWNLOAD = "player.wellnesssolution.com.au.download"
         const val ACTION_DOWNLOAD_UI = "player.wellnesssolution.com.au.download.ui"
         const val DOWNLOAD_VIDEO = "download_video"
-        const val CHANGE_SUB_SERVICE = "change_sub_service"
+//        const val CHANGE_SUB_SERVICE = "change_sub_service"
         const val DOWNLOAD_VIDEO_UI = "download_video_ui"
         const val DATA_VIDEOS = "data_videos"
     }
