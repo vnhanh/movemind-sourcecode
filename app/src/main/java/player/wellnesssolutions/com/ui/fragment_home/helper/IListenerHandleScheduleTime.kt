@@ -9,7 +9,7 @@ interface IListenerHandleScheduleTime {
     fun onProcessVideoError()
 }
 
-enum class STATE_CALCULATING_VIDEO_SCHEDULE_NOW(private val state: String){
+enum class STATE_CALCULATING_VIDEO_SCHEDULE_NOW(private val state: String) {
     NORMAL("NORMAL"),
     ON_PLAY_VIDEO_SCHEDULE_NOW("ON_PLAY_VIDEO_SCHEDULE_NOW"),
     VIDEO_EXPIRED("VIDEO_EXPIRED"),

@@ -12,6 +12,8 @@ interface ILoadBrandHandler {
         fun onLoadBrandsFailed(message: String) {}
     }
 
+    fun onAttach(view: Callback)
     fun loadBrands(tag: String)
+    fun onDetach()
     fun release()
 }

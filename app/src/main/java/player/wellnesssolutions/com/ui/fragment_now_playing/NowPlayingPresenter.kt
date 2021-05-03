@@ -119,6 +119,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
         mPlayerManager.updateContext(view.getViewContext())
 
         if (mLoadBrandsHandler == null) mLoadBrandsHandler = LoadBrandsHandler(view)
+        mLoadBrandsHandler?.onAttach(view)
 
         view.getViewContext()?.also {
             HandlerTimeScheduleHelper.readSharePrefData(PreferenceHelper.getInstance(it), view)
@@ -127,6 +128,9 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
         }
 
         checkPlayMode()
+        if(havetoCastOnceResume){
+            onCastRouterConnected()
+        }
     }
 
     private fun checkPlayMode() {
@@ -387,9 +391,10 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
     }
 
     override fun onPlayerInitialized(player: SimpleExoPlayer) {
-        Log.d("LOG", this.javaClass.simpleName + " onPlayerInitialized()")
+        Log.d("LOG", this.javaClass.simpleName + " onPlayerInitialized() | playWhenReady: ${player.playWhenReady}")
         // class video always play once init
-        if (playedMode == PlayMode.SCHEDULE) player.playWhenReady = true
+//        if (playedMode == PlayMode.SCHEDULE) player.playWhenReady = true
+        player.playWhenReady = true
         mView?.onPlayerInitialized(player = player)
         mPlayerState = PlayerState.PLAYING
 
@@ -499,7 +504,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
                 Log.d("LOG", this.javaClass.simpleName + " onHaveNowPlayingVideo() | SCHEDULE | " +
                         "isCastableOnTV: ${mView?.isCastableOnTV()}")
                 PreferenceHelper.getInstance()?.getBoolean(Constant.IS_LOADING_SCHEDULE, false)?.also { isLoadingSchedule ->
-                    if(!isLoadingSchedule){
+                    if (!isLoadingSchedule) {
                         VideoDBUtil.createOrUpdateVideos(videos, Constant.MM_SCHEDULE)
                     }
                 }
@@ -529,7 +534,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
                 // not for presentation screen
                 playedMode == PlayMode.SCHEDULE && playedPosition >= Constant.TIME_CHANGE_SCREEN -> {
                     PreferenceHelper.getInstance()?.getBoolean(Constant.IS_LOADING_SCHEDULE, false)?.also { isLoadingSchedule ->
-                        if(!isLoadingSchedule){
+                        if (!isLoadingSchedule) {
                             VideoDBUtil.createOrUpdateVideos(videos, Constant.MM_SCHEDULE)
                         }
                     }
@@ -586,6 +591,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
 
     override fun onDetach() {
         mView = null
+        mLoadBrandsHandler?.onDetach()
         // video if could be played at the next onAttach(), would be played from its last position
         mInitPlayedPosition = -1L
         when (playedMode) {
@@ -739,9 +745,17 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
 
     override fun isPlayingCC(): Boolean = mPlayerManager.isPlayingCC()
 
+    private var havetoCastOnceResume = false
     override fun onCastRouterConnected() {
+        Log.d("LOG", this.javaClass.simpleName + " onCastRouterConnected()")
         PreferenceHelper.getInstance()?.putLong(ConstantPreference.LAST_PLAYED_VIDEO_POSITION, getCurrentPlayedPosition())
-        mView?.castingAndBackToHome()
+        val view = mView
+        if(view == null){
+            havetoCastOnceResume = true
+        }else{
+            view.castingAndBackToHome()
+            havetoCastOnceResume = false
+        }
     }
 
     /**

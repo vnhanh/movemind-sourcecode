@@ -28,7 +28,6 @@ import player.wellnesssolutions.com.base.common.load_scheduled_videos.IScheduleC
 import player.wellnesssolutions.com.base.utils.FragmentUtil
 import player.wellnesssolutions.com.base.utils.ParameterUtils
 import player.wellnesssolutions.com.base.utils.ViewUtil
-import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
 import player.wellnesssolutions.com.base.view.BaseScheduleFragment
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.constant.SOURCE_LOAD_SCHEDULE
@@ -43,7 +42,6 @@ import player.wellnesssolutions.com.network.datasource.videos.PlayMode
 import player.wellnesssolutions.com.network.models.config.MMConfigData
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.com.network.models.screen_search.MMBrand
-import player.wellnesssolutions.com.services.AlarmManagerSchedule
 import player.wellnesssolutions.com.ui.activity_main.CastingBroadcastReceiver
 import player.wellnesssolutions.com.ui.activity_main.IRouterChanged
 import player.wellnesssolutions.com.ui.activity_main.MainActivity
@@ -71,7 +69,7 @@ import player.wellnesssolutions.com.ui.fragment_time_table.TimeTableFragment
  * This fragment is container of screens (child fragments) such as Brands screen, Search Preview screen, Search Video Results screen...
  */
 class ControlFragment : BaseScheduleFragment(), IControlContract.View, IScheduleContract.View, IRouterChanged, CastingBroadcastReceiver.TVListener,
-                            ScheduleBroadcastReceiver.ScheduleListener {
+        ScheduleBroadcastReceiver.ScheduleListener {
     private var mPresenter: IControlContract.Presenter? = ControlPresenter()
     var mCurrentChildScreenTag = ""
     var isClicked = false
@@ -780,12 +778,11 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
      * @interface CastingBroadcastReceiver.Callback
      */
     private val DURATION_DEFAULT = 1L
-    private var mVideoPlayingDuration = DURATION_DEFAULT
     private var mIsVideoPlayingTimebarMinute = true
     private var isRenderedPlayListView = false
 
     override fun onPlayerReady(isShowPlayPauseButton: Boolean, isPlaying: Boolean, currentPosition: Long, duration: Long) {
-        Log.d("LOG", this.javaClass.simpleName + " onPlayerRead() | currentPosition: $currentPosition | duration: $duration")
+//        Log.d("LOG", this.javaClass.simpleName + " onPlayerRead() | currentPosition: $currentPosition | duration: $duration")
         // show the pause button in PLAYLIST
         if (isShowPlayPauseButton)
             renderButtonPlayPausePlaylist(isPlaying)
@@ -821,9 +818,8 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
             textViewDuration.visibility = View.VISIBLE
         }
 
-        this.mVideoPlayingDuration = if (duration > 0) duration else 1L
         prgTimebarPlaying?.also { progressBar ->
-            progressBar.progress = (currentPosition * 100 / mVideoPlayingDuration).toInt()
+            progressBar.progress = (currentPosition * 100 / duration).toInt()
             progressBar.visibility = View.VISIBLE
         }
         isRenderedPlayListView = true
@@ -857,41 +853,39 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
         }
     }
 
-    override fun onUpdateProgress(isShowPlayPauseButton: Boolean, isPlaying: Boolean, position: Long) {
+    override fun onUpdateProgress(isShowPlayPauseButton: Boolean, isPlaying: Boolean, position: Long, duration: Long) {
 //        Log.d("LOG", this.javaClass.simpleName + " onUpdateProgress() | isRenderedPlayListView: $isRenderedPlayListView")
-        if(!isRenderedPlayListView){
-            onPlayerReady(isShowPlayPauseButton, isPlaying, position, mVideoPlayingDuration)
-        }else{
+        if (!isRenderedPlayListView) {
+            onPlayerReady(isShowPlayPauseButton, isPlaying, position, duration)
+        } else {
             if (isShowPlayPauseButton)
                 renderButtonPlayPausePlaylist(isPlaying)
             else
                 hidePlayPauseButtonInPlaylist()
 
-            var durationVideo = mVideoPlayingDuration
-            if(durationVideo <= DURATION_DEFAULT){
-                durationVideo = PreferenceHelper.getInstance()?.getLong(CastingBroadcastReceiver.EXTRA_DURATION_VIDEO_ON_TV, DURATION_DEFAULT)?:DURATION_DEFAULT
-                mVideoPlayingDuration = durationVideo
-            }
 
-
-            if(durationVideo > DURATION_DEFAULT) {
+            if (duration > DURATION_DEFAULT) {
                 prgTimebarPlaying?.also { progressTimePlayingVideo ->
                     tvVideoPlayingPlaylistPosition?.also { textViewPosition ->
-                        textViewPosition.text = StrUtil.convertTimeValueToString(value = position / 1000L)
-                        if(textViewPosition.visibility != View.VISIBLE){
-                            Log.d("LOG", this.javaClass.simpleName + " onUpdateProgress() | durationVideo: $durationVideo")
-                            textViewPosition.visibility = View.VISIBLE
-                        }
-                    }
-                    tvVideoPlayingPlaylistDuration?.also { textViewDuration ->
-                        textViewDuration.text = StrUtil.convertTimeValueToString(value = durationVideo / 1000L)
-                        textViewDuration.visibility = View.VISIBLE
+                        val _positionPlay = if(position < duration) position else duration
+                        textViewPosition.text = StrUtil.convertTimeValueToString(value = _positionPlay / 1000L)
+                        textViewPosition.visibility = View.VISIBLE
                     }
 
-                    progressTimePlayingVideo.progress = (position * 100 / mVideoPlayingDuration).toInt()
+                    tvVideoPlayingPlaylistDuration?.also { textViewDuration ->
+                        val text = textViewDuration.text
+                        Log.d("LOG", this.javaClass.simpleName + " onUpdateProgress() | durationVideo: $duration")
+                        if(text.isBlank()){
+                            Log.d("LOG", this.javaClass.simpleName + " onUpdateProgress() set duration textview")
+                            textViewDuration.text = StrUtil.convertTimeValueToString(value = duration / 1000L)
+                            textViewDuration.visibility = View.VISIBLE
+                        }
+                    }
+
+                    progressTimePlayingVideo.progress = (position * 100 / duration).toInt()
                     progressTimePlayingVideo.visibility = View.VISIBLE
                 }
-            }else{
+            } else {
                 tvVideoPlayingPlaylistDuration?.visibility = View.GONE
             }
         }

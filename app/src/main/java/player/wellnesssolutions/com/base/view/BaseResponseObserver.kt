@@ -131,3 +131,13 @@ abstract class BaseResponseObserver<T> : Observer<Response<ResponseValue<T>>> {
         this.requestError = null
     }
 }
+
+enum class CACHE_RESPONSE(private val state: String){
+    EMPTY("EMPTY"),
+    RESPONSE_SUCCESS("RESPONSE_SUCCESS"),
+    REQUEST_ERROR("RESQUEST_ERROR"),
+    RESPONSE_FAILED("RESPONSE_FAILED"),
+    UNAUTHORIZIED("UNAUTHORIZIED"),
+    EXPIRED("ON_EXPIRED"),
+    EXPIRED_UNAUTHENTICATION("ON_EXPIRED_UNAUTHENTICATION")
+}

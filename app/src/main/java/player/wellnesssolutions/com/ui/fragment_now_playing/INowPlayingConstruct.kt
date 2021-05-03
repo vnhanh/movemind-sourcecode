@@ -20,7 +20,6 @@ interface INowPlayingConstruct {
 
     interface View : IProgressView, ILoadBrandHandler.Callback, IShowMessageView, IScheduleContract.View, IPlayVideoContract.ViewCallback, Player.EventListener {
         fun showUIForPlayingVideo(videoData: MMVideo, comingUpVideos: ArrayList<MMVideo>) {}
-        fun returnPrevScreen() {}
         fun openNoClassSearchScreen(isClickedButtonHome: Boolean?) {}
         fun hideGroupViewsComingUpNext() {}
         fun setupViewFloatMenu(configData: MMConfigData) {}

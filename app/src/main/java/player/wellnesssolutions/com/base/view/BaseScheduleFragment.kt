@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.common.load_scheduled_videos.IScheduleContract
 import player.wellnesssolutions.com.base.common.load_scheduled_videos.SchedulePresenter
@@ -89,7 +88,7 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
         try {
             unregisterScheduleBroadcast()
             handler.removeCallbacks(null)
-        } catch (e: Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
         isNewScreen = true
@@ -123,7 +122,7 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
         schedulePresenter?.onTimePlaySchedule()
 
         activity?.also { activity ->
-            if(activity is MainActivity && activity.isPresentationAvailable()){
+            if (activity is MainActivity && activity.isPresentationAvailable()) {
                 val scheduleViddeos = VideoDBUtil.getScheduleVideos()
                 schedulePresenter?.setScheduleCurrentAndWaitNextVideo(scheduleViddeos, true)
             }
@@ -144,7 +143,7 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
 //                showMessage("Search Screen found schedule video", R.color.white)
         try {
             handler.post(runnablePlayScheduledVideo)
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
@@ -154,7 +153,7 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
         AlarmManagerSchedule.cancelAlarmScheduleTime()
         try {
             handler.post(runnableResetSchedule)
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
@@ -164,7 +163,7 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
         AlarmManagerSchedule.cancelAlarmScheduleTime()
         try {
             handler.post(runnableUpdateSchedule)
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
@@ -221,5 +220,6 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
 
     }
 
-    protected fun isUpdatingNewSchedule(): Boolean = schedulePresenter?.isUpdatingNewSchedule() ?: false
+    protected fun isUpdatingNewSchedule(): Boolean = schedulePresenter?.isUpdatingNewSchedule()
+            ?: false
 }

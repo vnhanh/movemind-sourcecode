@@ -8,6 +8,7 @@ import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
@@ -145,17 +146,19 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
             super.onProviderChanged(router, provider)
 
             router?.selectedRoute?.also { route ->
-                val id: Int = route.presentationDisplayId
-                if (id > -1 && id != mPresentationId) {
-                    mPresentationId = id
+                handlerMain.post{
+                    val id: Int = route.presentationDisplayId
+                    if (id > -1 && id != mPresentationId) {
+                        mPresentationId = id
 
-                    releaseRoute()
-                    initRoute(route)
-                } else if (id == -1 && id != mPresentationId) {
-                    mPresentationId = id
+                        releaseRoute()
+                        initRoute(route)
+                    } else if (id == -1 && id != mPresentationId) {
+                        mPresentationId = id
 
-                    releaseRoute()
-                    notifyRouterDisconnected()
+                        releaseRoute()
+                        notifyRouterDisconnected()
+                    }
                 }
             }
         }
@@ -226,7 +229,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         }
     }
 
-    private val handlerMain = Handler()
+    private val handlerMain = Handler(Looper.getMainLooper())
 
     private val mSessionCallback = object : MMSessionManager.Callback {
 

@@ -43,9 +43,9 @@ class HomePresenter : BaseResponseObserver<MMConfigData>(), IHomeContract.Presen
         }
 
         Log.d("LOG", this.javaClass.simpleName + " onAttach() | messageSnackbarOnResume: $messageSnackbarOnResume")
-        if(messageSnackbarOnResume.isNotBlank()){
+        if (messageSnackbarOnResume.isNotBlank()) {
             val message = messageSnackbarOnResume
-            view.showPopUp(message)
+            view.showSnackbar(message)
             messageSnackbarOnResume = ""
         }
     }
@@ -56,10 +56,10 @@ class HomePresenter : BaseResponseObserver<MMConfigData>(), IHomeContract.Presen
 
     override fun setupShowSnackbarOnStartScreen(message: String) {
         val view = mView
-        if(view == null){
+        if (view == null) {
             messageSnackbarOnResume = message
             Log.d("LOG", this.javaClass.simpleName + " setupShowSnackbarOnStartScreen() | view is null | set snackbar message: $messageSnackbarOnResume")
-        }else{
+        } else {
             Log.d("LOG", this.javaClass.simpleName + " setupShowSnackbarOnStartScreen() | view is not null | show snackbar message: $messageSnackbarOnResume")
             view.showSnackbar(message)
             messageSnackbarOnResume = ""

@@ -38,7 +38,7 @@ class CastingBroadcastReceiver : BroadcastReceiver() {
 
     interface TVListener {
         fun onPlayerReady(isShowPlayPauseButton: Boolean = false, isPlaying: Boolean = false, currentPosition: Long = 0L, duration: Long) {}
-        fun onUpdateProgress(isShowPlayPauseButton: Boolean = false, isPlaying: Boolean = true, position: Long) {}
+        fun onUpdateProgress(isShowPlayPauseButton: Boolean = false, isPlaying: Boolean = true, position: Long, duration: Long) {}
         fun onCookieExpired() {}
         fun onUpdateEndedVideoState() {}
         fun onUpdateEndedVideoStateSchedule() {}
@@ -168,8 +168,9 @@ class CastingBroadcastReceiver : BroadcastReceiver() {
         val isShowPlayPauseButton: Boolean = intent.getBooleanExtra(EXTRA_IS_SHOW_PLAY_PAUSE_BUTTON, false)
         val isPlaying: Boolean = intent.getBooleanExtra(EXTRA_READY_VIDEO_STATE_ON_TV, false)
         val progress: Long = intent.getLongExtra(EXTRA_UPDATE_PROGRESS, 0L)
+        val duration: Long = intent.getLongExtra(EXTRA_DURATION_VIDEO_ON_TV, 1L)
         for (listener: TVListener in mTVListeners) {
-            listener.onUpdateProgress(isShowPlayPauseButton, isPlaying, progress)
+            listener.onUpdateProgress(isShowPlayPauseButton, isPlaying, progress, duration)
         }
     }
 

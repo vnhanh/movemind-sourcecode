@@ -46,6 +46,7 @@ import player.wellnesssolutions.com.ui.fragment_now_playing.helper.MonitorVideoA
 import player.wellnesssolutions.com.ui.fragment_now_playing.helper.NowPlayingVideoInfoDisplayHelper
 import player.wellnesssolutions.com.ui.fragment_now_playing.helper.NowPlayingVideoSetupHelper
 import player.wellnesssolutions.com.ui.fragment_presentation.presentation.MMPreInterface
+import java.time.Duration
 
 class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterface.View,
         INowPlayingConstruct.View, MonitorVideoAsyncTask.Listener, CastingBroadcastReceiver.UIListener {
@@ -638,7 +639,8 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
         intent.putExtra(CastingBroadcastReceiver.EXTRA_READY_VIDEO_STATE_ON_TV, isPlaying)
         intent.putExtra(CastingBroadcastReceiver.EXTRA_UPDATE_PROGRESS, videoPlayer.player?.currentPosition
                 ?: 0L)
-        PreferenceHelper.getInstance()?.putLong(CastingBroadcastReceiver.EXTRA_DURATION_VIDEO_ON_TV, videoPlayer.player?.duration?:0L)
+        PreferenceHelper.getInstance()?.putLong(CastingBroadcastReceiver.EXTRA_DURATION_VIDEO_ON_TV, videoPlayer.player?.duration
+                ?: 0L)
         intent.putExtra(CastingBroadcastReceiver.EXTRA_DURATION_VIDEO_ON_TV, videoPlayer.player?.duration
                 ?: 0L)
         mService.sendBroadcast(intent)
@@ -779,7 +781,7 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
     private var mRunnable = object : Runnable {
         @SuppressLint("RestrictedApi")
         override fun run() {
-            Log.d("LOG", "MMPresentationBinder - runnable is running...")
+//            Log.d("LOG", "MMPresentationBinder - runnable is running...")
             if (mRouter?.presentationDisplayId == -1 || mRouter?.presentationDisplay?.isValid == false) {
                 Log.d("LOG", "MMPresentationBinder - runnable - stopped service...")
                 // stop service and pause video
@@ -835,12 +837,13 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
     /**
      * interface @MonitorVideoAsyncTask.TVListener
      */
-    override fun onUpdateVideoProgress(isPlaying: Boolean, position: Long) {
+    override fun onUpdateVideoProgress(isPlaying: Boolean, position: Long, duration: Long) {
         val intent = Intent(CastingBroadcastReceiver.ACTION_TV)
         val isShowPlayPauseButton: Boolean = mPresenter?.getPlayMode() == PlayMode.ON_DEMAND
         intent.putExtra(CastingBroadcastReceiver.EXTRA_IS_SHOW_PLAY_PAUSE_BUTTON, isShowPlayPauseButton)
         intent.putExtra(CastingBroadcastReceiver.EXTRA_READY_VIDEO_STATE_ON_TV, isPlaying)
         intent.putExtra(CastingBroadcastReceiver.EXTRA_UPDATE_PROGRESS, position)
+        intent.putExtra(CastingBroadcastReceiver.EXTRA_DURATION_VIDEO_ON_TV, duration)
         mService.sendBroadcast(intent)
     }
 

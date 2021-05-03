@@ -10,9 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.ColorRes
 import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.main.fragment_control.*
 import kotlinx.android.synthetic.main.fragment_home.*
-import kotlinx.android.synthetic.main.fragment_home.btnLogoBottom
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.common.download.DownloadVideoHelper
 import player.wellnesssolutions.com.base.utils.FragmentUtil
@@ -84,7 +82,7 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
             bundle.remove(Constant.BUNDLE_SHOW_POPUP)
 
             val messageSnackbar = bundle.getString(Constant.BUNDLE_SHOW_SNACKBAR, "").also { messageSnackbar ->
-                if(messageSnackbar.isNotBlank()){
+                if (messageSnackbar.isNotBlank()) {
                     presenter?.setupShowSnackbarOnStartScreen(messageSnackbar)
                 }
                 bundle.remove(Constant.BUNDLE_SHOW_SNACKBAR)
@@ -125,7 +123,7 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
     }
 
     override fun showPopUp(messagePopUpOnStart: String) {
-        handler.post{
+        handler.post {
             dialog?.dismiss()
             context?.also { context ->
                 dialog = DialogUtil.createDialogOnlyOneButton(context, messagePopUpOnStart, R.string.btn_ok,
@@ -141,8 +139,8 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
     }
 
     override fun showSnackbar(message: String) {
-        if(message.isNotBlank()){
-            handler.post{
+        if (message.isNotBlank()) {
+            handler.post {
                 MessageUtils.showSnackBar(
                         snackView = btnLogoBottom,
                         message = message,

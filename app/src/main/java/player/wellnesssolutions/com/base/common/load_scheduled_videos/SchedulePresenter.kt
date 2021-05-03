@@ -129,10 +129,10 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
 
     private fun loadSchedule() {
         Log.d("LOG", this.javaClass.simpleName + " loadSchedule()")
-        if (isLoading){
+        if (isLoading) {
             return
         }
-        if(mView == null){
+        if (mView == null) {
             isLoadScheduleOnStart = true
             return
         }
@@ -346,7 +346,7 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
             handler.removeCallbacks(runnableHanldeTimeForSchedule)
             handlerScheduleTime.release()
             disposable.clear()
-        } catch (e: Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
             FirebaseCrashlytics.getInstance().recordException(e)
         }
@@ -382,6 +382,7 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
         this.isPerformingNextScheduleVideo = false
         this.isLoadScheduleOnStart = false
     }
+
     private var isRemoveVideoOnSetupNextSchedule = true
     override fun setScheduleCurrentAndWaitNextVideo(videos: ArrayList<MMVideo>, isRemoveVideoOnSetupNextSchedule: Boolean) {
         this.scheduleVideos.clear()

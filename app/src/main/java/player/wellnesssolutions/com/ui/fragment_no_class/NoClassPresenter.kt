@@ -22,6 +22,7 @@ class NoClassPresenter : BaseResponseObserver<ArrayList<MMBrand>>(), INoClassCon
     override fun onAttach(view: INoClassContract.View) {
         this.mView = view
         if (mLoadBrandsHandler == null) mLoadBrandsHandler = LoadBrandsHandler(view)
+        mLoadBrandsHandler?.onAttach(view)
 
         view.getViewContext()?.also {
             val headerData: HeaderData? = CheckHeaderApiUtil.checkData(PreferenceHelper.getInstance(it), view.getFragment())
@@ -49,6 +50,7 @@ class NoClassPresenter : BaseResponseObserver<ArrayList<MMBrand>>(), INoClassCon
 
     override fun onDetach() {
         mView = null
+        mLoadBrandsHandler?.onDetach()
     }
 
     override fun onDestroy() {

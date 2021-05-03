@@ -262,6 +262,7 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View, IRouter
     }
 
     private fun clickedBtnPlay() {
+        Log.d("LOG", this.javaClass.simpleName + " clickedBtnPlay()")
         when (mPresenter?.hasSelectedVideos()) {
             true -> {
                 activity?.let {
@@ -423,7 +424,7 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View, IRouter
                     }
                 }
                 // return
-            }else{
+            } else {
                 NowPlayingVideoSetupHelper.openNowPlayingPlayVideoSearched(fragmentManager = activity.supportFragmentManager, videos = passData)
             }
         }

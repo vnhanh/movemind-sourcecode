@@ -149,6 +149,7 @@
     <TextView
         android:id="@+id/tvVideoPlayingPlaylistDuration"
         android:textSize="@dimen/playlist_video_time_textsize"
+        android:text=""
         android:layout_width="@dimen/playlist_video_time_minute_length"
         android:gravity="end"
         android:layout_height="wrap_content"

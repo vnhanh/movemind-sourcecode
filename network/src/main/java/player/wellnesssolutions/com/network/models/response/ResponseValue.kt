@@ -8,6 +8,6 @@ import com.google.gson.annotations.SerializedName
  */
 class ResponseValue<T>(
         @SerializedName("success") @Expose var success : Boolean = false,
-        @SerializedName("message") @Expose var message : String,
+        @SerializedName("message") @Expose var message : String = "",
         @SerializedName("data") @Expose var data : T
 )

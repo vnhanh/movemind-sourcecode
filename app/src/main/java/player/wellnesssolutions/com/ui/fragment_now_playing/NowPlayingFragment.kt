@@ -59,7 +59,6 @@ import player.wellnesssolutions.com.network.models.screen_search.MMBrand
 import player.wellnesssolutions.com.network.network_connect.NetworkReceiver
 import player.wellnesssolutions.com.ui.activity_main.IRouterChanged
 import player.wellnesssolutions.com.ui.activity_main.MainActivity
-import player.wellnesssolutions.com.ui.activity_main.PresentationDataHelper
 import player.wellnesssolutions.com.ui.activity_main.ScheduleBroadcastReceiver
 import player.wellnesssolutions.com.ui.fragment_control.ControlFragment
 import player.wellnesssolutions.com.ui.fragment_now_playing.helper.*
@@ -149,7 +148,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         try {
             handler.removeCallbacks(null)
 
-        } catch (e: Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
 
@@ -176,7 +175,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
     }
 
     override fun onDestroy() {
-        if(!isCasting){
+        if (!isCasting) {
             VideoDBUtil.deleteVideosFromDB(Constant.MM_VIDEO_SEARCHED)
         }
         mMenuSetupHelper.onRelease()
@@ -489,10 +488,6 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         }
     }
 
-    override fun returnPrevScreen() {
-        activity?.onBackPressed()
-    }
-
     override fun showLoadingProgress() {
         progressLoadingVideo?.visibility = View.VISIBLE
     }
@@ -749,7 +744,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
 
             PlayMode.ON_DEMAND -> {
                 dialog?.dismiss()
-                if (isLoadScheduleManually){
+                if (isLoadScheduleManually) {
                     context?.also { context ->
                         dialog = DialogUtil.createDialogTwoButtons(context, context.getString(R.string.confirm_stop_video_and_navigate_to_screen_get_started), R.string.cancel,
                                 object : DialogInterface.OnClickListener {
@@ -902,9 +897,9 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
     }
 
     override fun castingAndBackToHome() {
-        handler.post{
+        handler.post {
             activity?.also { activity ->
-                if (activity is MainActivity){
+                if (activity is MainActivity) {
                     PreferenceHelper.getInstance(activity).getInt(ConstantPreference.MODE_PLAY_VIDEO, PlayMode.UNKNOWN.value).also { modePlayValue ->
                         Log.d("LOG", "NowPlayingFragment - onMediaRouterConnected() | modePlayValue: $modePlayValue")
                         PlayMode.valueOf(modePlayValue)?.also { mode ->

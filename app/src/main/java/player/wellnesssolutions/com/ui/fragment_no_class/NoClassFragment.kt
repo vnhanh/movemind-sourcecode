@@ -55,7 +55,11 @@ class NoClassFragment : BaseFragment(), INoClassContract.View {
 
     private fun setupUI() {
         btnHelpMeChoose?.setOnClickListener { clickedHelpMeChooseButton() }
-        btnSkipSearch?.setOnClickListener { clickedSkipAndSearchButton() }
+        btnSkipSearch?.setOnClickListener {
+            it.isEnabled = false
+            clickedSkipAndSearchButton()
+            it.isEnabled = true
+        }
     }
 
     private fun clickedSkipAndSearchButton() {

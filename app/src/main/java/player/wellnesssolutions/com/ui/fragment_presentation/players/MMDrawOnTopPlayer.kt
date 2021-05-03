@@ -46,7 +46,7 @@ class MMDrawOnTopPlayer(context: Context) : MMLocalPlayer(context), SurfaceHolde
             }
             mPresentation?.onCreate()
 
-            if(modePlay != PlayMode.UNKNOWN && videosBuffer.size > 0){
+            if (modePlay != PlayMode.UNKNOWN && videosBuffer.size > 0) {
                 play(modePlay, videosBuffer, lastPosition)
             }
         }
@@ -81,12 +81,12 @@ class MMDrawOnTopPlayer(context: Context) : MMLocalPlayer(context), SurfaceHolde
     override fun play(mode: PlayMode, item: ArrayList<*>, lastPosition: Long) {
         Log.d("LOG", this.javaClass.simpleName + " play()")
         if (ParameterUtils.isClearVideoOnPresentation) {
-            if(mPresentation != null){
+            if (mPresentation != null) {
                 Log.d("LOG", this.javaClass.simpleName + " play() | is clear videos | call setupPlayVideo() on TV | mPresentation: $mPresentation")
                 mPresentation?.setupPlayVideo(mode, item as ArrayList<MMVideo>, lastPosition)
                 modePlay = PlayMode.UNKNOWN
                 this.lastPosition = 0L
-            }else{
+            } else {
                 modePlay = mode
                 videosBuffer.addAll(item as ArrayList<MMVideo>)
                 this.lastPosition = 0L

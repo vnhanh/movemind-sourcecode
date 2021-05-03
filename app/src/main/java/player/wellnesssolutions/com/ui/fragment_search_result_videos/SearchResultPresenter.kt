@@ -1,6 +1,7 @@
 package player.wellnesssolutions.com.ui.fragment_search_result_videos
 
 import android.content.Context
+import android.util.Log
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
 import player.wellnesssolutions.com.base.view.BaseFragment
@@ -305,6 +306,7 @@ class SearchResultPresenter(private var context: Context?) : BaseResponseObserve
     }
 
     override fun onPlaySearchedVideos() {
+        Log.d("LOG", this.javaClass.simpleName + " onPlaySearchedVideos()")
         val data: ArrayList<MMVideo> = mVideosToPlay
 
         when (data.size == 0) {

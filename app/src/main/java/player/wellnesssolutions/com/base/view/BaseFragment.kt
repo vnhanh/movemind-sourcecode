@@ -4,12 +4,12 @@ import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.utils.FragmentUtil
 import player.wellnesssolutions.com.common.utils.DialogUtil
@@ -19,7 +19,7 @@ import player.wellnesssolutions.com.ui.activity_main.MainActivity
 
 abstract class BaseFragment : Fragment(), ILifeCycle.View {
     protected var mIsJustBeDestroyed = false
-    protected val handler = Handler()
+    protected val handler = Handler(Looper.getMainLooper())
 
     protected open fun onBackPressed(view: View) {
         view.isEnabled = false

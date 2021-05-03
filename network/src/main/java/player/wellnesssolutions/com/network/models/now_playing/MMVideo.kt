@@ -31,7 +31,7 @@ data class MMVideo(
         var collections : ArrayList<MMTinyCategory>? = null,
         var levels : ArrayList<MMSimpleOption>? = null
 
-) : Cloneable, Parcelable {
+) : Parcelable {
     constructor(parcel : Parcel) : this(
             id = parcel.readValue(Int::class.java.classLoader) as? Int,
             brandId = parcel.readValue(Int::class.java.classLoader) as? Int,

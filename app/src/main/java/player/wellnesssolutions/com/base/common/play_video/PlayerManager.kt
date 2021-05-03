@@ -259,7 +259,7 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
     }
 
     override fun playVideoAt(index: Int) {
-        Log.d("LOG", this.javaClass.simpleName + " playVideoAt() | index: $index | videos number: ${mVideos?.size?:0}")
+        Log.d("LOG", this.javaClass.simpleName + " playVideoAt() | index: $index | videos number: ${mVideos?.size ?: 0}")
         if (index <= 0 || mVideos == null || mVideos!!.size <= 1) return
         // removeAllVideosBeforeAt() must run before onReleasePlayer() to avoid bug
         removeAllVideosBeforeAt(index)

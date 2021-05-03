@@ -67,7 +67,7 @@ class SearchBrandsPresenter : ISearchBrandsContract.Presenter {
 
     override fun onAttach(view: ISearchBrandsContract.View) {
         this.mView = view
-
+        mLoadBrandsHandler?.onAttach(view)
         displayUI()
     }
 
@@ -81,6 +81,7 @@ class SearchBrandsPresenter : ISearchBrandsContract.Presenter {
 
     override fun onDetach() {
         mView = null
+        mLoadBrandsHandler?.onDetach()
     }
 
     override fun onStop() {

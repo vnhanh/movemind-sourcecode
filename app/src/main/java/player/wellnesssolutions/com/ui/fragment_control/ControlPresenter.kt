@@ -41,6 +41,7 @@ class ControlPresenter : IControlContract.Presenter {
     override fun onAttach(view: IControlContract.View) {
         this.mView = view
         if (mLoadBrandsHandler == null) mLoadBrandsHandler = LoadBrandsHandler(view)
+        mLoadBrandsHandler?.onAttach(view)
 
         if (mConfigData == null)
             readSharePrefData()
@@ -68,6 +69,7 @@ class ControlPresenter : IControlContract.Presenter {
 
     override fun onDetach() {
         mView = null
+        mLoadBrandsHandler?.onDetach()
     }
 
     override fun onDestroy() {

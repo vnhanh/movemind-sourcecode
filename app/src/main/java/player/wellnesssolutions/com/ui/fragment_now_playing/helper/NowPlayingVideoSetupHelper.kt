@@ -40,7 +40,6 @@ import player.wellnesssolutions.com.ui.fragment_home.HomeFragment
 import player.wellnesssolutions.com.ui.fragment_now_playing.INowPlayingConstruct
 import player.wellnesssolutions.com.ui.fragment_now_playing.NowPlayingFragment
 import player.wellnesssolutions.com.ui.fragment_now_playing.recyclerview.MMVideoNowPlayingView
-import java.lang.IllegalStateException
 
 
 object NowPlayingVideoSetupHelper {
@@ -364,7 +363,7 @@ object NowPlayingVideoSetupHelper {
 //                        }
 //                        false -> HomeFragment.getInstanceWithLoadSchedule()
 //                    }
-            if(fragment != null && fragment is HomeFragment){
+            if (fragment != null && fragment is HomeFragment) {
                 fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
             }
             val newFragment = HomeFragment.getInstanceWithLoadSchedule()
@@ -384,7 +383,7 @@ object NowPlayingVideoSetupHelper {
 //                        }
 //                        false -> HomeFragment.getInstanceNotLoadSchedule()
 //                    }
-            if (fragment != null && fragment is HomeFragment){
+            if (fragment != null && fragment is HomeFragment) {
                 fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
             }
             val newFragment = HomeFragment.getInstanceNotLoadSchedule()
@@ -405,7 +404,7 @@ object NowPlayingVideoSetupHelper {
 //                        }
 //                        false -> HomeFragment.getInstanceNotLoadScheduleAndShowPopUp(message)
 //                    }
-            if (fragment != null && fragment is HomeFragment){
+            if (fragment != null && fragment is HomeFragment) {
                 fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
             }
             val newFragment = HomeFragment.getInstanceNotLoadScheduleAndShowPopUp(message)
@@ -420,7 +419,7 @@ object NowPlayingVideoSetupHelper {
         }
     }
 
-    fun openHomeFragmentWithNotLoadScheduleAndShowSnackbar(fm: FragmentManager?, message:String) {
+    fun openHomeFragmentWithNotLoadScheduleAndShowSnackbar(fm: FragmentManager?, message: String) {
         fm?.also { _fm ->
             Log.d("LOG", this.javaClass.simpleName + " openHomeFragmentWithNotLoadSchedule()")
             val tag = HomeFragment.TAG
@@ -432,7 +431,7 @@ object NowPlayingVideoSetupHelper {
 //                        }
 //                        false -> HomeFragment.getInstanceNotLoadSchedule()
 //                    }
-            if (fragment != null && fragment is HomeFragment){
+            if (fragment != null && fragment is HomeFragment) {
                 fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
             }
             val newFragment = HomeFragment.getInstanceNotLoadScheduleAndShowSnackbar(message)
@@ -458,7 +457,7 @@ object NowPlayingVideoSetupHelper {
         }
     }
 
-    fun openNowPlayingPlayVideoSearched(fragmentManager: FragmentManager?, videos: ArrayList<MMVideo>){
+    fun openNowPlayingPlayVideoSearched(fragmentManager: FragmentManager?, videos: ArrayList<MMVideo>) {
         fragmentManager?.also { fm ->
             val tag = NowPlayingFragment.TAG
             var fragment = fm.findFragmentByTag(tag)

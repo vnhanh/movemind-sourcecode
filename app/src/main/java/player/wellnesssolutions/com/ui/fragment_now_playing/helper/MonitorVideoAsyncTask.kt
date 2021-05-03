@@ -7,7 +7,7 @@ import player.wellnesssolutions.com.ui.fragment_now_playing.INowPlayingConstruct
 
 class MonitorVideoAsyncTask(private var view: View?, private var presenter: INowPlayingConstruct.Presenter?, private var listener: Listener? = null) : Runnable {
     interface Listener {
-        fun onUpdateVideoProgress(isPlaying: Boolean, position: Long)
+        fun onUpdateVideoProgress(isPlaying: Boolean, position: Long, duration: Long)
     }
 
     private var mPlayer: SimpleExoPlayer? = null
@@ -36,7 +36,7 @@ class MonitorVideoAsyncTask(private var view: View?, private var presenter: INow
                 }
                 val player = mPlayer ?: return
                 listener?.also { listener ->
-                    listener.onUpdateVideoProgress(player.playWhenReady, player.currentPosition)
+                    listener.onUpdateVideoProgress(player.playWhenReady, player.currentPosition, player.duration)
                 }
 
                 if (player.playbackState == Player.STATE_ENDED || player.currentPosition >= mVideoLength) {
