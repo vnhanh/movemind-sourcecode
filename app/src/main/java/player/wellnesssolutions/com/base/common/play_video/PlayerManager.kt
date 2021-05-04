@@ -89,7 +89,13 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
     }
 
     override fun removeListener(listener: Player.EventListener) {
-        mListeners.remove(listener)
+//        mListeners.remove(listener)
+        val iterator = mListeners.iterator()
+        while(iterator.hasNext()){
+            if(iterator.next() == listener){
+                iterator.remove()
+            }
+        }
     }
 
     override fun resumeOrIntialize(playedVideoPosition: Long, typeVideo: EnumTypeViewVideo, isUpdateViewNumber: Boolean, isSupportCC: Boolean) {
@@ -184,9 +190,8 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
                         }
                     }
                     false -> false
-                },
-                fileDataSource = fileDataSource).also {
-
+                }, fileDataSource = fileDataSource
+        ).also {
             for (listener: Player.EventListener in mListeners) {
                 it.addListener(listener)
             }
@@ -316,9 +321,9 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
     }
 
     override fun onDestroy() {
-        mListeners.clear()
         mClosedCaptionController?.release()
         onReleasePlayer(isKeepPosition = false, keepPlayWhenReady = false)
+        mListeners.clear()
         mPlayerCallback = null
     }
 
@@ -366,7 +371,7 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
     }
 
     override fun handleOnEnded() {
-        Log.d("LOG", this.javaClass.simpleName + " handleOnEnded()")
+        Log.d("LOG", this.javaClass.simpleName + " handleOnEnded() | videos number: ${mVideos?.size ?: 0}")
         mClosedCaptionController?.resetData()
         if (mVideos?.size ?: 0 <= 1) return
         playVideoAt(index = 1)

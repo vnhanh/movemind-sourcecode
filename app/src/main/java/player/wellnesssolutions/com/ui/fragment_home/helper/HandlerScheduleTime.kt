@@ -91,7 +91,7 @@ class HandlerScheduleTime(private var context: Context?, private var listener: I
 
     private fun setupAlarmTaskForCaseWaitSchedule(index: Int, timePlay: Long, callback: ICallBackNextScheduleVideo) {
         setupAlarmTask(timePlay)
-        callback.onResult(index, timePlay)
+        callback.onResult(index, timePlay-1000L)
     }
 
     private fun handleNextScheduleVideo(videos: ArrayList<MMVideo>, index: Int, callback: ICallBackNextScheduleVideo) {
@@ -107,15 +107,16 @@ class HandlerScheduleTime(private var context: Context?, private var listener: I
                     STATE_TIME_PLAY_SCHEDULE.TIME_PLAY -> {
                         Log.d("LOG", this.javaClass.simpleName + " handleNextScheduleVideo() | TIME_PLAY | timePlay: $timePlay | " +
                                 "video name: ${videoHandle.videoName} | videos number: ${videos.size}")
-                        when {
-                            timePlay <= Constant.TIME_CHANGE_SCREEN -> {
-                                Log.d("LOG", this.javaClass.simpleName + " handleNextScheduleVideo() | TIME_WAIT | timePlay: $timePlay | " +
-                                        "video name: ${videoHandle.videoName} | videos number: ${videos.size}")
-                                setupAlarmTaskForCaseWaitSchedule(index, timePlay, callback)
-                            }
-
-                            else -> handleNextScheduleVideo(videos, index + 1, callback)
-                        }
+                        handleNextScheduleVideo(videos, index + 1, callback)
+//                        when {
+//                            timePlay <= Constant.TIME_CHANGE_SCREEN -> {
+//                                Log.d("LOG", this.javaClass.simpleName + " handleNextScheduleVideo() | TIME_WAIT | timePlay: $timePlay | " +
+//                                        "video name: ${videoHandle.videoName} | videos number: ${videos.size}")
+//                                setupAlarmTaskForCaseWaitSchedule(index, timePlay, callback)
+//                            }
+//
+//                            else -> handleNextScheduleVideo(videos, index + 1, callback)
+//                        }
 
                     }
 

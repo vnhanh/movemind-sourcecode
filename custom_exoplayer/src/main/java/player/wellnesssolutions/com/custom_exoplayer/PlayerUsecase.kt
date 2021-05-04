@@ -73,7 +73,10 @@ class PlayerUsecase {
             it.playWhenReady = false
 
             for (listener in listeners) {
-                it.removeListener(listener)
+                val iterator = listeners.iterator()
+                while (iterator.hasNext()){
+                    iterator.remove()
+                }
             }
 
             mIsPlayWhenReady = keepPlayWhenReady

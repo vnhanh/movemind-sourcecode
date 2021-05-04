@@ -25,23 +25,26 @@ enum class STATE_TIME_PLAY_SCHEDULE(val state: String) {
 }
 
 object HandlerTimeScheduleHelper {
-    private const val TIME_PLAY_MAX_ROUND = 3000L
+    private const val TIME_PLAY_MAX_ROUND = 2000L
+    private const val ROUND_TIME_DIFFER_CAN_PLAY = 2000L
 
     fun calculateTimePlayVideo(video: MMVideo, callback: ICallbackNowScheduleVideo) {
         try {
             val timeStart: Long = convertTime(video.getStartTime())
             val length = ((video.videoLength ?: 0f) * 1000).toInt()
             val timeEnd = timeStart + length
-            Log.d("LOG", this.javaClass.simpleName + " claculateTimePlayVideo() | " +
+            Log.d("LOG", this.javaClass.simpleName + " calculateTimePlayVideo() | " +
                     "curent time: ${convertCurrentTimeToDateStr(System.currentTimeMillis())} | " +
                     "time start: ${convertCurrentTimeToDateStr(timeStart)} | " +
                     "time end: ${convertCurrentTimeToDateStr(timeEnd)}")
             val currentTime = System.currentTimeMillis()
+
             when {
                 currentTime < timeEnd -> {
                     var timePlay = currentTime - timeStart
+                    Log.d("LOG", this.javaClass.simpleName + " calculateTimePlayVideo() | timplay: $timePlay")
                     when {
-                        timePlay < -1 * Constant.TIME_CHANGE_SCREEN -> {
+                        timePlay < -1 * ROUND_TIME_DIFFER_CAN_PLAY -> {
                             callback.onResult(STATE_TIME_PLAY_SCHEDULE.TIME_WAIT, -1 * timePlay)
                         }
                         else -> {

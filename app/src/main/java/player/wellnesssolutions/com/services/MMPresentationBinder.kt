@@ -329,6 +329,9 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
         mPresenter = NowPlayingPresenter(context = mContext, playMode = mode).also {
             it.setPlayedPosition(lastPosition)
             it.setSubtitleController(ClosedCaptionController(videoPlayer.playerControllerView, videoPlayer.exo_subtitles, ShowMode.TV))
+            if(mode == PlayMode.SCHEDULE){
+                it.stopPlayNext()
+            }
         }
 
         setupUI()
