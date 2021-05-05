@@ -271,8 +271,10 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         btnPrevious?.also { button ->
             button.visibility = View.VISIBLE
             button.setOnClickListener {
+                it.isEnabled = false
                 PreferenceHelper.getInstance(context = button.context).delete(ConstantPreference.LAST_PLAYED_VIDEO_POSITION)
                 onBackPressed(button)
+                it.isEnabled = true
             }
         }
     }

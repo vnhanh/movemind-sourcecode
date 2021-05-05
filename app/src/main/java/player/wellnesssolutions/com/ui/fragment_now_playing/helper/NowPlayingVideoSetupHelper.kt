@@ -23,6 +23,7 @@ import androidx.fragment.app.FragmentManager
 import com.bumptech.glide.Glide
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerView
+import com.google.android.gms.dynamic.SupportFragmentWrapper
 import kotlinx.android.synthetic.main.custom_controller_player_screen_now_playing.view.*
 import kotlinx.android.synthetic.main.fragment_now_playing.view.*
 import kotlinx.android.synthetic.main.merge_layout_bottom_bar_screen_now_playing.view.*
@@ -444,16 +445,20 @@ object NowPlayingVideoSetupHelper {
         Log.d("LOG", this.javaClass.simpleName + " openNowPlayingWithSchedule()")
         fm?.also { _fm ->
             val tag = NowPlayingFragment.TAG
-            var fragment = _fm.findFragmentByTag(tag)
-            fragment =
-                    when (fragment != null && fragment is NowPlayingFragment) {
-                        true -> {
-//                            _fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
-                            NowPlayingFragment.updateAlreadyInstanceWithSchedule(fragment)
-                        }
-                        false -> NowPlayingFragment.getInstancePlaySchedule()
-                    }
-            FragmentUtil.replaceFragment(fm = _fm, newFragment = fragment, newFragmentTag = tag, frameId = R.id.frameLayoutHome, isAddToBackStack = true, isRemoveOlds = true)
+            val fragment = _fm.findFragmentByTag(tag)
+            if(fragment != null && fragment is NowPlayingFragment){
+                _fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
+            }
+            val newFragment = NowPlayingFragment.getInstancePlaySchedule()
+//            fragment =
+//                    when (fragment != null && fragment is NowPlayingFragment) {
+//                        true -> {
+////                            _fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
+//                            NowPlayingFragment.updateAlreadyInstanceWithSchedule(fragment)
+//                        }
+//                        false -> NowPlayingFragment.getInstancePlaySchedule()
+//                    }
+            FragmentUtil.replaceFragment(fm = _fm, newFragment = newFragment, newFragmentTag = tag, frameId = R.id.frameLayoutHome, isAddToBackStack = true, isRemoveOlds = true)
         }
     }
 

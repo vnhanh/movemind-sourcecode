@@ -796,6 +796,8 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
             if (lastIndex < 0) return
 
             supportFragmentManager.fragments[lastIndex]?.childFragmentManager?.also { childFragmentManager ->
+                Log.d("LOG", this.javaClass.simpleName + " onBackPreviousScreen() | last fragment: ${supportFragmentManager.fragments[lastIndex].javaClass.simpleName}")
+                Log.d("LOG", this.javaClass.simpleName + " onBackPreviousScreen() | child fragments number: ${childFragmentManager.backStackEntryCount}")
                 if (childFragmentManager.backStackEntryCount > 0) {
                     childFragmentManager.popBackStack()
                     return
