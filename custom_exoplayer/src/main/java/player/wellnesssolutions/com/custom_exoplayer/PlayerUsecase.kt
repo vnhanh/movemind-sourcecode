@@ -75,6 +75,7 @@ class PlayerUsecase {
             for (listener in listeners) {
                 val iterator = listeners.iterator()
                 while (iterator.hasNext()){
+                    iterator.next()
                     iterator.remove()
                 }
             }
