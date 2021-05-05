@@ -38,8 +38,9 @@ class PlayerUsecase {
     fun initPlayer(context: Context, cookieValue: String,
                    url: String, subtitleLink: String, languageCode: String,
                    volume: Float,typeVideo: EnumTypeViewVideo,isPlayOffline: Boolean,fileDataSource : FileDataSource): SimpleExoPlayer {
+        Log.d("LOG", this.javaClass.simpleName + " initPlayer()")
         val extension: String = MimeTypeMap.getFileExtensionFromUrl(url)
-
+        mIsPlayWhenReady = true
         val player: SimpleExoPlayer =
                 when (extension.contains(M3U8)) {
                     true -> ExoPlayerUtil.initStreamPlayer(

@@ -95,7 +95,7 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
 
         Log.d("LOG", this.javaClass.simpleName + " onResume() | isNewScreen: $isNewScreen")
         if (isNewScreen) {
-            handler.post(runnableAttachPresenterFirstTime)
+            handler.postDelayed(runnableAttachPresenterFirstTime, Constant.TIME_POST_DELAY_DEFAULT)
         } else {
             presenter?.onAttach(this)
         }

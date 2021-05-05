@@ -24,6 +24,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.mediarouter.media.MediaControlIntent
 import androidx.mediarouter.media.MediaRouteSelector
 import androidx.mediarouter.media.MediaRouter
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.gson.Gson
 import io.reactivex.SingleObserver
@@ -69,6 +70,9 @@ import player.wellnesssolutions.com.ui.fragment_splash.SplashFragment
 import player.wellnesssolutions.database.manager.DownloadDBManager
 import retrofit2.Response
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, CastingBroadcastReceiver.TVListener {
@@ -810,6 +814,14 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
             }
         } catch (e: Exception) {
             e.printStackTrace()
+            FirebaseCrashlytics.getInstance().recordException(e)
+            try{
+
+            }catch (e:Exception){
+                val currentDate: String =
+                    SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault()).format(Date())
+                FirebaseCrashlytics.getInstance().log("crash on backing to previous screen | date: $currentDate")
+            }
         }
     }
 
