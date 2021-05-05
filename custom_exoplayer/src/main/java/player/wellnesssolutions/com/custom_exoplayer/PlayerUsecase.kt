@@ -38,31 +38,30 @@ class PlayerUsecase {
     fun initPlayer(context: Context, cookieValue: String,
                    url: String, subtitleLink: String, languageCode: String,
                    volume: Float,typeVideo: EnumTypeViewVideo,isPlayOffline: Boolean,fileDataSource : FileDataSource): SimpleExoPlayer {
-        Log.d("LOG", this.javaClass.simpleName + " initPlayer()")
         val extension: String = MimeTypeMap.getFileExtensionFromUrl(url)
-        mIsPlayWhenReady = true
-        val player: SimpleExoPlayer =
-                when (extension.contains(M3U8)) {
-                    true -> ExoPlayerUtil.initStreamPlayer(
-                            context = context, appName = APP_NAME,
-                            cookieValue = cookieValue, mediaUrl = url,
-                            subtitleLink = subtitleLink, languageCode = languageCode,
-                            playWhenReady = mIsPlayWhenReady, currentPosition = mCurrentPosition,
-                            volume = volume,typeVideo = typeVideo,isPlayOffline = isPlayOffline,fileDataSource = fileDataSource)
 
-                    false -> {
-                        ExoPlayerUtil.initProgressiveContainerFormat(
-                                context = context,
-                                appName = APP_NAME,
-                                cookieValue = cookieValue,
-                                mediaUrl = url,
-                                subtitleLink = subtitleLink,
-                                languageCode = languageCode,
-                                playWhenReady = mIsPlayWhenReady,
-                                currentPosition = mCurrentPosition,
-                                volume = volume)
-                    }
+        val player: SimpleExoPlayer =
+            when (extension.contains(M3U8)) {
+                true -> ExoPlayerUtil.initStreamPlayer(
+                    context = context, appName = APP_NAME,
+                    cookieValue = cookieValue, mediaUrl = url,
+                    subtitleLink = subtitleLink, languageCode = languageCode,
+                    playWhenReady = mIsPlayWhenReady, currentPosition = mCurrentPosition,
+                    volume = volume,typeVideo = typeVideo,isPlayOffline = isPlayOffline,fileDataSource = fileDataSource)
+
+                false -> {
+                    ExoPlayerUtil.initProgressiveContainerFormat(
+                        context = context,
+                        appName = APP_NAME,
+                        cookieValue = cookieValue,
+                        mediaUrl = url,
+                        subtitleLink = subtitleLink,
+                        languageCode = languageCode,
+                        playWhenReady = mIsPlayWhenReady,
+                        currentPosition = mCurrentPosition,
+                        volume = volume)
                 }
+            }
 
         this.mPlayer = player
 
@@ -70,9 +69,15 @@ class PlayerUsecase {
     }
 
     fun onRelease(isKeepPosition: Boolean, keepPlayWhenReady: Boolean, listeners: ArrayList<Player.EventListener>) {
+        Log.d("LOG", this.javaClass.simpleName + " onRelease() | listeners number: ${listeners.size}")
         mPlayer?.also {
-            Log.d("LOG", "PlayerUseCase - onRelease()")
             it.playWhenReady = false
+
+            val iterator = listeners.iterator()
+            while(iterator.hasNext()){
+                val item = iterator.next()
+                it.removeListener(item)
+            }
 
             mCurrentPosition = if (isKeepPosition)
                 it.currentPosition
@@ -82,10 +87,8 @@ class PlayerUsecase {
             mIsPlayWhenReady = keepPlayWhenReady
             it.stop()
 
-//            val iterator = listeners.iterator()
-//            while (iterator.hasNext()){
-//                iterator.next()
-//                iterator.remove()
+//            for (listener in listeners) {
+//                it.removeListener(listener)
 //            }
 
             it.release()
@@ -128,42 +131,42 @@ class PlayerUsecase {
                                        subtitleLinks: ArrayList<String>,
                                        playWhenReady: Boolean = true,
                                        currentPosition: Long, volume: Float): SimpleExoPlayer =
-            getDefaultInstanceForMp4(context).also { player ->
-                val dataSourceFactory = DefaultHttpDataSourceFactory(Util.getUserAgent(context, appName), null).apply {
-                    defaultRequestProperties.set("Cookie", cookieValue)
-                }
-
-                val extractorFactory = DefaultExtractorsFactory()
-
-                val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory, extractorFactory)
-                        .createMediaSource(Uri.parse(mediaUrl))
-
-                val textFormat = Format.createTextSampleFormat(
-                        null,
-                        MimeTypes.APPLICATION_SUBRIP,
-                        null,
-                        Format.NO_VALUE,
-                        Format.NO_VALUE,
-                        null,
-                        null,
-                        Format.OFFSET_SAMPLE_RELATIVE
-                )
-
-                val list = ArrayList<MediaSource>()
-                list.add(mediaSource)
-                for (srt in subtitleLinks) {
-                    list.add(SingleSampleMediaSource.Factory(dataSourceFactory)
-                            .createMediaSource(Uri.parse(srt), textFormat, C.TIME_UNSET))
-                }
-
-                val arr: Array<MediaSource> = list.toTypedArray()
-
-                val mergedSource = MergingMediaSource(*arr)
-                player.prepare(mergedSource)
-                player.seekTo(currentPosition)
-                player.volume = volume
-                player.playWhenReady = playWhenReady
+        getDefaultInstanceForMp4(context).also { player ->
+            val dataSourceFactory = DefaultHttpDataSourceFactory(Util.getUserAgent(context, appName), null).apply {
+                defaultRequestProperties.set("Cookie", cookieValue)
             }
+
+            val extractorFactory = DefaultExtractorsFactory()
+
+            val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory, extractorFactory)
+                .createMediaSource(Uri.parse(mediaUrl))
+
+            val textFormat = Format.createTextSampleFormat(
+                null,
+                MimeTypes.APPLICATION_SUBRIP,
+                null,
+                Format.NO_VALUE,
+                Format.NO_VALUE,
+                null,
+                null,
+                Format.OFFSET_SAMPLE_RELATIVE
+            )
+
+            val list = ArrayList<MediaSource>()
+            list.add(mediaSource)
+            for (srt in subtitleLinks) {
+                list.add(SingleSampleMediaSource.Factory(dataSourceFactory)
+                    .createMediaSource(Uri.parse(srt), textFormat, C.TIME_UNSET))
+            }
+
+            val arr: Array<MediaSource> = list.toTypedArray()
+
+            val mergedSource = MergingMediaSource(*arr)
+            player.prepare(mergedSource)
+            player.seekTo(currentPosition)
+            player.volume = volume
+            player.playWhenReady = playWhenReady
+        }
 
     fun initStreamPlayer(context: Context, appName: String,
                          cookieValue: String, mediaUrl: String, playWhenReady: Boolean = true,
@@ -174,7 +177,7 @@ class PlayerUsecase {
         val player = ExoPlayerFactory.newSimpleInstance(context, mTrackSelector)
 
         val dataHttpSourceFactory = DefaultHttpDataSourceFactory(
-                Util.getUserAgent(context, appName), null
+            Util.getUserAgent(context, appName), null
         )
         dataHttpSourceFactory.defaultRequestProperties.set("Cookie", cookieValue)
 

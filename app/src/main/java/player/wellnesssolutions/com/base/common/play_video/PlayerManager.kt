@@ -197,6 +197,7 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
             }
 
             mPlayerCallback?.onPlayerInitialized(player = it)
+            isEndedPlayer = false
         }
     }
 
@@ -341,13 +342,15 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
     /**
      * implementing @interface Player.EventListener
      */
+    private var isEndedPlayer = false
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
         mPlayBackState = playbackState
 
         when (playbackState) {
             Player.STATE_ENDED -> {
-                Log.d("LOG", this.javaClass.simpleName + " onPlayerStateChanged() | STATE_ENDED | mHasSubtitle: $mHasSubtitle")
-                if (!mHasSubtitle) {
+                Log.d("LOG", this.javaClass.simpleName + " onPlayerStateChanged() | STATE_ENDED | isEndedPlayer: $isEndedPlayer")
+                if (!mHasSubtitle && !isEndedPlayer) {
+                    isEndedPlayer = true
                     handleOnEnded()
                 }
             }

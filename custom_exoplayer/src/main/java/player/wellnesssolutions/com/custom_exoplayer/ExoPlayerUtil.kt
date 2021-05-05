@@ -49,7 +49,6 @@ object ExoPlayerUtil {
     fun initProgressiveContainerFormat(context: Context, appName: String, cookieValue: String,
                                        mediaUrl: String, subtitleLink: String, languageCode: String,
                                        playWhenReady: Boolean = true, currentPosition: Long, volume: Float): SimpleExoPlayer {
-        Log.d("LOG", this.javaClass.simpleName + " initProgressiveContainerFormat()")
         val player: SimpleExoPlayer = getDefaultInstanceForMp4(context)
 
         val dataSourceFactory: DefaultHttpDataSourceFactory = DefaultHttpDataSourceFactory(Util.getUserAgent(context, appName), null).apply {
@@ -59,7 +58,7 @@ object ExoPlayerUtil {
         val extractorFactory = DefaultExtractorsFactory()
 
         val mediaSource: ProgressiveMediaSource = ProgressiveMediaSource.Factory(dataSourceFactory, extractorFactory)
-                .createMediaSource(Uri.parse(mediaUrl))
+            .createMediaSource(Uri.parse(mediaUrl))
 //        val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(MimeTypeMap.getFileExtensionFromUrl(mediaUrl))?:"video/mp4"
 //        val mediaCodec = MediaCodec.createByCodecName(mimeType)
         return mergeMediaSource(player, dataSourceFactory, mediaSource, subtitleLink, languageCode, currentPosition, volume, playWhenReady)
@@ -70,9 +69,9 @@ object ExoPlayerUtil {
                          subtitleLink: String, languageCode: String,
                          playWhenReady: Boolean = true, currentPosition: Long,
                          volume: Float, typeVideo: EnumTypeViewVideo, isPlayOffline: Boolean, fileDataSource: FileDataSource): SimpleExoPlayer {
-        Log.d("LOG", this.javaClass.simpleName + " initStreamPlayer()")
         val videoTrackSelectionFactory: TrackSelection.Factory = AdaptiveTrackSelection.Factory()
         val trackSelector = DefaultTrackSelector(videoTrackSelectionFactory)
+
 //        val defaultParameter = trackSelector.buildUponParameters()
 //                .setMaxVideoBitrate(BITRATE_1080)
 //                .setForceHighestSupportedBitrate(true)
@@ -84,19 +83,18 @@ object ExoPlayerUtil {
         val player = ExoPlayerFactory.newSimpleInstance(context, trackSelector)
 
         val dataSourceFactory = DefaultHttpDataSourceFactory(
-                Util.getUserAgent(context, appName), null
+            Util.getUserAgent(context, appName), null
         )
         dataSourceFactory.defaultRequestProperties.set("Cookie", cookieValue)
 
         val endIndex = mediaUrl.lastIndexOf(EXT_M3U8) + 5
         val s = mediaUrl.substring(0, endIndex)
-        Log.d("LOG", this.javaClass.simpleName + " s: $s")
-
+        Log.d("LOG", this.javaClass.simpleName + " initStreamPlayer() | url: $s")
         val mediaSource: MediaSource?
 
         mediaSource = if (isPlayOffline) {
             val extractorsFactory = DefaultExtractorsFactory()
-                    .setMp4ExtractorFlags(Mp4Extractor.FLAG_WORKAROUND_IGNORE_EDIT_LISTS)
+                .setMp4ExtractorFlags(Mp4Extractor.FLAG_WORKAROUND_IGNORE_EDIT_LISTS)
             val defaultFactory = DefaultDataSourceFactory(context, Util.getUserAgent(context, appName))
             val factory = EncryptedDefaultDataSourceFactory("vovanhoan1234567", context, defaultFactory)
 //            Toast.makeText(context, "Play offline mode", Toast.LENGTH_SHORT).show()
@@ -119,18 +117,18 @@ object ExoPlayerUtil {
             }
             false -> {
                 val textFormat = Format.createTextSampleFormat(
-                        null,
-                        MimeTypes.APPLICATION_SUBRIP,
-                        null,
-                        Format.NO_VALUE,
-                        Format.NO_VALUE,
-                        languageCode,
-                        null,
-                        Format.OFFSET_SAMPLE_RELATIVE
+                    null,
+                    MimeTypes.APPLICATION_SUBRIP,
+                    null,
+                    Format.NO_VALUE,
+                    Format.NO_VALUE,
+                    languageCode,
+                    null,
+                    Format.OFFSET_SAMPLE_RELATIVE
                 )
 
                 val subtitleMediaSource = SingleSampleMediaSource.Factory(dataSourceFactory)
-                        .createMediaSource(Uri.parse(subtitleLink), textFormat, C.TIME_UNSET)
+                    .createMediaSource(Uri.parse(subtitleLink), textFormat, C.TIME_UNSET)
                 val mergedSource = MergingMediaSource(mediaSource, subtitleMediaSource)
                 player.prepare(mergedSource)
             }

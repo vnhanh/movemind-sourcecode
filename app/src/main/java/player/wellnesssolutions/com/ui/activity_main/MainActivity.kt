@@ -144,26 +144,41 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
     /**
      * end IRouterChangedListener
      */
+    private var route : MediaRouter.RouteInfo? = null
+    private var isMediaProviderChangedInBackground = false
     private val mMediaRouterCB = object : MediaRouter.Callback() {
         @SuppressLint("RestrictedApi")
         override fun onProviderChanged(router: MediaRouter?, provider: MediaRouter.ProviderInfo?) {
             super.onProviderChanged(router, provider)
 
-            router?.selectedRoute?.also { route ->
-                handlerMain.post{
-                    val id: Int = route.presentationDisplayId
-                    if (id > -1 && id != mPresentationId) {
-                        mPresentationId = id
-
-                        releaseRoute()
-                        initRoute(route)
-                    } else if (id == -1 && id != mPresentationId) {
-                        mPresentationId = id
-
-                        releaseRoute()
-                        notifyRouterDisconnected()
+            router?.selectedRoute?.also { route: MediaRouter.RouteInfo ->
+                PreferenceHelper.getInstance()?.getBoolean(ConstantPreference.IS_IN_BACKGROUND, false)?.also { isInBackground ->
+                    if(isInBackground){
+                        this@MainActivity.route = route
+                        isMediaProviderChangedInBackground = true
+                    }else{
+                        handleOnProviderChanged(route)
                     }
                 }
+            }
+        }
+    }
+
+    @SuppressLint("RestrictedApi")
+    private fun handleOnProviderChanged(route: MediaRouter.RouteInfo?) {
+        if(route == null) return
+        handlerMain.post{
+            val id: Int = route.presentationDisplayId
+            if (id > -1 && id != mPresentationId) {
+                mPresentationId = id
+
+                releaseRoute()
+                initRoute(route)
+            } else if (id == -1 && id != mPresentationId) {
+                mPresentationId = id
+
+                releaseRoute()
+                notifyRouterDisconnected()
             }
         }
     }
@@ -510,6 +525,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
     override fun onResume() {
         super.onResume()
         Log.d("LOG", this.javaClass.simpleName + " onResume() | current thread: ${Thread.currentThread()} | name: ${Thread.currentThread().name}")
+        PreferenceHelper.getInstance(this).putBoolean(ConstantPreference.IS_IN_BACKGROUND, false)
         mIsVisble = true
         appVisible = true
         checkForCrashes()
@@ -517,6 +533,23 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         showNetworkDisconnectedDialogIf()
 //        mSessionManagerListener.onSetup(this)
         mPlayer?.onAppViewVisible()
+        if(isMediaProviderChangedInBackground){
+            isMediaProviderChangedInBackground = false
+            handleOnProviderChanged(route)
+            route = null
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        Log.d("LOG", this.javaClass.simpleName + " onSaveInstanceState()")
+        PreferenceHelper.getInstance(this).putBoolean(ConstantPreference.IS_IN_BACKGROUND, true)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        Log.d("LOG", this.javaClass.simpleName + " onRestoreInstanceState()")
+        PreferenceHelper.getInstance(this).putBoolean(ConstantPreference.IS_IN_BACKGROUND, false)
     }
 
     private fun showNetworkDisconnectedDialogIf() {

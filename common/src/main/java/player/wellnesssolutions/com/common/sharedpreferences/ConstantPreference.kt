@@ -36,4 +36,6 @@ object ConstantPreference {
     const val IS_SEND_DEVICE_TOKEN = "isSendDeviceToken"
     const val IS_DOWNLOAD_VIDEOS = "isDownloadVideos"
     const val DOWNLOAD_VIDEOS_SUBS_ID = "downloadVideosSubsID"
+
+    const val IS_IN_BACKGROUND = "IS_IN_BACKGROUND"
 }

@@ -92,7 +92,7 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
 
     override fun onResume() {
         super.onResume()
-
+        PreferenceHelper.getInstance()?.putBoolean(ConstantPreference.IS_IN_BACKGROUND, false)
         Log.d("LOG", this.javaClass.simpleName + " onResume() | isNewScreen: $isNewScreen")
         if (isNewScreen) {
             handler.postDelayed(runnableAttachPresenterFirstTime, Constant.TIME_POST_DELAY_DEFAULT)
@@ -106,6 +106,12 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
     override fun onPause() {
         presenter?.onDetach()
         super.onPause()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        Log.d("LOG", this.javaClass.simpleName + " onSaveInstanceState()")
+        PreferenceHelper.getInstance()?.putBoolean(ConstantPreference.IS_IN_BACKGROUND, true)
     }
 
     override fun onDestroyView() {

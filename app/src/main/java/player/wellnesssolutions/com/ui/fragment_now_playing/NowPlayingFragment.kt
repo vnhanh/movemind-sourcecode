@@ -124,6 +124,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
 
     override fun onResume() {
         super.onResume()
+        PreferenceHelper.getInstance()?.putBoolean(ConstantPreference.IS_IN_BACKGROUND, false)
 
         attachPresenter()
         setOldScreen()
@@ -138,6 +139,12 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         mCheckVideoPositionRunnable?.stopTask()
         detachPresenters()
         super.onPause()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        Log.d("LOG", this.javaClass.simpleName + " onSaveInstanceState()")
+        PreferenceHelper.getInstance()?.putBoolean(ConstantPreference.IS_IN_BACKGROUND, true)
     }
 
     override fun onDestroyView() {
@@ -419,6 +426,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
                             vidPlayer.hideController()
                         } else {
                             vidPlayer.player?.let { players ->
+                                Log.d("LOG", this.javaClass.simpleName + " setupVideoPlayerController() | controler is visible")
                                 when (players.playbackState) {
                                     Player.STATE_IDLE -> {
                                         // do nothing

@@ -103,7 +103,7 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
 
     override fun onResume() {
         super.onResume()
-
+        PreferenceHelper.getInstance()?.putBoolean(ConstantPreference.IS_IN_BACKGROUND, false)
         mPresenter?.onAttach(this)
         setOldScreen()
     }
@@ -111,6 +111,12 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     override fun onPause() {
         mPresenter?.onDetach()
         super.onPause()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        Log.d("LOG", this.javaClass.simpleName + " onSaveInstanceState()")
+        PreferenceHelper.getInstance()?.putBoolean(ConstantPreference.IS_IN_BACKGROUND, true)
     }
 
     override fun onDestroyView() {
