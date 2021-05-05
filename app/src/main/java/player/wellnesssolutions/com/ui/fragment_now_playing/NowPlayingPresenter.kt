@@ -166,7 +166,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
     }
 
     override fun resumeOrReplay() {
-        Log.d("LOG", this.javaClass.simpleName + " resumeOrReplay() | playMode: $playedMode | mPlayerState: $mPlayerState | player: ${mPlayerManager.getPlayer()}")
+        Log.d("LOG", this.javaClass.simpleName + " resumeOrReplay() | playMode: $playedMode | playbackState: ${mPlayerManager.getPlaybackState()} | mPlayerState: $mPlayerState | player: ${mPlayerManager.getPlayer()}")
         if (playedMode != PlayMode.ON_DEMAND) return
         when {
             mPlayerState == PlayerState.PAUSED && mPlayerManager.getPlayer() != null -> mPlayerManager.onResume()
@@ -678,6 +678,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
      * @interface Player.EventListener
      */
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+        Log.d("LOG", this.javaClass.simpleName + " onPlayerStateChanged() | playbackState: $playbackState | playWhenReady: $playWhenReady")
         when (playbackState) {
             Player.STATE_BUFFERING -> {
 

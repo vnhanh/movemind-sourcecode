@@ -35,7 +35,6 @@ object FragmentUtil {
         if (isAddToBackStack) ft.addToBackStack(null)
 
         ft.commitAllowingStateLoss()
-
     }
 
     fun printActivityFragmentList(fragmentManager: FragmentManager, index: Int = 0) {

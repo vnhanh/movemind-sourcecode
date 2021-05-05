@@ -49,6 +49,7 @@ object ExoPlayerUtil {
     fun initProgressiveContainerFormat(context: Context, appName: String, cookieValue: String,
                                        mediaUrl: String, subtitleLink: String, languageCode: String,
                                        playWhenReady: Boolean = true, currentPosition: Long, volume: Float): SimpleExoPlayer {
+        Log.d("LOG", this.javaClass.simpleName + " initProgressiveContainerFormat()")
         val player: SimpleExoPlayer = getDefaultInstanceForMp4(context)
 
         val dataSourceFactory: DefaultHttpDataSourceFactory = DefaultHttpDataSourceFactory(Util.getUserAgent(context, appName), null).apply {
@@ -69,6 +70,7 @@ object ExoPlayerUtil {
                          subtitleLink: String, languageCode: String,
                          playWhenReady: Boolean = true, currentPosition: Long,
                          volume: Float, typeVideo: EnumTypeViewVideo, isPlayOffline: Boolean, fileDataSource: FileDataSource): SimpleExoPlayer {
+        Log.d("LOG", this.javaClass.simpleName + " initStreamPlayer()")
         val videoTrackSelectionFactory: TrackSelection.Factory = AdaptiveTrackSelection.Factory()
         val trackSelector = DefaultTrackSelector(videoTrackSelectionFactory)
 //        val defaultParameter = trackSelector.buildUponParameters()

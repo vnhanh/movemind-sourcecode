@@ -207,7 +207,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
                 }
 
                 extras.containsKey(BUNDLE_VIDEO_SEARCHED) -> {
-                    val videos: ArrayList<MMVideo> = VideoDBUtil.getVideosFromDB(TAG, false)
+                    val videos: ArrayList<MMVideo> = VideoDBUtil.getVideosFromDB(Constant.MM_VIDEO_SEARCHED, false)
                     Log.d("LOG", this.javaClass.simpleName + " readArguments() | PLAY VIDEO SEARCHED | videos number: ${videos.size}")
                     when {
                         presenter == null -> presenter = NowPlayingPresenter(
@@ -970,11 +970,12 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
      * implemented @Player.EventListener
      */
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+        Log.d("LOG", this.javaClass.simpleName + " onPlayerStateChanged() | playWhenReady: $playWhenReady " +
+                "| playbackState: $playbackState")
         if (progressLoadingVideo == null || btnPlayVideo == null || btnPauseVideo == null) return
 
         when (playbackState) {
             Player.STATE_BUFFERING -> {
-
                 PlayVideoDisplayHelper.displayViewsOnBuffering(progressLoadingVideo, btnPlayVideo, btnPauseVideo)
             }
 
@@ -985,7 +986,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
 
                     vidPlayer.player?.let { _ ->
                         val isControllerVisible = vidPlayer.isControllerVisible
-
+                        Log.d("LOG", this.javaClass.simpleName + " onPlayerStateChanged() state ready| isControllerVisible: $isControllerVisible")
                         PlayVideoDisplayHelper.displayOnReady(
                                 isControllerVisible = isControllerVisible,
                                 playWhenReady = playWhenReady,
@@ -1113,7 +1114,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
 
         fun getInstanceForSearchedVideos(data: ArrayList<MMVideo>): NowPlayingFragment =
                 NowPlayingFragment().apply {
-                    VideoDBUtil.createOrUpdateVideos(data, TAG)
+                    VideoDBUtil.createOrUpdateVideos(data, Constant.MM_VIDEO_SEARCHED)
 
                     arguments = Bundle().apply {
                         putBoolean(BUNDLE_VIDEO_SEARCHED, true)
@@ -1122,7 +1123,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
                 }
 
         fun getBundleBySearchedVideos(data: ArrayList<MMVideo>): Bundle {
-            VideoDBUtil.createOrUpdateVideos(data, TAG)
+            VideoDBUtil.createOrUpdateVideos(data, Constant.MM_VIDEO_SEARCHED)
 
             return Bundle().apply {
                 putBoolean(BUNDLE_VIDEO_SEARCHED, true)

@@ -71,21 +71,22 @@ class PlayerUsecase {
 
     fun onRelease(isKeepPosition: Boolean, keepPlayWhenReady: Boolean, listeners: ArrayList<Player.EventListener>) {
         mPlayer?.also {
+            Log.d("LOG", "PlayerUseCase - onRelease()")
             it.playWhenReady = false
-
-            val iterator = listeners.iterator()
-            while (iterator.hasNext()){
-                iterator.next()
-                iterator.remove()
-            }
-
-            mIsPlayWhenReady = keepPlayWhenReady
-            it.stop()
 
             mCurrentPosition = if (isKeepPosition)
                 it.currentPosition
             else
                 0L
+
+            mIsPlayWhenReady = keepPlayWhenReady
+            it.stop()
+
+//            val iterator = listeners.iterator()
+//            while (iterator.hasNext()){
+//                iterator.next()
+//                iterator.remove()
+//            }
 
             it.release()
         }
