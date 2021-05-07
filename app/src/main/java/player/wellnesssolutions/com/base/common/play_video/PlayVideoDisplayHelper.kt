@@ -59,7 +59,7 @@ object PlayVideoDisplayHelper {
     }
 
     fun displayView(view: View?, isDisplayed: Boolean) {
-        Log.d("LOG", this.javaClass.simpleName + " displayView() | view: $view | isDisplayed: $isDisplayed")
+//        Log.d("LOG", this.javaClass.simpleName + " displayView() | view: $view | isDisplayed: $isDisplayed")
         when (isDisplayed) {
             true -> {
                 view?.also {

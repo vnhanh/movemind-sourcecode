@@ -19,7 +19,7 @@ interface IScheduleContract {
         fun onDetach()
         fun onDestroy()
         fun onAttach(view: View)
-        fun setScheduleCurrentAndWaitNextVideo(videos: ArrayList<MMVideo>, isRemoveVideoOnSetupNextSchedule: Boolean = true)
+        fun setScheduleCurrentAndWaitNextVideo(videos: ArrayList<MMVideo>)
         fun onTimePlaySchedule()
         fun setStateLoadScheduleOnStart()
         fun isUpdatingNewSchedule(): Boolean

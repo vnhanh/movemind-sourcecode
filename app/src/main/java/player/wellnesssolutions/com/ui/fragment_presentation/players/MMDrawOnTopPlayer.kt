@@ -89,8 +89,8 @@ class MMDrawOnTopPlayer(context: Context) : MMLocalPlayer(context), SurfaceHolde
             } else {
                 modePlay = mode
                 videosBuffer.addAll(item as ArrayList<MMVideo>)
-                this.lastPosition = 0L
-                Log.d("LOG", this.javaClass.simpleName + " play() | videosBuffer size: ${videosBuffer.size} | thread: ${Thread.currentThread()}")
+                this.lastPosition = lastPosition
+//                Log.d("LOG", this.javaClass.simpleName + " play() | videosBuffer size: ${videosBuffer.size} | thread: ${Thread.currentThread()}")
             }
         }
     }

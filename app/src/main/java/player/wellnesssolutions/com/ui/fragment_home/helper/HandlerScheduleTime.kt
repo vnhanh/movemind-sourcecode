@@ -29,7 +29,7 @@ class HandlerScheduleTime(private var context: Context?, private var listener: I
         this.mTimeDiffs = timeDiffs
     }
 
-    fun setupScheduleNextVideo(videos: ArrayList<MMVideo>, callback: ICallBackNextScheduleVideo) {
+    fun setupScheduleNextVideo(videos: ArrayList<MMVideo>, callback: ICallBackNextScheduleVideo? = null) {
         if (videos.size == 0) return
         handleNextScheduleVideo(videos, 0, callback)
     }
@@ -89,14 +89,14 @@ class HandlerScheduleTime(private var context: Context?, private var listener: I
 
     }
 
-    private fun setupAlarmTaskForCaseWaitSchedule(index: Int, timePlay: Long, callback: ICallBackNextScheduleVideo) {
+    private fun setupAlarmTaskForCaseWaitSchedule(index: Int, timePlay: Long, callback: ICallBackNextScheduleVideo?) {
         setupAlarmTask(timePlay)
-        callback.onResult(index, timePlay-1000L)
+        callback?.onResult(index, timePlay-1000L)
     }
 
-    private fun handleNextScheduleVideo(videos: ArrayList<MMVideo>, index: Int, callback: ICallBackNextScheduleVideo) {
+    private fun handleNextScheduleVideo(videos: ArrayList<MMVideo>, index: Int, callback: ICallBackNextScheduleVideo?) {
         if (index >= videos.size) {
-            callback.onNotFound()
+            callback?.onNotFound()
             return
         }
 
@@ -132,7 +132,7 @@ class HandlerScheduleTime(private var context: Context?, private var listener: I
                     }
 
                     STATE_TIME_PLAY_SCHEDULE.TIME_ERROR -> {
-                        callback.onNotFound()
+                        callback?.onNotFound()
                     }
                 }
             }

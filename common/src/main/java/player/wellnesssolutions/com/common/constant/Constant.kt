@@ -1,6 +1,7 @@
 package player.wellnesssolutions.com.common.constant
 
 object Constant {
+
     /**
      * "Header X-Device not found.", "Your account is inactive.",
     "Device not found.", "Device is inactive."

@@ -312,7 +312,6 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
     }
 
     fun playVideo(mode: PlayMode, videos: ArrayList<MMVideo>) {
-        Log.d("LOG", this.javaClass.simpleName + " playVideo() | mode: $mode | videos number: ${videos.size}")
         mSessionManager.stop()
         PreferenceHelper.getInstance(this).putInt(ConstantPreference.MODE_PLAY_VIDEO, mode.value)
         when {
@@ -326,6 +325,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         }
         val currentPosition: Long = PreferenceHelper.getInstance(this).getLong(ConstantPreference.LAST_PLAYED_VIDEO_POSITION,
                 0L)
+        Log.d("LOG", this.javaClass.simpleName + " playVideo() | mode: $mode | videos number: ${videos.size} | current position: $currentPosition")
         ParameterUtils.isClearVideoOnPresentation = true
         mSessionManager.add(mode = mode, videos = videos, playedPosition = currentPosition)
     }
@@ -524,7 +524,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
 
     override fun onResume() {
         super.onResume()
-        Log.d("LOG", this.javaClass.simpleName + " onResume() | current thread: ${Thread.currentThread()} | name: ${Thread.currentThread().name}")
+        Log.d("LOG", this.javaClass.simpleName + " onResume() | current thread: ${Thread.currentThread()} | isMediaProviderChangedInBackground: $isMediaProviderChangedInBackground")
         PreferenceHelper.getInstance(this).putBoolean(ConstantPreference.IS_IN_BACKGROUND, false)
         mIsVisble = true
         appVisible = true
@@ -533,6 +533,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         showNetworkDisconnectedDialogIf()
 //        mSessionManagerListener.onSetup(this)
         mPlayer?.onAppViewVisible()
+
         if(isMediaProviderChangedInBackground){
             isMediaProviderChangedInBackground = false
             handleOnProviderChanged(route)
@@ -928,8 +929,6 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
     fun isPlayingSearchedVideos(): Boolean = mSessionManager.isPlayingSearchVideos()
     fun isPlayingPresentation(): Boolean = mSessionManager.isPlayingPresentaion()
     fun getPresentationPlayMode(): PlayMode = mSessionManager.getPlayingMode()
-
-    fun getPresentationVideos(): ArrayList<MMVideo> = mSessionManager.getVideos()
 
     fun onPlayPresentationVideoAt(position: Int) {
         mSessionManager.onPlayPresentationVideoAt(position)

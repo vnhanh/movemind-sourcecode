@@ -3,6 +3,7 @@ package player.wellnesssolutions.com.ui.activity_main
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 
 /**
  * This BroadcastReceiver helps to transfer the data and actions between the Casting TV Service and the UI
@@ -18,6 +19,7 @@ class CastingBroadcastReceiver : BroadcastReceiver() {
         const val EXTRA_ENDED_VIDEO_STATE_ON_TV = "EXTRA_ENDED_VIDEO_STATE_ON_TV"
         const val EXTRA_ENDED_VIDEO_STATE_ON_TV_SCHEDULE = "EXTRA_ENDED_VIDEO_STATE_ON_TV_SCHEDULE"
         const val EXTRA_DURATION_VIDEO_ON_TV = "EXTRA_DURATION_VIDEO_ON_TV"
+        const val EXTRA_DURATION_GO_WITH_UPDATE = "EXTRA_DURATION_GO_WITH_UPDATE"
         const val EXTRA_UPDATE_PROGRESS = "EXTRA_UPDATE_PROGRESS"
         const val EXTRA_TRANSLATE_TO_ANOTHER_VIDEO_ON_TV = "EXTRA_TRANSLATE_TO_ANOTHER_VIDEO_ON_TV"
         const val EXTRA_IS_SHOW_PLAY_PAUSE_BUTTON = "EXTRA_IS_SHOW_PLAY_PAUSE_BUTTON"
@@ -94,6 +96,7 @@ class CastingBroadcastReceiver : BroadcastReceiver() {
     }
 
     private fun readTVIntent(intent: Intent) {
+//        Log.d("LOG", this.javaClass.simpleName + " readTVIntent()")
         when {
             intent.hasExtra(EXTRA_DURATION_VIDEO_ON_TV) -> onPlayerInitialized(intent)
             intent.hasExtra(EXTRA_UPDATE_PROGRESS) -> onUpdateVideoProgress(intent)
@@ -168,7 +171,7 @@ class CastingBroadcastReceiver : BroadcastReceiver() {
         val isShowPlayPauseButton: Boolean = intent.getBooleanExtra(EXTRA_IS_SHOW_PLAY_PAUSE_BUTTON, false)
         val isPlaying: Boolean = intent.getBooleanExtra(EXTRA_READY_VIDEO_STATE_ON_TV, false)
         val progress: Long = intent.getLongExtra(EXTRA_UPDATE_PROGRESS, 0L)
-        val duration: Long = intent.getLongExtra(EXTRA_DURATION_VIDEO_ON_TV, 1L)
+        val duration: Long = intent.getLongExtra(EXTRA_DURATION_GO_WITH_UPDATE, 1L)
         for (listener: TVListener in mTVListeners) {
             listener.onUpdateProgress(isShowPlayPauseButton, isPlaying, progress, duration)
         }

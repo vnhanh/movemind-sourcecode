@@ -41,7 +41,7 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
     private var isLoadScheduleOnStart = false
     private var isUpdatingNewSchedule = false
     private var isPerformNextScheduleOnAttachView = false
-    private var isPerformingNextScheduleVideo = false
+//    private var isPerformingNextScheduleVideo = false
     private var isLoading = false
 
     private var cacheVideoScheduleCalculated = DataCachedVideoScheduleCalculated()
@@ -88,7 +88,7 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
     override fun setStateLoadScheduleOnStart() {
         Log.d("LOG", this.javaClass.simpleName + " setStateLoadScheduleOnStart()")
         isLoadScheduleOnStart = true
-        isPerformingNextScheduleVideo = false
+//        isPerformingNextScheduleVideo = false
         isPerformNextScheduleOnAttachView = false
     }
 
@@ -112,7 +112,7 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
         }
 
         // reset flags
-        isPerformingNextScheduleVideo = false
+//        isPerformingNextScheduleVideo = false
         isPerformNextScheduleOnAttachView = false
 
         this.mView = view
@@ -218,26 +218,44 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
      */
     override fun onHaveNowPlayingVideo(playedPosition: Long) {
         Log.d("LOG", this.javaClass.simpleName + " onHaveNowPlayingVideo() | playedPosition: $playedPosition | videos number: ${scheduleVideos.size}")
+
         if (mView == null) {
             cacheVideoScheduleCalculated = DataCachedVideoScheduleCalculated(STATE_CALCULATING_VIDEO_SCHEDULE_NOW.ON_PLAY_VIDEO_SCHEDULE_NOW, playedPosition)
+            setupNextScheduleOnCaseCasting()
         } else {
             if (scheduleVideos.size > 0) {
-                val view = mView
-                when {
-                    view == null -> {
+//                val view = mView
+//                when {
+//                    view == null -> {
                         // TODO: will have to perform the case view is null setup for now schedule
-                        if (isPerformingNextScheduleVideo) isPerformNextScheduleOnAttachView = true
+//                        if (isPerformingNextScheduleVideo) isPerformNextScheduleOnAttachView = true
 
-                    }
+//                    }
+//
+//                    else -> {
+//
+//                    }
+//                }
 
-                    else -> {
-                        view.hideLoadingProgress()
-                        VideoDBUtil.createOrUpdateVideos(scheduleVideos, Constant.MM_SCHEDULE)
-                        view.onHaveClassVideos(scheduleVideos, this.isClickedFromBtnBottom)
-                    }
+                mView?.also { view ->
+                    view.hideLoadingProgress()
+                    VideoDBUtil.createOrUpdateVideos(scheduleVideos, Constant.MM_SCHEDULE)
+                    view.onHaveClassVideos(scheduleVideos, this.isClickedFromBtnBottom)
                 }
+
+                setupNextScheduleOnCaseCasting()
             } else {
                 navigateToNoClass()
+            }
+        }
+
+    }
+
+    private fun setupNextScheduleOnCaseCasting(){
+        context?.also { context ->
+            if(context is MainActivity && context.isPresentationAvailable()){
+                Log.d("LOG", this.javaClass.simpleName + " onHaveNowPlayingVideo() | setup next videos")
+                handlerScheduleTime.setupScheduleNextVideo(scheduleVideos)
             }
         }
     }
@@ -277,7 +295,7 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
 
                 else -> {
                     view.hideLoadingProgress()
-                    if (isPerformingNextScheduleVideo) return
+//                    if (isPerformingNextScheduleVideo) return
 
                     view.onNoClassVideosForNow(scheduleVideos, "", R.color.white, isClickedFromBtnBottom)
                     // do nothing more
@@ -331,7 +349,7 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
             scheduleVideos = VideoDBUtil.getScheduleVideos()
         }
         isPerformNextScheduleOnAttachView = false
-        isPerformingNextScheduleVideo = false
+//        isPerformingNextScheduleVideo = false
         handlerScheduleTime.setupScheduleForNowVideo(scheduleVideos)
     }
 
@@ -379,18 +397,16 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
         this.scheduleVideos.clear()
         this.scheduleVideos = videos
         this.isPerformNextScheduleOnAttachView = false
-        this.isPerformingNextScheduleVideo = false
+//        this.isPerformingNextScheduleVideo = false
         this.isLoadScheduleOnStart = false
     }
 
-    private var isRemoveVideoOnSetupNextSchedule = true
-    override fun setScheduleCurrentAndWaitNextVideo(videos: ArrayList<MMVideo>, isRemoveVideoOnSetupNextSchedule: Boolean) {
+    override fun setScheduleCurrentAndWaitNextVideo(videos: ArrayList<MMVideo>) {
         this.scheduleVideos.clear()
         this.scheduleVideos = videos
         this.isPerformNextScheduleOnAttachView = false
-        this.isPerformingNextScheduleVideo = true // setup schedule for next schedule on screen show
+//        this.isPerformingNextScheduleVideo = true // setup schedule for next schedule on screen show
         this.isLoadScheduleOnStart = false
-        this.isRemoveVideoOnSetupNextSchedule = isRemoveVideoOnSetupNextSchedule
         if (mView == null) {
             this.isPerformNextScheduleOnAttachView = true
             return
@@ -456,7 +472,7 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
 //            }
 //        }
 
-        isPerformingNextScheduleVideo = false
+//        isPerformingNextScheduleVideo = false
     }
 
     override fun isUpdatingNewSchedule(): Boolean = isUpdatingNewSchedule

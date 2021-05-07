@@ -33,15 +33,17 @@ import player.wellnesssolutions.com.network.models.config.MMConfigData
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.com.network.models.response.ResponseValue
 import player.wellnesssolutions.com.services.DownloadService
+import player.wellnesssolutions.com.ui.activity_main.IRouterChanged
 import player.wellnesssolutions.com.ui.activity_main.MainActivity
 import player.wellnesssolutions.com.ui.fragment_control.ControlFragment
+import player.wellnesssolutions.com.ui.fragment_control.helpers.HandleVideosOnceStopCasting
 import player.wellnesssolutions.com.ui.fragment_help_me_choose.helpers.HMCDataHelper
 import player.wellnesssolutions.com.ui.fragment_no_class.NoClassFragment
 import player.wellnesssolutions.com.ui.fragment_now_playing.helper.NowPlayingVideoSetupHelper
 import player.wellnesssolutions.com.ui.fragment_search_preview.helpers.SPDBUtil
 import player.wellnesssolutions.com.ui.fragment_search_result_videos.SearchResultFragment
 
-class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
+class HomeFragment : BaseScheduleFragment(), IHomeContract.View, IRouterChanged {
     private var presenter: IHomeContract.Presenter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,9 +51,9 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
         presenter = HomePresenter()
     }
 
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
+        registerRouterChangedListener()
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
@@ -118,6 +120,7 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
         super.onDestroyView()
         try {
             handler.removeCallbacks(null)
+            unregisterRouterChangedListener()
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -393,6 +396,23 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View {
                     FileUtil.getAvailableExternalMemorySize(it),
                     FileUtil.getTotalExternalMemorySize(it))
 
+        }
+    }
+
+    override fun onMediaRouterDisconnected() {
+        super.onMediaRouterDisconnected()
+        HandleVideosOnceStopCasting.handlePlayingVideos(activity, handler)
+    }
+
+    private fun registerRouterChangedListener() {
+        activity?.also {
+            if (it is MainActivity) it.addRouterChangedListener(this)
+        }
+    }
+
+    private fun unregisterRouterChangedListener() {
+        activity?.also {
+            if (it is MainActivity) it.removeRouterChangedListener(this)
         }
     }
 

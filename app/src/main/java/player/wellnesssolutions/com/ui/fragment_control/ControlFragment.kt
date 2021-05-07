@@ -106,6 +106,10 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
         PreferenceHelper.getInstance()?.putBoolean(ConstantPreference.IS_IN_BACKGROUND, false)
         mPresenter?.onAttach(this)
         setOldScreen()
+        if(isCastDisconnectedInBackground){
+            isCastDisconnectedInBackground = false
+            onMediaRouterDisconnected()
+        }
     }
 
     override fun onPause() {
@@ -133,7 +137,7 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     }
 
     /**
-     * implementing @interface Presenter
+     * Implement Schedule
      */
     // process in case no class videos (no schedule) after loading schedule
     override fun onNoClassVideosForNow(scheduleVideos: ArrayList<MMVideo>, message: String, @ColorRes msgColor: Int, isLoadScheduleManually: Boolean) {
@@ -151,13 +155,6 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
 
         when {
             !isCasted -> {
-                activity?.also { act ->
-                    if (act is MainActivity && act.isPresentationAvailable() && ParameterUtils.isClearVideoOnPresentation) {
-                        act.clearPresentationVideos()
-                    } else {
-                        ParameterUtils.isClearVideoOnPresentation = true
-                    }
-                }
 
                 // old flow
                 //        childFragmentManager.also { fm ->
@@ -186,6 +183,14 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
             }
 
             else -> {
+                activity?.also { act ->
+                    if (act is MainActivity && act.isPresentationAvailable() && ParameterUtils.isClearVideoOnPresentation) {
+                        act.clearPresentationVideos()
+                    } else {
+                        ParameterUtils.isClearVideoOnPresentation = true
+                    }
+                }
+
                 val messageLowerCase = message.toLowerCase()
                 if (messageLowerCase.contains("request failed")) {
                     MessageUtils.showSnackBar(btnLogoBottom, message, R.color.yellow)
@@ -646,14 +651,20 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     /**
      * interface IRouterChanged
      */
+    private var isCastDisconnectedInBackground = false
+
     // disconnect TV
     override fun onMediaRouterDisconnected() {
         Log.d("LOG", this.javaClass.simpleName + " onMediaRouterDisconnected()")
-        btnPlaylistPresentation?.visibility = View.INVISIBLE
-        constraintArrowUp?.visibility = View.INVISIBLE
-        constraintArrowDown?.visibility = View.INVISIBLE
-        prgTimebarPlaying?.visibility = View.INVISIBLE
-        HandleVideosOnceStopCasting.handlePlayingVideos(activity = activity, handler = handler)
+        PreferenceHelper.getInstance()?.getBoolean(ConstantPreference.IS_IN_BACKGROUND, false)?.also { isInBackground ->
+            if(isInBackground){
+                isCastDisconnectedInBackground = true
+            }else{
+                Log.d("LOG", this.javaClass.simpleName + " onMediaRouterDisconnected() - hide casting views and open new screen")
+                onClearVideos()
+                HandleVideosOnceStopCasting.handlePlayingVideos(activity = activity, handler = handler)
+            }
+        }
     }
 
     // start playing videos on TV or play new videos on TV
@@ -669,10 +680,10 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
         btnPlaylistPresentation?.visibility = View.INVISIBLE
         constraintArrowUp?.visibility = View.INVISIBLE
         constraintArrowDown?.visibility = View.INVISIBLE
-
     }
 
     private fun showPresentationPlaylist() {
+        Log.d("LOG", this.javaClass.simpleName + " showPresentationPlaylist()")
         constraintArrowUp?.let {
             it.visibility = View.INVISIBLE
         }
@@ -686,6 +697,7 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     }
 
     private fun hidePresentationPlaylist() {
+        Log.d("LOG", this.javaClass.simpleName + " hidePresentationPlaylist()")
         constraintArrowUp?.let {
             it.visibility = View.VISIBLE
         }
@@ -700,6 +712,12 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     private fun registerRouterChangedListener() {
         activity?.also {
             if (it is MainActivity) it.addRouterChangedListener(this)
+        }
+    }
+
+    private fun unregisterRouterChangedListener() {
+        activity?.also {
+            if (it is MainActivity) it.removeRouterChangedListener(this)
         }
     }
 
@@ -722,12 +740,6 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
                     e.printStackTrace()
                 }
             }
-        }
-    }
-
-    private fun unregisterRouterChangedListener() {
-        activity?.also {
-            if (it is MainActivity) it.removeRouterChangedListener(this)
         }
     }
 
@@ -762,7 +774,9 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     }
 
     override fun showPresentationPlayList(nowPlayVideo: MMVideo, comingUpVideos: ArrayList<MMVideo>) {
-        //mNowPlayingDownloadButtonManager?.setVideoData(nowPlayVideo)
+        Log.d("LOG", this.javaClass.simpleName + " showPresentationPlayList()")
+                //mNowPlayingDownloadButtonManager?.setVideoData(nowPlayVideo)
+
         view?.also { _ ->
             // show video nowplaying data in group views coming up next
             mExtraNPGCUCollectionViews = GCUDisplayHelper.showPlayingVideoInfo(groupViewsComingUpNext,
@@ -788,7 +802,8 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     private var isRenderedPlayListView = false
 
     override fun onPlayerReady(isShowPlayPauseButton: Boolean, isPlaying: Boolean, currentPosition: Long, duration: Long) {
-//        Log.d("LOG", this.javaClass.simpleName + " onPlayerRead() | currentPosition: $currentPosition | duration: $duration")
+        Log.d("LOG", this.javaClass.simpleName + " onPlayerReady() | currentPosition: $currentPosition | duration: $duration " +
+                "| isRenderPlayListView: $isRenderedPlayListView")
         // show the pause button in PLAYLIST
         if (isShowPlayPauseButton)
             renderButtonPlayPausePlaylist(isPlaying)
@@ -879,13 +894,8 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
                     }
 
                     tvVideoPlayingPlaylistDuration?.also { textViewDuration ->
-                        val text = textViewDuration.text
-                        Log.d("LOG", this.javaClass.simpleName + " onUpdateProgress() | durationVideo: $duration")
-                        if(text.isBlank()){
-                            Log.d("LOG", this.javaClass.simpleName + " onUpdateProgress() set duration textview")
-                            textViewDuration.text = StrUtil.convertTimeValueToString(value = duration / 1000L)
-                            textViewDuration.visibility = View.VISIBLE
-                        }
+                        textViewDuration.text = StrUtil.convertTimeValueToString(value = duration / 1000L)
+                        textViewDuration.visibility = View.VISIBLE
                     }
 
                     progressTimePlayingVideo.progress = (position * 100 / duration).toInt()
@@ -902,6 +912,7 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     }
 
     override fun onUpdateEndedVideoState() {
+        Log.d("LOG", this.javaClass.simpleName + " onUpdateEndedVideoState()")
         showPlayVideoUIOnPlaylist()
         hidePresentationPlaylist()
         btnPlaylistPresentation?.let {
@@ -916,6 +927,7 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     }
 
     override fun onUpdateEndedVideoStateSchedule() {
+        Log.d("LOG", this.javaClass.simpleName + " onUpdateEndedVideoStateSchedule()")
         showPlayVideoUIOnPlaylist()
         hidePresentationPlaylist()
         btnPlaylistPresentation?.let {

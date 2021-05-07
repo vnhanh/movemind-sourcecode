@@ -184,10 +184,10 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
         mMonitorVideoAsyncTask?.stopTask()
         mMonitorVideoAsyncTask?.release()
         unregisterUICastingBroadcast()
-        mContext?.also { context ->
-            val lastPosition: Long = mPresenter?.getCurrentPlayedPosition() ?: 0L
-            PreferenceHelper.getInstance(context).putLong(ConstantPreference.LAST_PLAYED_VIDEO_POSITION, lastPosition)
-        }
+//        mContext?.also { context ->
+//            val lastPosition: Long = mPresenter?.getCurrentPlayedPosition() ?: 0L
+//            PreferenceHelper.getInstance(context).putLong(ConstantPreference.LAST_PLAYED_VIDEO_POSITION, lastPosition)
+//        }
 
         if (mView != null) {
             (mContext?.getSystemService(Service.WINDOW_SERVICE) as? WindowManager)?.removeView(mView)
@@ -581,6 +581,8 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
         postDelayCheckVideoPosition()
     }
 
+    private var isVideoPlaying = false
+
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
         when (playbackState) {
             Player.STATE_BUFFERING -> {
@@ -591,6 +593,7 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
 
             Player.STATE_READY -> {
                 mIsLoadingNewVideo = false
+                isVideoPlaying = true
 
                 videoPlayer.player?.let { _ ->
                     PlayVideoDisplayHelper.displayOnReady(
@@ -615,13 +618,15 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
             }
 
             Player.STATE_ENDED -> {
-                //LogUtil.log(javaClass.simpleName + " | ended")
+                Log.d("LOG", this.javaClass.simpleName + " onPlayerStateChanged() | STATE_ENDED")
                 //3
                 showCountDown()
                 //PlayVideoDisplayHelper.displayOnEnded(progressLoadingVideo, btnPlayVideo, btnPauseVideo)
                 onVideoEnded()
-                sendEndedVideoStateToUI()
-
+                if(isVideoPlaying){
+                    sendEndedVideoStateToUI()
+                    isVideoPlaying = false
+                }
             }
         }
     }
@@ -651,12 +656,14 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
 
     override fun hideControlWhenNextVideoSchedule() {
         super.hideControlWhenNextVideoSchedule()
+        Log.d("LOG", this.javaClass.simpleName + " hideControlWhenNextVideoSchedule()")
         sendEndedVideoStateToUI()
     }
 
     override fun isCastableOnTV(): Boolean = true
 
     private fun sendEndedVideoStateToUI() {
+        Log.d("LOG", this.javaClass.simpleName + " sendEndedVideoStateToUI()")
         when (mPresenter?.getPlayMode()) {
             PlayMode.ON_DEMAND -> {
                 val intent = Intent(CastingBroadcastReceiver.ACTION_TV)
@@ -669,7 +676,6 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
                 mService.sendBroadcast(intent)
             }
         }
-
 
     }
 
@@ -846,7 +852,7 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
         intent.putExtra(CastingBroadcastReceiver.EXTRA_IS_SHOW_PLAY_PAUSE_BUTTON, isShowPlayPauseButton)
         intent.putExtra(CastingBroadcastReceiver.EXTRA_READY_VIDEO_STATE_ON_TV, isPlaying)
         intent.putExtra(CastingBroadcastReceiver.EXTRA_UPDATE_PROGRESS, position)
-        intent.putExtra(CastingBroadcastReceiver.EXTRA_DURATION_VIDEO_ON_TV, duration)
+        intent.putExtra(CastingBroadcastReceiver.EXTRA_DURATION_GO_WITH_UPDATE, duration)
         mService.sendBroadcast(intent)
     }
 

@@ -1,11 +1,14 @@
 package player.wellnesssolutions.com.ui.fragment_control
 
 import android.content.Context
+import android.util.Log
 import com.google.gson.Gson
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import player.wellnesssolutions.com.R
+import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
+import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.network.datasource.videos.PlayMode
@@ -30,7 +33,11 @@ class ControlPresenter : IControlContract.Presenter {
 
     override fun getPlayMode(): PlayMode {
         mView?.getViewContext()?.also { context ->
-            if (context is MainActivity) return context.getPresentationPlayMode()
+            if (context is MainActivity) {
+                context.getPresentationPlayMode()
+                val value = PreferenceHelper.getInstance(context).getInt(ConstantPreference.MODE_PLAY_VIDEO, PlayMode.ON_DEMAND.value)
+                return PlayMode.valueOf(value)?:PlayMode.UNKNOWN
+            }
         }
         return PlayMode.ON_DEMAND
     }
@@ -39,6 +46,7 @@ class ControlPresenter : IControlContract.Presenter {
     private var mConfigData: MMConfigData? = null
 
     override fun onAttach(view: IControlContract.View) {
+        Log.d("LOG", "ControlPresenter - onAttach()")
         this.mView = view
         if (mLoadBrandsHandler == null) mLoadBrandsHandler = LoadBrandsHandler(view)
         mLoadBrandsHandler?.onAttach(view)
@@ -48,21 +56,33 @@ class ControlPresenter : IControlContract.Presenter {
 
         view.getViewContext()?.also { context ->
             if (context is MainActivity && context.isPlayingPresentation()) {
-                val videos = context.getPresentationVideos()
-                val number = videos.size
-                if (number == 0) return
+                PreferenceHelper.getInstance(context).getInt(ConstantPreference.MODE_PLAY_VIDEO, PlayMode.ON_DEMAND.value).also { playModeCastingValue ->
+                    val playMode = PlayMode.valueOf(playModeCastingValue)
 
-                Observable.fromCallable {
-                    val comingUpVideos = ArrayList<MMVideo>()
-                    for (i in 1 until number) {
-                        comingUpVideos.add(videos[i])
-                    }
-                    return@fromCallable comingUpVideos
-                }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                    val videos: ArrayList<MMVideo> =
+                        when(playMode){
+                            PlayMode.ON_DEMAND -> VideoDBUtil.getVideosFromDB(Constant.MM_VIDEO_SEARCHED, isDelete = false)
+                            PlayMode.SCHEDULE -> VideoDBUtil.getScheduleVideos()
+                            else -> arrayListOf()
+                        }
+
+                    Log.d("LOG", "ControlPresenter - onAttach() | videos number: ${videos.size} | playModeCasting: $playMode")
+                    val number = videos.size
+                    if (number == 0) return
+
+                    Observable.fromCallable {
+                        val comingUpVideos = ArrayList<MMVideo>()
+                        for (i in 1 until number) {
+                            comingUpVideos.add(videos[i])
+                        }
+                        return@fromCallable comingUpVideos
+                    }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                         .subscribe { comingUpVideos ->
                             val nowPlayVideo = videos[0]
+                            Log.d("LOG", "ControlPresenter - onAttach() | observeOn - coming videos number: ${comingUpVideos.size}")
                             view.showPresentationPlayList(nowPlayVideo, comingUpVideos)
                         }
+                }
             }
         }
     }

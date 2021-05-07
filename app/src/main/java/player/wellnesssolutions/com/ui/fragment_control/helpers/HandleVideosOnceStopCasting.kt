@@ -2,6 +2,7 @@ package player.wellnesssolutions.com.ui.fragment_control.helpers
 
 import android.app.Activity
 import android.os.Handler
+import android.util.Log
 import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
@@ -19,7 +20,8 @@ object HandleVideosOnceStopCasting {
                 activity?.also { activity ->
                     PreferenceHelper.getInstance(activity).getInt(ConstantPreference.MODE_PLAY_VIDEO, PlayMode.UNKNOWN.value).also { modeCasting ->
                         if (modeCasting == PlayMode.ON_DEMAND.value) {
-                            VideoDBUtil.getVideosFromDB(Constant.MM_VIDEO_SEARCHED).also { videos ->
+                            VideoDBUtil.getVideosFromDB(Constant.MM_VIDEO_SEARCHED, isDelete = false).also { videos ->
+                                Log.d("LOG", this.javaClass.simpleName + " handlePlayingVideos() - videos number: ${videos.size}")
                                 if (videos.size > 1 && activity is MainActivity) {
                                     val videosNext = ArrayList<MMVideo>()
                                     for (i in 1 until videos.size) {

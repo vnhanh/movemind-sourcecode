@@ -25,6 +25,7 @@ import player.wellnesssolutions.com.custom_exoplayer.EnumTypeViewVideo
 import player.wellnesssolutions.com.custom_exoplayer.PlayerState
 import player.wellnesssolutions.com.network.datasource.videos.PlayMode
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
+import player.wellnesssolutions.com.ui.activity_main.MainActivity
 import player.wellnesssolutions.com.ui.fragment_home.helper.HandlerScheduleTime
 import player.wellnesssolutions.com.ui.fragment_now_playing.helper.HandlerTimeScheduleHelper
 import player.wellnesssolutions.com.ui.fragment_search_brands.module.ILoadBrandHandler
@@ -250,6 +251,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
         // player has been initialized
         // return
         if (isPlayerInitialized() && isKeepPlayerVideoSearchedAfterNetworkReconnect) {
+            Log.d("LOG", this.javaClass.simpleName + " processPlayerBaseOnState() | is inited player")
             isKeepPlayerVideoSearchedAfterNetworkReconnect = false
             mPlayerManager.onReleasePlayer(true, true)
         }
@@ -270,8 +272,8 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
                         runCountDownTimer()
                     } else if (videos.size > 0) {
                         Log.d("LOG", this.javaClass.simpleName + " processPlayerBaseOnState() | initializeSearchPlayer")
-                        PreferenceHelper.getInstance(context = context).delete(ConstantPreference.LAST_PLAYED_VIDEO_POSITION)
                         initPlayer()
+                        PreferenceHelper.getInstance(context = context).delete(ConstantPreference.LAST_PLAYED_VIDEO_POSITION)
                     }
 
                 }
@@ -349,7 +351,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
                 // play searched videos with startTask position > 0
                 mPlayerManager.resumeOrIntialize(playedVideoPosition = mInitPlayedPosition,
                         typeVideo = EnumTypeViewVideo.NORMAL, isUpdateViewNumber = true, isSupportCC = true)
-                mInitPlayedPosition = -1L
+                mInitPlayedPosition = 0L
             }
 
             false -> {
@@ -367,10 +369,11 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
         when (videos.size > 0) {
             true -> {
                 mPlayerState = PlayerState.INITIALIZING
-                mInitPlayedPosition = 0L
+//                mInitPlayedPosition = 0L
                 // play searched videos with startTask position > 0
                 mPlayerManager.onInitialize(playedVideoPosition = mInitPlayedPosition,
                         typeVideo = EnumTypeViewVideo.NORMAL, isUpdateViewNumber = true, isSupportCC = true)
+                mInitPlayedPosition = 0L
             }
 
             false -> {
@@ -419,10 +422,10 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
 
     override fun onReload() {
         Log.d("LOG", this.javaClass.simpleName + " onReload()")
-        mInitPlayedPosition = -1L
+        mInitPlayedPosition = 0L
 //        checkPlayMode()
         mIsReload = true
-        openNowPlayingVideo(-1L)
+        openNowPlayingVideo(0L)
     }
 
     override fun onCookieExpired() {
@@ -526,6 +529,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
     }
 
     override fun onHaveVideoAfter(playedPosition: Long) {
+        Log.d("LOG", this.javaClass.simpleName + "  onHaveVideoAfter()")
         if (playedPosition > 0L) {
             mView?.hideLoadingProgress()
             mView?.hideControlWhenNextVideoSchedule()
@@ -578,11 +582,16 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
 
     override fun setPlayedPosition(position: Long) {
         this.mInitPlayedPosition = position
+        if(position == 0L){
+            mPlayerState = PlayerState.COUNTDOWN
+        }else{
+            mPlayerState = PlayerState.PLAYING
+        }
     }
 
     override fun switchToPlayScheduleVideos(scheduleVideos: ArrayList<MMVideo>) {
         Log.d("LOG", this.javaClass.simpleName + " switchToPlayScheduleVideos() | videos number: ${videos.size}")
-        mInitPlayedPosition = -1L
+        mInitPlayedPosition = 0L
         mPlayerManager.onReleasePlayer(isKeepPosition = true, keepPlayWhenReady = true)
 
         setVideos(scheduleVideos, PlayMode.SCHEDULE)
@@ -593,7 +602,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
         mView = null
         mLoadBrandsHandler?.onDetach()
         // video if could be played at the next onAttach(), would be played from its last position
-        mInitPlayedPosition = -1L
+        mInitPlayedPosition = 0L
         when (playedMode) {
             PlayMode.SCHEDULE -> {
 //                mPlayerManager.onReleasePlayer(isKeepPosition = true, keepPlayWhenReady = true)
@@ -748,7 +757,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
 
     private var havetoCastOnceResume = false
     override fun onCastRouterConnected() {
-        Log.d("LOG", this.javaClass.simpleName + " onCastRouterConnected()")
+        Log.d("LOG", this.javaClass.simpleName + " onCastRouterConnected() | last position: ${mPlayerManager.getCurrentPosition()}")
         PreferenceHelper.getInstance()?.putLong(ConstantPreference.LAST_PLAYED_VIDEO_POSITION, getCurrentPlayedPosition())
         val view = mView
         if(view == null){

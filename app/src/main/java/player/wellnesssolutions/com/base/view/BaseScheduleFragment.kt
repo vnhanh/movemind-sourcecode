@@ -54,7 +54,7 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
                     val videos: ArrayList<MMVideo> = VideoDBUtil.getScheduleVideos()
                     Log.d("LOG", this.javaClass.simpleName + " onCreateView() | setup next schedule | videos number: ${videos.size}")
                     when {
-                        videos.size > 0 -> schedulePresenter?.setScheduleCurrentAndWaitNextVideo(videos, isRemoveVideoOnSetupNextSchedule)
+                        videos.size > 0 -> schedulePresenter?.setScheduleCurrentAndWaitNextVideo(videos)
                         else -> {
                             Log.d("LOG", this.javaClass.simpleName + " onCreateView() | isNewScreen | load remote schedule")
 //                            schedulePresenter?.setStateLoadScheduleOnStart()
@@ -120,13 +120,6 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
      */
     private val runnablePlayScheduledVideo = Runnable {
         schedulePresenter?.onTimePlaySchedule()
-
-        activity?.also { activity ->
-            if (activity is MainActivity && activity.isPresentationAvailable()) {
-                val scheduleViddeos = VideoDBUtil.getScheduleVideos()
-                schedulePresenter?.setScheduleCurrentAndWaitNextVideo(scheduleViddeos, true)
-            }
-        }
     }
 
     private val runnableResetSchedule = Runnable {
@@ -187,7 +180,9 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
                         schedulePresenter?.onLoadSchedule(view = this@BaseScheduleFragment, isClickedFromBtnBottom = false, mustLoad = true)
                     }
                 }
-                ).apply { show() }
+                ).apply {
+                    show()
+                }
             }
         }
     }

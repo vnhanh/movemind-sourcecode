@@ -319,7 +319,7 @@ class MMSessionManager(private val mName: String) : MMPlayer.Callback {
         return result
     }
 
-    fun getVideos(): java.util.ArrayList<MMVideo> = mPlayer?.getVideos() ?: ArrayList()
+    fun getVideos(): ArrayList<MMVideo> = mPlayer?.getVideos() ?: ArrayList()
 
     fun clearAllVideos() {
         mPlayer?.clearAllVideos()
