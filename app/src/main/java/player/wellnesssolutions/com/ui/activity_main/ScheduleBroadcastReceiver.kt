@@ -59,6 +59,7 @@ class ScheduleBroadcastReceiver : BroadcastReceiver() {
     fun release() {
         mScheduleListeners.clear()
         handler.release()
+        handler.removeCallbacks(null)
     }
 
     fun isRegistered(listener: ScheduleListener): Boolean = mScheduleListeners.contains(listener)
@@ -145,17 +146,21 @@ class ScheduleBroadcastReceiver : BroadcastReceiver() {
 
     fun addListener(listener: ScheduleListener) {
         if (mScheduleListeners.contains(listener)) return
-        mScheduleListeners.add(listener)
+        handler.post {
+            mScheduleListeners.add(listener)
+        }
         Log.d("LOG", this.javaClass.simpleName + " addListener() | " +
                 "listeners number: ${mScheduleListeners.size} | listener class name: ${listener.javaClass.simpleName}")
     }
 
     fun removeListener(listener: ScheduleListener) {
-        val iterator = mScheduleListeners.iterator()
-        while (iterator.hasNext()) {
-            val item = iterator.next()
-            if (item == listener) {
-                iterator.remove()
+        handler.post {
+            val iterator = mScheduleListeners.iterator()
+            while (iterator.hasNext()) {
+                val item = iterator.next()
+                if (item == listener) {
+                    iterator.remove()
+                }
             }
         }
     }

@@ -73,10 +73,8 @@ class PlayerUsecase {
         mPlayer?.also {
             it.playWhenReady = false
 
-            val iterator = listeners.iterator()
-            while(iterator.hasNext()){
-                val item = iterator.next()
-                it.removeListener(item)
+            for (listener in listeners) {
+                it.removeListener(listener)
             }
 
             mCurrentPosition = if (isKeepPosition)
