@@ -29,14 +29,10 @@ class DownloadNotification(private var context: Context?) : DownloadTask.Callbac
     }
 
     override fun onDownloadStarted(id: Int?, name: String?) {
-        FirebaseCrashlytics.getInstance().recordException(RuntimeException("onDownloadStarted() called"))
-        FirebaseCrashlytics.getInstance().log("noti: start $name")
         create(0, name)
     }
 
     override fun onInsufficientSpace(videoId: Int?, name: String?, availableSpace: Long, fileSize: Long) {
-        FirebaseCrashlytics.getInstance().recordException(RuntimeException("onInsufficientSpace() called"))
-        FirebaseCrashlytics.getInstance().log("noti: not enough space for video $name")
         cancelNoti()
     }
 
@@ -52,15 +48,11 @@ class DownloadNotification(private var context: Context?) : DownloadTask.Callbac
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            FirebaseCrashlytics.getInstance().recordException(e)
         }
         //Log.e("onDownloadUpdate", "onDownloadUpdate" + progress.toString())
     }
 
     override fun onDownloadFailed(id: Int?, name: String?, reason: String, url: String?) {
-        FirebaseCrashlytics.getInstance().recordException(RuntimeException("onDownloadFailed() called"))
-        FirebaseCrashlytics.getInstance().log("noti: failed $name")
-        FirebaseCrashlytics.getInstance().log("noti: failed reason $reason")
         cancelNoti()
     }
 
@@ -125,8 +117,6 @@ class DownloadNotification(private var context: Context?) : DownloadTask.Callbac
 
                 if (mBuilder == null) return
                 mNotiManager?.notify(NOTI_ID, mBuilder!!.build())
-                FirebaseCrashlytics.getInstance().recordException(RuntimeException("init noti builder"))
-                FirebaseCrashlytics.getInstance().log("noti: init $name")
             } catch (e: Exception) {
                 e.printStackTrace()
                 mBuilder = NotificationCompat.Builder(context, CHANNEL_ID)
@@ -141,8 +131,6 @@ class DownloadNotification(private var context: Context?) : DownloadTask.Callbac
                 try {
                     if (mBuilder == null) return
                     mNotiManager?.notify(NOTI_ID, mBuilder!!.build())
-                    FirebaseCrashlytics.getInstance().recordException(RuntimeException("init noti builder"))
-                    FirebaseCrashlytics.getInstance().log("noti: init $name")
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -151,12 +139,10 @@ class DownloadNotification(private var context: Context?) : DownloadTask.Callbac
     }
 
     fun stop() {
-        FirebaseCrashlytics.getInstance().log("noti: stop")
         mNotiManager?.cancel(NOTI_ID)
     }
 
     fun release() {
-        FirebaseCrashlytics.getInstance().log("noti: release")
         context = null
     }
 }

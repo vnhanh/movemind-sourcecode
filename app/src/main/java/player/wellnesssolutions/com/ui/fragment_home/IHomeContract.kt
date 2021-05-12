@@ -19,7 +19,6 @@ interface IHomeContract {
     interface Presenter : ILifeCycle.Presenter<View> {
         fun setScheduleCurrent(videos: ArrayList<MMVideo>)
         fun onTimePlayAlreadySchedule()
-        fun setupShowPopUpOnStartScreen(message: String)
         fun setupShowSnackbarOnStartScreen(message: String)
     }
 }

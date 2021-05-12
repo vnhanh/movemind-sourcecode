@@ -55,14 +55,17 @@ object HandlerTimeScheduleHelper {
                 }
 
                 else -> {
+                    Log.d("LOG", this.javaClass.simpleName + " calculateTimePlayVideo() | expired")
                     callback.onResult(STATE_TIME_PLAY_SCHEDULE.TIME_EXPIRED, 0L)
                 }
             }
         } catch (parseException: ParseException) {
             parseException.printStackTrace()
+            Log.d("LOG", this.javaClass.simpleName + " calculateTimePlayVideo() | parse error: ${parseException.message}")
             callback.onResult(STATE_TIME_PLAY_SCHEDULE.TIME_ERROR, 0L)
         } catch (e: Exception) {
             e.printStackTrace()
+            Log.d("LOG", this.javaClass.simpleName + " calculateTimePlayVideo() | error: ${e.message}")
             callback.onResult(STATE_TIME_PLAY_SCHEDULE.TIME_ERROR, 0L)
         }
     }

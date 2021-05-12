@@ -31,7 +31,7 @@ import java.net.ConnectException
 
 
 class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var context: Context?) :
-        BaseResponseObserver<VideoViewResponse>(), IPlayVideoContract.Manager, Player.EventListener {
+    BaseResponseObserver<VideoViewResponse>(), IPlayVideoContract.Manager, Player.EventListener {
     companion object {
         const val CODE_NO_ERROR = -1
 
@@ -51,7 +51,8 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
     // video data
     private var mVideos: ArrayList<MMVideo>? = null
 
-    private var mCookieValue: String = PreferenceHelper.getInstance()?.getString(ConstantPreference.SP_COOKIE, "").orEmpty()
+    private var mCookieValue: String =
+        PreferenceHelper.getInstance()?.getString(ConstantPreference.SP_COOKIE, "").orEmpty()
 
     // handle CloseCaption related to UI
     private var mClosedCaptionController: ClosedCaptionController? = null
@@ -91,30 +92,47 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
     override fun removeListener(listener: Player.EventListener) {
 //        mListeners.remove(listener)
         val iterator = mListeners.iterator()
-        while(iterator.hasNext()){
-            if(iterator.next() == listener){
+        while (iterator.hasNext()) {
+            if (iterator.next() == listener) {
                 iterator.remove()
             }
         }
     }
 
-    override fun resumeOrIntialize(playedVideoPosition: Long, typeVideo: EnumTypeViewVideo, isUpdateViewNumber: Boolean, isSupportCC: Boolean) {
+    override fun resumeOrIntialize(
+        playedVideoPosition: Long,
+        typeVideo: EnumTypeViewVideo,
+        isUpdateViewNumber: Boolean,
+        isSupportCC: Boolean
+    ) {
         when (mPlayerUseCase.mPlayer != null) {
             true -> onResume()
-            false -> onInitialize(playedVideoPosition = playedVideoPosition, typeVideo = EnumTypeViewVideo.NORMAL, isUpdateViewNumber = isUpdateViewNumber, isSupportCC = true)
+            false -> onInitialize(
+                playedVideoPosition = playedVideoPosition,
+                typeVideo = EnumTypeViewVideo.NORMAL,
+                isUpdateViewNumber = isUpdateViewNumber,
+                isSupportCC = true
+            )
         }
     }
 
     // playedVideoPosition: default value is 0L
-    override fun onInitialize(playedVideoPosition: Long, typeVideo: EnumTypeViewVideo, isUpdateViewNumber: Boolean, isSupportCC: Boolean) {
+    override fun onInitialize(
+        playedVideoPosition: Long,
+        typeVideo: EnumTypeViewVideo,
+        isUpdateViewNumber: Boolean,
+        isSupportCC: Boolean
+    ) {
         val videos: ArrayList<MMVideo>? = mVideos
         if (videos == null || videos.size == 0) return
         val _context = context ?: return
 
         mPlayerCallback?.onStartIntializePlayer()
 
-        val languageKey: String = PreferenceHelper.getInstance(_context).getString(ConstantPreference.LAST_LANGUAGE_KEY, "")
-        val languageCode: String = PreferenceHelper.getInstance(_context).getString(ConstantPreference.LAST_LANGUAGE_CODE, "")
+        val languageKey: String = PreferenceHelper.getInstance(_context)
+            .getString(ConstantPreference.LAST_LANGUAGE_KEY, "")
+        val languageCode: String = PreferenceHelper.getInstance(_context)
+            .getString(ConstantPreference.LAST_LANGUAGE_CODE, "")
 
         resetData()
         this.mTypeVideo = typeVideo
@@ -122,25 +140,26 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
 
         val video: MMVideo = videos[0]
         val url: String =
-                if (isUpdateViewNumber) {
-                    video.videoUrl ?: Constant.EMPTY
+            if (isUpdateViewNumber) {
+                video.videoUrl ?: Constant.EMPTY
 
-                } else {
-                    video.trailerUrl ?: Constant.EMPTY
-                }
+            } else {
+                video.trailerUrl ?: Constant.EMPTY
+            }
 
         if (playedVideoPosition >= 0) {
             mPlayerUseCase.setCurrentPlayPosition(playedVideoPosition)
         }
 
-        val volume: Float = PreferenceHelper.getInstance()?.getFloat(ConstantPreference.SS_LAST_VOLUME_PERCENT, Constant.DEF_EXO_VOLUME)
-                ?: 0.5f
+        val volume: Float = PreferenceHelper.getInstance()
+            ?.getFloat(ConstantPreference.SS_LAST_VOLUME_PERCENT, Constant.DEF_EXO_VOLUME)
+            ?: 0.5f
 
         val subtitleLink: String =
-                when (isSupportCC) {
-                    true -> mVideos!![0].subtitles?.get(languageKey) ?: ""
-                    false -> ""
-                }
+            when (isSupportCC) {
+                true -> mVideos!![0].subtitles?.get(languageKey) ?: ""
+                false -> ""
+            }
 
         this.mHasSubtitle = isSupportCC && subtitleLink != ""
 
@@ -150,24 +169,42 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
         val externalFolder: File
         val internalFolder: File
         var dataSpec: DataSpec
-        if (FileUtil.isExternalStorageAvailable() && !FileUtil.isExternalStorageReadOnly() && FileUtil.isSDCardAvailable(context)) {
+        if (FileUtil.isExternalStorageAvailable() && !FileUtil.isExternalStorageReadOnly() && FileUtil.isSDCardAvailable(
+                context
+            )
+        ) {
             val externalUrl = context?.getExternalFilesDirs(null)
             if (externalUrl?.get(1) != null) {
-                externalFolder = File(externalUrl[1],
-                        String.format("%s/%s", Constant.FOLDER_DOWNLOADED, video.id.toString() + ".mp4"))
+                externalFolder = File(
+                    externalUrl[1],
+                    String.format("%s/%s", Constant.FOLDER_DOWNLOADED, video.id.toString() + ".mp4")
+                )
                 if (externalFolder.exists()) {
                     dataSpec = DataSpec(Uri.fromFile(externalFolder))
                 } else {
-                    internalFolder = File(_context.filesDir, String.format("%s/%s", Constant.FOLDER_DOWNLOADED, video.id.toString() + ".mp4"))
+                    internalFolder = File(
+                        _context.filesDir,
+                        String.format(
+                            "%s/%s",
+                            Constant.FOLDER_DOWNLOADED,
+                            video.id.toString() + ".mp4"
+                        )
+                    )
                     dataSpec = DataSpec(Uri.fromFile(internalFolder))
                 }
             } else {
-                internalFolder = File(_context.filesDir, String.format("%s/%s", Constant.FOLDER_DOWNLOADED, video.id.toString() + ".mp4"))
+                internalFolder = File(
+                    _context.filesDir,
+                    String.format("%s/%s", Constant.FOLDER_DOWNLOADED, video.id.toString() + ".mp4")
+                )
                 dataSpec = DataSpec(Uri.fromFile(internalFolder))
             }
 
         } else {
-            internalFolder = File(_context.filesDir, String.format("%s/%s", Constant.FOLDER_DOWNLOADED, video.id.toString() + ".mp4"))
+            internalFolder = File(
+                _context.filesDir,
+                String.format("%s/%s", Constant.FOLDER_DOWNLOADED, video.id.toString() + ".mp4")
+            )
             dataSpec = DataSpec(Uri.fromFile(internalFolder))
         }
 
@@ -178,19 +215,24 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
             e.printStackTrace()
         }
 
-        mPlayerUseCase.initPlayer(context = _context, cookieValue = mCookieValue,
-                url = url, subtitleLink = subtitleLink,
-                languageCode = languageCode, volume = volume, typeVideo = typeVideo,
-                isPlayOffline = when (isUpdateViewNumber) {
-                    true -> {
-                        if (VideoDBUtil.checkVideoDownloaded(data = video, tag = Constant.TAG_VIDEO_DOWNLOAD)) {
-                            checkIfFileExist(video.id.toString() + ".mp4")
-                        } else {
-                            false
-                        }
+        mPlayerUseCase.initPlayer(
+            context = _context, cookieValue = mCookieValue,
+            url = url, subtitleLink = subtitleLink,
+            languageCode = languageCode, volume = volume, typeVideo = typeVideo,
+            isPlayOffline = when (isUpdateViewNumber) {
+                true -> {
+                    if (VideoDBUtil.checkVideoDownloaded(
+                            data = video,
+                            tag = Constant.TAG_VIDEO_DOWNLOAD
+                        )
+                    ) {
+                        checkIfFileExist(video.id.toString() + ".mp4")
+                    } else {
+                        false
                     }
-                    false -> false
-                }, fileDataSource = fileDataSource
+                }
+                false -> false
+            }, fileDataSource = fileDataSource
         ).also {
             for (listener: Player.EventListener in mListeners) {
                 it.addListener(listener)
@@ -203,29 +245,72 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
 
     private fun checkIfFileExist(fileName: String): Boolean {
         context?.also { context ->
-            if (FileUtil.isExternalStorageAvailable() && !FileUtil.isExternalStorageReadOnly() && FileUtil.isSDCardAvailable(context)) {
+            if (FileUtil.isExternalStorageAvailable() && !FileUtil.isExternalStorageReadOnly() && FileUtil.isSDCardAvailable(
+                    context
+                )
+            ) {
                 val externalUrl = context.getExternalFilesDirs(null)
                 if (externalUrl?.get(1) != null) {
-                    if (File(externalUrl[1],
-                                    String.format("%s/%s", Constant.FOLDER_DOWNLOADED, fileName)).exists()) {
-                        return checkSize(File(externalUrl[1],
-                                String.format("%s/%s", Constant.FOLDER_DOWNLOADED, fileName)))
-                    } else if ((File(context.filesDir, String.format("%s/%s",
-                                    Constant.FOLDER_DOWNLOADED, fileName)).exists())) {
-                        return checkSize(File(context.filesDir, String.format("%s/%s",
-                                Constant.FOLDER_DOWNLOADED, fileName)))
+                    if (File(
+                            externalUrl[1],
+                            String.format("%s/%s", Constant.FOLDER_DOWNLOADED, fileName)
+                        ).exists()
+                    ) {
+                        return checkSize(
+                            File(
+                                externalUrl[1],
+                                String.format("%s/%s", Constant.FOLDER_DOWNLOADED, fileName)
+                            )
+                        )
+                    } else if ((File(
+                            context.filesDir, String.format(
+                                "%s/%s",
+                                Constant.FOLDER_DOWNLOADED, fileName
+                            )
+                        ).exists())
+                    ) {
+                        return checkSize(
+                            File(
+                                context.filesDir, String.format(
+                                    "%s/%s",
+                                    Constant.FOLDER_DOWNLOADED, fileName
+                                )
+                            )
+                        )
                     }
-                } else if ((File(context.filesDir, String.format("%s/%s",
-                                Constant.FOLDER_DOWNLOADED, fileName)).exists())) {
-                    return checkSize(File(context.filesDir, String.format("%s/%s",
-                            Constant.FOLDER_DOWNLOADED, fileName)))
+                } else if ((File(
+                        context.filesDir, String.format(
+                            "%s/%s",
+                            Constant.FOLDER_DOWNLOADED, fileName
+                        )
+                    ).exists())
+                ) {
+                    return checkSize(
+                        File(
+                            context.filesDir, String.format(
+                                "%s/%s",
+                                Constant.FOLDER_DOWNLOADED, fileName
+                            )
+                        )
+                    )
                 }
 
             } else {
-                if ((File(context.filesDir, String.format("%s/%s",
-                                Constant.FOLDER_DOWNLOADED, fileName)).exists())) {
-                    return checkSize(File(context.filesDir, String.format("%s/%s",
-                            Constant.FOLDER_DOWNLOADED, fileName)))
+                if ((File(
+                        context.filesDir, String.format(
+                            "%s/%s",
+                            Constant.FOLDER_DOWNLOADED, fileName
+                        )
+                    ).exists())
+                ) {
+                    return checkSize(
+                        File(
+                            context.filesDir, String.format(
+                                "%s/%s",
+                                Constant.FOLDER_DOWNLOADED, fileName
+                            )
+                        )
+                    )
                 }
             }
 
@@ -265,7 +350,10 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
     }
 
     override fun playVideoAt(index: Int) {
-        Log.d("LOG", this.javaClass.simpleName + " playVideoAt() | index: $index | videos number: ${mVideos?.size ?: 0}")
+        Log.d(
+            "LOG",
+            this.javaClass.simpleName + " playVideoAt() | index: $index | videos number: ${mVideos?.size ?: 0}"
+        )
         if (index <= 0 || mVideos == null || mVideos!!.size <= 1) return
         // removeAllVideosBeforeAt() must run before onReleasePlayer() to avoid bug
         removeAllVideosBeforeAt(index)
@@ -301,7 +389,8 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
         mPlayerUseCase.mPlayer?.volume = value
 
         context?.also {
-            PreferenceHelper.getInstance(it).putFloat(ConstantPreference.SS_LAST_VOLUME_PERCENT, value)
+            PreferenceHelper.getInstance(it)
+                .putFloat(ConstantPreference.SS_LAST_VOLUME_PERCENT, value)
         }
     }
 
@@ -348,7 +437,10 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
 
         when (playbackState) {
             Player.STATE_ENDED -> {
-                Log.d("LOG", this.javaClass.simpleName + " onPlayerStateChanged() | STATE_ENDED | isEndedPlayer: $isEndedPlayer")
+                Log.d(
+                    "LOG",
+                    this.javaClass.simpleName + " onPlayerStateChanged() | STATE_ENDED | isEndedPlayer: $isEndedPlayer"
+                )
                 if (!mHasSubtitle && !isEndedPlayer) {
                     isEndedPlayer = true
                     handleOnEnded()
@@ -374,10 +466,14 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
     }
 
     override fun handleOnEnded() {
-        Log.d("LOG", this.javaClass.simpleName + " handleOnEnded() | videos number: ${mVideos?.size ?: 0}")
+        Log.d(
+            "LOG",
+            this.javaClass.simpleName + " handleOnEnded() | videos number: ${mVideos?.size ?: 0}"
+        )
         mClosedCaptionController?.resetData()
-        if (mVideos?.size ?: 0 <= 1) return
-        playVideoAt(index = 1)
+        if (mVideos?.size ?: 0 > 1) {
+            playVideoAt(index = 1)
+        }
     }
 
     override fun onPlayerError(error: ExoPlaybackException?) {
@@ -385,21 +481,34 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
         mTryCount++
 
         if (mTryCount < MaxTryCount) {
-            mPlayerUseCase.onRelease(isKeepPosition = true, keepPlayWhenReady = true, listeners = mListeners)
-            onInitialize(playedVideoPosition = -1L, typeVideo = this.mTypeVideo) // playedVideoPosition = -1L: play video at last position before the time counted error
+            mPlayerUseCase.onRelease(
+                isKeepPosition = true,
+                keepPlayWhenReady = true,
+                listeners = mListeners
+            )
+            onInitialize(
+                playedVideoPosition = -1L,
+                typeVideo = this.mTypeVideo
+            ) // playedVideoPosition = -1L: play video at last position before the time counted error
         } else {
             mErrorCode = ERR_CODE
-            mPlayerUseCase.onRelease(isKeepPosition = true, keepPlayWhenReady = true, listeners = mListeners)
+            mPlayerUseCase.onRelease(
+                isKeepPosition = true,
+                keepPlayWhenReady = true,
+                listeners = mListeners
+            )
 
             if (error.cause is HttpDataSource.InvalidResponseCodeException) {
-                val code: Int = (error.cause as HttpDataSource.InvalidResponseCodeException).responseCode
+                val code: Int =
+                    (error.cause as HttpDataSource.InvalidResponseCodeException).responseCode
                 if (code == ERR_FORBIDDEN) {
                     mErrorCode = ERR_FORBIDDEN
                     onHandleForbiddenError()
                 }
             } else if (error.cause is HttpDataSource.HttpDataSourceException) {
                 mErrorCode = ERR_DISCONNECT
-                val isConnectException: Boolean = (error.cause as HttpDataSource.HttpDataSourceException).cause is ConnectException
+                val isConnectException: Boolean =
+                    (error.cause as HttpDataSource.HttpDataSourceException).cause is ConnectException
                 if (isConnectException) {
                     onHandleDisconnectedError()
                 }
@@ -416,7 +525,12 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
     private fun onHandleDisconnectedError() {
         context?.also { context ->
             val message = context.getString(R.string.error_disconnected_video)
-            DialogUtil.createDialogOnlyOneButton(context = context, message = message, titleButton = R.string.btn_ok, dialogClickListener = null).show()
+            DialogUtil.createDialogOnlyOneButton(
+                context = context,
+                message = message,
+                titleButton = R.string.btn_ok,
+                dialogClickListener = null
+            ).show()
         }
     }
 
@@ -432,7 +546,11 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
 
     override fun onSeekProcessed() {}
 
-    override fun onTracksChanged(trackGroups: TrackGroupArray?, trackSelections: TrackSelectionArray?) {}
+    override fun onTracksChanged(
+        trackGroups: TrackGroupArray?,
+        trackSelections: TrackSelectionArray?
+    ) {
+    }
 
     override fun onLoadingChanged(isLoading: Boolean) {
     }
@@ -457,7 +575,12 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
                 onExpired(it.getString(R.string.device_not_store_authenticated_data))
                 return
             }
-            mUpdateViewNumberService.updateViewNumber(token = headerData.token, deviceId = headerData.deviceId, videoId = videoId, type = this.mTypeVideo.value).subscribe(this)
+            mUpdateViewNumberService.updateViewNumber(
+                token = headerData.token,
+                deviceId = headerData.deviceId,
+                videoId = videoId,
+                type = this.mTypeVideo.value
+            ).subscribe(this)
         }
     }
 

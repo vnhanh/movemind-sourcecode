@@ -29,5 +29,5 @@ interface IScheduleContract {
 
 interface ICallBackNextScheduleVideo {
     fun onResult(index: Int, timeWait: Long)
-    fun onNotFound()
+    fun onError(error: String = "")
 }

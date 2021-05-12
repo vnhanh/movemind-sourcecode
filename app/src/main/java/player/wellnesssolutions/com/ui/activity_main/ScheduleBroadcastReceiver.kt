@@ -146,31 +146,18 @@ class ScheduleBroadcastReceiver : BroadcastReceiver() {
 
     fun addListener(listener: ScheduleListener) {
         if (mScheduleListeners.contains(listener)) return
-        handler.post {
-            mScheduleListeners.add(listener)
-        }
+        mScheduleListeners.add(listener)
         Log.d("LOG", this.javaClass.simpleName + " addListener() | " +
                 "listeners number: ${mScheduleListeners.size} | listener class name: ${listener.javaClass.simpleName}")
     }
 
     fun removeListener(listener: ScheduleListener) {
-        handler.post {
-            val iterator = mScheduleListeners.iterator()
-            while (iterator.hasNext()) {
-                val item = iterator.next()
-                if (item == listener) {
-                    iterator.remove()
-                }
+        val iterator = mScheduleListeners.iterator()
+        while (iterator.hasNext()) {
+            val item = iterator.next()
+            if (item == listener) {
+                iterator.remove()
             }
         }
-    }
-
-    private fun checkListenerHomeAndControl(): Boolean {
-        for (listener: ScheduleListener in mScheduleListeners) {
-            if (listener is HomeFragment || listener is ControlFragment) {
-                return true
-            }
-        }
-        return false
     }
 }

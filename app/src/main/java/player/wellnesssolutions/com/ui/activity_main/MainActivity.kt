@@ -1,6 +1,7 @@
 package player.wellnesssolutions.com.ui.activity_main
 
 import android.annotation.SuppressLint
+import android.app.ActivityManager
 import android.app.PendingIntent
 import android.content.*
 import android.content.pm.PackageManager
@@ -87,8 +88,6 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
 
     private var mIsReturnScanScreen = false
 
-    //private var mDownloadingHelper: ActivityDownloadHelper? = null
-
     private var mPresentationId = -1
 
     var appVisible = true
@@ -110,7 +109,6 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         }
 
     }
-
 
     /**
      * IRouterChangedListener
@@ -175,6 +173,8 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
                 releaseRoute()
                 initRoute(route)
             } else if (id == -1 && id != mPresentationId) {
+                FirebaseCrashlytics.getInstance().recordException(RuntimeException("casting: disconnect"))
+                FirebaseCrashlytics.getInstance().log("casting: disconnect")
                 mPresentationId = id
 
                 releaseRoute()
@@ -195,38 +195,11 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         registerRemoteControlClient()
 
         notifyRouterConnected()
-        Log.d("LOG", this.javaClass.simpleName + " notified()")
-//        openPresentationIfIsPlaying()
     }
 
     fun releaseRoute() {
         unregisterRemoteControlClient()
         mPlayer?.release()
-    }
-
-    private fun openPresentationIfIsPlaying() {
-        handlerMain.post {
-            PreferenceHelper.getInstance()?.getBoolean(Constant.IS_PLAYING_VIDEO, false)?.also { isPlayingVideo ->
-                if (isPlayingVideo) {
-                    if (isPresentationAvailable()) {
-                        val playedModeValue = PreferenceHelper.getInstance(this).getInt(ConstantPreference.MODE_PLAY_VIDEO,
-                                PlayMode.ON_DEMAND.value)
-
-                        PlayMode.valueOf(playedModeValue)?.also { mode ->
-                            Log.d("LOG", "MainActivity - openPresentationIfIsPlaying() | mode: $mode")
-                            val tagDB =
-                                    when (mode) {
-                                        PlayMode.ON_DEMAND -> Constant.MM_VIDEO_SEARCHED
-                                        PlayMode.SCHEDULE -> Constant.MM_SCHEDULE
-                                        else -> return@post
-                                    }
-                            playVideo(mode = mode, videos = VideoDBUtil.getVideosFromDB(tagDB))
-                        }
-                    }
-                }
-            } // end block
-
-        }
     }
 
     private fun registerRemoteControlClient() {
@@ -360,34 +333,16 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
 
         registerMediaRouter()
 
-        checkForUpdates()
-
         PermissionUtils.checkAndRequestWriteExternalPermission(activity = this)
-
-        // TODO
-        //clearFileAndDBForDownload()
 
         registerReceivers()
 
         registerService()
 
-        //registerDownloadListener()
-
         FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener {
             checkSendTokenDeviceFCM(it.token)
         }
         setupAlarmTimeCallEveryDay(this)
-//        if (SharedPreferencesCustomized.getInstance(this).getBoolean(SPrefConstant.IS_SET_TIME_EVERY_DAY, true)) {
-//            setupAlarmTimeCallEveryDay(this)
-//            SharedPreferencesCustomized.getInstance(this).putBoolean(SPrefConstant.IS_SET_TIME_EVERY_DAY, false)
-//        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Log.e("ffffff", Build.getSerial())
-        } else {
-            //Log.e("dddddd", Build.SERIAL)
-        }
-
-        //AlarmManagerSchedule.setupTimeWakeSchedule(this, 20)
 
         window.setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
@@ -528,7 +483,6 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         PreferenceHelper.getInstance(this).putBoolean(ConstantPreference.IS_IN_BACKGROUND, false)
         mIsVisble = true
         appVisible = true
-        checkForCrashes()
 
         showNetworkDisconnectedDialogIf()
 //        mSessionManagerListener.onSetup(this)
@@ -668,13 +622,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         mIsVisble = false
         appVisible = false
         mPlayer?.onAppViewInVisible()
-        unregisterManagers()
         super.onPause()
-    }
-
-    override fun onTrimMemory(level: Int) {
-        super.onTrimMemory(level)
-        Log.d("LOG", this.javaClass.simpleName + " onTrimMemory() | level: $level")
     }
 
     override fun onDestroy() {
@@ -781,22 +729,6 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
     }
 
     /**
-     * Hockey App
-     */
-    private fun checkForCrashes() {
-//        CrashManager.register(this)
-    }
-
-    private fun checkForUpdates() {
-        // Remove this for store builds!
-//        UpdateManager.register(this)
-    }
-
-    private fun unregisterManagers() {
-//        UpdateManager.unregister()
-    }
-
-    /**
      * ---------
      */
 
@@ -804,10 +736,6 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         // show (add) the Home screen
         FragmentUtil.addNewFragment(supportFragmentManager, SplashFragment(), R.id.frameLayoutHome)
     }
-
-//    private fun registerDownloadListener() {
-//        mDownloadingHelper = ActivityDownloadHelper(activity = this, view = frameLayoutHome)
-//    }
 
     fun getFragment(tag: String): Fragment? {
         return getFragment(supportFragmentManager, tag)
@@ -851,7 +779,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
             FirebaseCrashlytics.getInstance().recordException(e)
             try{
 
-            }catch (e:Exception){
+            } catch (e:Exception){
                 val currentDate: String =
                     SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault()).format(Date())
                 FirebaseCrashlytics.getInstance().log("crash on backing to previous screen | date: $currentDate")
@@ -993,6 +921,39 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
 
     }
 
+    /**
+     * Authorise Memory
+     */
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        FirebaseCrashlytics.getInstance().recordException(RuntimeException("onTrimMemory()"))
+        FirebaseCrashlytics.getInstance().log("memory: level - $level")
+        logFirebaseAboutMemory()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        FirebaseCrashlytics.getInstance().recordException(RuntimeException("onLowMemory()"))
+        logFirebaseAboutMemory()
+    }
+
+    fun logFirebaseAboutMemory(isRecordException: Boolean = false) {
+        val memInfo = getAvailableMemory()
+        if(isRecordException){
+            FirebaseCrashlytics.getInstance().recordException(java.lang.RuntimeException("Checking Schedule"))
+        }
+        val strAvailableMemory = String.format("mem - available memory:  %s", memInfo.availMem)
+        val strIsMemoryLow = String.format("mem - memory is low:  %s", memInfo.lowMemory)
+        FirebaseCrashlytics.getInstance().log(strAvailableMemory)
+        FirebaseCrashlytics.getInstance().log(strIsMemoryLow)
+    }
+
+    fun getAvailableMemory(): ActivityManager.MemoryInfo {
+        val activityManager = this.getSystemService(ACTIVITY_SERVICE) as ActivityManager
+        val memoryInfo = ActivityManager.MemoryInfo()
+        activityManager.getMemoryInfo(memoryInfo)
+        return memoryInfo
+    }
 
     /**
      * ---------------

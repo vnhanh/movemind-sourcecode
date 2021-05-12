@@ -25,7 +25,6 @@ import player.wellnesssolutions.com.custom_exoplayer.EnumTypeViewVideo
 import player.wellnesssolutions.com.custom_exoplayer.PlayerState
 import player.wellnesssolutions.com.network.datasource.videos.PlayMode
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
-import player.wellnesssolutions.com.ui.activity_main.MainActivity
 import player.wellnesssolutions.com.ui.fragment_home.helper.HandlerScheduleTime
 import player.wellnesssolutions.com.ui.fragment_now_playing.helper.HandlerTimeScheduleHelper
 import player.wellnesssolutions.com.ui.fragment_search_brands.module.ILoadBrandHandler
@@ -565,7 +564,8 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
     }
 
     override fun onProcessVideoError() {
-        mView?.showMessage(R.string.encountered_error_handling_class_video_data, R.color.red)
+        Log.d("LOG", this.javaClass.simpleName + " onProcessVideoError()")
+        mView?.showMessage(R.string.encountered_error_handling_class_data, R.color.red)
     }
 
     override fun onDontHaveNowPlayingVideo(isClickedButtonHome: Boolean?) {
@@ -686,6 +686,8 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
     /**
      * @interface Player.EventListener
      */
+    private var isPlayingVideo = false
+
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
         Log.d("LOG", this.javaClass.simpleName + " onPlayerStateChanged() | playbackState: $playbackState | playWhenReady: $playWhenReady")
         when (playbackState) {
@@ -695,6 +697,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
             }
 
             Player.STATE_READY -> {
+                isPlayingVideo = true
                 mPlayerState =
                         when (playWhenReady) {
                             true -> PlayerState.PLAYING
@@ -704,24 +707,10 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
 
             Player.STATE_ENDED -> {
                 mPlayerState = PlayerState.ENDED
-                when {
-                    videos.size == 0 -> {
-                        when {
-                            playedMode == PlayMode.ON_DEMAND -> {
-
-                            }
-
-                            playedMode == PlayMode.SCHEDULE -> {
-                                onDontHaveNowPlayingVideo(isClickedButtonHome = false)
-                            }
-                        }
-                    }
-
-                    else -> {
-//                        mVideos.removeAt(0)
-//                        scanScheduledVideo()
-                    }
+                if (videos.size <= 1 && playedMode == PlayMode.SCHEDULE && isPlayingVideo) {
+                    onDontHaveNowPlayingVideo(isClickedButtonHome = false)
                 }
+                isPlayingVideo = false
 
             }
 

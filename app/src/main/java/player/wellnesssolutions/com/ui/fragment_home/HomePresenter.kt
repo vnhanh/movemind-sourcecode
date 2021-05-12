@@ -50,10 +50,6 @@ class HomePresenter : BaseResponseObserver<MMConfigData>(), IHomeContract.Presen
         }
     }
 
-    override fun setupShowPopUpOnStartScreen(message: String) {
-        messagePopUpOnStart = message
-    }
-
     override fun setupShowSnackbarOnStartScreen(message: String) {
         val view = mView
         if (view == null) {

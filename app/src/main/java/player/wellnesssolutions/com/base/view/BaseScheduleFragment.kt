@@ -7,6 +7,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.common.load_scheduled_videos.IScheduleContract
 import player.wellnesssolutions.com.base.common.load_scheduled_videos.SchedulePresenter
@@ -18,6 +20,7 @@ import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.com.services.AlarmManagerSchedule
 import player.wellnesssolutions.com.ui.activity_main.MainActivity
 import player.wellnesssolutions.com.ui.activity_main.ScheduleBroadcastReceiver
+import java.lang.RuntimeException
 
 open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleContract.View, ScheduleBroadcastReceiver.ScheduleListener {
     protected var schedulePresenter: IScheduleContract.Presenter? = null
@@ -36,7 +39,6 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
         arguments?.also { bundle ->
             val sourceLoadSchedule = bundle.getString(Constant.BUNDLE_SOURCE_SCHEDULE).orEmpty()
             val isSetupNowSchedule = bundle.getBoolean(Constant.BUNDLE_NOT_SETUP_NOW_SCHEDULE, false)
-            val isRemoveVideoOnSetupNextSchedule = bundle.getBoolean(Constant.BUNDLE_NOT_REMOVE_VIDEO_SCHEDULE_ON_SETUP_NEXT, false)
             Log.d("LOG", this.javaClass.simpleName + " onCreateView() | sourceLoadSchedule: ${sourceLoadSchedule} | isSetupNextScheduleVideo: $isSetupNowSchedule")
             when {
                 sourceLoadSchedule == SOURCE_LOAD_SCHEDULE.REMOTE.toString() -> {
@@ -120,6 +122,11 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
      */
     private val runnablePlayScheduledVideo = Runnable {
         schedulePresenter?.onTimePlaySchedule()
+        activity?.also { activity ->
+            if(activity is MainActivity && activity.isPresentationAvailable()){
+                activity.logFirebaseAboutMemory(isRecordException = true)
+            }
+        }
     }
 
     private val runnableResetSchedule = Runnable {
@@ -127,7 +134,7 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
     }
 
     private val runnableUpdateSchedule = Runnable {
-        updateScheduleFromUI()
+        schedulePresenter?.onLoadSchedule(view = this@BaseScheduleFragment, isClickedFromBtnBottom = false, mustLoad = true)
     }
 
     override fun onReceivePlayVideoScheduleFromUI() {
@@ -158,32 +165,6 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
             handler.post(runnableUpdateSchedule)
         } catch (e: Exception) {
             e.printStackTrace()
-        }
-    }
-
-    private fun updateScheduleFromUI() {
-        val _context = context
-        when {
-            _context == null -> {
-                schedulePresenter?.onLoadSchedule(view = this, isClickedFromBtnBottom = false, mustLoad = true)
-                Log.d("LOG", this.javaClass.simpleName + " onReceiveUpdateScheduleFromUI() | context's null")
-            }
-            else -> {
-                Log.d("LOG", this.javaClass.simpleName + " onReceiveUpdateScheduleFromUI() | context's not null | show dialog")
-                dialog?.dismiss()
-                dialog = DialogUtil.createDialogOnlyOneButton(
-                        _context, R.string.schedule_just_update,
-                        R.string.btn_ok, object : DialogInterface.OnClickListener {
-                    override fun onClick(dialogInterface: DialogInterface?, p1: Int) {
-                        dialogInterface?.dismiss()
-                        dialog = null
-                        schedulePresenter?.onLoadSchedule(view = this@BaseScheduleFragment, isClickedFromBtnBottom = false, mustLoad = true)
-                    }
-                }
-                ).apply {
-                    show()
-                }
-            }
         }
     }
 

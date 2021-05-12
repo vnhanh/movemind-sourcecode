@@ -75,15 +75,7 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View, IRouterChanged 
             }
             bundle.remove(Constant.BUNDLE_SOURCE_SCHEDULE)
 
-            val message = bundle.getString(Constant.BUNDLE_SHOW_POPUP, "").orEmpty()
-            Log.d("LOG", this.javaClass.simpleName + " onCreateView() | sourceLoadSChedule: ${sourceLoadSchedule} | " +
-                    "message for popup: ${message} | button getStarted state: ${btnGetStarted?.isEnabled}")
-            when {
-                message.isNotBlank() -> presenter?.setupShowPopUpOnStartScreen(message)
-            }
-            bundle.remove(Constant.BUNDLE_SHOW_POPUP)
-
-            val messageSnackbar = bundle.getString(Constant.BUNDLE_SHOW_SNACKBAR, "").also { messageSnackbar ->
+            bundle.getString(Constant.BUNDLE_SHOW_SNACKBAR, "").also { messageSnackbar ->
                 if (messageSnackbar.isNotBlank()) {
                     presenter?.setupShowSnackbarOnStartScreen(messageSnackbar)
                 }
@@ -281,14 +273,9 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View, IRouterChanged 
 
     override fun onNoClassVideosForNow(scheduleVideos: ArrayList<MMVideo>, message: String, @ColorRes msgColor: Int, isLoadScheduleManually: Boolean) {
         if (btnGetStarted == null) return
-        if (message == Constant.ERROR_CANT_CONNECT_SERVER) {
-            val text = String.format("%s %s", context?.getString(R.string.request_class_video_failed).orEmpty(), message)
-            MessageUtils.showSnackBar(btnGetStarted, text, msgColor)
-        } else if (scheduleVideos.size > 0) {
-            val isCasted = playVideoPresentationable(scheduleVideos)
-            if (isCasted) {
-                loadControlScreen()
-            }
+        val isCasted = playVideoPresentationable(scheduleVideos)
+        if (isCasted) {
+            loadControlScreen()
         }
         //loadNoClassScreen()
     }
@@ -456,13 +443,6 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View, IRouterChanged 
             }
         }
 
-        fun getInstanceNotLoadScheduleAndShowPopUp(message: String): HomeFragment = HomeFragment().apply {
-            arguments = Bundle().apply {
-                putString(Constant.BUNDLE_SOURCE_SCHEDULE, SOURCE_LOAD_SCHEDULE.LOCAL.name)
-                putString(Constant.BUNDLE_SHOW_POPUP, message)
-            }
-        }
-
         fun getInstanceNotLoadScheduleAndShowSnackbar(message: String): HomeFragment = HomeFragment().apply {
             arguments = Bundle().apply {
                 putString(Constant.BUNDLE_SOURCE_SCHEDULE, SOURCE_LOAD_SCHEDULE.LOCAL.name)
@@ -479,13 +459,6 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View, IRouterChanged 
         fun updateAlreadyInstanceWithNotLoadSchedule(fragment: HomeFragment): Fragment = fragment.apply {
             arguments = Bundle().apply {
                 putString(Constant.BUNDLE_SOURCE_SCHEDULE, SOURCE_LOAD_SCHEDULE.LOCAL.name)
-            }
-        }
-
-        fun updateAlreadyInstanceWithNotLoadScheduleAndShowPopUp(fragment: HomeFragment, message: String): Fragment = fragment.apply {
-            arguments = Bundle().apply {
-                putString(Constant.BUNDLE_SOURCE_SCHEDULE, SOURCE_LOAD_SCHEDULE.LOCAL.name)
-                putString(Constant.BUNDLE_SHOW_POPUP, message)
             }
         }
 

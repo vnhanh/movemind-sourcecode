@@ -389,33 +389,13 @@ object NowPlayingVideoSetupHelper {
             }
             val newFragment = HomeFragment.getInstanceNotLoadSchedule()
 
-            FragmentUtil.replaceFragment(fm = _fm, newFragment = newFragment, newFragmentTag = tag, frameId = R.id.frameLayoutHome, isAddToBackStack = false, isRemoveOlds = true)
-        }
-    }
-
-    fun openHomeFragmentWithNotLoadScheduleAndShowPopup(fm: FragmentManager?, message: String) {
-        fm?.also { _fm ->
-            Log.d("LOG", this.javaClass.simpleName + " openHomeFragmentWithNotLoadSchedule()")
-            val tag = HomeFragment.TAG
-            val fragment = _fm.findFragmentByTag(tag)
-//            fragment =
-//                    when (fragment != null && fragment is HomeFragment) {
-//                        true -> {
-//                            HomeFragment.updateAlreadyInstanceWithNotLoadScheduleAndShowPopUp(fragment, message)
-//                        }
-//                        false -> HomeFragment.getInstanceNotLoadScheduleAndShowPopUp(message)
-//                    }
-            if (fragment != null && fragment is HomeFragment) {
-                fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
-            }
-            val newFragment = HomeFragment.getInstanceNotLoadScheduleAndShowPopUp(message)
             FragmentUtil.replaceFragment(
-                    fm = _fm,
-                    newFragment = newFragment,
-                    newFragmentTag = tag,
-                    frameId = R.id.frameLayoutHome,
-                    isAddToBackStack = false,
-                    isRemoveOlds = true
+                fm = _fm,
+                newFragment = newFragment,
+                newFragmentTag = tag,
+                frameId = R.id.frameLayoutHome,
+                isAddToBackStack = false,
+                isRemoveOlds = true
             )
         }
     }

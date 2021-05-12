@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import player.wellnesssolutions.com.base.common.load_scheduled_videos.ICallBackNextScheduleVideo
 import player.wellnesssolutions.com.base.utils.ParameterUtils
-import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.network.datasource.time_network.IRequestTimeNetworkListener
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.com.services.AlarmManagerSchedule
@@ -37,7 +36,9 @@ class HandlerScheduleTime(private var context: Context?, private var listener: I
     fun setupScheduleForNowVideo(videos: ArrayList<MMVideo>) {
         Log.d("LOG", this.javaClass.simpleName + " setupScheduleForNowVideo() | videos number: ${videos.size}")
         this.videos = videos
-        if (videos.size == 0) return
+        if (videos.size == 0) {
+            return
+        }
 
         handleScheduleVideoNow()
     }
@@ -49,6 +50,9 @@ class HandlerScheduleTime(private var context: Context?, private var listener: I
 
     private fun handleScheduleVideoNow() {
         if (listener == null) return
+        if(videos.size == 0){
+            return
+        }
         val firstVideo = videos[0]
         Log.d("LOG", this.javaClass.simpleName + " process() | video name: ${firstVideo.videoName} | videos number: ${videos.size}")
         HandlerTimeScheduleHelper.calculateTimePlayVideo(firstVideo, object : ICallbackNowScheduleVideo {
@@ -71,8 +75,10 @@ class HandlerScheduleTime(private var context: Context?, private var listener: I
                     STATE_TIME_PLAY_SCHEDULE.TIME_EXPIRED -> {
                         Log.d("LOG", this.javaClass.simpleName + " process() | TIME_EXPIRED")
                         when {
-                            videos.size == 0 -> listener?.onVideoExpiredTime()
-                            else -> {
+                            videos.size <= 1 -> {
+                                listener?.onDontHaveNowPlayingVideo(false)
+                            }
+                            videos.size > 1 -> {
                                 videos.removeAt(0)
                                 handleScheduleVideoNow()
                             }
@@ -96,7 +102,6 @@ class HandlerScheduleTime(private var context: Context?, private var listener: I
 
     private fun handleNextScheduleVideo(videos: ArrayList<MMVideo>, index: Int, callback: ICallBackNextScheduleVideo?) {
         if (index >= videos.size) {
-            callback?.onNotFound()
             return
         }
 
@@ -132,7 +137,8 @@ class HandlerScheduleTime(private var context: Context?, private var listener: I
                     }
 
                     STATE_TIME_PLAY_SCHEDULE.TIME_ERROR -> {
-                        callback?.onNotFound()
+                        Log.d("LOG", this.javaClass.simpleName + " handleNextScheduleVideo() | TIME_ERROR")
+                        callback?.onError(STATE_TIME_PLAY_SCHEDULE.TIME_ERROR.state)
                     }
                 }
             }

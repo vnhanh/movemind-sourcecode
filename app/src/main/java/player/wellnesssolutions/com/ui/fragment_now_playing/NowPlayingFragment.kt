@@ -741,8 +741,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
             PlayMode.SCHEDULE -> {
                 handleMoveToNewScreenButUpdatingNewSchedule(isBackToHomeScreen = true, caseNotUpdating = {
                     Log.d("LOG", this.javaClass.simpleName + " onNoClassVideosForNow() | SCHEDULE | isClickedFromBtnBottom: $isLoadScheduleManually")
-                    NowPlayingVideoSetupHelper
-                            .openHomeFragmentWithNotLoadScheduleAndShowPopup(fm = activity?.supportFragmentManager, message = context?.getString(R.string.no_class_now).orEmpty())
+                    NowPlayingVideoSetupHelper.openHomeFragmentWithNotLoadSchedule(fm = activity?.supportFragmentManager)
                     activity?.let {
                         if (it is MainActivity) {
                             it.getApiConfigData()
