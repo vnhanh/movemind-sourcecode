@@ -103,68 +103,68 @@ abstract class BaseFragment : Fragment(), ILifeCycle.View {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("LOG", this.javaClass.simpleName + " onCreate()")
+//        Log.d("LOG", this.javaClass.simpleName + " onCreate()")
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        Log.d("LOG", this.javaClass.simpleName + " onCreateView()")
+//        Log.d("LOG", this.javaClass.simpleName + " onCreateView()")
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        Log.d("LOG", this.javaClass.simpleName + " onActivityCreated()")
+//        Log.d("LOG", this.javaClass.simpleName + " onActivityCreated()")
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        Log.d("LOG", this.javaClass.simpleName + " onAttach()")
+//        Log.d("LOG", this.javaClass.simpleName + " onAttach()")
     }
 
     override fun onStart() {
         super.onStart()
-        Log.d("LOG", this.javaClass.simpleName + " onStart()")
+//        Log.d("LOG", this.javaClass.simpleName + " onStart()")
     }
 
     override fun onResume() {
         super.onResume()
-        Log.d("LOG", this.javaClass.simpleName + " onResume()")
+//        Log.d("LOG", this.javaClass.simpleName + " onResume()")
     }
 
     override fun onPause() {
         super.onPause()
-        Log.d("LOG", this.javaClass.simpleName + " onPause()")
+//        Log.d("LOG", this.javaClass.simpleName + " onPause()")
     }
 
     override fun onStop() {
         super.onStop()
-        Log.d("LOG", this.javaClass.simpleName + " onStop()")
+//        Log.d("LOG", this.javaClass.simpleName + " onStop()")
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        Log.d("LOG", this.javaClass.simpleName + " onSaveInstanceState()")
+//        Log.d("LOG", this.javaClass.simpleName + " onSaveInstanceState()")
     }
 
     override fun onDestroyOptionsMenu() {
         super.onDestroyOptionsMenu()
-        Log.d("LOG", this.javaClass.simpleName + " onDestroyOptionsMenu()")
+//        Log.d("LOG", this.javaClass.simpleName + " onDestroyOptionsMenu()")
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.d("LOG", this.javaClass.simpleName + " onDestroyView()")
+//        Log.d("LOG", this.javaClass.simpleName + " onDestroyView()")
         mIsJustBeDestroyed = true
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d("LOG", this.javaClass.simpleName + " onDestroy()")
+//        Log.d("LOG", this.javaClass.simpleName + " onDestroy()")
     }
 
     override fun onDetach() {
         super.onDetach()
-        Log.d("LOG", this.javaClass.simpleName + " onDetach()")
+//        Log.d("LOG", this.javaClass.simpleName + " onDetach()")
     }
 
 }

@@ -35,31 +35,30 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
         schedulePresenter = SchedulePresenter(context)
         registerScheduleBroadcast()
 
-        Log.d("LOG", this.javaClass.simpleName + " onCreateView() | isNewScreen | arguments is: ${arguments ?: "null"}")
+//        Log.d("LOG", this.javaClass.simpleName + " onCreateView() | isNewScreen | arguments is: ${arguments ?: "null"}")
         arguments?.also { bundle ->
             val sourceLoadSchedule = bundle.getString(Constant.BUNDLE_SOURCE_SCHEDULE).orEmpty()
             val isSetupNowSchedule = bundle.getBoolean(Constant.BUNDLE_NOT_SETUP_NOW_SCHEDULE, false)
-            Log.d("LOG", this.javaClass.simpleName + " onCreateView() | sourceLoadSchedule: ${sourceLoadSchedule} | isSetupNextScheduleVideo: $isSetupNowSchedule")
+//            Log.d("LOG", this.javaClass.simpleName + " onCreateView() | sourceLoadSchedule: ${sourceLoadSchedule} | isSetupNextScheduleVideo: $isSetupNowSchedule")
             when {
                 sourceLoadSchedule == SOURCE_LOAD_SCHEDULE.REMOTE.toString() -> {
-                    Log.d("LOG", this.javaClass.simpleName + " onCreateView() | isNewScreen | load remote schedule")
+//                    Log.d("LOG", this.javaClass.simpleName + " onCreateView() | isNewScreen | load remote schedule")
                     schedulePresenter?.setStateLoadScheduleOnStart()
                 }
 
                 isSetupNowSchedule -> {
                     val videos: ArrayList<MMVideo> = VideoDBUtil.getScheduleVideos()
-                    Log.d("LOG", this.javaClass.simpleName + " onCreateView() | not setup next schedule | videos number: ${videos.size}")
+//                    Log.d("LOG", this.javaClass.simpleName + " onCreateView() | not setup next schedule | videos number: ${videos.size}")
                     schedulePresenter?.setScheduleCurrent(videos)
                 }
 
                 else -> {
                     val videos: ArrayList<MMVideo> = VideoDBUtil.getScheduleVideos()
-                    Log.d("LOG", this.javaClass.simpleName + " onCreateView() | setup next schedule | videos number: ${videos.size}")
+//                    Log.d("LOG", this.javaClass.simpleName + " onCreateView() | setup next schedule | videos number: ${videos.size}")
                     when {
                         videos.size > 0 -> schedulePresenter?.setScheduleCurrentAndWaitNextVideo(videos)
                         else -> {
-                            Log.d("LOG", this.javaClass.simpleName + " onCreateView() | isNewScreen | load remote schedule")
-//                            schedulePresenter?.setStateLoadScheduleOnStart()
+//                            Log.d("LOG", this.javaClass.simpleName + " onCreateView() | isNewScreen | load remote schedule")
                         }
                     }
                 }
@@ -109,7 +108,7 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
     }
 
     protected fun loadSchedule(isClickedFromBtnBottom: Boolean) {
-        Log.d("LOG", this.javaClass.simpleName + " loadSchedule() | isClickedFromBtnBottom: $isClickedFromBtnBottom | presenter: $schedulePresenter")
+//        Log.d("LOG", this.javaClass.simpleName + " loadSchedule() | isClickedFromBtnBottom: $isClickedFromBtnBottom | presenter: $schedulePresenter")
         schedulePresenter?.onLoadSchedule(view = this, isClickedFromBtnBottom = isClickedFromBtnBottom)
     }
 
@@ -138,7 +137,7 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
     }
 
     override fun onReceivePlayVideoScheduleFromUI() {
-        Log.d("LOG", this.javaClass.simpleName + " onReceivePlayVideoScheduleFromUI()")
+//        Log.d("LOG", this.javaClass.simpleName + " onReceivePlayVideoScheduleFromUI()")
 //        AlarmManagerSchedule.cancelAlarmScheduleTime()
 //                showMessage("Search Screen found schedule video", R.color.white)
         try {
@@ -149,7 +148,7 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
     }
 
     override fun onReceiveResetScheduleFromUI() {
-        Log.d("LOG", this.javaClass.simpleName + " onReceiveResetScheduleFromUI()")
+//        Log.d("LOG", this.javaClass.simpleName + " onReceiveResetScheduleFromUI()")
         AlarmManagerSchedule.cancelAlarmScheduleTime()
         try {
             handler.post(runnableResetSchedule)
@@ -159,7 +158,7 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
     }
 
     override fun onReceiveUpdateScheduleFromUI() {
-        Log.d("LOG", this.javaClass.simpleName + " onReceiveUpdateScheduleFromUI() | schedulePresenter: $schedulePresenter")
+//        Log.d("LOG", this.javaClass.simpleName + " onReceiveUpdateScheduleFromUI() | schedulePresenter: $schedulePresenter")
         AlarmManagerSchedule.cancelAlarmScheduleTime()
         try {
             handler.post(runnableUpdateSchedule)

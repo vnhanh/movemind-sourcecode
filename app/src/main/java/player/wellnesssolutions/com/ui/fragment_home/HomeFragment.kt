@@ -59,7 +59,6 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View, IRouterChanged 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        Log.d("LOG", this.javaClass.simpleName + " onActivityCreated() ")
         readArguments()
         setupUI()
     }
@@ -87,7 +86,6 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View, IRouterChanged 
     override fun onResume() {
         super.onResume()
         PreferenceHelper.getInstance()?.putBoolean(ConstantPreference.IS_IN_BACKGROUND, false)
-        Log.d("LOG", this.javaClass.simpleName + " onResume() | isNewScreen: $isNewScreen")
         if (isNewScreen) {
             handler.postDelayed(runnableAttachPresenterFirstTime, Constant.TIME_POST_DELAY_DEFAULT)
         } else {
@@ -104,7 +102,7 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View, IRouterChanged 
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        Log.d("LOG", this.javaClass.simpleName + " onSaveInstanceState()")
+//        Log.d("LOG", this.javaClass.simpleName + " onSaveInstanceState()")
         PreferenceHelper.getInstance()?.putBoolean(ConstantPreference.IS_IN_BACKGROUND, true)
     }
 
@@ -217,7 +215,6 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View, IRouterChanged 
     }
 
     private fun getAllVideosForDownload(context: Context) {
-        Log.d("LOG", "HomeFragment - getAllVideosForDownload()")
         val tokenAu: String = PreferenceHelper.getInstance(context).getString(ConstantPreference.TOKEN, "")
         val deviceId = PreferenceHelper.getInstance(context).getString(ConstantPreference.DEVICE_ID, "")
         if (deviceId.isNotEmpty() && tokenAu.isNotEmpty()) {
@@ -229,9 +226,9 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View, IRouterChanged 
 
                         override fun onResponseSuccess(data: ResponseValue<ArrayList<MMVideo>>?) {
                             super.onResponseSuccess(data)
-                            Log.d("LOG", "HomeFragment - getAllVideosForDownload() | current thread: ${Thread.currentThread()} | name: ${Thread.currentThread().name}")
-                            if (data == null) return
-                            VideoDBUtil.saveDVideosToDB(data = data.data, tag = Constant.TAG_VIDEO_DOWNLOAD)
+//                            Log.d("LOG", "HomeFragment - getAllVideosForDownload() | current thread: ${Thread.currentThread()} | name: ${Thread.currentThread().name}")
+                            VideoDBUtil.saveDVideosToDB(data = data?.data?: arrayListOf<MMVideo>(), tag = Constant.TAG_VIDEO_DOWNLOAD)
+                            if (data == null || data.data.size == 0) return
                             PreferenceHelper.getInstance(context).putBoolean(ConstantPreference.IS_DOWNLOAD_VIDEOS, false)
                             val intent = Intent().apply {
                                 action = DownloadService.ACTION_DOWNLOAD
@@ -297,7 +294,7 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View, IRouterChanged 
     }
 
     private fun loadControlScreen() {
-        Log.d("LOG", this.javaClass.simpleName + " loadControlScreen() | isStartedOpenNewScreen: $isStartedOpenNewScreen")
+//        Log.d("LOG", this.javaClass.simpleName + " loadControlScreen() | isStartedOpenNewScreen: $isStartedOpenNewScreen")
         if (isStartedOpenNewScreen) return
         isStartedOpenNewScreen = true
         FragmentUtil.replaceFragment(
@@ -319,7 +316,7 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View, IRouterChanged 
     }
 
     private fun loadNowPlayingScreen() {
-        Log.d("LOG", this.javaClass.simpleName + " loadNowPlayingScreen() | isStartedOpenNewScreen: $isStartedOpenNewScreen")
+//        Log.d("LOG", this.javaClass.simpleName + " loadNowPlayingScreen() | isStartedOpenNewScreen: $isStartedOpenNewScreen")
         handler.post(runnableOpenNowPlayingWithSchedule)
     }
 

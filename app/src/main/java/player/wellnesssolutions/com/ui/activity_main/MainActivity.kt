@@ -6,10 +6,7 @@ import android.app.PendingIntent
 import android.content.*
 import android.content.pm.PackageManager
 import android.media.AudioManager
-import android.os.Build
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.os.*
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
@@ -185,7 +182,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
 
     private fun initRoute(route: MediaRouter.RouteInfo) {
         // mPlayer : MMDrawOnTopPlayer
-        Log.d("LOG", this.javaClass.simpleName + " initRoute()")
+//        Log.d("LOG", this.javaClass.simpleName + " initRoute()")
         mPlayer = MMPlayer.create(context = this, route = route)
         mPlayer?.let { player ->
             player.updatePresentation(route)
@@ -232,7 +229,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         }
 
         override fun onUpdateVideos(nowPlayVideo: MMVideo, comingUpVideos: ArrayList<MMVideo>) {
-            Log.d("LOG", "MainActivity - mSessionCallback - onUpdateVideos() | video: ${nowPlayVideo.videoName} | video next: ${comingUpVideos[0].videoName}")
+//            Log.d("LOG", "MainActivity - mSessionCallback - onUpdateVideos() | video: ${nowPlayVideo.videoName} | video next: ${comingUpVideos[0].videoName}")
             for (listener: IRouterChanged in mRouterChangedListeners) {
                 listener.onUpdateVideos(nowPlayVideo, comingUpVideos)
             }
@@ -298,7 +295,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         }
         val currentPosition: Long = PreferenceHelper.getInstance(this).getLong(ConstantPreference.LAST_PLAYED_VIDEO_POSITION,
                 0L)
-        Log.d("LOG", this.javaClass.simpleName + " playVideo() | mode: $mode | videos number: ${videos.size} | current position: $currentPosition")
+//        Log.d("LOG", this.javaClass.simpleName + " playVideo() | mode: $mode | videos number: ${videos.size} | current position: $currentPosition")
         ParameterUtils.isClearVideoOnPresentation = true
         mSessionManager.add(mode = mode, videos = videos, playedPosition = currentPosition)
     }
@@ -441,9 +438,13 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         }
     }
 
+    private var isDownloadComplete = false
     private fun showDialogLoadingDownloaded() {
-        DialogUtil.createDialogOnlyOneButton(this,
+        if(!isDownloadComplete){
+            isDownloadComplete = true
+            DialogUtil.createDialogOnlyOneButton(this,
                 R.style.NormalDialog, "All videos have been downloaded", R.string.btn_ok, null).show()
+        }
     }
 
     private fun onInsufficientSpace() {
@@ -479,7 +480,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
 
     override fun onResume() {
         super.onResume()
-        Log.d("LOG", this.javaClass.simpleName + " onResume() | current thread: ${Thread.currentThread()} | isMediaProviderChangedInBackground: $isMediaProviderChangedInBackground")
+//        Log.d("LOG", this.javaClass.simpleName + " onResume() | current thread: ${Thread.currentThread()} | isMediaProviderChangedInBackground: $isMediaProviderChangedInBackground")
         PreferenceHelper.getInstance(this).putBoolean(ConstantPreference.IS_IN_BACKGROUND, false)
         mIsVisble = true
         appVisible = true
@@ -497,13 +498,13 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        Log.d("LOG", this.javaClass.simpleName + " onSaveInstanceState()")
+//        Log.d("LOG", this.javaClass.simpleName + " onSaveInstanceState()")
         PreferenceHelper.getInstance(this).putBoolean(ConstantPreference.IS_IN_BACKGROUND, true)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        Log.d("LOG", this.javaClass.simpleName + " onRestoreInstanceState()")
+//        Log.d("LOG", this.javaClass.simpleName + " onRestoreInstanceState()")
         PreferenceHelper.getInstance(this).putBoolean(ConstantPreference.IS_IN_BACKGROUND, false)
     }
 
@@ -623,6 +624,14 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         appVisible = false
         mPlayer?.onAppViewInVisible()
         super.onPause()
+        FirebaseCrashlytics.getInstance().recordException(RuntimeException("screen-background"))
+        FirebaseCrashlytics.getInstance().log("screen-background")
+    }
+
+    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+        super.onSaveInstanceState(outState, outPersistentState)
+        FirebaseCrashlytics.getInstance().recordException(RuntimeException("screen-save instance state"))
+        FirebaseCrashlytics.getInstance().log("screen-save instance state")
     }
 
     override fun onDestroy() {
@@ -635,6 +644,8 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         unregisterReceivers()
         VideoDBUtil.deleteAllVideos()
         super.onDestroy()
+        FirebaseCrashlytics.getInstance().recordException(RuntimeException("app-destroyed"))
+        FirebaseCrashlytics.getInstance().log("app-destroyed")
     }
 
     private fun unregisterReceivers() {
@@ -762,8 +773,8 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
             if (lastIndex < 0) return
 
             supportFragmentManager.fragments[lastIndex]?.childFragmentManager?.also { childFragmentManager ->
-                Log.d("LOG", this.javaClass.simpleName + " onBackPreviousScreen() | last fragment: ${supportFragmentManager.fragments[lastIndex].javaClass.simpleName}")
-                Log.d("LOG", this.javaClass.simpleName + " onBackPreviousScreen() | child fragments number: ${childFragmentManager.backStackEntryCount}")
+//                Log.d("LOG", this.javaClass.simpleName + " onBackPreviousScreen() | last fragment: ${supportFragmentManager.fragments[lastIndex].javaClass.simpleName}")
+//                Log.d("LOG", this.javaClass.simpleName + " onBackPreviousScreen() | child fragments number: ${childFragmentManager.backStackEntryCount}")
                 if (childFragmentManager.backStackEntryCount > 0) {
                     childFragmentManager.popBackStack()
                     return
@@ -777,6 +788,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         } catch (e: Exception) {
             e.printStackTrace()
             FirebaseCrashlytics.getInstance().recordException(e)
+            FirebaseCrashlytics.getInstance().log("exception-back screen: ${e.message}")
             try{
 
             } catch (e:Exception){
@@ -917,8 +929,6 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
             }
         })
         navigateToHomeScreen()
-
-
     }
 
     /**
@@ -943,8 +953,10 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
             FirebaseCrashlytics.getInstance().recordException(java.lang.RuntimeException("Checking Schedule"))
         }
         val strAvailableMemory = String.format("mem - available memory:  %s", memInfo.availMem)
+        val strTotalMemory = String.format("mem - total memory:  %s", memInfo.totalMem)
         val strIsMemoryLow = String.format("mem - memory is low:  %s", memInfo.lowMemory)
         FirebaseCrashlytics.getInstance().log(strAvailableMemory)
+        FirebaseCrashlytics.getInstance().log(strTotalMemory)
         FirebaseCrashlytics.getInstance().log(strIsMemoryLow)
     }
 

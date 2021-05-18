@@ -98,13 +98,13 @@ class ScheduleBroadcastReceiver : BroadcastReceiver() {
     private val TIME_DELAY = 1000L
 
     private fun onPLaySchedule() {
-        Log.d("LOG", this.javaClass.simpleName + " onPLaySchedule() | counterTry: ${counterTry}")
+//        Log.d("LOG", this.javaClass.simpleName + " onPLaySchedule() | counterTry: ${counterTry}")
         counterTry++
         if (counterTry > MAX_NUM_TRY) return
         try {
             mScheduleListeners.forEach { listener ->
                 listener.onReceivePlayVideoScheduleFromUI()
-                Log.d("LOG", this.javaClass.simpleName + " onPLaySchedule() | listener: ${listener}")
+//                Log.d("LOG", this.javaClass.simpleName + " onPLaySchedule() | listener: ${listener}")
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -133,6 +133,7 @@ class ScheduleBroadcastReceiver : BroadcastReceiver() {
     }
 
     private fun onPLayScheduleEvery() {
+//        Log.d("LOG", this.javaClass.simpleName + " onPLayScheduleEvery()")
         for (listener: ScheduleListener in mScheduleListeners) {
             listener.onReceiveResetScheduleFromUI()
         }
@@ -147,8 +148,8 @@ class ScheduleBroadcastReceiver : BroadcastReceiver() {
     fun addListener(listener: ScheduleListener) {
         if (mScheduleListeners.contains(listener)) return
         mScheduleListeners.add(listener)
-        Log.d("LOG", this.javaClass.simpleName + " addListener() | " +
-                "listeners number: ${mScheduleListeners.size} | listener class name: ${listener.javaClass.simpleName}")
+//        Log.d("LOG", this.javaClass.simpleName + " addListener() | " +
+//                "listeners number: ${mScheduleListeners.size} | listener class name: ${listener.javaClass.simpleName}")
     }
 
     fun removeListener(listener: ScheduleListener) {

@@ -11,6 +11,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import player.wellnesssolutions.com.base.common.download.DownloadVideoHelper
 import player.wellnesssolutions.com.base.utils.ParameterUtils
+import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
@@ -160,6 +161,7 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
                             FileUtil.getTotalExternalMemorySize(it))
                 }
             }
+            VideoDBUtil.updateTabledVideoDownloadedState(id)
         }
         for (listener: IProgressListener in mListeners) {
             listener.onDownloaded()
@@ -265,18 +267,18 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
                         override fun onSubscribe(d: Disposable) {}
 
                         override fun onNext(fileLength: Long) {
-                            Log.d("LOG", this.javaClass.simpleName + " addTask() | inited connection | current thread: ${Thread.currentThread()} | name: ${Thread.currentThread().name}")
+//                            Log.d("LOG", this.javaClass.simpleName + " addTask() | inited connection | current thread: ${Thread.currentThread()} | name: ${Thread.currentThread().name}")
                             val availableSpaceExternal = FileUtil.getAvailableExternalMemorySize(context = context)
 //                    Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | start to calculate free space on device | fileLength: $fileLength | availableSpaceExternal: $availableSpaceExternal")
                             when (fileLength < availableSpaceExternal) {
                                 true -> {
-                                    Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | store new downloaded video on external storage | current thread: ${Thread.currentThread()}")
+//                                    Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | store new downloaded video on external storage | current thread: ${Thread.currentThread()}")
                                     createDownloadTask(videoId, url, folder, hasPermission, fileName, fileNameShowNotification)
                                 }
                                 false -> {
                                     val availableSpaceInternal: Long = FileUtil.getAvailableInternalMemorySize()
-                                    Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | start to calculate free space on device | fileLength: $fileLength | " +
-                                            "availableSpaceInternal: $availableSpaceInternal | current thread: ${Thread.currentThread()}")
+//                                    Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | start to calculate free space on device | fileLength: $fileLength | " +
+//                                            "availableSpaceInternal: $availableSpaceInternal | current thread: ${Thread.currentThread()}")
                                     when (fileLength < availableSpaceInternal) {
                                         true -> {
                                             Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | store new downloaded video on internal storage")

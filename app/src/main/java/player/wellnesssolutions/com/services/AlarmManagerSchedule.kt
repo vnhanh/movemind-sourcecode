@@ -15,7 +15,7 @@ object AlarmManagerSchedule {
     private var intentPending: PendingIntent? = null
 
     fun setupTimeWakeSchedule(context: Context, secondStart: Int) {
-        Log.d("LOG", this.javaClass.simpleName + " setupTimeWakeSchedule()")
+//        Log.d("LOG", this.javaClass.simpleName + " setupTimeWakeSchedule()")
         alarm = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, ScheduleVideosService::class.java)
         intent.putExtra(Constant.SCHEDULE_INTENT, Constant.SCHEDULE_ALARM_TIME)
@@ -26,6 +26,7 @@ object AlarmManagerSchedule {
     }
 
     fun setupAlarmTimeCallEveryDay(context: Context) {
+//        Log.d("LOG", this.javaClass.simpleName + " setupAlarmTimeCallEveryDay()")
         val alarm = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, ScheduleVideosService::class.java)
         intent.putExtra(Constant.SCHEDULE_INTENT, Constant.SCHEDULE_ALARM_EVERY)
@@ -48,7 +49,7 @@ object AlarmManagerSchedule {
     }
 
     fun cancelAlarmScheduleTime() {
-        Log.d("LOG", this.javaClass.simpleName + " cancelAlarmScheduleTime")
+//        Log.d("LOG", this.javaClass.simpleName + " cancelAlarmScheduleTime")
         if (alarm != null && intentPending != null) {
             alarm?.cancel(intentPending)
         }

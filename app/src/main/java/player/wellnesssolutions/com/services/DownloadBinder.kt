@@ -30,24 +30,21 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
     private var mService: DownloadService = listener.onGetService()
 
     fun getListDoesNotDownloaded(context: Context, isCalledComeFromUI: Boolean) {
-        Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | current thread: ${Thread.currentThread()} | name: ${Thread.currentThread().name}")
+//        Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | current thread: ${Thread.currentThread()} | name: ${Thread.currentThread().name}")
         mListDownload = VideoDBUtil.readDVideosFromDB(tag = Constant.TAG_VIDEO_DOWNLOAD)
         mListDownloadFailure = VideoDBUtil.readDVideosFailureFromDB(tag = Constant.TAG_VIDEO_DOWNLOAD)
         Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | mListDownload size: ${mListDownload.size} | list download failed size: ${mListDownloadFailure.size}")
         if (mListDownload.isEmpty()) {
             if (mListDownloadFailure.isEmpty()) {
-                if (!isCalledComeFromUI) {
-                    Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | isCalledComeFromUI: $isCalledComeFromUI | end download")
+//                if (!isCalledComeFromUI) {
+//                    Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | isCalledComeFromUI: $isCalledComeFromUI | end download")
                     mService.onDownloadEnd()
-                }
+//                }
                 return
             } else {
                 if (isCalledComeFromUI) {
                     for (v: MMVideo in mListDownloadFailure) {
                         if (v.id == null || v.downloadUrl.isNullOrEmpty()) {
-                            if (!isCalledComeFromUI) {
-                                mService.onDownloadEnd()
-                            }
                             return
                         }
                         Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | mListDownloadFailure is not empty: ${mListDownloadFailure.size}")
@@ -68,9 +65,9 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
 //        Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | listDownloadNow size: ${mListDownload.size}")
         for (v: MMVideo in mListDownload) {
             if (v.id == null || v.downloadUrl.isNullOrEmpty()) {
-                if (!isCalledComeFromUI) {
-                    mService.onDownloadEnd()
-                }
+//                if (!isCalledComeFromUI) {
+//                    mService.onDownloadEnd()
+//                }
                 return
             }
             DownloadManagerCustomized.getInstance(context).queueTask(
@@ -100,24 +97,24 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
         }
     }
 
-    fun getFullListVideoAndRemoveVideoWithId(data: IntArray) {
-        val videosFromData = VideoDBUtil.readAllDVideosFromDB(Constant.TAG_VIDEO_DOWNLOAD)
-        for (v: MMVideo in videosFromData) {
-            var isDelete = true
-            for (i in data) {
-                v.id?.let {
-                    if (it == i) {
-                        isDelete = false
-                    }
-                }
-            }
-            if (isDelete) {
-                if (v.id == null || v.videoName == null || v.downloadUrl == null) return
-                VideoDBUtil.deleteDVideosFromDB(Constant.TAG_VIDEO_DOWNLOAD, v.id!!)
-                deleteFileWithId(mService.applicationContext, v.id!!, v.videoName!!, v.downloadUrl!!)
-            }
-        }
-    }
+//    fun getFullListVideoAndRemoveVideoWithId(data: IntArray) {
+//        val videosFromData = VideoDBUtil.readAllDVideosFromDB(Constant.TAG_VIDEO_DOWNLOAD)
+//        for (v: MMVideo in videosFromData) {
+//            var isDelete = true
+//            for (i in data) {
+//                v.id?.let {
+//                    if (it == i) {
+//                        isDelete = false
+//                    }
+//                }
+//            }
+//            if (isDelete) {
+//                if (v.id == null || v.videoName == null || v.downloadUrl == null) return
+//                VideoDBUtil.deleteDVideosFromDB(Constant.TAG_VIDEO_DOWNLOAD, v.id!!)
+//                deleteFileWithId(mService.applicationContext, v.id!!, v.videoName!!, v.downloadUrl!!)
+//            }
+//        }
+//    }
 
     fun deleteFileWithId(context: Context, videoId: Int, nameShowFile: String?, url: String?) {
         if (url == null) {
@@ -181,60 +178,59 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
 
     private fun getSavedFileName(name: String, extension: String): String = String.format("%s.%s", name, extension)
 
-    fun compareAndUpdateDataDVideos() {
-        getAllVideosForDownload(mService.applicationContext)
-    }
+//    fun compareAndUpdateDataDVideos() {
+//        getAllVideosForDownload(mService.applicationContext)
+//    }
 
-    private fun getAllVideosForDownload(context: Context) {
-        Log.d("LOG", this.javaClass.simpleName + " getAllVideosForDownload() | current thread: ${Thread.currentThread()}")
-        val tokenAu: String = PreferenceHelper.getInstance(context).getString(ConstantPreference.TOKEN, "")
-        val deviceId = PreferenceHelper.getInstance(context).getString(ConstantPreference.DEVICE_ID, "")
-        if (deviceId.isNotEmpty() && tokenAu.isNotEmpty()) {
-            DownloadApi().getAllVideosFromServer(tokenAu, deviceId)
-                    .subscribe(object : BaseResponseObserver<ArrayList<MMVideo>>() {
-                        override fun onExpiredUnauthenticated(error: String) {
-
-                        }
-
-                        override fun onResponseSuccess(data: ResponseValue<ArrayList<MMVideo>>?) {
-                            super.onResponseSuccess(data)
-                            if (data == null) return
-                            val indexForRemove = ArrayList<Int>()
-                            val dataSaveToDB = data.data
-                            val videosFromData = VideoDBUtil.readAllDVideosFromDB(Constant.TAG_VIDEO_DOWNLOAD)
-
-                            for (i in 0 until dataSaveToDB.size) {
-                                var isDelete = false
-                                for (videoDB: MMVideo in videosFromData) {
-                                    videoDB.id?.let {
-                                        if (it == dataSaveToDB[i].id) {
-                                            isDelete = true
-                                        }
-                                    }
-                                }
-                                if (isDelete) {
-                                    indexForRemove.add(i)
-                                }
-                            }
-                            for (i in indexForRemove) {
-                                dataSaveToDB.removeAt(i)
-                            }
-
-                            VideoDBUtil.createOrUpdateVideos(data = dataSaveToDB, tag = Constant.TAG_VIDEO_DOWNLOAD)
-                            DownloadManagerCustomized.getInstance(context).cancelDownloadService()
-                            DownloadManagerCustomized.getInstance(context).stopNotify()
-                            DownloadManagerCustomized.getInstance(context).clearQueue()
-                            getListDoesNotDownloaded(context, false)
-                        }
-
-                        override fun onExpired(error: String) {
-
-                        }
-
-                    })
-        }
-
-    }
+//    private fun getAllVideosForDownload(context: Context) {
+//        val tokenAu: String = PreferenceHelper.getInstance(context).getString(ConstantPreference.TOKEN, "")
+//        val deviceId = PreferenceHelper.getInstance(context).getString(ConstantPreference.DEVICE_ID, "")
+//        if (deviceId.isNotEmpty() && tokenAu.isNotEmpty()) {
+//            DownloadApi().getAllVideosFromServer(tokenAu, deviceId)
+//                    .subscribe(object : BaseResponseObserver<ArrayList<MMVideo>>() {
+//                        override fun onExpiredUnauthenticated(error: String) {
+//
+//                        }
+//
+//                        override fun onResponseSuccess(data: ResponseValue<ArrayList<MMVideo>>?) {
+//                            super.onResponseSuccess(data)
+//                            if (data == null) return
+//                            val indexForRemove = ArrayList<Int>()
+//                            val dataSaveToDB = data.data
+//                            val videosFromData = VideoDBUtil.readAllDVideosFromDB(Constant.TAG_VIDEO_DOWNLOAD)
+//
+//                            for (i in 0 until dataSaveToDB.size) {
+//                                var isDelete = false
+//                                for (videoDB: MMVideo in videosFromData) {
+//                                    videoDB.id?.let {
+//                                        if (it == dataSaveToDB[i].id) {
+//                                            isDelete = true
+//                                        }
+//                                    }
+//                                }
+//                                if (isDelete) {
+//                                    indexForRemove.add(i)
+//                                }
+//                            }
+//                            for (i in indexForRemove) {
+//                                dataSaveToDB.removeAt(i)
+//                            }
+//
+//                            VideoDBUtil.createOrUpdateVideos(data = dataSaveToDB, tag = Constant.TAG_VIDEO_DOWNLOAD)
+//                            DownloadManagerCustomized.getInstance(context).cancelDownloadService()
+//                            DownloadManagerCustomized.getInstance(context).stopNotify()
+//                            DownloadManagerCustomized.getInstance(context).clearQueue()
+//                            getListDoesNotDownloaded(context, false)
+//                        }
+//
+//                        override fun onExpired(error: String) {
+//
+//                        }
+//
+//                    })
+//        }
+//
+//    }
 
     fun updateDataDVideos(data: IntArray) {
         Log.d("LOG", this.javaClass.simpleName + " updateDataDVideos()")
@@ -280,7 +276,7 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
     }
 
     fun downloadWhenChangeSubs(context: Context) {
-        Log.d("LOG", this.javaClass.simpleName + " downloadWhenChangeSubs() | current thread: ${Thread.currentThread()}")
+//        Log.d("LOG", this.javaClass.simpleName + " downloadWhenChangeSubs() | current thread: ${Thread.currentThread()}")
         DownloadManagerCustomized.getInstance(context).cancelDownloadService()
         DownloadManagerCustomized.getInstance(context).stopNotify()
         DownloadManagerCustomized.getInstance(context).clearQueue()

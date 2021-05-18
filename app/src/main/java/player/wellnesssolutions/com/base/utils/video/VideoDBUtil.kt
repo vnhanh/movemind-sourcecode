@@ -280,6 +280,23 @@ object VideoDBUtil {
         }
     }
 
+    fun updateTabledVideoDownloadedState(videoId: Int) {
+        val realm = Realm.getDefaultInstance()
+        try {
+            val data = realm.where(RealmDVideo::class.java).equalTo("id", videoId).findFirst()
+            realm.beginTransaction()
+            if (data != null) {
+                data.isDownloaded = true
+                data.isFailureDownload = false
+            }
+            realm.commitTransaction()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            realm.close()
+        }
+    }
+
     fun deleteAllVideos() {
         var realm: Realm? = null
         try {

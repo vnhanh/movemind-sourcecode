@@ -350,10 +350,10 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
     }
 
     override fun playVideoAt(index: Int) {
-        Log.d(
-            "LOG",
-            this.javaClass.simpleName + " playVideoAt() | index: $index | videos number: ${mVideos?.size ?: 0}"
-        )
+//        Log.d(
+//            "LOG",
+//            this.javaClass.simpleName + " playVideoAt() | index: $index | videos number: ${mVideos?.size ?: 0}"
+//        )
         if (index <= 0 || mVideos == null || mVideos!!.size <= 1) return
         // removeAllVideosBeforeAt() must run before onReleasePlayer() to avoid bug
         removeAllVideosBeforeAt(index)
@@ -437,10 +437,10 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
 
         when (playbackState) {
             Player.STATE_ENDED -> {
-                Log.d(
-                    "LOG",
-                    this.javaClass.simpleName + " onPlayerStateChanged() | STATE_ENDED | isEndedPlayer: $isEndedPlayer"
-                )
+//                Log.d(
+//                    "LOG",
+//                    this.javaClass.simpleName + " onPlayerStateChanged() | STATE_ENDED | isEndedPlayer: $isEndedPlayer"
+//                )
                 if (!mHasSubtitle && !isEndedPlayer) {
                     isEndedPlayer = true
                     handleOnEnded()
@@ -466,10 +466,10 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
     }
 
     override fun handleOnEnded() {
-        Log.d(
-            "LOG",
-            this.javaClass.simpleName + " handleOnEnded() | videos number: ${mVideos?.size ?: 0}"
-        )
+//        Log.d(
+//            "LOG",
+//            this.javaClass.simpleName + " handleOnEnded() | videos number: ${mVideos?.size ?: 0}"
+//        )
         mClosedCaptionController?.resetData()
         if (mVideos?.size ?: 0 > 1) {
             playVideoAt(index = 1)

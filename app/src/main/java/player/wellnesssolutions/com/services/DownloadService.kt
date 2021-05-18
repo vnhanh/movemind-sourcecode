@@ -32,7 +32,7 @@ class DownloadService : Service(), IProgressListener, DownloadBinder.BinderDownl
 
     private val mBroadcast: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            Log.d("LOG", "DownloadService - mBroadcast - onReceive() | current thread: ${Thread.currentThread()}")
+//            Log.d("LOG", "DownloadService - mBroadcast - onReceive() | current thread: ${Thread.currentThread()}")
             if (context == null || intent == null) return
             when (intent.action) {
                 ACTION_DOWNLOAD -> readScheduleIntent(intent)
@@ -157,7 +157,7 @@ class DownloadService : Service(), IProgressListener, DownloadBinder.BinderDownl
 
     override fun onDownloaded() {
         super.onDownloaded()
-        Log.d("LOG", this.javaClass.simpleName + " onDownloaded() | current thread: ${Thread.currentThread()}")
+//        Log.d("LOG", this.javaClass.simpleName + " onDownloaded() | current thread: ${Thread.currentThread()}")
         mBinder.getListDoesNotDownloaded(this, false)
     }
 
@@ -166,21 +166,21 @@ class DownloadService : Service(), IProgressListener, DownloadBinder.BinderDownl
         mBinder.deleteFileWithId(this, videoId, fileName, url)
     }
 
-    fun onDownloadStart() {
-        val intent = Intent().apply {
-            action = ACTION_DOWNLOAD_UI
-            putExtra(DOWNLOAD_VIDEO_UI, Constant.DOWNLOAD_START_UI)
-        }
-        this.sendBroadcast(intent)
-    }
+//    fun onDownloadStart() {
+//        val intent = Intent().apply {
+//            action = ACTION_DOWNLOAD_UI
+//            putExtra(DOWNLOAD_VIDEO_UI, Constant.DOWNLOAD_START_UI)
+//        }
+//        this.sendBroadcast(intent)
+//    }
 
-    private fun onUpDateDownload() {
-        val intent = Intent().apply {
-            action = ACTION_DOWNLOAD_UI
-            putExtra(DOWNLOAD_VIDEO_UI, Constant.DOWNLOAD_UPDATE_UI)
-        }
-        this.sendBroadcast(intent)
-    }
+//    private fun onUpDateDownload() {
+//        val intent = Intent().apply {
+//            action = ACTION_DOWNLOAD_UI
+//            putExtra(DOWNLOAD_VIDEO_UI, Constant.DOWNLOAD_UPDATE_UI)
+//        }
+//        this.sendBroadcast(intent)
+//    }
 
     fun onDownloadEnd() {
         val intent = Intent().apply {

@@ -172,7 +172,7 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
     }
 
     private fun registerUICastingBroadcast() {
-        Log.d("LOG", this.javaClass.simpleName + " registerUICastingBroadcast()")
+//        Log.d("LOG", this.javaClass.simpleName + " registerUICastingBroadcast()")
         val castingFilter = IntentFilter(CastingBroadcastReceiver.ACTION_UI)
         CastingBroadcastReceiver.getInstance().addListener(listener = this)
         mService.registerReceiver(CastingBroadcastReceiver.getInstance(), castingFilter)
@@ -180,7 +180,7 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
 
     fun onDestroy() {
         PreferenceHelper.getInstance()?.putBoolean(Constant.IS_CAST_DISCONNECT, true)
-        Log.d("LOG", this.javaClass.simpleName + " onDestroy")
+//        Log.d("LOG", this.javaClass.simpleName + " onDestroy")
         mMonitorVideoAsyncTask?.stopTask()
         mMonitorVideoAsyncTask?.release()
         unregisterUICastingBroadcast()
@@ -200,7 +200,7 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
     }
 
     private fun unregisterUICastingBroadcast() {
-        Log.d("LOG", this.javaClass.simpleName + " unregisterUICastingBroadcast()")
+//        Log.d("LOG", this.javaClass.simpleName + " unregisterUICastingBroadcast()")
         if (CastingBroadcastReceiver.getInstance().isRegistered(this)) {
             try {
                 mService.unregisterReceiver(CastingBroadcastReceiver.getInstance())
@@ -212,28 +212,28 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
     }
 
     fun pauseOrPlay() {
-        Log.d("LOG", this.javaClass.simpleName + " pauseOrPlay()")
+//        Log.d("LOG", this.javaClass.simpleName + " pauseOrPlay()")
         when (isShowClosedCaptionView()) {
             // is showing list of closed caption language views
             true -> {
-                Log.d("LOG", this.javaClass.simpleName + " pauseOrPlay() | isShowClosedCaptionView")
+//                Log.d("LOG", this.javaClass.simpleName + " pauseOrPlay() | isShowClosedCaptionView")
                 mPresenter?.selectLanguageCCOption()
                 videoPlayer.controllerShowTimeoutMs = 3000
                 mService.changeToNormalMode()
             }
 
             false -> {
-                Log.d("LOG", this.javaClass.simpleName + " pauseOrPlay() | isShowClosedCaptionView: not")
+//                Log.d("LOG", this.javaClass.simpleName + " pauseOrPlay() | isShowClosedCaptionView: not")
                 when (mPresenter?.getPlayMode()) {
                     PlayMode.SCHEDULE -> {
-                        Log.d("LOG", this.javaClass.simpleName + " pauseOrPlay() | isShowClosedCaptionView: not | SCHEDULE")
+//                        Log.d("LOG", this.javaClass.simpleName + " pauseOrPlay() | isShowClosedCaptionView: not | SCHEDULE")
                         MessageUtils.showSnackBar(videoPlayer, R.string.class_video_cant_paused, R.color.yellow, isOnPresentation = true
                         )
                         videoPlayer.showController()
                     }
 
                     PlayMode.ON_DEMAND -> {
-                        Log.d("LOG", this.javaClass.simpleName + " pauseOrPlay() | isShowClosedCaptionView: not | DEMAND")
+//                        Log.d("LOG", this.javaClass.simpleName + " pauseOrPlay() | isShowClosedCaptionView: not | DEMAND")
                         when (videoPlayer.player?.playbackState) {
                             Player.STATE_ENDED -> {
                                 mPresenter?.replayVideo()
@@ -254,17 +254,17 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
     }
 
     fun pause() {
-        Log.d("LOG", this.javaClass.simpleName + " pause()")
+//        Log.d("LOG", this.javaClass.simpleName + " pause()")
         btnPauseVideo.performClick()
     }
 
     fun resume() {
-        Log.d("LOG", this.javaClass.simpleName + " resume()")
+//        Log.d("LOG", this.javaClass.simpleName + " resume()")
         btnPlayVideo.performClick()
     }
 
     fun nextVideo() {
-        Log.d("LOG", this.javaClass.simpleName + " nextVideo()")
+//        Log.d("LOG", this.javaClass.simpleName + " nextVideo()")
         when (isShowClosedCaptionView()) {
             // switch language cc option
             true -> {
@@ -274,7 +274,7 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
             false -> {
                 when (mPresenter?.getPlayMode()) {
                     PlayMode.SCHEDULE -> {
-                        Log.d("LOG", this.javaClass.simpleName + " nextVideo() | SCHEDULE | can not do this")
+//                        Log.d("LOG", this.javaClass.simpleName + " nextVideo() | SCHEDULE | can not do this")
                         MessageUtils.showSnackBar(videoPlayer, R.string.class_video_cant_skip, R.color.yellow, isOnPresentation = true)
                     }
 
@@ -302,7 +302,7 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
     }
 
     fun showClosedCaption() {
-        Log.d("LOG", this.javaClass.simpleName + " showClosedCaption()")
+//        Log.d("LOG", this.javaClass.simpleName + " showClosedCaption()")
         groupViewsComingUpNext.visibility = View.GONE
 
         when (mPresenter?.isShowClosedCaptionView()) {
@@ -320,7 +320,7 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
     }
 
     fun setupPlayVideo(mode: PlayMode, videos: ArrayList<MMVideo>, lastPosition: Long) {
-        Log.d("LOG", this.javaClass.simpleName + " setupPlayVideo() | play mode: $mode | videos number: ${videos.size} | positionPlay: $lastPosition")
+//        Log.d("LOG", this.javaClass.simpleName + " setupPlayVideo() | play mode: $mode | videos number: ${videos.size} | positionPlay: $lastPosition")
         val videosPlay = ArrayList<MMVideo>()
         videosPlay.addAll(videos)
         releasePresenters()
@@ -792,7 +792,7 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
         override fun run() {
 //            Log.d("LOG", "MMPresentationBinder - runnable is running...")
             if (mRouter?.presentationDisplayId == -1 || mRouter?.presentationDisplay?.isValid == false) {
-                Log.d("LOG", "MMPresentationBinder - runnable - stopped service...")
+//                Log.d("LOG", "MMPresentationBinder - runnable - stopped service...")
                 // stop service and pause video
                 mService.stopSelf()
                 mPresenter?.pauseVideo()

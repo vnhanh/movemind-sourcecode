@@ -116,7 +116,6 @@ object Constant {
     /**
      * VIEW
      */
-    const val TIME_TRANSITION_SCREEN = 1600L
     const val TIME_POST_DELAY_DEFAULT = 1000L
     const val NUM_MAX_TRY_POST_DELAY = 5
     const val IS_CAST_DISCONNECT = "IS_CAST_DISCONNECT"
@@ -125,7 +124,6 @@ object Constant {
     /**
      * NETWORK
      */
-    const val ERROR_CANT_CONNECT_SERVER = "Cannot connect to the server. Please check network and try again."
     const val ERROR_OUT_OF_MEMORY = "Error out of memory"
 
     const val TIME_CHANGE_SCREEN = 1000L
