@@ -165,9 +165,12 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         handlerMain.post{
             val id: Int = route.presentationDisplayId
             if (id > -1 && id != mPresentationId) {
-                mPresentationId = id
+                FirebaseCrashlytics.getInstance().recordException(RuntimeException("casting: connected"))
+                FirebaseCrashlytics.getInstance().log("casting: connected")
 
+                mPresentationId = id
                 releaseRoute()
+
                 initRoute(route)
             } else if (id == -1 && id != mPresentationId) {
                 FirebaseCrashlytics.getInstance().recordException(RuntimeException("casting: disconnect"))
@@ -307,6 +310,9 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+//        FirebaseCrashlytics.getInstance().recordException(RuntimeException("screen: onCreate()"))
+//        FirebaseCrashlytics.getInstance().log("screen: onCreate()")
+
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         val flags = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -440,6 +446,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
 
     private var isDownloadComplete = false
     private fun showDialogLoadingDownloaded() {
+        Log.d("LOG", this.javaClass.simpleName + " showDialogLoadingDownloaded() | isDownloadComplete: ${isDownloadComplete}")
         if(!isDownloadComplete){
             isDownloadComplete = true
             DialogUtil.createDialogOnlyOneButton(this,
@@ -480,6 +487,8 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
 
     override fun onResume() {
         super.onResume()
+//        FirebaseCrashlytics.getInstance().recordException(RuntimeException("screen: onResume()"))
+//        FirebaseCrashlytics.getInstance().log("screen: onResume()")
 //        Log.d("LOG", this.javaClass.simpleName + " onResume() | current thread: ${Thread.currentThread()} | isMediaProviderChangedInBackground: $isMediaProviderChangedInBackground")
         PreferenceHelper.getInstance(this).putBoolean(ConstantPreference.IS_IN_BACKGROUND, false)
         mIsVisble = true
@@ -494,18 +503,6 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
             handleOnProviderChanged(route)
             route = null
         }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-//        Log.d("LOG", this.javaClass.simpleName + " onSaveInstanceState()")
-        PreferenceHelper.getInstance(this).putBoolean(ConstantPreference.IS_IN_BACKGROUND, true)
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-//        Log.d("LOG", this.javaClass.simpleName + " onRestoreInstanceState()")
-        PreferenceHelper.getInstance(this).putBoolean(ConstantPreference.IS_IN_BACKGROUND, false)
     }
 
     private fun showNetworkDisconnectedDialogIf() {
@@ -624,14 +621,31 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         appVisible = false
         mPlayer?.onAppViewInVisible()
         super.onPause()
-        FirebaseCrashlytics.getInstance().recordException(RuntimeException("screen-background"))
-        FirebaseCrashlytics.getInstance().log("screen-background")
+//        FirebaseCrashlytics.getInstance().recordException(RuntimeException("screen-background"))
+//        FirebaseCrashlytics.getInstance().log("screen-background")
     }
 
     override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
         super.onSaveInstanceState(outState, outPersistentState)
-        FirebaseCrashlytics.getInstance().recordException(RuntimeException("screen-save instance state"))
-        FirebaseCrashlytics.getInstance().log("screen-save instance state")
+        PreferenceHelper.getInstance(this).putBoolean(ConstantPreference.IS_IN_BACKGROUND, true)
+//        FirebaseCrashlytics.getInstance().recordException(RuntimeException("screen-save instance state 2 params"))
+//        FirebaseCrashlytics.getInstance().log("screen-save instance state 2 params")
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+//        Log.d("LOG", this.javaClass.simpleName + " onSaveInstanceState()")
+//        FirebaseCrashlytics.getInstance().recordException(RuntimeException("screen-save instance state 1 param"))
+//        FirebaseCrashlytics.getInstance().log("screen-save instance state 1 param")
+        PreferenceHelper.getInstance(this).putBoolean(ConstantPreference.IS_IN_BACKGROUND, true)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+//        Log.d("LOG", this.javaClass.simpleName + " onRestoreInstanceState()")
+//        FirebaseCrashlytics.getInstance().recordException(RuntimeException("screen: on restore instance state 1 param"))
+//        FirebaseCrashlytics.getInstance().log("screen: on restore instance state 1 param")
+        PreferenceHelper.getInstance(this).putBoolean(ConstantPreference.IS_IN_BACKGROUND, false)
     }
 
     override fun onDestroy() {
@@ -644,8 +658,8 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         unregisterReceivers()
         VideoDBUtil.deleteAllVideos()
         super.onDestroy()
-        FirebaseCrashlytics.getInstance().recordException(RuntimeException("app-destroyed"))
-        FirebaseCrashlytics.getInstance().log("app-destroyed")
+//        FirebaseCrashlytics.getInstance().recordException(RuntimeException("app-destroyed"))
+//        FirebaseCrashlytics.getInstance().log("app-destroyed")
     }
 
     private fun unregisterReceivers() {
@@ -825,7 +839,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         FileUtil.clearFolder(this, Constant.FOLDER_DOWNLOADED_VIDEOS)
         FileUtil.clearFolder(this, Constant.FOLDER_DOWNLOADED)
         DownloadDBManager.getInstance().clearAll()
-        PreferenceHelper.getInstance(this).putBoolean(ConstantPreference.IS_DOWNLOAD_VIDEOS, true)
+        PreferenceHelper.getInstance(this).putBoolean(ConstantPreference.IS_DOWNLOAD_COMPLETELY, true)
         PreferenceHelper.getInstance(this).putInt(ConstantPreference.DOWNLOAD_VIDEOS_SUBS_ID, -1)
     }
 
@@ -936,15 +950,15 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
      */
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
-        FirebaseCrashlytics.getInstance().recordException(RuntimeException("onTrimMemory()"))
-        FirebaseCrashlytics.getInstance().log("memory: level - $level")
-        logFirebaseAboutMemory()
+//        FirebaseCrashlytics.getInstance().recordException(RuntimeException("onTrimMemory()"))
+//        FirebaseCrashlytics.getInstance().log("memory: level - $level")
+//        logFirebaseAboutMemory()
     }
 
     override fun onLowMemory() {
         super.onLowMemory()
-        FirebaseCrashlytics.getInstance().recordException(RuntimeException("onLowMemory()"))
-        logFirebaseAboutMemory()
+//        FirebaseCrashlytics.getInstance().recordException(RuntimeException("onLowMemory()"))
+//        logFirebaseAboutMemory()
     }
 
     fun logFirebaseAboutMemory(isRecordException: Boolean = false) {

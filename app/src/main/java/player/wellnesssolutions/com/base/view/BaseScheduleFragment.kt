@@ -91,6 +91,8 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
             handler.removeCallbacks(null)
         } catch (e: Exception) {
             e.printStackTrace()
+            FirebaseCrashlytics.getInstance().recordException(RuntimeException("destroyed error ${e.message}"))
+            FirebaseCrashlytics.getInstance().log("${this.javaClass.simpleName} destroyed exception")
         }
         isNewScreen = true
         schedulePresenter?.onDestroy()
@@ -144,6 +146,8 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
             handler.post(runnablePlayScheduledVideo)
         } catch (e: Exception) {
             e.printStackTrace()
+            FirebaseCrashlytics.getInstance().recordException(RuntimeException("play video on schedule error ${e.message}"))
+            FirebaseCrashlytics.getInstance().log("play video on schedule")
         }
     }
 
@@ -154,6 +158,8 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
             handler.post(runnableResetSchedule)
         } catch (e: Exception) {
             e.printStackTrace()
+            FirebaseCrashlytics.getInstance().recordException(RuntimeException("reset schedule error ${e.message}"))
+            FirebaseCrashlytics.getInstance().log("reset schedule error")
         }
     }
 
@@ -164,6 +170,8 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
             handler.post(runnableUpdateSchedule)
         } catch (e: Exception) {
             e.printStackTrace()
+            FirebaseCrashlytics.getInstance().recordException(RuntimeException("update schedule error ${e.message}"))
+            FirebaseCrashlytics.getInstance().log("update schedule error")
         }
     }
 

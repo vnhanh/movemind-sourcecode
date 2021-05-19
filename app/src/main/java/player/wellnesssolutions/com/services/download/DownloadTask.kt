@@ -112,6 +112,7 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
                 }
             }
         }
+        release()
     }
 
     private fun saveFileInternal(downloadData: DownloadData): Int {

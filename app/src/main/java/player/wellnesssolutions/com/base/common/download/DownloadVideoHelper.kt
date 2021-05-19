@@ -65,7 +65,7 @@ object DownloadVideoHelper {
         try {
             val tokenAu: String = PreferenceHelper.getInstance(context).getString(ConstantPreference.TOKEN, "")
             val deviceId = PreferenceHelper.getInstance(context).getString(ConstantPreference.DEVICE_ID, "")
-            Log.d("LOG", this.javaClass.simpleName + " senStorageStatusToServer() | tokenAu: $tokenAu | deviceId: $deviceId")
+//            Log.d("LOG", this.javaClass.simpleName + " senStorageStatusToServer() | tokenAu: $tokenAu | deviceId: $deviceId")
             StorageApi().sendStorageStatusToServer(tokenAu, deviceId, availableSpace, totalSpace, sdAvailableSpace, sdTotalSpace)
                     .subscribe(object : BaseResponseObserver<Any>() {
                         override fun onExpired(error: String) {

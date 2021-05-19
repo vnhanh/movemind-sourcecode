@@ -34,7 +34,8 @@ object ConstantPreference {
 
     const val LAST_TIME_COUNT_DOWN = "lastTimeCountDown"
     const val IS_SEND_DEVICE_TOKEN = "isSendDeviceToken"
-    const val IS_DOWNLOAD_VIDEOS = "isDownloadVideos"
+    const val IS_STARTED_DOWNLOADING = "IS_STARTED_DOWNLOADING"
+    const val IS_DOWNLOAD_COMPLETELY = "IS_DOWNLOAD_COMPLETELY"
     const val DOWNLOAD_VIDEOS_SUBS_ID = "downloadVideosSubsID"
 
     const val IS_IN_BACKGROUND = "IS_IN_BACKGROUND"

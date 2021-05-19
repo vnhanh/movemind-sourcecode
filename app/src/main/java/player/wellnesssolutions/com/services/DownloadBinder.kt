@@ -33,12 +33,14 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
 //        Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | current thread: ${Thread.currentThread()} | name: ${Thread.currentThread().name}")
         mListDownload = VideoDBUtil.readDVideosFromDB(tag = Constant.TAG_VIDEO_DOWNLOAD)
         mListDownloadFailure = VideoDBUtil.readDVideosFailureFromDB(tag = Constant.TAG_VIDEO_DOWNLOAD)
-        Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | mListDownload size: ${mListDownload.size} | list download failed size: ${mListDownloadFailure.size}")
+        Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | downloaded video number: ${mListDownload.size} | list download failed size: ${mListDownloadFailure.size}")
         if (mListDownload.isEmpty()) {
             if (mListDownloadFailure.isEmpty()) {
+                Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | downloaded list is empty | failed downloaded list is also empty")
 //                if (!isCalledComeFromUI) {
 //                    Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | isCalledComeFromUI: $isCalledComeFromUI | end download")
-                    mService.onDownloadEnd()
+                PreferenceHelper.getInstance()?.putBoolean(ConstantPreference.IS_DOWNLOAD_COMPLETELY, true)
+                mService.onDownloadEnd()
 //                }
                 return
             } else {

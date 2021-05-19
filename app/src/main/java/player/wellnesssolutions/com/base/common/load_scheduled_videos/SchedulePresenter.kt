@@ -21,6 +21,7 @@ import player.wellnesssolutions.com.ui.fragment_home.helper.DataCachedVideoSched
 import player.wellnesssolutions.com.ui.fragment_home.helper.HandlerScheduleTime
 import player.wellnesssolutions.com.ui.fragment_home.helper.IListenerHandleScheduleTime
 import player.wellnesssolutions.com.ui.fragment_home.helper.STATE_CALCULATING_VIDEO_SCHEDULE_NOW
+import java.lang.RuntimeException
 
 class SchedulePresenter(private var context: Context?) : BaseResponseObserver<ArrayList<MMVideo>>(), IScheduleContract.Presenter,
         IListenerHandleScheduleTime {
@@ -53,6 +54,8 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
                 loadSchedule()
             } catch (e: Exception) {
                 e.printStackTrace()
+                FirebaseCrashlytics.getInstance().recordException(RuntimeException("load schedule exception ${e.message}"))
+                FirebaseCrashlytics.getInstance().log("load schedule error ${e.message}")
                 if (counterTryPostDelay++ < Constant.NUM_MAX_TRY_POST_DELAY) {
                     handler.postDelayed(this, Constant.TIME_POST_DELAY_DEFAULT)
                 }

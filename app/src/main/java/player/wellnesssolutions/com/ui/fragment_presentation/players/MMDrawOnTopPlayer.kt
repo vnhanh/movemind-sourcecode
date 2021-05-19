@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.SurfaceHolder
 import android.view.ViewGroup
 import androidx.mediarouter.media.MediaRouter
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.utils.ParameterUtils
 import player.wellnesssolutions.com.network.datasource.videos.PlayMode
@@ -120,6 +121,8 @@ class MMDrawOnTopPlayer(context: Context) : MMLocalPlayer(context), SurfaceHolde
             context.stopService(Intent(context, MMPresentationService::class.java))
         } catch (ex: Exception) {
             ex.printStackTrace()
+            FirebaseCrashlytics.getInstance().recordException(ex)
+            FirebaseCrashlytics.getInstance().log("casting-stop service: erro")
         }
         mBound = false
         mService = null

@@ -8,8 +8,10 @@ import android.view.Surface
 import android.view.SurfaceHolder
 import androidx.mediarouter.media.MediaItemStatus
 import androidx.mediarouter.media.MediaRouter
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import player.wellnesssolutions.com.common.media_router.models.PlaylistItem
 import java.io.IOException
+import java.lang.RuntimeException
 
 abstract class MMLocalPlayer(protected val context: Context) : MMPlayer(),
         MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
@@ -63,12 +65,20 @@ abstract class MMLocalPlayer(protected val context: Context) : MMPlayer(),
             mediaPlayer!!.prepareAsync()
         } catch (e: IllegalStateException) {
             e.printStackTrace()
+            FirebaseCrashlytics.getInstance().recordException(e)
+            FirebaseCrashlytics.getInstance().log("casting-local player: illegal state error")
         } catch (e: IOException) {
             e.printStackTrace()
+            FirebaseCrashlytics.getInstance().recordException(e)
+            FirebaseCrashlytics.getInstance().log("casting-local player: IO error")
         } catch (e: IllegalArgumentException) {
             e.printStackTrace()
+            FirebaseCrashlytics.getInstance().recordException(e)
+            FirebaseCrashlytics.getInstance().log("casting-local player: ILlegal error")
         } catch (e: SecurityException) {
             e.printStackTrace()
+            FirebaseCrashlytics.getInstance().recordException(e)
+            FirebaseCrashlytics.getInstance().log("casting-local player: security error")
         }
 
         if (item.state == MediaItemStatus.PLAYBACK_STATE_PLAYING) {

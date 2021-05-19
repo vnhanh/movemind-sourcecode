@@ -111,6 +111,7 @@ object VideoDBUtil {
     }
 
     fun saveDVideosToDB(data: ArrayList<MMVideo>, tag: String) {
+        Log.d("LOG", this.javaClass.simpleName + " saveDVideosToDB() | tag: $tag")
         val realm = Realm.getDefaultInstance()
 
         try {
@@ -126,6 +127,7 @@ object VideoDBUtil {
     }
 
     fun checkVideoAvailable(data: MMVideo, tag: String): Boolean {
+        Log.d("LOG", this.javaClass.simpleName + " checkVideoAvailable() | tag: $tag")
         val realm = Realm.getDefaultInstance()
         return try {
             realm.beginTransaction()
@@ -145,6 +147,7 @@ object VideoDBUtil {
     }
 
     fun checkVideoDownloaded(data: MMVideo, tag: String): Boolean {
+        Log.d("LOG", this.javaClass.simpleName + " checkVideoDownloaded() | tag: $tag")
         val realm = Realm.getDefaultInstance()
         return try {
             realm.beginTransaction()
@@ -165,6 +168,7 @@ object VideoDBUtil {
     }
 
     fun readDVideosFromDB(tag: String): ArrayList<MMVideo> {
+        Log.d("LOG", this.javaClass.simpleName + " readDVideosFromDB() | tag: $tag")
         val realm = Realm.getDefaultInstance()
         var list = ArrayList<MMVideo>()
         try {
@@ -184,6 +188,7 @@ object VideoDBUtil {
     }
 
     fun readDVideosFailureFromDB(tag: String): ArrayList<MMVideo> {
+        Log.d("LOG", this.javaClass.simpleName + " readDVideosFailureFromDB() | tag: $tag")
         val realm = Realm.getDefaultInstance()
         var list = ArrayList<MMVideo>()
         try {
@@ -199,11 +204,12 @@ object VideoDBUtil {
         } finally {
             realm.close()
         }
-
+        Log.d("LOG", this.javaClass.simpleName + " readDVideosFailureFromDB() | number: ${list.size}")
         return list
     }
 
     fun readAllDVideosFromDB(tag: String): ArrayList<MMVideo> {
+        Log.d("LOG", this.javaClass.simpleName + " readAllDVideosFromDB() | tag: ${tag}")
         val realm = Realm.getDefaultInstance()
         var list = ArrayList<MMVideo>()
         try {
@@ -223,6 +229,7 @@ object VideoDBUtil {
 
 
     fun countRecordInTable(tag: String): Pair<Int, Int> {
+        Log.d("LOG", this.javaClass.simpleName + " countRecordInTable() | tag: $tag")
         val realm = Realm.getDefaultInstance()
         var sizeDownloaded = 0
         var size = 0
@@ -240,10 +247,12 @@ object VideoDBUtil {
         } finally {
             realm.close()
         }
+        Log.d("LOG", this.javaClass.simpleName + " countRecordInTable() | not downloaded: $size | sizeDownloaded: $sizeDownloaded")
         return Pair(size, sizeDownloaded)
     }
 
     fun deleteDVideosFromDB(tag: String, idVideo: Int): Boolean {
+        Log.d("LOG", this.javaClass.simpleName + " deleteDVideosFromDB() | tag: $tag | idVideo: $idVideo")
         val realm = Realm.getDefaultInstance()
         var isSuccess = true
         try {
@@ -264,6 +273,7 @@ object VideoDBUtil {
     }
 
     fun updateTabledVideoDownloadedToFalse(videoId: Int) {
+        Log.d("LOG", this.javaClass.simpleName + " updateTabledVideoDownloadedToFalse() | videoId: $videoId")
         val realm = Realm.getDefaultInstance()
         try {
             val data = realm.where(RealmDVideo::class.java).equalTo("id", videoId).findFirst()
@@ -281,6 +291,7 @@ object VideoDBUtil {
     }
 
     fun updateTabledVideoDownloadedState(videoId: Int) {
+        Log.d("LOG", this.javaClass.simpleName + " updateTabledVideoDownloadedState() | videoId: $videoId")
         val realm = Realm.getDefaultInstance()
         try {
             val data = realm.where(RealmDVideo::class.java).equalTo("id", videoId).findFirst()

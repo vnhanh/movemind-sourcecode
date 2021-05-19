@@ -9,6 +9,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.FileDataSource
 import com.google.android.exoplayer2.upstream.HttpDataSource
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
 import player.wellnesssolutions.com.base.utils.check_header_api_util.HeaderData
@@ -27,6 +28,7 @@ import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.com.network.models.now_playing.MMVideoLanguage
 import player.wellnesssolutions.com.network.models.response.ResponseValue
 import java.io.File
+import java.lang.RuntimeException
 import java.net.ConnectException
 
 
@@ -213,6 +215,8 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
             fileDataSource.open(dataSpec)
         } catch (e: Exception) {
             e.printStackTrace()
+            FirebaseCrashlytics.getInstance().recordException(RuntimeException("open video file error ${e.message}"))
+            FirebaseCrashlytics.getInstance().log("open video file error ${e.message}")
         }
 
         mPlayerUseCase.initPlayer(

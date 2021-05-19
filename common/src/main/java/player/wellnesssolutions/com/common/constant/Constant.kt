@@ -75,7 +75,6 @@ object Constant {
 
     const val DOWNLOAD_START = "download_start"
 
-    const val DOWNLOAD_START_UI = "download_start_ui"
     const val DOWNLOAD_UPDATE_UI = "download_update_ui"
     const val DOWNLOAD_END_UI = "download_end_ui"
     const val DOWNLOAD_CHANGE_SUB_UI = "download_change_sub_ui"

@@ -11,6 +11,8 @@ import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import player.wellnesssolutions.com.base.common.download.DownloadVideoHelper
 import player.wellnesssolutions.com.common.constant.Constant
+import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
+import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.common.utils.FileUtil
 import player.wellnesssolutions.com.services.download.DownloadManagerCustomized
 import player.wellnesssolutions.database.manager.DownloadDBManager
@@ -137,11 +139,14 @@ class DownloadService : Service(), IProgressListener, DownloadBinder.BinderDownl
     }
 
     private fun startDownload() {
-        Observable.fromCallable { }.subscribeOn(Schedulers.io())
+        Log.d("LOG", this.javaClass.simpleName + " startDownload()")
+        if(!PreferenceHelper.getInstance(this).getBoolean(ConstantPreference.IS_DOWNLOAD_COMPLETELY, false)){
+            Observable.fromCallable { }.subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.trampoline())
                 .subscribe {
                     mBinder.getListDoesNotDownloaded(this, true)
                 }
+        }
     }
 
     override fun onDownloadCompleted(videoId: Int, fileName: String?, isSuccess: Boolean, message: String) {
@@ -157,7 +162,7 @@ class DownloadService : Service(), IProgressListener, DownloadBinder.BinderDownl
 
     override fun onDownloaded() {
         super.onDownloaded()
-//        Log.d("LOG", this.javaClass.simpleName + " onDownloaded() | current thread: ${Thread.currentThread()}")
+        Log.d("LOG", this.javaClass.simpleName + " onDownloaded() | current thread: ${Thread.currentThread()}")
         mBinder.getListDoesNotDownloaded(this, false)
     }
 
@@ -183,6 +188,7 @@ class DownloadService : Service(), IProgressListener, DownloadBinder.BinderDownl
 //    }
 
     fun onDownloadEnd() {
+        Log.d("LOG", this.javaClass.simpleName + " onDownloadEnd()")
         val intent = Intent().apply {
             action = ACTION_DOWNLOAD_UI
             putExtra(DOWNLOAD_VIDEO_UI, Constant.DOWNLOAD_END_UI)
