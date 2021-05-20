@@ -33,7 +33,7 @@ class MMDrawOnTopPlayer(context: Context) : MMLocalPlayer(context), SurfaceHolde
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
             mPresentation = service as MMPresentationBinder
-            Log.d("LOG", "MMDrawOnTopPlayer - onServiceConnected() | inited mPresentation")
+//            Log.d("LOG", "MMDrawOnTopPlayer - onServiceConnected() | inited mPresentation")
             mPresentation?.addCallback(mPresentationCallback)
 
             mService = mPresentation!!.getService()
@@ -80,10 +80,10 @@ class MMDrawOnTopPlayer(context: Context) : MMLocalPlayer(context), SurfaceHolde
     }
 
     override fun play(mode: PlayMode, item: ArrayList<*>, lastPosition: Long) {
-        Log.d("LOG", this.javaClass.simpleName + " play()")
+//        Log.d("LOG", this.javaClass.simpleName + " play()")
         if (ParameterUtils.isClearVideoOnPresentation) {
             if (mPresentation != null) {
-                Log.d("LOG", this.javaClass.simpleName + " play() | is clear videos | call setupPlayVideo() on TV | mPresentation: $mPresentation")
+//                Log.d("LOG", this.javaClass.simpleName + " play() | is clear videos | call setupPlayVideo() on TV | mPresentation: $mPresentation")
                 mPresentation?.setupPlayVideo(mode, item as ArrayList<MMVideo>, lastPosition)
                 modePlay = PlayMode.UNKNOWN
                 this.lastPosition = 0L

@@ -57,7 +57,7 @@ class DownloadNotification(private var context: Context?) : DownloadTask.Callbac
     }
 
     override fun onDownloadCompleted(id: Int?, name: String?) {
-        Log.d("LOG", this.javaClass.simpleName + " onDownloadCompleted() | fileName: ${name}")
+//        Log.d("LOG", this.javaClass.simpleName + " onDownloadCompleted() | fileName: ${name}")
         cancelNoti()
     }
 
@@ -98,7 +98,7 @@ class DownloadNotification(private var context: Context?) : DownloadTask.Callbac
             mLayout?.setTextViewText(R.id.tvProgress, context.getString(R.string.progress, progress))
             mLayout?.setTextViewText(R.id.tvFilename, name ?: "The downloaded file")
             val data = VideoDBUtil.countRecordInTable(tag = Constant.TAG_VIDEO_DOWNLOAD)
-            Log.d("LOG", this.javaClass.simpleName + " Downloaded ${data.second} videos. There are ${data.first} videos left")
+//            Log.d("LOG", this.javaClass.simpleName + " Downloaded ${data.second} videos. There are ${data.first} videos left")
             mLayout?.setTextViewText(R.id.tvRestOfDownload, "Downloaded ${data.second} videos. There are ${data.first} videos left.")
 
             if (mNotiManager == null) mNotiManager = NotificationManagerCompat.from(context)

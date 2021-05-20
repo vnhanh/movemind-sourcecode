@@ -40,7 +40,7 @@ abstract class BaseResponseObserver<T> : Observer<Response<ResponseValue<T>>> {
         this.response = response
         val strBodyError = response.errorBody()?.string()
         val bodyError = CommonUtility.getErrorBody(strBodyError)
-        Log.d("LOG", this.javaClass.simpleName + " onNext() | code: ${response.code()} | messageError: $strBodyError | messageBody: ${response.body()?.message}")
+//        Log.d("LOG", this.javaClass.simpleName + " onNext() | code: ${response.code()} | messageError: $strBodyError | messageBody: ${response.body()?.message}")
         val messageError = bodyError?.message
 
         when {
@@ -66,7 +66,7 @@ abstract class BaseResponseObserver<T> : Observer<Response<ResponseValue<T>>> {
 
     override fun onError(e: Throwable) {
         e.printStackTrace()
-        Log.d("LOG", this.javaClass.simpleName + " onError() | message: ${e.message} | exception: ${e.printStackTrace()}")
+//        Log.d("LOG", this.javaClass.simpleName + " onError() | message: ${e.message} | exception: ${e.printStackTrace()}")
         this.requestError = e
         when (e.message?.toLowerCase()?.contains("failed to connect to")) {
             true -> {
@@ -95,7 +95,7 @@ abstract class BaseResponseObserver<T> : Observer<Response<ResponseValue<T>>> {
     }
 
     private fun handleErrorMessage(code: Int, message: String) {
-        Log.d("LOG", this.javaClass.simpleName + " handleErrorMessage() | message: $message")
+//        Log.d("LOG", this.javaClass.simpleName + " handleErrorMessage() | message: $message")
         when (message) {
             HEADER_X_DEVICE_NOT_FOUND, YOUR_ACCOUNT_IS_INACTIVE,
             DEVICE_NOT_FOUND, DEVICE_IS_INACTIVE
@@ -104,7 +104,7 @@ abstract class BaseResponseObserver<T> : Observer<Response<ResponseValue<T>>> {
             UNAUTHENTICATED -> onExpiredUnauthenticated(message)
 
             else -> {
-                Log.d("LOG", this.javaClass.simpleName + " handleErrorMessage() | case default")
+//                Log.d("LOG", this.javaClass.simpleName + " handleErrorMessage() | case default")
                 when (message.toLowerCase().contains(FAILED_TO_CONNECT)) {
                     true -> {
                         onResponseFailed(code, "Failed to connect to server")

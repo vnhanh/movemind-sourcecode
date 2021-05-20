@@ -139,7 +139,7 @@ class DownloadService : Service(), IProgressListener, DownloadBinder.BinderDownl
     }
 
     private fun startDownload() {
-        Log.d("LOG", this.javaClass.simpleName + " startDownload()")
+//        Log.d("LOG", this.javaClass.simpleName + " startDownload()")
         if(!PreferenceHelper.getInstance(this).getBoolean(ConstantPreference.IS_DOWNLOAD_COMPLETELY, false)){
             Observable.fromCallable { }.subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.trampoline())
@@ -150,7 +150,7 @@ class DownloadService : Service(), IProgressListener, DownloadBinder.BinderDownl
     }
 
     override fun onDownloadCompleted(videoId: Int, fileName: String?, isSuccess: Boolean, message: String) {
-        Log.d("LOG", this.javaClass.simpleName + " onDownloadCompleted() | filename: $fileName")
+//        Log.d("LOG", this.javaClass.simpleName + " onDownloadCompleted() | filename: $fileName")
 //        VideoDBUtil.addDownloadedVideo(videoId, Constant.MM_VIDEO_DOWNLOADED)
         //onUpDateDownload()
     }
@@ -162,7 +162,7 @@ class DownloadService : Service(), IProgressListener, DownloadBinder.BinderDownl
 
     override fun onDownloaded() {
         super.onDownloaded()
-        Log.d("LOG", this.javaClass.simpleName + " onDownloaded() | current thread: ${Thread.currentThread()}")
+//        Log.d("LOG", this.javaClass.simpleName + " onDownloaded() | current thread: ${Thread.currentThread()}")
         mBinder.getListDoesNotDownloaded(this, false)
     }
 
@@ -171,24 +171,8 @@ class DownloadService : Service(), IProgressListener, DownloadBinder.BinderDownl
         mBinder.deleteFileWithId(this, videoId, fileName, url)
     }
 
-//    fun onDownloadStart() {
-//        val intent = Intent().apply {
-//            action = ACTION_DOWNLOAD_UI
-//            putExtra(DOWNLOAD_VIDEO_UI, Constant.DOWNLOAD_START_UI)
-//        }
-//        this.sendBroadcast(intent)
-//    }
-
-//    private fun onUpDateDownload() {
-//        val intent = Intent().apply {
-//            action = ACTION_DOWNLOAD_UI
-//            putExtra(DOWNLOAD_VIDEO_UI, Constant.DOWNLOAD_UPDATE_UI)
-//        }
-//        this.sendBroadcast(intent)
-//    }
-
     fun onDownloadEnd() {
-        Log.d("LOG", this.javaClass.simpleName + " onDownloadEnd()")
+//        Log.d("LOG", this.javaClass.simpleName + " onDownloadEnd()")
         val intent = Intent().apply {
             action = ACTION_DOWNLOAD_UI
             putExtra(DOWNLOAD_VIDEO_UI, Constant.DOWNLOAD_END_UI)

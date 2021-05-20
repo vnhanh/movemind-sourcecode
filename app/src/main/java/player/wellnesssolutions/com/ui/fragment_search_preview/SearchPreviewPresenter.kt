@@ -49,7 +49,7 @@ class SearchPreviewPresenter : BaseResponseObserver<MMSearchPreviewResponse>(), 
         this.mView = view
         when {
             mDisplayData != null && mChosenOptions != null -> {
-                Log.d("LOG", this.javaClass.simpleName + " onAttach() | display right now")
+//                Log.d("LOG", this.javaClass.simpleName + " onAttach() | display right now")
                 displayUI()
             }
             else -> loadData(view)
@@ -194,7 +194,7 @@ class SearchPreviewPresenter : BaseResponseObserver<MMSearchPreviewResponse>(), 
     }
 
     override fun requestResultVideos(isUseOptions: Boolean) {
-        Log.d("LOG", this.javaClass.simpleName + " requestResultVideos() | isUseOptions: $isUseOptions")
+//        Log.d("LOG", this.javaClass.simpleName + " requestResultVideos() | isUseOptions: $isUseOptions")
         val chosenOptions: SPSearchedOption? = mChosenOptions
         if (chosenOptions == null) {
             mView?.showMessage(R.string.error_data, R.color.red)

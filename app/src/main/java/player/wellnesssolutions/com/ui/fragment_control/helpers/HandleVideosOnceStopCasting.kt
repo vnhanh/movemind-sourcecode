@@ -21,7 +21,7 @@ object HandleVideosOnceStopCasting {
                     PreferenceHelper.getInstance(activity).getInt(ConstantPreference.MODE_PLAY_VIDEO, PlayMode.UNKNOWN.value).also { modeCasting ->
                         if (modeCasting == PlayMode.ON_DEMAND.value) {
                             VideoDBUtil.getVideosFromDB(Constant.MM_VIDEO_SEARCHED, isDelete = false).also { videos ->
-                                Log.d("LOG", this.javaClass.simpleName + " handlePlayingVideos() - videos number: ${videos.size}")
+//                                Log.d("LOG", this.javaClass.simpleName + " handlePlayingVideos() - videos number: ${videos.size}")
                                 if (videos.size > 1 && activity is MainActivity) {
                                     val videosNext = ArrayList<MMVideo>()
                                     for (i in 1 until videos.size) {

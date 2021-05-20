@@ -86,10 +86,10 @@ abstract class BaseFragment : Fragment(), ILifeCycle.View {
     }
 
     protected fun playVideoPresentationable(scheduleVideos: ArrayList<MMVideo>): Boolean {
-        Log.d("LOG", this.javaClass.simpleName + " playVideoPresentationable() | scheduled videos number: ${scheduleVideos.size}")
+//        Log.d("LOG", this.javaClass.simpleName + " playVideoPresentationable() | scheduled videos number: ${scheduleVideos.size}")
         activity?.also { activity ->
             if (activity is MainActivity && activity.isPresentationAvailable() == true) {
-                Log.d("LOG", this.javaClass.simpleName + " playVideoPresentationable() | casting...")
+//                Log.d("LOG", this.javaClass.simpleName + " playVideoPresentationable() | casting...")
                 activity.playVideo(PlayMode.SCHEDULE, scheduleVideos)
                 return true
             }

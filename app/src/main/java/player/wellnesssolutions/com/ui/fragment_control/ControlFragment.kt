@@ -119,7 +119,7 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        Log.d("LOG", this.javaClass.simpleName + " onSaveInstanceState()")
+//        Log.d("LOG", this.javaClass.simpleName + " onSaveInstanceState()")
         PreferenceHelper.getInstance()?.putBoolean(ConstantPreference.IS_IN_BACKGROUND, true)
     }
 
@@ -141,7 +141,7 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
      */
     // process in case no class videos (no schedule) after loading schedule
     override fun onNoClassVideosForNow(scheduleVideos: ArrayList<MMVideo>, message: String, @ColorRes msgColor: Int, isLoadScheduleManually: Boolean) {
-        Log.d("LOG", this.javaClass.simpleName + " onNoClassVideoForNow() | message: $message | schedule videos number: ${scheduleVideos.size}")
+//        Log.d("LOG", this.javaClass.simpleName + " onNoClassVideoForNow() | message: $message | schedule videos number: ${scheduleVideos.size}")
         btnLogoBottom?.isEnabled = true
 //        if (message.contains("Request failed")) {
 //            MessageUtils.showSnackBar(btnLogoBottom, message, R.color.yellow)
@@ -202,7 +202,7 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     }
 
     override fun onHaveClassVideos(scheduleVideos: ArrayList<MMVideo>, isClickedFromBtnBottom: Boolean) {
-        Log.d("LOG", this.javaClass.simpleName + " onHaveClassVideos() | videos number: ${scheduleVideos.size}")
+//        Log.d("LOG", this.javaClass.simpleName + " onHaveClassVideos() | videos number: ${scheduleVideos.size}")
 
         activity?.also { activity ->
             if (activity is MainActivity && activity.isPresentationAvailable()) {
@@ -217,12 +217,12 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     }
 
     override fun onTimePlaySchedule() {
-        Log.d("LOG", this.javaClass.simpleName + " onTimePlaySchedule()")
+//        Log.d("LOG", this.javaClass.simpleName + " onTimePlaySchedule()")
         loadScreenPlaySchedule()
     }
 
     fun loadScreenPlaySchedule() {
-        Log.d("LOG", this.javaClass.simpleName + " loadScreenPlaySchedule() | isStartedOpenNewScreen: $isStartedOpenNewScreen")
+//        Log.d("LOG", this.javaClass.simpleName + " loadScreenPlaySchedule() | isStartedOpenNewScreen: $isStartedOpenNewScreen")
         if (isStartedOpenNewScreen) return
         activity?.supportFragmentManager?.also { _fm ->
             val tag = NowPlayingFragment.TAG
@@ -230,11 +230,11 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
             fragment =
                     when (fragment != null && fragment is NowPlayingFragment) {
                         true -> {
-                            Log.d("LOG", this.javaClass.simpleName + " loadScreenPlaySchedule() | old instance is NowPlayingFragment")
+//                            Log.d("LOG", this.javaClass.simpleName + " loadScreenPlaySchedule() | old instance is NowPlayingFragment")
                             NowPlayingFragment.updateAlreadyInstanceWithSchedule(fragment)
                         }
                         false -> {
-                            Log.d("LOG", this.javaClass.simpleName + " loadScreenPlaySchedule() | there's no instance of NowPlayingFragment")
+//                            Log.d("LOG", this.javaClass.simpleName + " loadScreenPlaySchedule() | there's no instance of NowPlayingFragment")
                             NowPlayingFragment.getInstancePlaySchedule()
                         }
                     }
@@ -655,12 +655,12 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
 
     // disconnect TV
     override fun onMediaRouterDisconnected() {
-        Log.d("LOG", this.javaClass.simpleName + " onMediaRouterDisconnected()")
+//        Log.d("LOG", this.javaClass.simpleName + " onMediaRouterDisconnected()")
         PreferenceHelper.getInstance()?.getBoolean(ConstantPreference.IS_IN_BACKGROUND, false)?.also { isInBackground ->
             if(isInBackground){
                 isCastDisconnectedInBackground = true
             }else{
-                Log.d("LOG", this.javaClass.simpleName + " onMediaRouterDisconnected() - hide casting views and open new screen")
+//                Log.d("LOG", this.javaClass.simpleName + " onMediaRouterDisconnected() - hide casting views and open new screen")
                 onClearVideos()
                 HandleVideosOnceStopCasting.handlePlayingVideos(activity = activity, handler = handler)
             }
@@ -683,7 +683,7 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     }
 
     private fun showPresentationPlaylist() {
-        Log.d("LOG", this.javaClass.simpleName + " showPresentationPlaylist()")
+//        Log.d("LOG", this.javaClass.simpleName + " showPresentationPlaylist()")
         constraintArrowUp?.let {
             it.visibility = View.INVISIBLE
         }
@@ -697,7 +697,7 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     }
 
     private fun hidePresentationPlaylist() {
-        Log.d("LOG", this.javaClass.simpleName + " hidePresentationPlaylist()")
+//        Log.d("LOG", this.javaClass.simpleName + " hidePresentationPlaylist()")
         constraintArrowUp?.let {
             it.visibility = View.VISIBLE
         }
@@ -774,7 +774,7 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     }
 
     override fun showPresentationPlayList(nowPlayVideo: MMVideo, comingUpVideos: ArrayList<MMVideo>) {
-        Log.d("LOG", this.javaClass.simpleName + " showPresentationPlayList()")
+//        Log.d("LOG", this.javaClass.simpleName + " showPresentationPlayList()")
                 //mNowPlayingDownloadButtonManager?.setVideoData(nowPlayVideo)
 
         view?.also { _ ->
@@ -802,8 +802,8 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     private var isRenderedPlayListView = false
 
     override fun onPlayerReady(isShowPlayPauseButton: Boolean, isPlaying: Boolean, currentPosition: Long, duration: Long) {
-        Log.d("LOG", this.javaClass.simpleName + " onPlayerReady() | currentPosition: $currentPosition | duration: $duration " +
-                "| isRenderPlayListView: $isRenderedPlayListView")
+//        Log.d("LOG", this.javaClass.simpleName + " onPlayerReady() | currentPosition: $currentPosition | duration: $duration " +
+//                "| isRenderPlayListView: $isRenderedPlayListView")
         // show the pause button in PLAYLIST
         if (isShowPlayPauseButton)
             renderButtonPlayPausePlaylist(isPlaying)
@@ -912,7 +912,7 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     }
 
     override fun onUpdateEndedVideoState() {
-        Log.d("LOG", this.javaClass.simpleName + " onUpdateEndedVideoState()")
+//        Log.d("LOG", this.javaClass.simpleName + " onUpdateEndedVideoState()")
         showPlayVideoUIOnPlaylist()
         hidePresentationPlaylist()
         btnPlaylistPresentation?.let {
@@ -927,7 +927,7 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     }
 
     override fun onUpdateEndedVideoStateSchedule() {
-        Log.d("LOG", this.javaClass.simpleName + " onUpdateEndedVideoStateSchedule()")
+//        Log.d("LOG", this.javaClass.simpleName + " onUpdateEndedVideoStateSchedule()")
         showPlayVideoUIOnPlaylist()
         hidePresentationPlaylist()
         btnPlaylistPresentation?.let {

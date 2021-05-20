@@ -8,20 +8,20 @@ import player.wellnesssolutions.com.common.customize_views.MMProgressBar
 
 object PlayVideoDisplayHelper {
     fun displayViewsOnBuffering(progress: ProgressBar?, btnPlay: View?, btnPause: View?) {
-        Log.d("LOG", this.javaClass.simpleName + " displayViewsOnBuffering()")
+//        Log.d("LOG", this.javaClass.simpleName + " displayViewsOnBuffering()")
         displayLoading(progress = progress, isDisplayed = true)
         hideAllButtons(btnPlay, btnPause)
     }
 
     fun displayOnReady(isControllerVisible: Boolean, playWhenReady: Boolean, progressLoading: MMProgressBar?, btnPlayVideo: View?, btnPauseVideo: View?) {
-        Log.d("LOG", this.javaClass.simpleName + " displayOnReady() | playWhenReady: $playWhenReady")
+//        Log.d("LOG", this.javaClass.simpleName + " displayOnReady() | playWhenReady: $playWhenReady")
         displayLoading(progress = progressLoading, isDisplayed = false)
 
         displayControllerPlayViews(isControllerVisible, playWhenReady, btnPlayVideo, btnPauseVideo)
     }
 
     fun displayOnEnded(progressLoading: MMProgressBar?, btnPlayVideo: ImageView?, btnPauseVideo: ImageView?) {
-        Log.d("LOG", this.javaClass.simpleName + " displayOnEnded()")
+//        Log.d("LOG", this.javaClass.simpleName + " displayOnEnded()")
         displayLoading(progress = progressLoading, isDisplayed = false)
         displayPlayButton(btnPlayVideo, true)
         displayPauseButton(btnPauseVideo, false)
