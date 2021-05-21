@@ -169,7 +169,7 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View, IRouterChanged 
     }
 
     private fun continueDownload(it: Context) {
-        Log.d("LOG", "HomeFragment - continueDownload()")
+//        Log.d("LOG", "HomeFragment - continueDownload()")
         if (context is MainActivity) {
             (it as MainActivity).checkFileStorageDownloaded()
         }
@@ -194,7 +194,7 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View, IRouterChanged 
                             super.onResponseSuccess(data)
                             val subsID = PreferenceHelper.getInstance(context).getInt(ConstantPreference.DOWNLOAD_VIDEOS_SUBS_ID, -1)
                             val idData = data?.data
-                            Log.d("LOG", "HomeFragment - checkSubIsChange() | response success | subsID: $subsID | idData: $idData")
+//                            Log.d("LOG", "HomeFragment - checkSubIsChange() | response success | subsID: $subsID | idData: $idData")
                             if (data == null) return
                             if (PreferenceHelper.getInstance(context).getInt(ConstantPreference.DOWNLOAD_VIDEOS_SUBS_ID, -1) == -1) {
                                 PreferenceHelper.getInstance(context).putInt(ConstantPreference.DOWNLOAD_VIDEOS_SUBS_ID, data.data)
@@ -231,7 +231,7 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View, IRouterChanged 
 
                         override fun onResponseSuccess(data: ResponseValue<ArrayList<MMVideo>>?) {
                             super.onResponseSuccess(data)
-                            Log.d("LOG", "HomeFragment - getAllVideosForDownload() | response success: ${data?.data?.size?:0}")
+//                            Log.d("LOG", "HomeFragment - getAllVideosForDownload() | response success: ${data?.data?.size?:0}")
                             VideoDBUtil.saveDVideosToDB(data = data?.data?: arrayListOf<MMVideo>(), tag = Constant.TAG_VIDEO_DOWNLOAD)
                             if (data == null || data.data.size == 0) return
                             PreferenceHelper.getInstance(context).putBoolean(ConstantPreference.IS_STARTED_DOWNLOADING, true)

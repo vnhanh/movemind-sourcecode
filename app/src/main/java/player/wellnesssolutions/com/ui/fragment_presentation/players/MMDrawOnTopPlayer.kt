@@ -122,7 +122,7 @@ class MMDrawOnTopPlayer(context: Context) : MMLocalPlayer(context), SurfaceHolde
         } catch (ex: Exception) {
             ex.printStackTrace()
             FirebaseCrashlytics.getInstance().recordException(ex)
-            FirebaseCrashlytics.getInstance().log("casting-stop service: erro")
+            FirebaseCrashlytics.getInstance().log("casting-stop service: error")
         }
         mBound = false
         mService = null

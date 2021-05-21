@@ -69,7 +69,7 @@ class PlayerUsecase {
     }
 
     fun onRelease(isKeepPosition: Boolean, keepPlayWhenReady: Boolean, listeners: ArrayList<Player.EventListener>) {
-        Log.d("LOG", this.javaClass.simpleName + " onRelease() | listeners number: ${listeners.size}")
+//        Log.d("LOG", this.javaClass.simpleName + " onRelease() | listeners number: ${listeners.size}")
         mPlayer?.also {
             it.playWhenReady = false
 

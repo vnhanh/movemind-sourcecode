@@ -1,13 +1,12 @@
 package player.wellnesssolutions.database.manager
 
-import android.util.Log
 import io.realm.Realm
 import player.wellnesssolutions.database.model.download.DownloadedFile
 import player.wellnesssolutions.database.model.video.RealmDVideo
 
 class DownloadDBManager : IProgressListener {
     override fun onDownloadCompleted(videoId: Int, fileName: String?, isSuccess: Boolean, message: String) {
-        Log.d("LOG", this.javaClass.simpleName + " onDownloadCompleted() | fileName: ${fileName}")
+//        Log.d("LOG", this.javaClass.simpleName + " onDownloadCompleted() | fileName: ${fileName}")
         if (isSuccess) {
             writeFileDownloaded(videoId)
             updateTabledVideoDownloaded(videoId)
@@ -37,12 +36,13 @@ class DownloadDBManager : IProgressListener {
     }
 
     private fun updateTabledVideoDownloadedFailure(videoId: Int) {
+//        Log.d("LOG", this.javaClass.simpleName + " updateVideoIdWhenDownloadFailed() | videoId: $videoId")
         val realm = Realm.getDefaultInstance()
         try {
             val data = realm.where(RealmDVideo::class.java).equalTo("id", videoId).findFirst()
             realm.beginTransaction()
             if (data != null) {
-                data.isDownloaded = true
+                data.isDownloaded = false
                 data.isFailureDownload = true
             }
             realm.commitTransaction()

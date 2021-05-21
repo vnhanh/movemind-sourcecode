@@ -33,16 +33,16 @@ object HandlerTimeScheduleHelper {
             val timeStart: Long = convertTime(video.getStartTime())
             val length = ((video.videoLength ?: 0f) * 1000).toInt()
             val timeEnd = timeStart + length
-            Log.d("LOG", this.javaClass.simpleName + " calculateTimePlayVideo() | " +
-                    "curent time: ${convertCurrentTimeToDateStr(System.currentTimeMillis())} | " +
-                    "time start: ${convertCurrentTimeToDateStr(timeStart)} | " +
-                    "time end: ${convertCurrentTimeToDateStr(timeEnd)}")
+//            Log.d("LOG", this.javaClass.simpleName + " calculateTimePlayVideo() | " +
+//                    "curent time: ${convertCurrentTimeToDateStr(System.currentTimeMillis())} | " +
+//                    "time start: ${convertCurrentTimeToDateStr(timeStart)} | " +
+//                    "time end: ${convertCurrentTimeToDateStr(timeEnd)}")
             val currentTime = System.currentTimeMillis()
 
             when {
                 currentTime < timeEnd -> {
                     var timePlay = currentTime - timeStart
-                    Log.d("LOG", this.javaClass.simpleName + " calculateTimePlayVideo() | timplay: $timePlay")
+//                    Log.d("LOG", this.javaClass.simpleName + " calculateTimePlayVideo() | timplay: $timePlay")
                     when {
                         timePlay < -1 * ROUND_TIME_DIFFER_CAN_PLAY -> {
                             callback.onResult(STATE_TIME_PLAY_SCHEDULE.TIME_WAIT, -1 * timePlay)
@@ -55,17 +55,17 @@ object HandlerTimeScheduleHelper {
                 }
 
                 else -> {
-                    Log.d("LOG", this.javaClass.simpleName + " calculateTimePlayVideo() | expired")
+//                    Log.d("LOG", this.javaClass.simpleName + " calculateTimePlayVideo() | expired")
                     callback.onResult(STATE_TIME_PLAY_SCHEDULE.TIME_EXPIRED, 0L)
                 }
             }
         } catch (parseException: ParseException) {
             parseException.printStackTrace()
-            Log.d("LOG", this.javaClass.simpleName + " calculateTimePlayVideo() | parse error: ${parseException.message}")
+//            Log.d("LOG", this.javaClass.simpleName + " calculateTimePlayVideo() | parse error: ${parseException.message}")
             callback.onResult(STATE_TIME_PLAY_SCHEDULE.TIME_ERROR, 0L)
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.d("LOG", this.javaClass.simpleName + " calculateTimePlayVideo() | error: ${e.message}")
+//            Log.d("LOG", this.javaClass.simpleName + " calculateTimePlayVideo() | error: ${e.message}")
             callback.onResult(STATE_TIME_PLAY_SCHEDULE.TIME_ERROR, 0L)
         }
     }

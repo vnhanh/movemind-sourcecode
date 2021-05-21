@@ -89,7 +89,7 @@ object ExoPlayerUtil {
 
         val endIndex = mediaUrl.lastIndexOf(EXT_M3U8) + 5
         val s = mediaUrl.substring(0, endIndex)
-        Log.d("LOG", this.javaClass.simpleName + " initStreamPlayer() | url: $s")
+//        Log.d("LOG", this.javaClass.simpleName + " initStreamPlayer() | url: $s")
         val mediaSource: MediaSource?
 
         mediaSource = if (isPlayOffline) {

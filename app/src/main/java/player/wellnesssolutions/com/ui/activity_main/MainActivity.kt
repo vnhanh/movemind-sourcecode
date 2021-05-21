@@ -301,6 +301,9 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
 //        Log.d("LOG", this.javaClass.simpleName + " playVideo() | mode: $mode | videos number: ${videos.size} | current position: $currentPosition")
         ParameterUtils.isClearVideoOnPresentation = true
         mSessionManager.add(mode = mode, videos = videos, playedPosition = currentPosition)
+        FirebaseCrashlytics.getInstance().recordException(RuntimeException(String.format("casting-play video %s", Date().time)))
+        FirebaseCrashlytics.getInstance().log(String.format("casting-play %s videos", videos.size))
+        logFirebaseAboutMemory(true)
     }
 
     //endregion
@@ -310,8 +313,8 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-//        FirebaseCrashlytics.getInstance().recordException(RuntimeException("screen: onCreate()"))
-//        FirebaseCrashlytics.getInstance().log("screen: onCreate()")
+        FirebaseCrashlytics.getInstance().recordException(RuntimeException(String.format("screen: onCreate() | %s", Date().time)))
+        FirebaseCrashlytics.getInstance().log("screen: onCreate()")
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         val flags = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -446,7 +449,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
 
     private var isDownloadComplete = false
     private fun showDialogLoadingDownloaded() {
-        Log.d("LOG", this.javaClass.simpleName + " showDialogLoadingDownloaded() | isDownloadComplete: ${isDownloadComplete}")
+//        Log.d("LOG", this.javaClass.simpleName + " showDialogLoadingDownloaded() | isDownloadComplete: ${isDownloadComplete}")
         if(!isDownloadComplete){
             isDownloadComplete = true
             DialogUtil.createDialogOnlyOneButton(this,
@@ -487,8 +490,8 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
 
     override fun onResume() {
         super.onResume()
-//        FirebaseCrashlytics.getInstance().recordException(RuntimeException("screen: onResume()"))
-//        FirebaseCrashlytics.getInstance().log("screen: onResume()")
+        FirebaseCrashlytics.getInstance().recordException(RuntimeException(String.format("screen: onResume() | %s", Date().time)))
+        FirebaseCrashlytics.getInstance().log("screen: onResume()")
 //        Log.d("LOG", this.javaClass.simpleName + " onResume() | current thread: ${Thread.currentThread()} | isMediaProviderChangedInBackground: $isMediaProviderChangedInBackground")
         PreferenceHelper.getInstance(this).putBoolean(ConstantPreference.IS_IN_BACKGROUND, false)
         mIsVisble = true
@@ -621,22 +624,24 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         appVisible = false
         mPlayer?.onAppViewInVisible()
         super.onPause()
-//        FirebaseCrashlytics.getInstance().recordException(RuntimeException("screen-background"))
-//        FirebaseCrashlytics.getInstance().log("screen-background")
+        FirebaseCrashlytics.getInstance().recordException(RuntimeException(String.format("screen-background: %s", Date().time)))
+        FirebaseCrashlytics.getInstance().log("screen-background")
     }
 
     override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
         super.onSaveInstanceState(outState, outPersistentState)
         PreferenceHelper.getInstance(this).putBoolean(ConstantPreference.IS_IN_BACKGROUND, true)
-//        FirebaseCrashlytics.getInstance().recordException(RuntimeException("screen-save instance state 2 params"))
-//        FirebaseCrashlytics.getInstance().log("screen-save instance state 2 params")
+        FirebaseCrashlytics.getInstance().recordException(RuntimeException(String.format("screen-save instance state 2 params: %s", Date().time)))
+        FirebaseCrashlytics.getInstance().log("screen-save instance state 2 params")
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 //        Log.d("LOG", this.javaClass.simpleName + " onSaveInstanceState()")
-//        FirebaseCrashlytics.getInstance().recordException(RuntimeException("screen-save instance state 1 param"))
-//        FirebaseCrashlytics.getInstance().log("screen-save instance state 1 param")
+        FirebaseCrashlytics.getInstance().recordException(
+            RuntimeException(String.format("screen-save instance state 1 param: %s", Date().time))
+        )
+        FirebaseCrashlytics.getInstance().log("screen-save instance state 1 param")
         PreferenceHelper.getInstance(this).putBoolean(ConstantPreference.IS_IN_BACKGROUND, true)
     }
 
@@ -657,9 +662,10 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         mPlayer?.release()
         unregisterReceivers()
         VideoDBUtil.deleteAllVideos()
+
+        FirebaseCrashlytics.getInstance().recordException(RuntimeException(String.format("app-destroyed: %s", Date().time)))
+        FirebaseCrashlytics.getInstance().log("app-destroyed")
         super.onDestroy()
-//        FirebaseCrashlytics.getInstance().recordException(RuntimeException("app-destroyed"))
-//        FirebaseCrashlytics.getInstance().log("app-destroyed")
     }
 
     private fun unregisterReceivers() {
@@ -696,27 +702,35 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
                 if (File(externalUrl[1], Constant.FOLDER_DOWNLOADED).exists()) {
                     val dir = File(externalUrl[1], Constant.FOLDER_DOWNLOADED)
                     if (dir.isDirectory) {
-                        for (f in dir.list()) {
-                            val a = File(dir, f).name.split(".")
-                            try {
-                                listDoesNotDownloaded.add(a[0].toInt())
-                            } catch (e: Exception) {
-                                e.printStackTrace()
+                        val files: Array<String>? = dir.list()
+                        if(files != null){
+                            for (f in files) {
+                                val a = File(dir, f).name.split(".")
+                                try {
+                                    listDoesNotDownloaded.add(a[0].toInt())
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
                             }
                         }
+
                     }
                 }
             }
+
         }
         if (File(filesDir, Constant.FOLDER_DOWNLOADED).exists()) {
             val dir = File(filesDir, Constant.FOLDER_DOWNLOADED)
             if (dir.isDirectory) {
-                for (f in dir.list()) {
-                    val a = File(dir, f).name.split(".")
-                    try {
-                        listDoesNotDownloaded.add(a[0].toInt())
-                    } catch (e: Exception) {
-                        e.printStackTrace()
+                val files: Array<String>? = dir.list()
+                if(files != null) {
+                    for (f in files) {
+                        val a = File(dir, f).name.split(".")
+                        try {
+                            listDoesNotDownloaded.add(a[0].toInt())
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
                 }
             }
@@ -950,15 +964,15 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
      */
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
-//        FirebaseCrashlytics.getInstance().recordException(RuntimeException("onTrimMemory()"))
-//        FirebaseCrashlytics.getInstance().log("memory: level - $level")
-//        logFirebaseAboutMemory()
+        FirebaseCrashlytics.getInstance().recordException(RuntimeException(String.format("onTrimMemory(): %s", Date().time)))
+        FirebaseCrashlytics.getInstance().log("memory: level - $level")
+        logFirebaseAboutMemory()
     }
 
     override fun onLowMemory() {
         super.onLowMemory()
-//        FirebaseCrashlytics.getInstance().recordException(RuntimeException("onLowMemory()"))
-//        logFirebaseAboutMemory()
+        FirebaseCrashlytics.getInstance().recordException(RuntimeException(String.format("onLowMemory(): %s", Date().time)))
+        logFirebaseAboutMemory()
     }
 
     fun logFirebaseAboutMemory(isRecordException: Boolean = false) {

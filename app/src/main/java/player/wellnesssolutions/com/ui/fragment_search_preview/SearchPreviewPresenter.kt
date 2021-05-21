@@ -145,16 +145,16 @@ class SearchPreviewPresenter : BaseResponseObserver<MMSearchPreviewResponse>(), 
 
     override fun onRequestError(message: String?) {
         super.onRequestError(message)
-        onRequestFailed(message)
+        onRequestFailed()
     }
 
     override fun onResponseFailed(code: Int, message: String?) {
         super.onResponseFailed(code, message)
 
-        onRequestFailed(message)
+        onRequestFailed()
     }
 
-    private fun onRequestFailed(message: String?) {
+    private fun onRequestFailed() {
 //        val msg = message?:mView?.getViewContext()?.getString(R.string.request_failed)?: Constant.MSG_REQUEST_FAILED
         mView?.onRequestFailed(mView?.getViewContext()?.getString(R.string.request_failed)
                 ?: MSG_REQUEST_FAILED)

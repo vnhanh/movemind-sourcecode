@@ -63,7 +63,7 @@ object CommonUtility {
                 Gson().fromJson(strBodyError, ErrorBody::class.java)
             } catch (e: Exception) {
                 e.printStackTrace()
-                Log.d("LOG", this.javaClass.simpleName + " getErrorBody() | error: ${e.message}")
+//                Log.d("LOG", this.javaClass.simpleName + " getErrorBody() | error: ${e.message}")
                 ErrorBody(success = false, message = strBodyError)
             }
         }

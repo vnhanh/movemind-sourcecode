@@ -35,8 +35,6 @@ import java.net.URL
 class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Callback, NetworkReceiver.IStateListener {
 
     companion object {
-        const val ERR_USER_CANCEL = "The downloaded file has been canceled !"
-
         private var INSTANCE: DownloadManagerCustomized? = null
 
         fun getInstance(context: Context): DownloadManagerCustomized {
@@ -133,6 +131,12 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
                         DownloadVideoHelper.sendDownloadStatusToServer(it, Constant.DOWNLOAD_FAILIED)
                     }
                 }
+
+                for (listener: IProgressListener in mListeners) {
+//                    Log.d("LOG", this.javaClass.simpleName + " onDownloadFailed() | listener: $listener")
+                    listener.onDownloaded()
+                }
+
                 mIsDownloading = false
 
                 addTaskFromQueueInit()
@@ -145,7 +149,7 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
         mDownloadTask?.release()
         if (id != null) {
             getDownloadDataByVideoId(id)?.also { data ->
-                resetDataNotDelete()
+                resetDataNotDeleteFile()
                 for (listener: IProgressListener in mListeners) {
                     listener.onDownloadCompleted(
                             videoId = data.videoId,
@@ -336,7 +340,7 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
     private fun notifyDownloadCannotStart(videoId: Int, fileName: String) {
 //        Log.d("LOG", this.javaClass.simpleName + " notifyDownloadCannotStart() | mQueue: ${mQueue.size} | videoId: $videoId | name: $fileName")
         mNotiManager.stop()
-        nextDownload(videoId, fileName)
+        nextDownload(videoId)
     }
 
     private fun createDownloadTask(videoId: Int, url: String, folder: String, hasPermission: Boolean = true,
@@ -497,14 +501,6 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
 
     }
 
-    private fun notifyDownloadCompleted(data: DownloadData, isSuccess: Boolean, message: String = "") {
-        // notify to Activity scope listener
-        for (listener: IProgressListener in mListeners) {
-            listener.onDownloadCompleted(videoId = data.videoId, fileName = data.name, isSuccess = isSuccess, message = message)
-        }
-
-    }
-
     private fun getDownloadDataByVideoId(id: Int): DownloadData? {
         for (data: DownloadData in mQueue) {
             if (data.videoId == id) {
@@ -516,11 +512,11 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
 
     // reset all init data for starting download task
     private fun resetData() {
-        resetDataNotDelete()
+        resetDataNotDeleteFile()
         deleteFileIfExist()
     }
 
-    private fun resetDataNotDelete() {
+    private fun resetDataNotDeleteFile() {
 //        Log.d("LOG", this.javaClass.simpleName + " resetDataNotDelete() | mQueue size: ${mQueue.size} | queueInit.size: ${queueInit.size} ")
         if (mQueue.size > 0) {
             mQueueMap.remove(key = mQueue[0].videoId)
@@ -542,7 +538,7 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
         }
     }
 
-    private fun nextDownload(videoId: Int, name: String?) {
+    private fun nextDownload(videoId: Int) {
 //        Log.d("LOG", this.javaClass.simpleName + " nextDownload() | mQueue: ${mQueue.size} | videoId: $videoId")
         for (listener: IProgressListener in mListeners) {
             listener.updateVideoIdWhenDownloadFailed(videoId = videoId)

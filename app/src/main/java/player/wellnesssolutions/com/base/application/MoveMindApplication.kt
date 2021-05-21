@@ -21,7 +21,7 @@ class MoveMindApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        FirebaseCrashlytics.getInstance().setUserId("12345")
+        FirebaseCrashlytics.getInstance().setUserId("22222")
         setupDB()
         setupDefaultFont()
     }
@@ -35,28 +35,5 @@ class MoveMindApplication : Application() {
     private fun setupDefaultFont() {
 //        TypefaceUtil.overrideFont(applicationContext, "SERIF", getString(R.string.font_made_evolve_sans))
         TypefaceUtil.overrideFont(applicationContext, "SERIF", getString(R.string.font_made_evolve_sans_bold))
-
-        //TODO hard code
-//        storeBranding()
-    }
-
-    private fun storeBranding() {
-        val mPref = PreferenceHelper.getInstance(this)
-        mPref.putString(ConstantPreference.TOKEN, token)
-        mPref.putString(ConstantPreference.DEVICE_ID, "233")
-        mPref.putString(ConstantPreference.SS_BOTTOM_BAR_COLOR, "#041e41")
-        mPref.putString(ConstantPreference.PRIMARY_COLOR, "#00c3b3")
-        mPref.putString(ConstantPreference.SECONDARY_COLOR, "#ffffff")
-//        mPref.putString(SPrefConstant.SS_COMPANY_LOGO, branding.companyLogo ?: "")
-//        mPref.putStrings(SPrefConstant.SS_BACKGROUND_PICTURES, branding.backgroundPictures)
-        mPref.putStrings(ConstantPreference.SS_BACKGROUND_PICTURES, fakeImageBG())
-    }
-
-    private fun fakeImageBG(): Array<String> {
-        return arrayOf("https://3c1703fe8d.site.internapcdn.net/newman/gfx/news/hires/2018/traininggym.jpg",
-                "https://www.rider.edu/sites/default/files/styles/hero_image_-_no_play_icon/public/featuredimages/1920x1080%20Runner.jpg",
-                "https://www.sheknows.com/wp-content/uploads/2019/03/this-is-how-you-should-recover-after-your-favorite-kind-of-workout.jpg",
-                "https://wallpapershome.com/images/pages/pic_h/11085.jpg",
-                "https://www.desktop-background.com/p/2011/06/11/217389_gymnastics-exercise-fitness-sexy-babe-sport-grace-artistic-art_1920x1200_h.jpg")
     }
 }

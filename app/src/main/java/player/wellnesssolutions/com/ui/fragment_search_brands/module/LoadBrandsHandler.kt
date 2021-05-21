@@ -40,7 +40,7 @@ class LoadBrandsHandler(callback: ILoadBrandHandler.Callback) : BaseResponseObse
             CACHE_RESPONSE.EXPIRED -> onExpired(cache.message)
             CACHE_RESPONSE.EXPIRED_UNAUTHENTICATION -> onExpiredUnauthenticated(cache.message)
             CACHE_RESPONSE.EMPTY -> {
-                Log.d("LOG", this.javaClass.simpleName + " onAttach() | empty state")
+//                Log.d("LOG", this.javaClass.simpleName + " onAttach() | empty state")
             }
         }
         if(cache.state != CACHE_RESPONSE.EMPTY){
@@ -74,7 +74,7 @@ class LoadBrandsHandler(callback: ILoadBrandHandler.Callback) : BaseResponseObse
     }
 
     override fun onResponseSuccess(data: ResponseValue<ArrayList<MMBrand>>?) {
-        Log.d("LOG", this.javaClass.simpleName + " onResponseSuccess()")
+//        Log.d("LOG", this.javaClass.simpleName + " onResponseSuccess()")
         isLoading = false
         val callback = mCallback
         if(callback == null){

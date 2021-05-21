@@ -514,21 +514,21 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
                 val video = videos[0]
                 PreferenceHelper.getInstance()?.putInt(Constant.SCHEDULE_CURRENT_ID, video.id ?: -1)
                 PreferenceHelper.getInstance()?.putString(Constant.SCHEDULE_CURRENT_TIME_START, video.getStartTime())
-                Log.d("LOG", this.javaClass.simpleName + " onHaveNowPlayingVideo() | saved current video ")
+//                Log.d("LOG", this.javaClass.simpleName + " onHaveNowPlayingVideo() | saved current video ")
                 mCountDownTimerPlayVideo?.cancel()
                 openNowPlayingVideo(playedPosition)
 
             }
 
             PlayMode.ON_DEMAND -> {
-                Log.d("LOG", this.javaClass.simpleName + " onHaveNowPlayingVideo() | ON_DEMAND")
+//                Log.d("LOG", this.javaClass.simpleName + " onHaveNowPlayingVideo() | ON_DEMAND")
                 onDontHaveNowPlayingVideo(null)
             }
         }
     }
 
     override fun onHaveVideoAfter(playedPosition: Long) {
-        Log.d("LOG", this.javaClass.simpleName + "  onHaveVideoAfter()")
+//        Log.d("LOG", this.javaClass.simpleName + "  onHaveVideoAfter()")
         if (playedPosition > 0L) {
             mView?.hideLoadingProgress()
             mView?.hideControlWhenNextVideoSchedule()
@@ -569,14 +569,14 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
     }
 
     override fun onDontHaveNowPlayingVideo(isClickedButtonHome: Boolean?) {
-        Log.d("LOG", this.javaClass.simpleName + " onDontHaveNowPlayingVideo() ")
+//        Log.d("LOG", this.javaClass.simpleName + " onDontHaveNowPlayingVideo() ")
         mView?.hideLoadingProgress()
         PreferenceManager.clearSchedulePref()
         mView?.openNoClassSearchScreen(isClickedButtonHome)
     }
 
     private fun openNowPlayingVideo(playedVideoPosition: Long) {
-        Log.d("LOG", this.javaClass.simpleName + " openNowPlayingVideo() ")
+//        Log.d("LOG", this.javaClass.simpleName + " openNowPlayingVideo() ")
         mPlayerManager.onInitialize(playedVideoPosition = playedVideoPosition, typeVideo = EnumTypeViewVideo.SCHEDULE, isUpdateViewNumber = true, isSupportCC = true)
     }
 
@@ -590,7 +590,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
     }
 
     override fun switchToPlayScheduleVideos(scheduleVideos: ArrayList<MMVideo>) {
-        Log.d("LOG", this.javaClass.simpleName + " switchToPlayScheduleVideos() | videos number: ${videos.size}")
+//        Log.d("LOG", this.javaClass.simpleName + " switchToPlayScheduleVideos() | videos number: ${videos.size}")
         mInitPlayedPosition = 0L
         mPlayerManager.onReleasePlayer(isKeepPosition = true, keepPlayWhenReady = true)
 
@@ -689,7 +689,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
     private var isPlayingVideo = false
 
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-        Log.d("LOG", this.javaClass.simpleName + " onPlayerStateChanged() | playbackState: $playbackState | playWhenReady: $playWhenReady")
+//        Log.d("LOG", this.javaClass.simpleName + " onPlayerStateChanged() | playbackState: $playbackState | playWhenReady: $playWhenReady")
         when (playbackState) {
             Player.STATE_BUFFERING -> {
 
@@ -746,7 +746,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
 
     private var havetoCastOnceResume = false
     override fun onCastRouterConnected() {
-        Log.d("LOG", this.javaClass.simpleName + " onCastRouterConnected() | last position: ${mPlayerManager.getCurrentPosition()}")
+//        Log.d("LOG", this.javaClass.simpleName + " onCastRouterConnected() | last position: ${mPlayerManager.getCurrentPosition()}")
         PreferenceHelper.getInstance()?.putLong(ConstantPreference.LAST_PLAYED_VIDEO_POSITION, getCurrentPlayedPosition())
         val view = mView
         if(view == null){

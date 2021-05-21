@@ -55,7 +55,7 @@ class MMSessionManager(private val mName: String) : MMPlayer.Callback {
     }
 
     fun add(mode: PlayMode, videos: ArrayList<*>, playedPosition: Long?) {
-        Log.d("LOG", this.javaClass.simpleName + " add() | mPlayer: $mPlayer | videos number: ${videos.size}")
+//        Log.d("LOG", this.javaClass.simpleName + " add() | mPlayer: $mPlayer | videos number: ${videos.size}")
         mPlayer?.play(mode = mode, item = videos, lastPosition = playedPosition ?: 0L)
     }
 

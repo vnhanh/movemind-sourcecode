@@ -179,7 +179,7 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
             if (externalUrl?.get(1) != null) {
                 externalFolder = File(
                     externalUrl[1],
-                    String.format("%s/%s", Constant.FOLDER_DOWNLOADED, video.id.toString() + ".mp4")
+                    String.format("%s/%s%s", Constant.FOLDER_DOWNLOADED, video.id.toString(), ".mp4")
                 )
                 if (externalFolder.exists()) {
                     dataSpec = DataSpec(Uri.fromFile(externalFolder))
@@ -187,9 +187,9 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
                     internalFolder = File(
                         _context.filesDir,
                         String.format(
-                            "%s/%s",
+                            "%s/%s%s",
                             Constant.FOLDER_DOWNLOADED,
-                            video.id.toString() + ".mp4"
+                            video.id.toString(), ".mp4"
                         )
                     )
                     dataSpec = DataSpec(Uri.fromFile(internalFolder))
@@ -197,7 +197,7 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
             } else {
                 internalFolder = File(
                     _context.filesDir,
-                    String.format("%s/%s", Constant.FOLDER_DOWNLOADED, video.id.toString() + ".mp4")
+                    String.format("%s/%s%s", Constant.FOLDER_DOWNLOADED, video.id.toString(), ".mp4")
                 )
                 dataSpec = DataSpec(Uri.fromFile(internalFolder))
             }
@@ -205,7 +205,7 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
         } else {
             internalFolder = File(
                 _context.filesDir,
-                String.format("%s/%s", Constant.FOLDER_DOWNLOADED, video.id.toString() + ".mp4")
+                String.format("%s/%s%s", Constant.FOLDER_DOWNLOADED, video.id.toString(), ".mp4")
             )
             dataSpec = DataSpec(Uri.fromFile(internalFolder))
         }
@@ -230,7 +230,7 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
                             tag = Constant.TAG_VIDEO_DOWNLOAD
                         )
                     ) {
-                        checkIfFileExist(video.id.toString() + ".mp4")
+                        checkIfFileExist(String.format("%s%s",video.id.toString(), ".mp4"))
                     } else {
                         false
                     }

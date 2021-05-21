@@ -8,6 +8,7 @@ import com.google.android.exoplayer2.upstream.DataSink
 import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.crypto.AesCipherDataSink
 import com.google.android.exoplayer2.util.Util
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
@@ -198,6 +199,9 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
 //            closeAll()
         } catch (exOOM: OutOfMemoryError) {
             exOOM.printStackTrace()
+            FirebaseCrashlytics.getInstance().recordException(exOOM)
+            FirebaseCrashlytics.getInstance().log("download-save-error: OOM")
+
             Log.d("LOG", this.javaClass.simpleName + " saveFileInternal() | error: ${exOOM.message}")
             Log.e("LOG", this.javaClass.simpleName + " saveFileInternal() | error: ${exOOM.message}")
             isEncounteredOOM = true
@@ -205,6 +209,8 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
             return CODE_FAILED
         } catch (e: Exception) {
             e.printStackTrace()
+            FirebaseCrashlytics.getInstance().recordException(e)
+            FirebaseCrashlytics.getInstance().log("download-save-error: ${e.message}")
             Log.d("LOG", this.javaClass.simpleName + " saveFileInternal() | error: ${e.message}")
             Log.e("LOG", this.javaClass.simpleName + " saveFileInternal() | error: ${e.message}")
             if (!isEncounteredOOM) {
@@ -302,8 +308,8 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
             }
         } catch (oom: OutOfMemoryError) {
             oom.printStackTrace()
-            Log.d("LOG", this.javaClass.simpleName + " saveFileExternal() | error: ${oom.message}")
-            Log.e("LOG", this.javaClass.simpleName + " saveFileExternal() | error: ${oom.message}")
+            Log.d("LOG", this.javaClass.simpleName + " saveFileExternal() - OOM | error: ${oom.message}")
+            Log.e("LOG", this.javaClass.simpleName + " saveFileExternal() - OOM | error: ${oom.message}")
             isEncounteredOOM = true
             mReason = Constant.ERROR_OUT_OF_MEMORY
             return CODE_FAILED
