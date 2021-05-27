@@ -21,7 +21,6 @@ class SearchResultApi {
         val requestData = SearchVideosOnSearchByRequestData(brandId = brandId, searchBy = searchBy, searchValue = searchValue, options = options)
 
         return mService.getVideosSearchResultOnSearchBy(RequestUtil.APP_JSON, RequestUtil.APP_JSON, tokenHeader, deviceId, requestData)
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
     }
 
@@ -32,7 +31,6 @@ class SearchResultApi {
         val requestData = SearchVideosOnHelpMeChooseRequestData(brandId, answers)
 
         return mService.getVideosSearchResultOnHelpMeChooseAnswers(RequestUtil.APP_JSON, RequestUtil.APP_JSON, tokenHeader, deviceId, requestData)
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
     }
 
@@ -41,13 +39,11 @@ class SearchResultApi {
         val tokenHeader = RequestUtil.getTokenHeader(token)
 
         return mService.getVideosSearchResultOnInstructor(RequestUtil.APP_JSON, RequestUtil.APP_JSON, tokenHeader, deviceId, instructorId)
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
     }
 
     fun updateViewNumber(token:String, deviceId:String, videoId:Int, type:String) : Observable<Response<ResponseValue<VideoViewResponse>>> {
         return  mService.updateViewNumber(RequestUtil.getTokenHeader(token), deviceId, videoId.toString(), UpdateViewVideoRequest(type))
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
     }
 

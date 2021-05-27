@@ -16,7 +16,6 @@ class InstructorApi() {
     fun getInstructors(token: String, deviceId:String, brandId:Int): Observable<Response<ResponseValue<ArrayList<MMInstructor>>>> {
         val tokenHeader = RequestUtil.getTokenHeader(token)
         return mService.getInstructors(tokenHeader, deviceId, brandId)
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
     }
 }

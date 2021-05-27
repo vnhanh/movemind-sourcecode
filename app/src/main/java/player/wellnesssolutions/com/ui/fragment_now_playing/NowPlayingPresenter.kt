@@ -6,6 +6,7 @@ import android.os.Handler
 import android.util.Log
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -210,7 +211,9 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
             this.mCountDownTimerPlayVideo?.cancel()
         } catch (e: RuntimeException) {
             e.printStackTrace()
-            Log.e("CountDownTimer", " NowPlayingPresenter - " + e.message)
+            FirebaseCrashlytics.getInstance().recordException(e)
+            FirebaseCrashlytics.getInstance().log("NowPlayingPresenter - countdown error")
+//            Log.e("CountDownTimer", " NowPlayingPresenter - " + e.message)
         }
         this.mCountDownTimerPlayVideo = null
         this.videos = videos
@@ -248,7 +251,6 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
     private fun processPlayerBaseOnState() {
 //        Log.d("LOG", this.javaClass.simpleName + " processPlayerBaseOnState() | videos number: ${videos.size} | mPlayerState: $mPlayerState")
         // player has been initialized
-        // return
         if (isPlayerInitialized() && isKeepPlayerVideoSearchedAfterNetworkReconnect) {
 //            Log.d("LOG", this.javaClass.simpleName + " processPlayerBaseOnState() | is inited player")
             isKeepPlayerVideoSearchedAfterNetworkReconnect = false
@@ -408,7 +410,6 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
 
     override fun onPlayNext() {
 //        Log.d("LOG", this.javaClass.simpleName + " onPlayNext()")
-//        mPlayerManager.onInitialize(0L, EnumTypeViewVideo.NORMAL, isPlayCC = true)
         mInitPlayedPosition = 0L
         if (videos.size > 0) {
             mPlayerState = PlayerState.NOTHING
@@ -422,7 +423,6 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
     override fun onReload() {
 //        Log.d("LOG", this.javaClass.simpleName + " onReload()")
         mInitPlayedPosition = 0L
-//        checkPlayMode()
         mIsReload = true
         openNowPlayingVideo(0L)
     }
@@ -564,7 +564,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
     }
 
     override fun onProcessVideoError() {
-        Log.d("LOG", this.javaClass.simpleName + " onProcessVideoError()")
+//        Log.d("LOG", this.javaClass.simpleName + " onProcessVideoError()")
         mView?.showMessage(R.string.encountered_error_handling_class_data, R.color.red)
     }
 

@@ -642,9 +642,9 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
             // mMainDownloadButtonManager?.setVideoData(video)
 
             NowPlayingVideoInfoDisplayHelper.displayPlayingVideo(
-                    rootView,
-                    groupMainCollections, video,
-                    mExtraMainCollectionViews
+                parentView = rootView,
+                videoData = video,
+                extraCollectionViews = mExtraMainCollectionViews
             ).also {
                 mExtraMainCollectionViews = it
             }
@@ -803,19 +803,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
 
                 // show dialog ask user want to play class video
                 PlayMode.ON_DEMAND -> {
-//                    Log.d("LOG", this.javaClass.simpleName + " onHaveClassVideos() | isClickedFromBtnBottom: ${isClickedFromBtnBottom}")
-//                    if (isClickedFromBtnBottom) {
-//                        val message = it.getString(R.string.confirm_stop_video_and_open_current_class)
-//                        val okButtonListener = DialogInterface.OnClickListener { _, _ -> switchToCurrentClass(scheduleVideos) }
-//                        val cancelButtonListener = DialogInterface.OnClickListener { _, _ ->
-//                            presenter?.resumeOrReplay()
-//                        }
-//
-//                        DialogUtil.createDialogTwoButtons(context = it, message = message, titleLeftButton = R.string.btn_no,
-//                                leftButtonClickListener = cancelButtonListener, titleRightButton = R.string.btn_yes, rightButtonClickListener = okButtonListener).show()
-//                    } else {
                     switchToCurrentClass(scheduleVideos)
-//                    }
                 }
             }
         }
@@ -877,23 +865,6 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
      */
 
     override fun onMediaRouterConnected() {
-//        Log.d("LOG", this.javaClass.simpleName + " onMediaRouterConnected()")
-//        when{
-//            mPresenter?.getPlayMode() == PlayMode.ON_DEMAND -> {
-//
-//            }
-//        }
-//        val videos: ArrayList<MMVideo>? = presenter?.getAllVideos()
-
-//        presenter?.getPlayerManager()?.getCurrentPosition()?.let {
-//            if (it > 0) {
-//                PresentationDataHelper.save(
-//                        context = activity,
-//                        mode = presenter?.getPlayMode(),
-//                        videos = videos
-//                )
-//            }
-//        }
         isCasting = true
         presenter?.onCastRouterConnected()
     }
@@ -920,13 +891,10 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
                             )
                         }
                     }
-//                    activity.frameLayoutHome.also {
-//                        MessageUtils.showSnackBar(snackView = it, message = it.context?.getString(R.string.detect_connecting_to_tv).orEmpty(),
-//                                colorRes = R.color.white, isLongTime = true, btnRes = R.string.btn_ok)
-//                    }
+
                 }
             }
-//            openNoClassSearchScreen(null)
+
         }
     }
 

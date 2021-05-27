@@ -8,7 +8,7 @@ import java.util.*
 class SearchVideosByPresenter : ISearchVideosByContract.Presenter {
     // vars
     private var mView: ISearchVideosByContract.View? = null
-    private lateinit var mBrand: MMBrand
+    private var mBrand: MMBrand? = null
 
     // must call before onAttach() function
     override fun setChosenBrand(brand: MMBrand) {
@@ -16,7 +16,9 @@ class SearchVideosByPresenter : ISearchVideosByContract.Presenter {
     }
 
     override fun onChooseItem(data: SearchByOption) {
-        mView?.onOpenNextScreen(mBrand, data)
+        mBrand?.also { brand ->
+            mView?.onOpenNextScreen(brand, data)
+        }
     }
 
     override fun onAttach(view: ISearchVideosByContract.View) {
@@ -31,10 +33,14 @@ class SearchVideosByPresenter : ISearchVideosByContract.Presenter {
     }
 
     private fun displayUI() {
-        mView?.getFragment()?.context?.also { context ->
-            val list: ArrayList<SearchByOption> = SearchVideosByHelper.getSearchByOptions(context, mBrand.hasLevel
-                    ?: 1)
-            mView?.showUI(list)
+        mView?.also { view ->
+            mBrand?.also { brand ->
+                view.getFragment().context?.also { context ->
+                    val list: ArrayList<SearchByOption> = SearchVideosByHelper.getSearchByOptions(context, brand.hasLevel
+                        ?: 1)
+                    view.showUI(list)
+                }
+            }
         }
     }
 

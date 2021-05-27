@@ -1,21 +1,16 @@
 package player.wellnesssolutions.com.ui.fragment_now_playing.helper
 
 import android.content.Context
-import android.content.DialogInterface
 import android.content.res.Resources
 import android.graphics.Color
-import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.util.DisplayMetrics
-import android.util.Log
-import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.SeekBar
-import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.graphics.ColorUtils
@@ -23,7 +18,6 @@ import androidx.fragment.app.FragmentManager
 import com.bumptech.glide.Glide
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerView
-import com.google.android.gms.dynamic.SupportFragmentWrapper
 import kotlinx.android.synthetic.main.custom_controller_player_screen_now_playing.view.*
 import kotlinx.android.synthetic.main.fragment_now_playing.view.*
 import kotlinx.android.synthetic.main.merge_layout_bottom_bar_screen_now_playing.view.*
@@ -33,7 +27,6 @@ import player.wellnesssolutions.com.base.utils.FragmentUtil
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
-import player.wellnesssolutions.com.common.utils.DialogUtil
 import player.wellnesssolutions.com.custom_exoplayer.EnumVolumeLevel
 import player.wellnesssolutions.com.network.datasource.videos.PlayMode
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
@@ -118,23 +111,6 @@ object NowPlayingVideoSetupHelper {
         val btnExoFullScreen = videoPlayer?.exo_fullscreen
         val viewBottomVideoPlayer = barBottom?.viewBgGroupControllers
         setupToggleFullScreenButton(parentView, videoPlayer, btnExoFullScreen, viewBottomVideoPlayer, barBottom)
-    }
-
-    fun getHeight(context: Context, text: String, textSize: Float, typeface: Typeface, padding: Int): Int {
-        val textView = TextView(context)
-        textView.setPadding(padding, padding, padding, padding)
-        textView.typeface = typeface
-        textView.setText(text, TextView.BufferType.SPANNABLE)
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, textSize)
-
-        val metrics = DisplayMetrics()
-        val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        windowManager.defaultDisplay.getMetrics(metrics)
-
-        val widthMeasureSpec: Int = View.MeasureSpec.makeMeasureSpec(metrics.widthPixels, View.MeasureSpec.AT_MOST)
-        val heightMeasureSpec: Int = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-        textView.measure(widthMeasureSpec, heightMeasureSpec)
-        return textView.measuredHeight
     }
 
     /**
@@ -338,52 +314,30 @@ object NowPlayingVideoSetupHelper {
         }
     }
 
-    fun showDialogNavigateToNoClassScreen(context: Context, fm: FragmentManager?, isClickedFromBtnBottom: Boolean) {
-        val message = context.getString(R.string.confirm_stop_video_and_navigate_to_screen_get_started)
-        val okButtonListener = DialogInterface.OnClickListener { _, _ ->
-            openHomeFragmentWithNotLoadSchedule(fm)
-        }
-
-        DialogUtil.createDialogOnlyOneButton(
-                context = context,
-                message = message,
-                titleButton = R.string.btn_yes,
-                dialogClickListener = okButtonListener
-        ).show()
-    }
-
     fun openHomeFragmentWithLoadSchedule(fm: FragmentManager?) {
-        Log.d("LOG", this.javaClass.simpleName + " openHomeFragmentWithLoadSchedule()")
+//        Log.d("LOG", this.javaClass.simpleName + " openHomeFragmentWithLoadSchedule()")
         fm?.also { _fm ->
             val tag = HomeFragment.TAG
-            var fragment = _fm.findFragmentByTag(tag)
-//            fragment =
-//                    when (fragment != null && fragment is HomeFragment) {
-//                        true -> {
-//                            HomeFragment.updateAlreadyInstanceWithLoadSchedule(fragment)
-//                        }
-//                        false -> HomeFragment.getInstanceWithLoadSchedule()
-//                    }
+            val fragment = _fm.findFragmentByTag(tag)
             if (fragment != null && fragment is HomeFragment) {
                 fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
             }
             val newFragment = HomeFragment.getInstanceWithLoadSchedule()
-            FragmentUtil.replaceFragment(fm = _fm, newFragment = newFragment, newFragmentTag = tag, frameId = R.id.frameLayoutHome, isAddToBackStack = false, isRemoveOlds = true)
+            FragmentUtil.replaceFragment(
+                fm = _fm,
+                newFragment = newFragment,
+                newFragmentTag = tag,
+                frameId = R.id.frameLayoutHome,
+                isAddToBackStack = false
+            )
         }
     }
 
     fun openHomeFragmentWithNotLoadSchedule(fm: FragmentManager?) {
         fm?.also { _fm ->
-            Log.d("LOG", this.javaClass.simpleName + " openHomeFragmentWithNotLoadSchedule()")
+//            Log.d("LOG", this.javaClass.simpleName + " openHomeFragmentWithNotLoadSchedule()")
             val tag = HomeFragment.TAG
             val fragment = _fm.findFragmentByTag(tag)
-//            fragment =
-//                    when (fragment != null && fragment is HomeFragment) {
-//                        true -> {
-//                            HomeFragment.updateAlreadyInstanceWithNotLoadSchedule(fragment)
-//                        }
-//                        false -> HomeFragment.getInstanceNotLoadSchedule()
-//                    }
             if (fragment != null && fragment is HomeFragment) {
                 fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
             }
@@ -394,35 +348,33 @@ object NowPlayingVideoSetupHelper {
                 newFragment = newFragment,
                 newFragmentTag = tag,
                 frameId = R.id.frameLayoutHome,
-                isAddToBackStack = false,
-                isRemoveOlds = true
+                isAddToBackStack = false
             )
         }
     }
 
     fun openHomeFragmentWithNotLoadScheduleAndShowSnackbar(fm: FragmentManager?, message: String) {
         fm?.also { _fm ->
-            Log.d("LOG", this.javaClass.simpleName + " openHomeFragmentWithNotLoadSchedule()")
+//            Log.d("LOG", this.javaClass.simpleName + " openHomeFragmentWithNotLoadSchedule()")
             val tag = HomeFragment.TAG
             val fragment = _fm.findFragmentByTag(tag)
-//            fragment =
-//                    when (fragment != null && fragment is HomeFragment) {
-//                        true -> {
-//                            HomeFragment.updateAlreadyInstanceWithNotLoadSchedule(fragment)
-//                        }
-//                        false -> HomeFragment.getInstanceNotLoadSchedule()
-//                    }
             if (fragment != null && fragment is HomeFragment) {
                 fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
             }
             val newFragment = HomeFragment.getInstanceNotLoadScheduleAndShowSnackbar(message)
 
-            FragmentUtil.replaceFragment(fm = _fm, newFragment = newFragment, newFragmentTag = tag, frameId = R.id.frameLayoutHome, isAddToBackStack = false, isRemoveOlds = true)
+            FragmentUtil.replaceFragment(
+                fm = _fm,
+                newFragment = newFragment,
+                newFragmentTag = tag,
+                frameId = R.id.frameLayoutHome,
+                isAddToBackStack = false
+            )
         }
     }
 
     fun openNowPlayingWithSchedule(fm: FragmentManager?) {
-        Log.d("LOG", this.javaClass.simpleName + " openNowPlayingWithSchedule()")
+//        Log.d("LOG", this.javaClass.simpleName + " openNowPlayingWithSchedule()")
         fm?.also { _fm ->
             val tag = NowPlayingFragment.TAG
             val fragment = _fm.findFragmentByTag(tag)
@@ -430,15 +382,13 @@ object NowPlayingVideoSetupHelper {
                 _fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
             }
             val newFragment = NowPlayingFragment.getInstancePlaySchedule()
-//            fragment =
-//                    when (fragment != null && fragment is NowPlayingFragment) {
-//                        true -> {
-////                            _fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
-//                            NowPlayingFragment.updateAlreadyInstanceWithSchedule(fragment)
-//                        }
-//                        false -> NowPlayingFragment.getInstancePlaySchedule()
-//                    }
-            FragmentUtil.replaceFragment(fm = _fm, newFragment = newFragment, newFragmentTag = tag, frameId = R.id.frameLayoutHome, isAddToBackStack = true, isRemoveOlds = true)
+            FragmentUtil.replaceFragment(
+                fm = _fm,
+                newFragment = newFragment,
+                newFragmentTag = tag,
+                frameId = R.id.frameLayoutHome,
+                isAddToBackStack = true
+            )
         }
     }
 
@@ -464,8 +414,7 @@ object NowPlayingVideoSetupHelper {
                     newFragment = fragment,
                     newFragmentTag = tag,
                     frameId = R.id.frameLayoutHome,
-                    isAddToBackStack = true,
-                    isRemoveOlds = false
+                    isAddToBackStack = true
             )
         }
     }

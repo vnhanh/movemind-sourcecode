@@ -16,7 +16,6 @@ class NoClassSearchApi {
         val tokenHeader = RequestUtil.getTokenHeader(token)
 
         return noClassSearchService.getData(tokenHeader, deviceId)
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
     }
 }

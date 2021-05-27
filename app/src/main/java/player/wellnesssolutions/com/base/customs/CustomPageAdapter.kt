@@ -15,8 +15,6 @@ class CustomPageAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm, BEHAVIOR
         fragments.add(fragment)
     }
 
-    fun getFragments(): ArrayList<Fragment> = fragments
-
     fun release() {
         fragments.clear()
     }

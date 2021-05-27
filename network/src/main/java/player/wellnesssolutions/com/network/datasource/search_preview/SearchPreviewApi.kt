@@ -17,7 +17,6 @@ class SearchPreviewApi {
         val tokenHeader = RequestUtil.getTokenHeader(token)
 
         return searchPreviewService.getSuggestSearchDataByDuration(tokenHeader, deviceId, brandId, selectedId)
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
     }
 
@@ -25,7 +24,6 @@ class SearchPreviewApi {
         val tokenHeader = RequestUtil.getTokenHeader(token)
 
         return searchPreviewService.getSuggestSearchDataByLevel(tokenHeader, deviceId, brandId, selectedId)
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
     }
 
@@ -33,7 +31,6 @@ class SearchPreviewApi {
         val tokenHeader = RequestUtil.getTokenHeader(token)
 
         return searchPreviewService.getSuggestSearchDataByInstructor(tokenHeader, deviceId, brandId, selectedId)
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
     }
 
@@ -41,7 +38,6 @@ class SearchPreviewApi {
         val tokenHeader = RequestUtil.getTokenHeader(token)
 
         return searchPreviewService.getSuggestSearchDataByCollection(tokenHeader, deviceId, brandId, selectedId)
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
     }
 }

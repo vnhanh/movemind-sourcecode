@@ -1,6 +1,5 @@
 package player.wellnesssolutions.com.base.view
 
-import android.util.Log
 import io.reactivex.Observer
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable

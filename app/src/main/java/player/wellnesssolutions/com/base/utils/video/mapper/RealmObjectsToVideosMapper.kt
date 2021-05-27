@@ -61,19 +61,10 @@ object RealmObjectsToVideosMapper {
 
         // convert collections
         source.collections?.also {
-            //            val collections = ArrayList<MMTinyCategory>()
-//            for (ele : TinyCollectionRealm in it) {
-//                collections.add(convertSimpleCollection(ele))
-//            }
             res.collections = convertListSimpleCollections(it)
         }
 
         source.levels?.also {
-            //            val levels = ArrayList<MMSimpleOption>()
-//
-//            for (ele : TinyOptionRealm in it) {
-//                levels.add(convertSimpleOption(ele))
-//            }
             res.levels = convertListSimpleOptions(it)
         }
 

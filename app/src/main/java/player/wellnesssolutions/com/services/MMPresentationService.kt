@@ -19,7 +19,6 @@ class MMPresentationService : Service(), MMPresentationBinder.BinderListener {
 
     companion object {
         const val TAG = "MMPresentationService"
-        const val DESCRIPTION = "Move Mind"
         const val TITLE = "Move Mind"
     }
 

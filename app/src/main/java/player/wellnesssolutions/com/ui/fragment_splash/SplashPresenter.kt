@@ -1,6 +1,5 @@
 package player.wellnesssolutions.com.ui.fragment_splash
 
-import android.util.Log
 import com.google.gson.Gson
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.utils.ParameterUtils
@@ -40,8 +39,10 @@ class SplashPresenter : BaseResponseObserver<MMConfigData>(), ISplashContract.Pr
         if (isLoading) return
 
         mView?.getViewContext()?.also {
-            val headerData: HeaderData? = CheckHeaderApiUtil.checkData(sharedPref = PreferenceHelper.getInstance(it), fragment = mView!!.getFragment())
-                    ?: null
+            val headerData: HeaderData? = CheckHeaderApiUtil.checkData(
+                sharedPref = PreferenceHelper.getInstance(it),
+                fragment = mView!!.getFragment()
+            ) ?: null
 
             when {
                 headerData == null -> {
@@ -95,13 +96,15 @@ class SplashPresenter : BaseResponseObserver<MMConfigData>(), ISplashContract.Pr
         }
 
         savePref(data.data)
-        mView?.updateProgress(85)
+        mView?.also { view ->
+            view.updateProgress(85)
 
-        storeBranding(data.data.branding)
+            storeBranding(data.data.branding)
 
-        mView?.updateProgress(100)
+            view.updateProgress(100)
 
-        mView?.navigateToHomeScreen()
+            view.navigateToHomeScreen()
+        }
     }
 
     private fun storeBranding(branding: MMBranding?) {
@@ -138,7 +141,6 @@ class SplashPresenter : BaseResponseObserver<MMConfigData>(), ISplashContract.Pr
     override fun onResponseFailed(code: Int, message: String?) {
         super.onResponseFailed(code, message)
         isLoading = false
-        Log.d("LOG", this.javaClass.simpleName + " onResponseFailed() | message: $message")
         mRequestCode = RESPONSE_FALSE
         handleOnCallServiceFailed()
     }
@@ -164,7 +166,6 @@ class SplashPresenter : BaseResponseObserver<MMConfigData>(), ISplashContract.Pr
     }
 
     private fun handleOnCallServiceFailed() {
-        Log.d("LOG", this.javaClass.simpleName + " handleOnCallServiceFailed()")
         mView?.updateProgress(-1)
         val msgResId: Int =
                 when (mRequestCode) {

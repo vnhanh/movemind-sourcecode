@@ -16,7 +16,6 @@ class LevelApi() {
     fun getLevels(token: String, deviceId: String, brandId: Int): Observable<Response<ResponseValue<ArrayList<MMLevel>>>> {
         val tokenHeader = RequestUtil.getTokenHeader(token)
         return levelService.getBrands(RequestUtil.APP_JSON, RequestUtil.APP_JSON, tokenHeader, deviceId, brandId)
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
     }
 }

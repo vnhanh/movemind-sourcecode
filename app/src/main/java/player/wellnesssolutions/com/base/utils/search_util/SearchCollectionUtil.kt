@@ -31,69 +31,6 @@ object SearchCollectionUtil {
         tv.setTextColor(color)
     }
 
-    //    fun displayCollections(parentView: ConstraintLayout, leftView:View, collections:ArrayList<MMTinyCategory>?, collectionCountMax:Int,
-//                           extraViews:ArrayList<TextView>?) : ArrayList<TextView>?{
-//
-//        while (extraViews?.size?:0 > 0){
-//            parentView.removeView(extraViews?.get(0))
-//            extraViews?.removeAt(0)
-//        }
-//
-//        if(collections == null || collections.size == 0) {
-//            return extraViews
-//        }
-//
-//        if(MARGIN == 0) MARGIN = parentView.resources.getDimensionPixelSize(R.dimen.margin)
-//
-//        var prevTv = leftView
-//
-//        val lastIndex = Math.min(collections.size - 1, collectionCountMax)
-//
-//        for (i : Int in 0..lastIndex){
-//            val content = if(i < collectionCountMax) collections.get(i).name?:"" else "..."
-//            val colorStr = collections.get(i).getColor()
-//
-//            prevTv = addExtraSmallView(parentView, prevTv, content, colorStr, MARGIN)
-//            extraViews?.add(prevTv)
-//        }
-//
-//        return extraViews
-//    }
-//
-    fun addExtraSmallView(parentView: ConstraintLayout, prevView: View, name: String, colorStr: String?, leftMargin: Int): TextView {
-        val tv = TextView(parentView.context)
-
-        if (mTvCollectionHeight == 0) mTvCollectionHeight = parentView.resources.getDimensionPixelSize(R.dimen.vh_now_playing_title_collection_height)
-
-        tv.layoutParams = ConstraintLayout.LayoutParams(
-                ConstraintLayout.LayoutParams.WRAP_CONTENT,
-                mTvCollectionHeight
-        )
-
-        tv.id = ViewCompat.generateViewId()
-        tv.setTypeface(null, Typeface.BOLD_ITALIC)
-        tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, parentView.resources.getDimensionPixelSize(R.dimen.tv_collection_video_text_size_small).toFloat())
-
-        displayText(tv, name, colorStr)
-
-        parentView.addView(tv)
-
-        applyConstraintSet(parentView, prevView, tv, leftMargin)
-
-        return tv
-    }
-
-    private fun applyConstraintSet(parentView: ConstraintLayout, prevView: View, appliedView: TextView, leftMargin: Int) {
-        val set = ConstraintSet()
-        set.clone(parentView)
-
-        set.connect(appliedView.id, ConstraintSet.BOTTOM, prevView.id, ConstraintSet.BOTTOM)
-
-        set.connect(appliedView.id, ConstraintSet.START, prevView.id, ConstraintSet.END, leftMargin)
-
-        set.applyTo(parentView)
-    }
-
     /**
      * -----------------------
      */

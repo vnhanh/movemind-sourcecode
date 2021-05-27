@@ -1,9 +1,7 @@
 package player.wellnesssolutions.com.ui.fragment_now_playing.helper
 
-import android.util.Log
 import com.google.gson.Gson
 import player.wellnesssolutions.com.R
-import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.network.models.config.MMConfigData

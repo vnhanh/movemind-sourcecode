@@ -174,7 +174,7 @@ class TimeTableFragment : BaseFragment(), ITimeTableContract.View, MMTabBar.TabB
         reViewVideos?.layoutManager = GridLayoutManager(context, rowNumber, RecyclerView.HORIZONTAL, false)
         reViewVideos?.setHasFixedSize(true)
 
-        val itemDecoration = ItemDecorationGridHorizontalLayout(null, 0, rowNumber)
+        val itemDecoration = ItemDecorationGridHorizontalLayout(rowNumber)
         itemDecoration.margin = context?.resources?.getDimensionPixelSize(R.dimen.margin) ?: 0
         reViewVideos.addItemDecoration(itemDecoration)
 

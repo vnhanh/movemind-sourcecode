@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -181,6 +180,7 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View, IRouterChanged 
     }
 
     private fun checkSubIsChange(context: Context) {
+//        Log.d("LOG", "HomeFragment - checkSubIsChange()")
         val tokenAu: String = PreferenceHelper.getInstance(context).getString(ConstantPreference.TOKEN, "")
         val deviceId = PreferenceHelper.getInstance(context).getString(ConstantPreference.DEVICE_ID, "")
         if (deviceId.isNotEmpty() && tokenAu.isNotEmpty()) {
@@ -192,8 +192,8 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View, IRouterChanged 
 
                         override fun onResponseSuccess(data: ResponseValue<Int>?) {
                             super.onResponseSuccess(data)
-                            val subsID = PreferenceHelper.getInstance(context).getInt(ConstantPreference.DOWNLOAD_VIDEOS_SUBS_ID, -1)
-                            val idData = data?.data
+//                            val subsID = PreferenceHelper.getInstance(context).getInt(ConstantPreference.DOWNLOAD_VIDEOS_SUBS_ID, -1)
+//                            val idData = data?.data
 //                            Log.d("LOG", "HomeFragment - checkSubIsChange() | response success | subsID: $subsID | idData: $idData")
                             if (data == null) return
                             if (PreferenceHelper.getInstance(context).getInt(ConstantPreference.DOWNLOAD_VIDEOS_SUBS_ID, -1) == -1) {

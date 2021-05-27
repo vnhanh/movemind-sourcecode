@@ -9,7 +9,6 @@ import android.media.AudioManager
 import android.os.*
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.annotation.ColorRes
@@ -68,7 +67,6 @@ import player.wellnesssolutions.com.ui.fragment_splash.SplashFragment
 import player.wellnesssolutions.database.manager.DownloadDBManager
 import retrofit2.Response
 import java.io.File
-import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -546,7 +544,6 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         val deviceId = PreferenceHelper.getInstance(this).getString(ConstantPreference.DEVICE_ID, "")
         LoginApi().login(email, password, deviceId)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
                 .subscribe(object : BaseResponseObserver<MMLoginResponseData>() {
                     override fun onResponseSuccess(data: ResponseValue<MMLoginResponseData>?) {
                         super.onResponseSuccess(data)
@@ -796,7 +793,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
     }
 
     fun onBackPreviousScreen() {
-        try {
+//        try {
             val lastIndex = supportFragmentManager.fragments.size - 1
             if (lastIndex < 0) return
 
@@ -813,18 +810,18 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
                 supportFragmentManager.popBackStack()
                 return
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            FirebaseCrashlytics.getInstance().recordException(e)
-            FirebaseCrashlytics.getInstance().log("exception-back screen: ${e.message}")
-            try{
-
-            } catch (e:Exception){
-                val currentDate: String =
-                    SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault()).format(Date())
-                FirebaseCrashlytics.getInstance().log("crash on backing to previous screen | date: $currentDate")
-            }
-        }
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//            FirebaseCrashlytics.getInstance().recordException(e)
+//            FirebaseCrashlytics.getInstance().log("exception-back screen: ${e.message}")
+//            try{
+//
+//            } catch (e:Exception){
+//                val currentDate: String =
+//                    SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault()).format(Date())
+//                FirebaseCrashlytics.getInstance().log("crash on backing to previous screen | date: $currentDate")
+//            }
+//        }
     }
 
     // disable the BACK button

@@ -574,8 +574,8 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
 
     private fun loadApiUpdateViewNumber(videoId: Int) {
         context?.also {
-            val headerData: HeaderData? = CheckHeaderApiUtil.getExpiredData(it)
-            if (headerData == null || headerData.deviceId.isEmpty() || headerData.token.isEmpty()) {
+            val headerData: HeaderData = CheckHeaderApiUtil.getExpiredData(it)
+            if (headerData.deviceId.isEmpty() || headerData.token.isEmpty()) {
                 onExpired(it.getString(R.string.device_not_store_authenticated_data))
                 return
             }

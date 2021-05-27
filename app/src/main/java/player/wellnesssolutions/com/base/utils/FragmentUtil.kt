@@ -13,18 +13,9 @@ object FragmentUtil {
         fm.beginTransaction().add(frameId, newFragment).commit()
     }
 
-    fun replaceFragment(fm: FragmentManager?, newFragment: Fragment, newFragmentTag: String, @IdRes frameId: Int, isAddToBackStack: Boolean = false, isRemoveOlds: Boolean = false) {
+    fun replaceFragment(fm: FragmentManager?, newFragment: Fragment, newFragmentTag: String, @IdRes frameId: Int, isAddToBackStack: Boolean = false) {
         if (fm == null) return
         val ft: FragmentTransaction = fm.beginTransaction()
-
-//        if (isRemoveOlds) {
-//            try {
-//                fm.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-//            } catch (e: Exception) {
-//                e.printStackTrace()
-//            }
-//
-//        }
 
         // if open new fragment: enter_fragment for new one, exit_fragment for old one
         // if back: fade_in_left for new one, fade_out_right for old one

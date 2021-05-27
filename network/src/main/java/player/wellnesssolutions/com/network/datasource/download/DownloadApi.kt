@@ -16,7 +16,6 @@ class DownloadApi {
     fun getAllVideosFromServer(token: String, deviceId: String): Observable<Response<ResponseValue<ArrayList<MMVideo>>>> {
         val tokenHeader = RequestUtil.getTokenHeader(token)
         return mService.getVideosForDownload(RequestUtil.APP_JSON, RequestUtil.APP_JSON, tokenHeader, deviceId)
-                .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.single())
     }
 
@@ -24,7 +23,6 @@ class DownloadApi {
         val tokenHeader = RequestUtil.getTokenHeader(token)
         val params = DownLoadStatus(statusDownload,deviceId)
         return  mService.sendDownloadVideoStatus(RequestUtil.APP_JSON, RequestUtil.APP_JSON, tokenHeader, deviceId, params)
-                .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.single())
 
     }

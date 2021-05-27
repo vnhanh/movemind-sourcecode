@@ -15,7 +15,6 @@ class HelpMeChooseApi {
     fun loadQuestions(token:String, deviceId:String) : Observable<Response<ResponseValue<ArrayList<MMHelpMeChooseQuestion>>>> {
         val tokenHeader = RequestUtil.getTokenHeader(token)
         return service.getQuestions(RequestUtil.APP_JSON, RequestUtil.APP_JSON, tokenHeader, deviceId)
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
     }
 }

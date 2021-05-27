@@ -150,7 +150,6 @@ class DownloadService : Service(), IProgressListener, DownloadBinder.BinderDownl
 
     override fun onDownloadCompleted(videoId: Int, fileName: String?, isSuccess: Boolean, message: String) {
 //        Log.d("LOG", this.javaClass.simpleName + " onDownloadCompleted() | filename: $fileName")
-//        VideoDBUtil.addDownloadedVideo(videoId, Constant.MM_VIDEO_DOWNLOADED)
         //onUpDateDownload()
     }
 

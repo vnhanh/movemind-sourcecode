@@ -326,7 +326,7 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
 
                         override fun onError(e: Throwable) {
 //                            Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | can not start downloading video | error: ${e.message}")
-                            notifyDownloadCannotStart(videoId, fileName)
+                            notifyDownloadCannotStart(videoId)
                         }
 
                     })
@@ -337,14 +337,20 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
         }
     }
 
-    private fun notifyDownloadCannotStart(videoId: Int, fileName: String) {
+    private fun notifyDownloadCannotStart(videoId: Int) {
 //        Log.d("LOG", this.javaClass.simpleName + " notifyDownloadCannotStart() | mQueue: ${mQueue.size} | videoId: $videoId | name: $fileName")
         mNotiManager.stop()
         nextDownload(videoId)
     }
 
-    private fun createDownloadTask(videoId: Int, url: String, folder: String, hasPermission: Boolean = true,
-                                   fileNameDownload: String, nameShowFile: String) {
+    private fun createDownloadTask(
+        videoId: Int,
+        url: String,
+        folder: String,
+        hasPermission: Boolean = true,
+        fileNameDownload: String,
+        nameShowFile: String
+    ) {
 //        Log.d("LOG", this.javaClass.simpleName + " createDownloadTask() | queue size: ${mQueue.size}")
         val data: DownloadData = DownloadData(videoId = videoId, url = url).also {
             it.folder = folder
@@ -557,5 +563,4 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
 
     // get stored file name by video id
     private fun getSavedFileName(name: String, extension: String): String = String.format("%s.%s", name, extension)
-
 }

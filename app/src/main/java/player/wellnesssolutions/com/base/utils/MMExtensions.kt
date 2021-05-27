@@ -31,5 +31,4 @@ fun String.convertToStrDateFormat12hrs(): String {
         Log.e("ParseTime", "encountered parsing date time string from the input $this")
         return "###"
     }
-
 }

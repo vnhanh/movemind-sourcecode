@@ -16,7 +16,7 @@ import player.wellnesssolutions.com.ui.fragment_time_table.TimeTableFragment
 
 class NowPlayingFloatMenuHelper {
     // the handler for process all animations related to show and close menu
-    private lateinit var mAnimHelper: MMMenuAnimationHelper
+    private var mAnimHelper: MMMenuAnimationHelper? = null
 
     // weak reference of "Close Menu" button
     private var buttonClose: ImageView? = null
@@ -26,15 +26,15 @@ class NowPlayingFloatMenuHelper {
 
     fun onInit() {
         mAnimHelper = MMMenuAnimationHelper()
-        mAnimHelper.restart()
+        mAnimHelper?.restart()
         mIsShowFloatMenu = false
     }
 
     private fun onClickedButtonMenuFloat(showButton: ImageView, closeButton: ImageView, floatMenu: View, menuFrame: View) {
         val startAnim: Boolean =
                 when (mIsShowFloatMenu) {
-                    true -> mAnimHelper.startAnim(showButton, closeButton, floatMenu, menuFrame, isHideFloatMenu = true)
-                    else -> mAnimHelper.startAnim(closeButton, showButton, floatMenu, menuFrame, isHideFloatMenu = false)
+                    true -> mAnimHelper?.startAnim(showButton, closeButton, floatMenu, menuFrame, isHideFloatMenu = true)?:false
+                    else -> mAnimHelper?.startAnim(closeButton, showButton, floatMenu, menuFrame, isHideFloatMenu = false)?:false
                 }
         if (startAnim)
             mIsShowFloatMenu = !mIsShowFloatMenu
@@ -111,10 +111,6 @@ class NowPlayingFloatMenuHelper {
                 presenter?.loadBrands(tag = screenTag)
             }
 
-//            SearchResultFragment.mVideosToPlay.clear()
-//            SPDBUtil.deleteAllFromTag(SearchResultFragment.getTagOfChosen())
-//            HMCDataHelper.deleteALlFromTag(SearchResultFragment.getTagOfHMCForDB())
-
         }
     }
 
@@ -133,6 +129,6 @@ class NowPlayingFloatMenuHelper {
 
     fun onRelease() {
         buttonClose = null
-        mAnimHelper.release()
+        mAnimHelper?.release()
     }
 }

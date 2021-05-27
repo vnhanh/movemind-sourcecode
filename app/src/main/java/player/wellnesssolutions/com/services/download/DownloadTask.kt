@@ -53,15 +53,13 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
         }
 
         //save with external
-
         if (downloadData.filePathExternal != null) {
-            savedFile = File(downloadData.filePathExternal)
+            savedFile = File(downloadData.filePathExternal.orEmpty())
             return saveFileExternal(downloadData)
         } else {
-            savedFile = File(downloadData.filePath)
+            savedFile = File(downloadData.filePath.orEmpty())
             return saveFileInternal(downloadData)
         }
-
     }
 
     override fun onProgressUpdate(vararg values: Int?) {
@@ -202,8 +200,8 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
             FirebaseCrashlytics.getInstance().recordException(exOOM)
             FirebaseCrashlytics.getInstance().log("download-save-error: OOM")
 
-            Log.d("LOG", this.javaClass.simpleName + " saveFileInternal() | error: ${exOOM.message}")
-            Log.e("LOG", this.javaClass.simpleName + " saveFileInternal() | error: ${exOOM.message}")
+//            Log.d("LOG", this.javaClass.simpleName + " saveFileInternal() | error: ${exOOM.message}")
+//            Log.e("LOG", this.javaClass.simpleName + " saveFileInternal() | error: ${exOOM.message}")
             isEncounteredOOM = true
             mReason = Constant.ERROR_OUT_OF_MEMORY
             return CODE_FAILED
@@ -211,8 +209,8 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
             e.printStackTrace()
             FirebaseCrashlytics.getInstance().recordException(e)
             FirebaseCrashlytics.getInstance().log("download-save-error: ${e.message}")
-            Log.d("LOG", this.javaClass.simpleName + " saveFileInternal() | error: ${e.message}")
-            Log.e("LOG", this.javaClass.simpleName + " saveFileInternal() | error: ${e.message}")
+//            Log.d("LOG", this.javaClass.simpleName + " saveFileInternal() | error: ${e.message}")
+//            Log.e("LOG", this.javaClass.simpleName + " saveFileInternal() | error: ${e.message}")
             if (!isEncounteredOOM) {
                 mReason =
                         when (isNetworkDisconnected()) {

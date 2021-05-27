@@ -39,7 +39,6 @@ class NowPlayingComingUpNextVH(view: View, private var presenter: IComingUpNextC
 
         loadThumbnail(video)
         displayTypeLogo(video.brandTypeLogo, itemView.icTypeLogoGCU)
-        //bindDownloadData(video)
         displayTimeStart(video.getStartTime())
         displayTitleVideo(video.getVideoTitle(), itemView.tvTitleVideo)
         displayDurationVideo(video.getDurationValue(), itemView.tvTimeDuration)
@@ -49,10 +48,6 @@ class NowPlayingComingUpNextVH(view: View, private var presenter: IComingUpNextC
     private fun loadThumbnail(video: MMVideo) {
         NowPlayingVHDisplayHelper.displayThumbnail(itemView.thumbnailVideo, video.thumbnailSmallUrl)
     }
-
-//    private fun bindDownloadData(video : MMVideo) {
-//        mDownloadButtonManager.setVideoData(video)
-//    }
 
     private fun displayTimeStart(playTime: String) {
         if (presenter?.getPlayMode() == PlayMode.SCHEDULE)
@@ -88,7 +83,6 @@ class NowPlayingComingUpNextVH(view: View, private var presenter: IComingUpNextC
     }
 
     fun release() {
-        //mDownloadButtonManager.release()
         presenter = null
         mVideo = null
         mExtraCollectionViews?.clear()

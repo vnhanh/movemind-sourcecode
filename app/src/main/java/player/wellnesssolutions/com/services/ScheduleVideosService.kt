@@ -9,7 +9,6 @@ import player.wellnesssolutions.com.ui.activity_main.ScheduleBroadcastReceiver
 @SuppressLint("Registered")
 class ScheduleVideosService : IntentService(ScheduleVideosService::class.java.name) {
 
-
     override fun onHandleIntent(intent: Intent?) {
         when (intent?.getStringExtra(Constant.SCHEDULE_INTENT)) {
             Constant.SCHEDULE_ALARM_EVERY -> {
@@ -29,6 +28,5 @@ class ScheduleVideosService : IntentService(ScheduleVideosService::class.java.na
         }
 
     }
-
 
 }

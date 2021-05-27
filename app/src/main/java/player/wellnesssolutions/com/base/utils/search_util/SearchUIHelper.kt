@@ -83,7 +83,7 @@ object SearchUIHelper {
         if (parentFragment is ControlFragment)
             parentFragment.mCurrentChildScreenTag = newTag
 
-        FragmentUtil.replaceFragment(parentFragment.childFragmentManager, fragment, newTag, R.id.frameLayoutControl, isAddToBackStack = true)
+        FragmentUtil.replaceFragment(parentFragment.childFragmentManager, fragment, newTag, R.id.frameLayoutControl)
 
         if (parentFragment is ControlFragment)
             parentFragment.mCurrentChildScreenTag = newTag

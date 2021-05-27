@@ -18,26 +18,35 @@ object NowPlayingVideoInfoDisplayHelper {
     private var mTypeLogoWidth = 0
     private var mTypeLogoHeight = 0
 
-    fun displayPlayingVideo(parentView: ConstraintLayout, groupMainControllers: LinearLayout, videoData: MMVideo, extraCollectionViews: ArrayList<TextView>?): ArrayList<TextView>? {
-        /* parentView.btnDownload?.let {
-             if (it.visibility != View.VISIBLE)
-                 it.visibility = View.VISIBLE
-         }*/
-
-        return displayVideoInfo(parentView, groupMainControllers, videoData.getVideoTitle(), videoData.brandTypeLogo, videoData.collections, extraCollectionViews)
-    }
+    fun displayPlayingVideo(
+        parentView: ConstraintLayout,
+        videoData: MMVideo,
+        extraCollectionViews: ArrayList<TextView>?
+    ): ArrayList<TextView>? =
+         displayVideoInfo(parentView, videoData.getVideoTitle(), videoData.brandTypeLogo, videoData.collections, extraCollectionViews)
 
     fun setupVideo(parentView: View, player: SimpleExoPlayer) {
         parentView.videoPlayer?.player = player
         parentView.seekbarVolume?.progress = (player.volume * 100).toInt()
     }
 
-    fun displayVideoInfo(parentView: ConstraintLayout, groupMainControllers: LinearLayout, videoName: String, brandTypeLogo: String?, collections: ArrayList<MMTinyCategory>?, collectionViews: ArrayList<TextView>?): ArrayList<TextView>? {
+    fun displayVideoInfo(
+        parentView: ConstraintLayout,
+        videoName: String,
+        brandTypeLogo: String?,
+        collections: ArrayList<MMTinyCategory>?,
+        collectionViews: ArrayList<TextView>?
+    ): ArrayList<TextView>? {
         parentView.tvTitleVideo?.text = StringBuilder(videoName).append(Constant.WHITE_SPACE).toString()
         displayTypeLogoBrand(brandTypeLogo, parentView.icTypeLogoVideoPlaying)
 
-        return SearchCollectionUtil.displayCollections(parentView = parentView.groupMainCollections, leftView = parentView.icTypeLogoVideoPlaying,
-                collections = collections, collectionCountMax = 2, extraCollectionTextViews = collectionViews)
+        return SearchCollectionUtil.displayCollections(
+            parentView = parentView.groupMainCollections,
+            leftView = parentView.icTypeLogoVideoPlaying,
+            collections = collections,
+            collectionCountMax = 2,
+            extraCollectionTextViews = collectionViews
+        )
     }
 
     fun displayTypeLogoBrand(typeLogo: String?, iconView: ImageView?) {

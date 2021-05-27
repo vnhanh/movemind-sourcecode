@@ -10,9 +10,7 @@ object ViewUtil {
 
         button.setOnClickListener {
             it.isEnabled = false
-
             func()
-
             it.isEnabled = true
         }
     }
@@ -22,9 +20,7 @@ object ViewUtil {
 
         button.setOnClickListener {
             it.isEnabled = false
-
             func(param)
-
             it.isEnabled = true
         }
     }

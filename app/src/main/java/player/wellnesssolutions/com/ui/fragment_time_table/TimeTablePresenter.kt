@@ -84,7 +84,6 @@ class TimeTablePresenter : ITimeTableContract.Presenter, BaseResponseObserver<Ti
                 mView?.showLoadingProgress()
                 mTimeTableApi.getTimeTable(headerData.token, headerData.deviceId)
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeOn(Schedulers.io())
                         .subscribe(this)
             }
         }

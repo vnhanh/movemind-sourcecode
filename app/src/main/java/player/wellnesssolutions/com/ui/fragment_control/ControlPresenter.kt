@@ -46,7 +46,7 @@ class ControlPresenter : IControlContract.Presenter {
     private var mConfigData: MMConfigData? = null
 
     override fun onAttach(view: IControlContract.View) {
-        Log.d("LOG", "ControlPresenter - onAttach()")
+//        Log.d("LOG", "ControlPresenter - onAttach()")
         this.mView = view
         if (mLoadBrandsHandler == null) mLoadBrandsHandler = LoadBrandsHandler(view)
         mLoadBrandsHandler?.onAttach(view)
@@ -66,7 +66,7 @@ class ControlPresenter : IControlContract.Presenter {
                             else -> arrayListOf()
                         }
 
-                    Log.d("LOG", "ControlPresenter - onAttach() | videos number: ${videos.size} | playModeCasting: $playMode")
+//                    Log.d("LOG", "ControlPresenter - onAttach() | videos number: ${videos.size} | playModeCasting: $playMode")
                     val number = videos.size
                     if (number == 0) return
 
@@ -76,10 +76,9 @@ class ControlPresenter : IControlContract.Presenter {
                             comingUpVideos.add(videos[i])
                         }
                         return@fromCallable comingUpVideos
-                    }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                    }.subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread())
                         .subscribe { comingUpVideos ->
                             val nowPlayVideo = videos[0]
-                            Log.d("LOG", "ControlPresenter - onAttach() | observeOn - coming videos number: ${comingUpVideos.size}")
                             view.showPresentationPlayList(nowPlayVideo, comingUpVideos)
                         }
                 }

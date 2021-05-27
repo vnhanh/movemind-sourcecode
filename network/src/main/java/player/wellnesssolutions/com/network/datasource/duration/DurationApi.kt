@@ -17,14 +17,12 @@ class DurationApi {
     fun getDurations(token: String, deviceId:String): Observable<Response<ResponseValue<ArrayList<MMDuration>>>> {
         val tokenHeader = RequestUtil.getTokenHeader(token)
         return durationService.getDurations(APP_JSON, APP_JSON, tokenHeader, deviceId)
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
     }
 
     fun getDurationsByBrandId(token: String, deviceId:String, brandId:Int): Observable<Response<ResponseValue<ArrayList<MMDuration>>>> {
         val tokenHeader = RequestUtil.getTokenHeader(token)
         return durationService.getDurationsByBrandId(APP_JSON, APP_JSON, tokenHeader, deviceId, brandId)
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
     }
 }

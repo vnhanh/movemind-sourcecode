@@ -152,6 +152,4 @@ class FCMService : FirebaseMessagingService() {
         }
     }
 
-
-    private fun mergeStringWithAppModel(data: String): String = Constant.AppModel + data
 }

@@ -25,7 +25,7 @@ import player.wellnesssolutions.com.ui.fragment_search_result_videos.SearchResul
 class HelpMeChoosePresenter : BaseResponseObserver<ArrayList<MMHelpMeChooseQuestion>>(), IHelpMeChooseContract.Presenter {
     private var mView: IHelpMeChooseContract.View? = null
     private val helpMeChooseRepository = HelpMeChooseApi()
-    private lateinit var mBrand: MMBrand
+    private var mBrand: MMBrand? = null
     private var mLoadedData: ArrayList<MMHelpMeChooseQuestion>? = null
     private var mConfigData: MMConfigData? = null
 
@@ -149,17 +149,24 @@ class HelpMeChoosePresenter : BaseResponseObserver<ArrayList<MMHelpMeChooseQuest
     override fun isItemSelected(item: MMHelpMeChooseAnswer): Boolean = mAnswers.contains(item)
 
     override fun clickedButtonHelpMeChoose() {
-        if (mBrand.id == null) {
+        val brandId = mBrand?.id
+        if (brandId == null) {
             mView?.getViewContext()?.also { context ->
                 val message = context.getString(R.string.no_brand_id)
-                DialogUtil.createDialogOnlyOneButton(context = context, message = message, titleButton = R.string.btn_ok, dialogClickListener = null, buttonColor = R.color.red).show()
+                DialogUtil.createDialogOnlyOneButton(
+                    context = context,
+                    message = message,
+                    titleButton = R.string.btn_ok,
+                    dialogClickListener = null,
+                    buttonColor = R.color.red
+                ).show()
             }
             return
         }
         mVideosToPlay.clear()
         SPDBUtil.deleteAllFromTag(SearchResultFragment.getTagOfChosen())
         HMCDataHelper.deleteALlFromTag(SearchResultFragment.getTagOfHMCForDB())
-        mView?.openScreenSearchResult(mBrand.id!!, mAnswers)
+        mView?.openScreenSearchResult(brandId, mAnswers)
     }
 
     override fun onExpired(error: String) {

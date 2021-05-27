@@ -6,7 +6,6 @@ import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -74,9 +73,6 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     var mCurrentChildScreenTag = ""
     var isClicked = false
 
-    // handler that perform downloading videos task
-    // use for PLAYLIST function in case casting videos on TV
-    //private var mNowPlayingDownloadButtonManager: DownloadButtonManager? = null
     private var mExtraNPGCUCollectionViews: ArrayList<TextView>? = ArrayList()
 
     //MENU
@@ -143,24 +139,11 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     override fun onNoClassVideosForNow(scheduleVideos: ArrayList<MMVideo>, message: String, @ColorRes msgColor: Int, isLoadScheduleManually: Boolean) {
 //        Log.d("LOG", this.javaClass.simpleName + " onNoClassVideoForNow() | message: $message | schedule videos number: ${scheduleVideos.size}")
         btnLogoBottom?.isEnabled = true
-//        if (message.contains("Request failed")) {
-//            MessageUtils.showSnackBar(btnLogoBottom, message, R.color.yellow)
-//        }
-//        else {
-//            val msg = getString(R.string.no_class_now)
-//            MessageUtils.showSnackBar(btnLogoBottom, msg, R.color.yellow)
-//        }
 
         val isCasted = playVideoPresentationable(scheduleVideos)
 
         when {
             !isCasted -> {
-
-                // old flow
-                //        childFragmentManager.also { fm ->
-                //            ChildFragmentManager.createOrInputNewDataForFragment(fm, R.id.frameLayoutControl, NoClassFragment.TAG, null)
-                //            mCurrentChildScreenTag = NoClassFragment.TAG
-                //        }
 
                 activity?.let {
                     if (it is MainActivity) {
@@ -177,7 +160,7 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
                             }
                     FragmentUtil.replaceFragment(fm = fm,
                             newFragment = fragment, newFragmentTag = tag,
-                            frameId = R.id.frameLayoutHome, isAddToBackStack = false, isRemoveOlds = true)
+                            frameId = R.id.frameLayoutHome, isAddToBackStack = false)
                 }
 
             }
@@ -306,7 +289,7 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
                             }
                     FragmentUtil.replaceFragment(fm = fm,
                             newFragment = fragment, newFragmentTag = tag,
-                            frameId = R.id.frameLayoutHome, isAddToBackStack = false, isRemoveOlds = true)
+                            frameId = R.id.frameLayoutHome, isAddToBackStack = false)
                 }
             }
         }
@@ -643,7 +626,7 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
             FragmentUtil.addNewFragment(fm, newFragment, R.id.frameLayoutControl)
         } else {
             FragmentUtil.replaceFragment(fm, newFragment, newTag, R.id.frameLayoutControl,
-                    isAddToBackStack = true, isRemoveOlds = false)
+                    isAddToBackStack = true)
         }
         mCurrentChildScreenTag = newTag
     }

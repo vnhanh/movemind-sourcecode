@@ -1,23 +1,11 @@
 package player.wellnesssolutions.com.base.utils
 
-import android.content.Context
-import android.content.res.ColorStateList
-import android.graphics.Color
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.os.Environment
 import android.os.StatFs
 import android.text.TextUtils
-import android.util.Log
-import android.util.Patterns
-import androidx.annotation.ColorRes
-import androidx.core.content.ContextCompat
 import com.google.gson.Gson
-import player.wellnesssolutions.com.common.R
 import player.wellnesssolutions.com.common.constant.Constant
-import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
-import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
 import player.wellnesssolutions.com.network.models.response.ErrorBody
 
 
@@ -25,35 +13,6 @@ object CommonUtility {
 
     inline fun <reified T> getObjectBy(string: String): T {
         return Gson().fromJson(string, T::class.java)
-    }
-
-    fun getDrawableByPrimary(context: Context): Drawable? {
-        val mPref = PreferenceHelper.getInstance(context)
-
-        val strPrimaryColor = mPref.getString(ConstantPreference.PRIMARY_COLOR, "")
-
-        if (strPrimaryColor.isEmpty()) return null
-        val shape = GradientDrawable()
-        GradientDrawable.RECTANGLE
-        shape.cornerRadius = context.resources.getDimension(R.dimen.sr_radius_button)
-        shape.setStroke(context.resources.getDimension(R.dimen.sr_width_stroke_button).toInt(), Color.parseColor(strPrimaryColor))
-
-        return shape
-    }
-
-    fun getDrawableByPrimary(context: Context, @ColorRes solidColor: Int): Drawable? {
-        val mPref = PreferenceHelper.getInstance(context)
-
-        val strPrimaryColor = mPref.getString(ConstantPreference.PRIMARY_COLOR, "")
-
-        if (strPrimaryColor.isEmpty()) return null
-        val shape = GradientDrawable()
-        GradientDrawable.RECTANGLE
-        shape.cornerRadius = context.resources.getDimension(R.dimen.sr_radius_button)
-        shape.setStroke(context.resources.getDimension(R.dimen.sr_width_stroke_button).toInt(), Color.parseColor(strPrimaryColor))
-        shape.color = ColorStateList.valueOf(ContextCompat.getColor(context, solidColor))
-
-        return shape
     }
 
     fun getErrorBody(strBodyError: String?): ErrorBody? {
@@ -67,10 +26,6 @@ object CommonUtility {
                 ErrorBody(success = false, message = strBodyError)
             }
         }
-    }
-
-    fun isValidEmail(target: CharSequence): Boolean {
-        return !TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches()
     }
 
     fun getAvailableInternalMemorySize(): Long {

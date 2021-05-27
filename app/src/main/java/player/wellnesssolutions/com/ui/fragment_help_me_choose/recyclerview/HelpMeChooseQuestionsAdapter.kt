@@ -7,8 +7,13 @@ import player.wellnesssolutions.com.base.view.BaseClickableAdapter
 import player.wellnesssolutions.com.network.models.help_me_choose.MMHelpMeChooseAnswer
 import player.wellnesssolutions.com.ui.fragment_help_me_choose.IHelpMeChooseContract
 
-class HelpMeChooseQuestionsAdapter(answers: ArrayList<MMHelpMeChooseAnswer>, clickedListener: IHelpMeChooseContract.Presenter?) :
-        BaseClickableAdapter<HelpMeChooseQuestionVH, IHelpMeChooseContract.Presenter, MMHelpMeChooseAnswer>(clickedListener, answers) {
+class HelpMeChooseQuestionsAdapter(
+    answers: ArrayList<MMHelpMeChooseAnswer>,
+    clickedListener: IHelpMeChooseContract.Presenter?
+) : BaseClickableAdapter<HelpMeChooseQuestionVH, IHelpMeChooseContract.Presenter, MMHelpMeChooseAnswer>(
+    listener = clickedListener,
+    list = answers
+) {
     private var padding = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, itemType: Int): HelpMeChooseQuestionVH {

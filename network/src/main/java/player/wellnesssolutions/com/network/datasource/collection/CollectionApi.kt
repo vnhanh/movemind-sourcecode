@@ -15,7 +15,6 @@ class CollectionApi {
     fun getCollections(token : String, deviceId : String) : Observable<Response<ResponseValue<ArrayList<MMCollection>>>> {
         val tokenHeader = RequestUtil.getTokenHeader(token)
         return collectionService.getBrands(RequestUtil.APP_JSON, RequestUtil.APP_JSON, tokenHeader, deviceId)
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
     }
 }

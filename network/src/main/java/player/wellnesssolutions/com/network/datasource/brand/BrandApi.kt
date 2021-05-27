@@ -17,7 +17,6 @@ class BrandApi() {
     fun getAllBrands(token : String, deviceId : String) : Observable<Response<ResponseValue<ArrayList<MMBrand>>>> {
         val tokenHeader = RequestUtil.getTokenHeader(token)
         return brandService.getBrands(APP_JSON, APP_JSON, tokenHeader, deviceId)
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
     }
 }

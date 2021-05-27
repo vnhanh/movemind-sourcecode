@@ -56,10 +56,6 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
         fun onGetService(): MMPresentationService
     }
 
-    companion object {
-        private const val TAG = "PresentationBinder"
-    }
-
     var mDisplay: Display? = null
     private var isShowing: Boolean = false
 
@@ -340,7 +336,7 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
     }
 
     private fun releasePresenters() {
-        Log.d("LOG", this.javaClass.simpleName + " releasePresenters()")
+//        Log.d("LOG", this.javaClass.simpleName + " releasePresenters()")
         mPresenter?.onDetach()
         mPresenter?.onDestroy()
     }
@@ -618,7 +614,7 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
             }
 
             Player.STATE_ENDED -> {
-                Log.d("LOG", this.javaClass.simpleName + " onPlayerStateChanged() | STATE_ENDED")
+//                Log.d("LOG", this.javaClass.simpleName + " onPlayerStateChanged() | STATE_ENDED")
                 //3
                 showCountDown()
                 //PlayVideoDisplayHelper.displayOnEnded(progressLoadingVideo, btnPlayVideo, btnPauseVideo)
@@ -656,14 +652,14 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
 
     override fun hideControlWhenNextVideoSchedule() {
         super.hideControlWhenNextVideoSchedule()
-        Log.d("LOG", this.javaClass.simpleName + " hideControlWhenNextVideoSchedule()")
+//        Log.d("LOG", this.javaClass.simpleName + " hideControlWhenNextVideoSchedule()")
         sendEndedVideoStateToUI()
     }
 
     override fun isCastableOnTV(): Boolean = true
 
     private fun sendEndedVideoStateToUI() {
-        Log.d("LOG", this.javaClass.simpleName + " sendEndedVideoStateToUI()")
+//        Log.d("LOG", this.javaClass.simpleName + " sendEndedVideoStateToUI()")
         when (mPresenter?.getPlayMode()) {
             PlayMode.ON_DEMAND -> {
                 val intent = Intent(CastingBroadcastReceiver.ACTION_TV)
@@ -686,8 +682,7 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
     }
 
     override fun showUIForPlayingVideo(videoData: MMVideo, comingUpVideos: ArrayList<MMVideo>) {
-        Log.d("LOG", this.javaClass.simpleName + " showUIForPlayingVideo() | videos number: ${comingUpVideos.size}")
-        Log.d("LOG", this.javaClass.simpleName + " showUIForPlayingVideo() | video current: ${videoData.videoName} | video next: ${comingUpVideos[0].videoName}")
+//        Log.d("LOG", this.javaClass.simpleName + " showUIForPlayingVideo() | videos number: ${comingUpVideos.size}")
         this.mNowVideo = videoData
         this.mNowVideoLength = ((videoData.videoLength ?: 0f) * 1000).toLong()
         this.mComingUpVideos = comingUpVideos
@@ -696,8 +691,10 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
 
         mView?.also { parentView ->
             showTitleAndCollections()
-            mExtraPlayingCollectionViews = NowPlayingVideoInfoDisplayHelper.displayPlayingVideo(parentView as ConstraintLayout,
-                    groupCollections, videoData, mExtraPlayingCollectionViews)
+            mExtraPlayingCollectionViews = NowPlayingVideoInfoDisplayHelper.displayPlayingVideo(
+                parentView = parentView as ConstraintLayout,
+                videoData = videoData, extraCollectionViews = mExtraPlayingCollectionViews
+            )
 
             // show video nowPlaying data in group views coming up next
             mExtraComingCollectionViews = GCUDisplayHelper.showPlayingVideoInfo(groupViewsComingUpNext, videoData,

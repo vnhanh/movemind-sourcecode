@@ -35,9 +35,6 @@ class ScanBarCodePresenter(private val mView: ScanBarCodeContract.View) : ScanBa
     private fun storeBranding(token: String, branding: MMBranding) {
         mPref?.also { sharedPref ->
             sharedPref.putString(ConstantPreference.TOKEN, token)
-//        mPref.putString(SPrefConstant.SS_BOTTOM_BAR_COLOR, "#041e41")
-//        mPref.putString(SPrefConstant.PRIMARY_COLOR, "#00c3b3")
-//        mPref.putString(SPrefConstant.SECONDARY_COLOR, "#FFFFFF")
             sharedPref.putString(ConstantPreference.SS_BOTTOM_BAR_COLOR, branding.bottomBarColor
                     ?: "")
             sharedPref.putString(ConstantPreference.PRIMARY_COLOR, branding.primaryColor ?: "")
@@ -82,7 +79,6 @@ class ScanBarCodePresenter(private val mView: ScanBarCodeContract.View) : ScanBa
                 loginService.activeDevice(response.email ?: "", model, response.deviceId
                         ?: "", avaSpace, totalSpace)
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeOn(Schedulers.io())
                         .subscribe(this as BaseResponseObserver<Any>)
             } else {
                 Toast.makeText(mView.getViewContext()!!, R.string.qr_expired, Toast.LENGTH_SHORT).show()
@@ -105,7 +101,6 @@ class ScanBarCodePresenter(private val mView: ScanBarCodeContract.View) : ScanBa
             val deviceId = sharedPref.getString(ConstantPreference.DEVICE_ID, "")
             loginService.login(email, password, deviceId)
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeOn(Schedulers.io())
                     .subscribe(this as BaseResponseObserver<MMLoginResponseData>)
 
         }

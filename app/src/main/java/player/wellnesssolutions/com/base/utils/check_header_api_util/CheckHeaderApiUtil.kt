@@ -27,7 +27,7 @@ object CheckHeaderApiUtil {
         return HeaderData(token, deviceId)
     }
 
-    fun getExpiredData(context: Context): HeaderData? {
+    fun getExpiredData(context: Context): HeaderData {
         val token = PreferenceHelper.getInstance(context = context).getString(ConstantPreference.TOKEN, "")
 
         val deviceId = PreferenceHelper.getInstance(context = context).getString(ConstantPreference.DEVICE_ID, "")

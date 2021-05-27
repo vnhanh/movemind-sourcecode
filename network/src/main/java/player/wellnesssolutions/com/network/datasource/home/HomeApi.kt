@@ -16,15 +16,13 @@ class HomeApi {
         val tokenHeader = RequestUtil.getTokenHeader(token)
 
         return homeService.getConfigData(tokenHeader, deviceId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+            .observeOn(AndroidSchedulers.mainThread())
     }
 
     fun getUserSubscription(token:String, deviceId:String) : Observable<Response<ResponseValue<Int>>> {
         val tokenHeader = RequestUtil.getTokenHeader(token)
 
         return homeService.getUserSubscription(tokenHeader, deviceId)
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
     }
 }

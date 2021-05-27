@@ -6,7 +6,12 @@ import androidx.recyclerview.widget.GridLayoutManager
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.view.BaseVH
 
-abstract class BaseSearchVH<M : Any>(itemView: View, var itemWidth: Int, var itemHeight: Int, var itemCountInRow: Int) : BaseVH<M>(itemView) {
+abstract class BaseSearchVH<M : Any>(
+    itemView: View,
+    var itemWidth: Int,
+    var itemHeight: Int,
+    var itemCountInRow: Int
+) : BaseVH<M>(itemView) {
     protected var rowSpan = 1
     protected var parentWidth = GridLayoutManager.LayoutParams.MATCH_PARENT
 

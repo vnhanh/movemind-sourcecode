@@ -1,15 +1,10 @@
 package player.wellnesssolutions.com.base.customs.views
 
-import android.content.Context
 import android.graphics.Rect
-import android.graphics.drawable.Drawable
 import android.view.View
-import androidx.annotation.DimenRes
-import androidx.annotation.DrawableRes
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 
-class ItemDecorationGridHorizontalLayout(val divider: Drawable?, val dividerSize: Int, val rowNumber: Int) : RecyclerView.ItemDecoration() {
+class ItemDecorationGridHorizontalLayout(val rowNumber: Int) : RecyclerView.ItemDecoration() {
     var margin: Int = 0
     var maxRows: Int = 0
 
@@ -26,7 +21,7 @@ class ItemDecorationGridHorizontalLayout(val divider: Drawable?, val dividerSize
         outRect.set(outLeft, outTop, outRight, outBottom)
     }
 
-    private constructor(builder: Builder) : this(builder.dividerDrawable, builder.dividerPixelSize, builder.colNumber)
+    /*private constructor(builder: Builder) : this(builder.dividerDrawable, builder.dividerPixelSize, builder.colNumber)
 
     data class Builder(val context: Context) {
         var dividerDrawable: Drawable? = null
@@ -37,5 +32,5 @@ class ItemDecorationGridHorizontalLayout(val divider: Drawable?, val dividerSize
         fun dividerSizeResID(@DimenRes size: Int) = apply { dividerPixelSize = context.resources.getDimensionPixelSize(size) }
         fun colNumber(number: Int) = apply { colNumber = number }
         fun build() = ItemDecorationGridHorizontalLayout(this)
-    }
+    }*/
 }

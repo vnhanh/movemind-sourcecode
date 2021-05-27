@@ -1,8 +1,9 @@
 package player.wellnesssolutions.com.base.view
 
-abstract class BaseClickableAdapter<VH : BaseVH<M>, T : Any, M : Any>(protected var listener: T?, var list: ArrayList<M>) : androidx.recyclerview.widget.RecyclerView.Adapter<VH>() {
-    protected var mHolders: ArrayList<VH>? = ArrayList()
+abstract class BaseClickableAdapter<VH : BaseVH<M>, T : Any, M : Any>(protected var listener: T?, var list: ArrayList<M>) :
+    androidx.recyclerview.widget.RecyclerView.Adapter<VH>() {
 
+    protected var mHolders: ArrayList<VH>? = ArrayList()
 
     override fun getItemCount(): Int = list.size
 

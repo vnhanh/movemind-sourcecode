@@ -22,7 +22,6 @@ class NowPlayingApi {
 //        val gson = Gson()
 //        Log.d("LOG", this.javaClass.simpleName + " getSchedule() | tz: ${tz} | input: ${gson.toJson(input)}")
         return ApiUtil.getNowPlayingService().getScheduler(tokenHeader, deviceId, input)
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
     }
 }

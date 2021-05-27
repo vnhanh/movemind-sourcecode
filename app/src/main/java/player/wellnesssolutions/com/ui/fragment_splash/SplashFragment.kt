@@ -2,7 +2,6 @@ package player.wellnesssolutions.com.ui.fragment_splash
 
 import android.content.DialogInterface
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -115,7 +114,6 @@ class SplashFragment : BaseFragment(), ISplashContract.View, View.OnClickListene
     }
 
     override fun navigateToHomeScreen() {
-        Log.d("LOG", this.javaClass.simpleName + " navigateToHomeScreen()")
         FragmentUtil.replaceFragment(
                 fm = activity?.supportFragmentManager,
                 newFragment = HomeFragment.getInstanceWithLoadSchedule(),
@@ -126,7 +124,6 @@ class SplashFragment : BaseFragment(), ISplashContract.View, View.OnClickListene
     }
 
     override fun onCallServiceFailed(messageRes: Int) {
-        Log.d("LOG", this.javaClass.simpleName + " onCallServiceFailed() | stop progress bar")
         isStopProgressBar = true
         dialog?.dismiss()
         context?.also { _context ->

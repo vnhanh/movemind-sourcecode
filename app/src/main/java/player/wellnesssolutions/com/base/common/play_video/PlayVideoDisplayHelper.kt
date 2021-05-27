@@ -1,6 +1,5 @@
 package player.wellnesssolutions.com.base.common.play_video
 
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
