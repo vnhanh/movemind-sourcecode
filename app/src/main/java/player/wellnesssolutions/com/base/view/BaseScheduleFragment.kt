@@ -88,7 +88,6 @@ open class BaseScheduleFragment : BaseFragment(), ILifeCycle.View, IScheduleCont
 //        Log.d("LOG", this.javaClass.simpleName + " onDestroyView()")
         try {
             unregisterScheduleBroadcast()
-            handler.removeCallbacksAndMessages(null)
         } catch (e: Exception) {
             e.printStackTrace()
             FirebaseCrashlytics.getInstance().recordException(RuntimeException("destroyed error ${e.message}"))

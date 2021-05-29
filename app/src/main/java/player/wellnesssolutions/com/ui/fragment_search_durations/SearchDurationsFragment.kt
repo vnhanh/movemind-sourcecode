@@ -42,7 +42,6 @@ class SearchDurationsFragment : BaseFragment(), ISearchDurationContract.View {
         if (brand != null) {
             mPresenter?.setChosenBrand(brand)
         }
-//        arguments?.clear()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -92,7 +91,7 @@ class SearchDurationsFragment : BaseFragment(), ISearchDurationContract.View {
             mPresenter?.onReShowUI(this)
             mIsJustBeDestroyed = false
         } else {
-            tvTitle?.postDelayed(Runnable {
+            handler.postDelayed(Runnable {
                 mPresenter?.onAttach(this@SearchDurationsFragment)
             }, 400L)
         }
@@ -231,7 +230,6 @@ class SearchDurationsFragment : BaseFragment(), ISearchDurationContract.View {
     override fun onRequestFailed(message: String) {
         hideLoadingProgress()
         ViewUtil.showRefreshView(icRefresh, tvRetry)
-//        MessageUtils.showToast(context, message, R.color.red)
         context?.also {
             DialogUtil.createDialogOnlyOneButton(
                     context = it,

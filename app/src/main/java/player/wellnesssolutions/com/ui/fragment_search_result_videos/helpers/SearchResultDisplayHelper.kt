@@ -17,7 +17,7 @@ object SearchResultDisplayHelper {
         if (chosenOptions == null) return
 
         val builder = StringBuilder()
-        builder.append(chosenOptions.brand?.name ?: "".toUpperCase())
+        builder.append(chosenOptions.brand?.name.orEmpty())
         builder.append(getChosenText(chosenOptions, Constant.SEARCH_PRESENTER))
         builder.append(getChosenText(chosenOptions, Constant.SEARCH_COLLECTION))
         builder.append(getChosenText(chosenOptions, Constant.SEARCH_LEVEL))
@@ -29,7 +29,7 @@ object SearchResultDisplayHelper {
     private fun getChosenText(data: SPSearchedOption, typeId: Int): String {
         val builder = StringBuilder()
         if (data.searchByData?.typeOptionId == typeId)
-            builder.append(String.format(" - %s", data.searchByData?.name ?: "".toUpperCase()))
+            builder.append(String.format(" - %s", data.searchByData?.name.orEmpty()))
 
         val items: ArrayList<SearchedOption> =
                 when (typeId) {
@@ -42,7 +42,7 @@ object SearchResultDisplayHelper {
 
         if (items.size > 0) {
             for (item: SearchedOption in items) {
-                val str: String = String.format(" - %s", item.name ?: "".toUpperCase())
+                val str: String = String.format(" - %s", item.name.orEmpty())
                 builder.append(str)
             }
         }

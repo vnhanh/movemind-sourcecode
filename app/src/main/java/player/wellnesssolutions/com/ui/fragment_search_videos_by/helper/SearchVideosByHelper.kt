@@ -24,7 +24,6 @@ object SearchVideosByHelper {
             else -> color
         }
 
-
         list.add(SearchByOptionImage(
                 tag = SearchInstructorsFragment.TAG,
                 title = getString(context, R.string.screen_svb_item_presenter),
@@ -48,8 +47,7 @@ object SearchVideosByHelper {
                     bgColorStr = color)
             )
         }
-        //list.add(SearchByOptionText(tag = SearchLevelsFragment.TAG, title = getString(context, R.string.screen_svb_item_level), content = "III"))
-        //list.add(SearchByOptionText(tag = SearchDurationsFragment.TAG, title = getString(context, R.string.screen_svb_item_time), content = "9"))
+
         list.add(SearchByOptionImage(
                 tag = SearchDurationsFragment.TAG,
                 title = getString(context, R.string.screen_svb_item_time),

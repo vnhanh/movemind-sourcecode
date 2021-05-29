@@ -188,7 +188,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
         mPlayer?.let { player ->
             player.updatePresentation(route)
             mSessionManager.setPlayer(player)
-            mSessionManager.unSuspend()
+//            mSessionManager.unSuspend()
         }
         registerRemoteControlClient()
 
@@ -652,7 +652,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
 
     override fun onDestroy() {
         try {
-            handlerMain.removeCallbacks(null)
+            handlerMain.removeCallbacksAndMessages(null)
         } catch (e: Exception) {
             e.printStackTrace()
         }

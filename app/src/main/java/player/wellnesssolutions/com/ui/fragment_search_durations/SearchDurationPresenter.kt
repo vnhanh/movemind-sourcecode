@@ -17,7 +17,7 @@ class SearchDurationPresenter : BaseResponseObserver<ArrayList<MMDuration>>(), I
     // vars
     private var mView: ISearchDurationContract.View? = null
     private var mDurationApi: DurationApi = DurationApi()
-    private lateinit var mBrand: MMBrand
+    private var mBrand: MMBrand? = null
     private var mIsProcessing = false
     private var mData: ArrayList<MMDuration>? = null
     private var mIsRendered = false
@@ -27,7 +27,9 @@ class SearchDurationPresenter : BaseResponseObserver<ArrayList<MMDuration>>(), I
     }
 
     override fun onChooseItem(data: MMDuration) {
-        mView?.onOpenNextScreen(mBrand, data)
+        mBrand?.also { brand ->
+            mView?.onOpenNextScreen(brand, data)
+        }
     }
 
     override fun onAttach(view: ISearchDurationContract.View) {
@@ -45,11 +47,17 @@ class SearchDurationPresenter : BaseResponseObserver<ArrayList<MMDuration>>(), I
             if (mData != null)
                 displayUI()
             else {
-                val brandId: Int? = mBrand.id
+                val brandId: Int? = mBrand?.id
                 if (brandId == null) {
                     view.getViewContext()?.also { context ->
                         val message = context.getString(R.string.no_brand_id)
-                        DialogUtil.createDialogOnlyOneButton(context = context, message = message, titleButton = R.string.btn_ok, dialogClickListener = null, buttonColor = R.color.red).show()
+                        DialogUtil.createDialogOnlyOneButton(
+                            context = context,
+                            message = message,
+                            titleButton = R.string.btn_ok,
+                            dialogClickListener = null,
+                            buttonColor = R.color.red
+                        ).show()
                     }
                     return
                 }
@@ -67,7 +75,7 @@ class SearchDurationPresenter : BaseResponseObserver<ArrayList<MMDuration>>(), I
         if (mIsRendered) return
 
         mData?.also { data ->
-            val brandName = mBrand.name ?: "".toUpperCase()
+            val brandName = mBrand?.name ?: ""
             mView?.showUI(brandName, data)
             mIsRendered = true
         }
@@ -118,7 +126,6 @@ class SearchDurationPresenter : BaseResponseObserver<ArrayList<MMDuration>>(), I
     }
 
     private fun onRequestFailed(message: String?) {
-//        val msg = message?:mView?.getViewContext()?.getString(R.string.request_failed)?:Constant.MSG_REQUEST_FAILED
         mView?.onRequestFailed(mView?.getViewContext()?.getString(R.string.request_failed)
                 ?: MSG_REQUEST_FAILED)
         mIsProcessing = false

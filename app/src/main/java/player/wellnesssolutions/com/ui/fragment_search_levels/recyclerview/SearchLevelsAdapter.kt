@@ -13,10 +13,17 @@ class SearchLevelsAdapter(listener: ISearchLevelsContract.Presenter?, list: Arra
         BaseSearchVideosAdapter<SearchLevelVH, ISearchLevelsContract.Presenter, MMLevel>(listener, list) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchLevelVH {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.viewholder_search_video_level, parent, false)
+        val view = LayoutInflater.from(parent.context)
+                        .inflate(R.layout.viewholder_search_video_level, parent, false)
 
         setupLayoutForItemView(view, view.viewWrapper)
 
-        return SearchLevelVH(view = view, listener = listener, itemWidth = itemWidth, itemHeight = itemHeight, itemCountInRow = itemCountInRow)
+        return SearchLevelVH(
+            view = view,
+            listener = listener,
+            itemWidth = itemWidth,
+            itemHeight = itemHeight,
+            itemCountInRow = itemCountInRow
+        )
     }
 }

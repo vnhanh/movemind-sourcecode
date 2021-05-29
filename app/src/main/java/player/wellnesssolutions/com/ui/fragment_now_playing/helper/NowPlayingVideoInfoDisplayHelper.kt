@@ -2,7 +2,6 @@ package player.wellnesssolutions.com.ui.fragment_now_playing.helper
 
 import android.view.View
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.bumptech.glide.Glide

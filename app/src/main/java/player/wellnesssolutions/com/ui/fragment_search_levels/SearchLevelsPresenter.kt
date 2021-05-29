@@ -15,7 +15,7 @@ class SearchLevelsPresenter : BaseResponseObserver<ArrayList<MMLevel>>(), ISearc
     // vars
     private var mView: ISearchLevelsContract.View? = null
     private var mLevelApi: LevelApi = LevelApi()
-    private lateinit var mBrand: MMBrand
+    private var mBrand: MMBrand? = null
     private var mIsProcessing = false
     private var mIsRendered = false
     private var mData: ArrayList<MMLevel>? = null
@@ -25,7 +25,9 @@ class SearchLevelsPresenter : BaseResponseObserver<ArrayList<MMLevel>>(), ISearc
     }
 
     override fun onChooseItem(data: MMLevel) {
-        mView?.onOpenNextScreen(mBrand, data)
+        mBrand?.also { brand ->
+            mView?.onOpenNextScreen(brand, data)
+        }
     }
 
     override fun onAttach(view: ISearchLevelsContract.View) {
@@ -39,7 +41,7 @@ class SearchLevelsPresenter : BaseResponseObserver<ArrayList<MMLevel>>(), ISearc
 
             if (headerData != null) {
                 if (mData == null) {
-                    val brandId: Int? = mBrand.id
+                    val brandId: Int? = mBrand?.id
                     if (brandId == null) {
                         view.getViewContext()?.also { context ->
                             val message = context.getString(R.string.no_brand_id)
@@ -87,12 +89,12 @@ class SearchLevelsPresenter : BaseResponseObserver<ArrayList<MMLevel>>(), ISearc
      */
     override fun onRequestError(message: String?) {
         super.onRequestError(message)
-        onShowRequestApiFailed(message)
+        onShowRequestApiFailed()
     }
 
     override fun onResponseFailed(code: Int, message: String?) {
         super.onResponseFailed(code, message)
-        onShowRequestApiFailed(message)
+        onShowRequestApiFailed()
     }
 
     override fun onResponseSuccess(data: ResponseValue<ArrayList<MMLevel>>?) {
@@ -104,9 +106,7 @@ class SearchLevelsPresenter : BaseResponseObserver<ArrayList<MMLevel>>(), ISearc
         displayUI()
     }
 
-    private fun onShowRequestApiFailed(message: String?) {
-//        val msg = message?:mView?.getViewContext()?.getString(R.string.request_failed)?: Constant.MSG_REQUEST_FAILED
-
+    private fun onShowRequestApiFailed() {
         mView?.also { view ->
             view.onRequestFailed(mView?.getViewContext()?.getString(R.string.request_failed)
                     ?: MSG_REQUEST_FAILED)
@@ -118,7 +118,7 @@ class SearchLevelsPresenter : BaseResponseObserver<ArrayList<MMLevel>>(), ISearc
         if (mIsRendered) return
         mData?.also { data ->
             mView?.also { view ->
-                view.showLoadedData(data, mBrand.name ?: "")
+                view.showLoadedData(data, mBrand?.name.orEmpty())
                 view.hideLoadingProgress()
                 mIsRendered = true
             }

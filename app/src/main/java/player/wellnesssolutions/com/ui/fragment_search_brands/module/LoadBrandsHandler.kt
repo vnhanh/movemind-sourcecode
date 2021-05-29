@@ -1,11 +1,7 @@
 package player.wellnesssolutions.com.ui.fragment_search_brands.module
 
-import android.os.Handler
 import android.util.Log
 import androidx.annotation.StringRes
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
 import player.wellnesssolutions.com.base.utils.check_header_api_util.HeaderData
@@ -19,7 +15,6 @@ import player.wellnesssolutions.com.network.models.screen_search.MMBrand
 import player.wellnesssolutions.com.ui.fragment_search_brands.SearchBrandsFragment
 import player.wellnesssolutions.com.ui.fragment_search_levels.SearchLevelsFragment
 import player.wellnesssolutions.com.ui.fragment_search_videos_by.SearchVideosByFragment
-import java.util.concurrent.TimeUnit
 
 class LoadBrandsHandler(callback: ILoadBrandHandler.Callback) : BaseResponseObserver<ArrayList<MMBrand>>(), ILoadBrandHandler {
     private var mCallback: ILoadBrandHandler.Callback? = callback
@@ -53,7 +48,7 @@ class LoadBrandsHandler(callback: ILoadBrandHandler.Callback) : BaseResponseObse
     }
 
     override fun loadBrands(tag: String) {
-        Log.d("LOG", "LoadBrandsHandler() | loadBrands: $tag")
+//        Log.d("LOG", "LoadBrandsHandler() | loadBrands: $tag")
         if (isLoading) return
         mFlowTag = tag
         mCallback?.getViewContext()?.also { context ->
@@ -61,7 +56,7 @@ class LoadBrandsHandler(callback: ILoadBrandHandler.Callback) : BaseResponseObse
                     ?: return
 
             val (token: String, deviceId: String) = headerData
-            Log.d("LOG", "LoadBrandsHandler() | loadBrands - loading...")
+//            Log.d("LOG", "LoadBrandsHandler() | loadBrands - loading...")
             loadApi(token, deviceId)
         }
     }

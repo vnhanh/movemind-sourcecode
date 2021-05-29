@@ -73,7 +73,7 @@ class SearchBrandsFragment : BaseFragment(), ISearchBrandsContract.View {
     private fun attachPresenter() {
         // add 400 miliseconds delay
         // if not add, then app will be lagged during fragment translating
-        view?.postDelayed(Runnable {
+        handler.postDelayed(Runnable {
             mPresenter?.onAttach(this@SearchBrandsFragment)
         }, 400L)
     }
@@ -118,8 +118,6 @@ class SearchBrandsFragment : BaseFragment(), ISearchBrandsContract.View {
             args.getParcelableArrayList<MMBrand>(KEY_BRANDS)?.also { brands ->
                 mPresenter?.inputData(nextScreenTag, brands)
             }
-
-//            args.clear()
         }
     }
 

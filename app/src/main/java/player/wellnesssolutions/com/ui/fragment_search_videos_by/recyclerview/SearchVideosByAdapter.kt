@@ -10,7 +10,10 @@ import player.wellnesssolutions.com.base.utils.search_util.SearchCollectionUtil
 import player.wellnesssolutions.com.network.models.screen_search.SearchByOption
 import player.wellnesssolutions.com.ui.fragment_search_videos_by.ISearchVideosByContract
 
-class SearchVideosByAdapter(private var presenter: ISearchVideosByContract.Presenter?, var list: ArrayList<SearchByOption>) : RecyclerView.Adapter<SearchVideosByVH>() {
+class SearchVideosByAdapter(
+    private var presenter: ISearchVideosByContract.Presenter?,
+    var list: ArrayList<SearchByOption>
+) : RecyclerView.Adapter<SearchVideosByVH>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchVideosByVH {
         val viewholder: SearchVideosByVH

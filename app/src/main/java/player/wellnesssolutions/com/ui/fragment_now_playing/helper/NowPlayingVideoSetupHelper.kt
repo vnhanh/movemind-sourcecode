@@ -37,9 +37,9 @@ import player.wellnesssolutions.com.ui.fragment_now_playing.recyclerview.MMVideo
 
 
 object NowPlayingVideoSetupHelper {
+    val SUBTITLES_TEXTSIZE = 30
     private var mBottomBarHeight = 0
     private var mScreenHeight = 0
-    val SUBTITLES_TEXTSIZE = 30
     private var mIsPresentation = false
     private var isClicked = false
 

@@ -10,11 +10,12 @@ data class SearchedOption(var id: Int? = null,
                           var imgStrokeColor: String? = null) : Parcelable {
 
     constructor(parcel: Parcel) : this(
-            parcel.readInt(),
-            parcel.readString() ?: "",
-            parcel.readInt(),
-            parcel.readString() ?: "",
-            parcel.readString() ?: "")
+        id = parcel.readInt(),
+        name = parcel.readString() ?: "",
+        typeOptionId = parcel.readInt(),
+        imgCollection = parcel.readString() ?: "",
+        imgStrokeColor = parcel.readString() ?: ""
+    )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeInt(id ?: -1)
@@ -37,6 +38,12 @@ data class SearchedOption(var id: Int? = null,
             return arrayOfNulls(size)
         }
 
-        fun getEmptyData(): SearchedOption = SearchedOption(-1, "", -1, "", "")
+        fun getEmptyData(): SearchedOption = SearchedOption(
+            id = -1,
+            name = "",
+            typeOptionId = -1,
+            imgCollection = "",
+            imgStrokeColor = ""
+        )
     }
 }

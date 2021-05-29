@@ -84,7 +84,6 @@ object SearchPreviewDisplayHelper {
         }
     }
 
-
     private fun setupLayoutMargin(data: SPShowedUIData, rootView: ConstraintLayout) {
         val collections = data.collections
         val instructors = data.instructors

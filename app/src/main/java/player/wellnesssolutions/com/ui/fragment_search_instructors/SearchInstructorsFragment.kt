@@ -45,8 +45,6 @@ class SearchInstructorsFragment : BaseFragment(), ISearchInstructorContract.View
             true -> showMessage(context?.getString(R.string.error_not_get_chosen_brand).orEmpty(), R.color.red)
             false -> mPresenter?.setChosenBrand(brand)
         }
-
-//        arguments?.clear()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -102,7 +100,7 @@ class SearchInstructorsFragment : BaseFragment(), ISearchInstructorContract.View
             mPresenter?.onReshowUI(this)
             mIsJustBeDestroyed = false
         } else {
-            tvTitle?.postDelayed(Runnable {
+            handler.postDelayed(Runnable {
                 mPresenter?.onAttach(this@SearchInstructorsFragment)
             }, 300L)
         }
@@ -129,7 +127,6 @@ class SearchInstructorsFragment : BaseFragment(), ISearchInstructorContract.View
     /**
      * View interface
      */
-
 
     override fun showInstructorInfo(item: MMInstructor) {
         val dialog: InstructorDialogFragment = InstructorDialogFragment.getInstance(item)
@@ -223,7 +220,6 @@ class SearchInstructorsFragment : BaseFragment(), ISearchInstructorContract.View
     override fun onRequestFailed(message: String) {
         hideLoadingProgress()
         ViewUtil.showRefreshView(icRefresh, tvRetry)
-//        MessageUtils.showToast(context, message, R.color.red)
         context?.also {
             DialogUtil.createDialogOnlyOneButton(
                     context = it,

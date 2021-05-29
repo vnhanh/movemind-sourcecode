@@ -17,9 +17,7 @@ class SearchResultPagePresenter(pageIndex: Int) : ISearchResultPageContract.Pres
 
     override fun onAttach(view: ISearchResultPageContract.View) {
         this.mView = view
-        if (!mIsShown)
-        // displayUI(view)
-            mIsShown = true
+        if (!mIsShown) mIsShown = true
     }
 
     private fun displayUI(view: ISearchResultPageContract.View) {

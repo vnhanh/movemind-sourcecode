@@ -34,7 +34,6 @@ class SearchCollectionsFragment : BaseFragment(), ISearchCollectionContract.View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         readArguments()
     }
 
@@ -42,8 +41,6 @@ class SearchCollectionsFragment : BaseFragment(), ISearchCollectionContract.View
     private fun readArguments() {
         val brand: MMBrand = arguments?.getParcelable(KEY_BRAND) ?: return
         mPresenter?.setChosenBrand(brand)
-
-//        arguments?.clear()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -93,7 +90,7 @@ class SearchCollectionsFragment : BaseFragment(), ISearchCollectionContract.View
             mPresenter?.onReshowUI(this)
             mIsJustBeDestroyed = false
         } else {
-            view?.postDelayed(Runnable {
+            handler.postDelayed(Runnable {
                 mPresenter?.onAttach(this@SearchCollectionsFragment)
             }, 400L)
         }
@@ -216,7 +213,7 @@ class SearchCollectionsFragment : BaseFragment(), ISearchCollectionContract.View
     override fun onRequestFailed(message: String) {
         hideLoadingProgress()
         ViewUtil.showRefreshView(icRefresh, tvRetry)
-//        MessageUtils.showToast(context, message, R.color.red)
+
         context?.also {
             mDialog?.dismiss()
             mDialog = DialogUtil.createDialogOnlyOneButton(

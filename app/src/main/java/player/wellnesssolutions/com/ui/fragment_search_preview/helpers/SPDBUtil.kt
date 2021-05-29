@@ -27,7 +27,7 @@ object SPDBUtil {
             realm.beginTransaction()
             val realmData = realm.where(SPOptionRealm::class.java).equalTo("tag", tag).findAll()
             result = SPDBMapper.mapToData(realmData)
-            //realmData.deleteAllFromRealm()
+
             realm.commitTransaction()
         } catch (e: Exception) {
             e.printStackTrace()

@@ -40,27 +40,6 @@
         app:layout_constraintTop_toTopOf="@id/tvTitleSR" />
 
     <player.wellnesssolutions.com.common.customize_views.MMTextView
-        android:id="@+id/btnDownloadAllSelectedVideos"
-        android:visibility="gone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/marginx3"
-        android:paddingStart="@dimen/screen_search_result_btn_download_all_padding_lr"
-        android:paddingTop="@dimen/screen_search_result_btn_download_all_padding_tb"
-        android:paddingEnd="@dimen/screen_search_result_btn_download_all_padding_lr"
-        android:paddingBottom="@dimen/screen_search_result_btn_download_all_padding_tb"
-        android:text="@string/download"
-        android:textSize="@dimen/btn_previous_text_size"
-        android:textStyle="bold|italic"
-        app:cornerRadius="@dimen/radius_button"
-        app:layout_constraintBottom_toBottomOf="@+id/btnPrevious"
-        app:layout_constraintEnd_toStartOf="@id/btnPrevious"
-        app:layout_constraintTop_toTopOf="@+id/btnPrevious"
-        app:strokeWidth="@dimen/stroke_4dp"
-        app:style="borderActived"
-        app:unactivedColor="@color/lightGray" />
-
-    <player.wellnesssolutions.com.common.customize_views.MMTextView
         android:id="@+id/btnSelectAll"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -69,7 +48,7 @@
         android:textSize="@dimen/btn_previous_text_size"
         android:textStyle="bold|italic"
         app:layout_constraintBottom_toBottomOf="@+id/btnPrevious"
-        app:layout_constraintEnd_toStartOf="@id/btnDownloadAllSelectedVideos"
+        app:layout_constraintEnd_toStartOf="@id/btnPrevious"
         app:layout_constraintTop_toTopOf="@+id/btnPrevious" />
 
     <androidx.recyclerview.widget.RecyclerView

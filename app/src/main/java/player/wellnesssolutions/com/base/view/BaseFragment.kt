@@ -159,6 +159,7 @@ abstract class BaseFragment : Fragment(), ILifeCycle.View {
 
     override fun onDestroy() {
         super.onDestroy()
+        handler.removeCallbacksAndMessages(null)
 //        Log.d("LOG", this.javaClass.simpleName + " onDestroy()")
     }
 

@@ -5,7 +5,5 @@ import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 interface ISearchResultItemListener {
     fun selectVideo()
     fun unselectVideo()
-    fun download()
     fun getVideo(): MMVideo?
-    fun isDownloaded(): Boolean
 }

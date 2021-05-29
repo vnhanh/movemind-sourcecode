@@ -41,25 +41,30 @@ class TimeTablePresenter : ITimeTableContract.Presenter, BaseResponseObserver<Ti
 
     override fun onDestroy() {
         mResponse = null
-        disposable.dispose()
+        disposable.clear()
     }
 
     override fun onGetSessionVideo(typeDay: String, typeSession: String): ArrayList<SessionVideo>? {
         return when (typeDay) {
             getString(R.string.today) -> {
-                when (typeSession.trim()) {
-                    getString(R.string.morning) -> mResponse?.today?.morning
-                    getString(R.string.afternoon) -> mResponse?.today?.afternoon
-                    getString(R.string.evening) -> mResponse?.today?.evening
-                    else -> null
+                with(mResponse?.today) {
+                    when (typeSession.trim()) {
+                        getString(R.string.morning) -> this?.morning
+                        getString(R.string.afternoon) -> this?.afternoon
+                        getString(R.string.evening) -> this?.evening
+                        else -> null
+                    }
                 }
+
             }
             getString(R.string.tomorrow) -> {
-                when (typeSession.trim()) {
-                    getString(R.string.morning) -> mResponse?.tomorrow?.morning
-                    getString(R.string.afternoon) -> mResponse?.tomorrow?.afternoon
-                    getString(R.string.evening) -> mResponse?.tomorrow?.evening
-                    else -> null
+                with(mResponse?.tomorrow) {
+                    when (typeSession.trim()) {
+                        getString(R.string.morning) -> this?.morning
+                        getString(R.string.afternoon) -> this?.afternoon
+                        getString(R.string.evening) -> this?.evening
+                        else -> null
+                    }
                 }
             }
             else -> null

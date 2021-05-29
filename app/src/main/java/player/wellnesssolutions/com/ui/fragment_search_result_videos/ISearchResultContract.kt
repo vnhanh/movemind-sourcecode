@@ -17,7 +17,6 @@ interface ISearchResultContract {
         fun displaySearchReuslt(searchList: ArrayList<MMVideo>)
         fun openPlayingVideosScreen(data: ArrayList<MMVideo>)
         fun onRequestFailed(message: String)
-        fun addAllVideosForPlay()
         fun onAnyVideoSelected(isAnyVideoNotDownloaded: Boolean)
         fun onNoVideoSelected()
         fun onAllVideosSelected()
@@ -37,7 +36,6 @@ interface ISearchResultContract {
         fun selectVideoToPlay(video: MMVideo?, isSelected: Boolean)
         fun isVideoSelected(video: MMVideo?): Boolean
         fun hasSelectedVideos(): Boolean
-        fun downloadAllSelectedVideos()
         fun addItemListener(listener: ISearchResultItemListener)
         fun isAllVideosSelected(): Boolean
         fun selectAllVideos()

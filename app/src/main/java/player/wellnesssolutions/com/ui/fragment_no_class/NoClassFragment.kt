@@ -92,7 +92,7 @@ class NoClassFragment : BaseFragment(), INoClassContract.View {
     private fun attachPresenter() {
         // add 400 miliseconds delay
         // if not add, then app will be lagged during fragment translating
-        view?.postDelayed(Runnable {
+        handler.postDelayed(Runnable {
             mPresenter?.onAttach(this)
         }, 400L)
     }

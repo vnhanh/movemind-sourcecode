@@ -5,10 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.os.Message
-import android.util.Log
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.ui.fragment_control.ControlFragment
-import player.wellnesssolutions.com.ui.fragment_home.HomeFragment
 import player.wellnesssolutions.com.ui.fragment_now_playing.NowPlayingFragment
 
 class ScheduleBroadcastReceiver : BroadcastReceiver() {
@@ -59,7 +57,7 @@ class ScheduleBroadcastReceiver : BroadcastReceiver() {
     fun release() {
         mScheduleListeners.clear()
         handler.release()
-        handler.removeCallbacks(null)
+        handler.removeCallbacksAndMessages(null)
     }
 
     fun isRegistered(listener: ScheduleListener): Boolean = mScheduleListeners.contains(listener)

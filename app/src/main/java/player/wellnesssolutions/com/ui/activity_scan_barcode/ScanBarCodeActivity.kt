@@ -28,17 +28,23 @@ import player.wellnesssolutions.com.ui.activity_main.MainActivity
 
 
 class ScanBarCodeActivity : AppCompatActivity(), ScanBarCodeContract.View, BarcodeCallback {
-    private lateinit var presenter: ScanBarCodeContract.Presenter
+    private var presenter: ScanBarCodeContract.Presenter? = null
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun checkPermissionDrawOnTop(): Boolean {
         if (!Settings.canDrawOverlays(this)) {
-            val dialog = DialogUtil.createDialogOnlyOneButton(this, R.string.draw_over_other, R.string.btn_ok,
-                    DialogInterface.OnClickListener { _, _ ->
-                        val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                                Uri.parse("package:$packageName"))
-                        startActivityForResult(intent, ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE)
-                    })
+            val dialog = DialogUtil.createDialogOnlyOneButton(
+                context = this,
+                msgResId = R.string.draw_over_other,
+                titleButton = R.string.btn_ok,
+                dialogClickListener = DialogInterface.OnClickListener { _, _ ->
+                    val intent = Intent(
+                        Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:$packageName")
+                    )
+                    startActivityForResult(intent, ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE)
+                }
+            )
             dialog.setCancelable(false)
             dialog.show()
             return false
@@ -136,7 +142,7 @@ class ScanBarCodeActivity : AppCompatActivity(), ScanBarCodeContract.View, Barco
     }
 
     override fun barcodeResult(result: BarcodeResult?) {
-        if (result?.text == null || !presenter.checkFormatBarcode(result.text)) {
+        if (result?.text == null || presenter?.checkFormatBarcode(result.text) == false) {
             MessageUtils.showSnackBar(getView(), getString(R.string.msg_scan_fail), R.color.red)
             return
         }
@@ -144,7 +150,7 @@ class ScanBarCodeActivity : AppCompatActivity(), ScanBarCodeContract.View, Barco
         zxingBarcodeScanner.setStatusText(result.text)
         zxingBarcodeScanner.pause()
 
-        presenter.requestActiveDevice(result.text)
+        presenter?.requestActiveDevice(result.text)
     }
 
     override fun possibleResultPoints(resultPoints: MutableList<ResultPoint>?) {
@@ -182,7 +188,6 @@ class ScanBarCodeActivity : AppCompatActivity(), ScanBarCodeContract.View, Barco
     }
 
     companion object {
-        //    private lateinit var beepManager: BeepManager
         private const val PERMISSION_REQUEST = 101
         private const val ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE = 102
     }

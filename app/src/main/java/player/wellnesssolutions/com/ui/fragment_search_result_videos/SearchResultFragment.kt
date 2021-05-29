@@ -42,7 +42,7 @@ import player.wellnesssolutions.com.ui.fragment_search_result_videos.page_result
 /**
  * This fragment has the ViewPager that contains child fragments as pages and every child fragment has a recyclerview to show list of video items
  */
-class SearchResultFragment : BaseFragment(), ISearchResultContract.View, IRouterChanged {
+class SearchResultFragment : BaseFragment(), ISearchResultContract.View {
 
     companion object {
         const val TAG = "SearchResultFragment"
@@ -124,9 +124,7 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View, IRouter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mPresenter = SearchResultPresenter(context!!)
-
-        registerRouterChangedListener()
+        mPresenter = SearchResultPresenter()
 
         readArguments()
     }
@@ -212,21 +210,6 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View, IRouter
         setupBtnPlay()
         setupBtnRefresh()
         setupBtnSelectAll()
-        setupBtnDownloadAll()
-    }
-
-    private fun setupBtnDownloadAll() {
-        btnDownloadAllSelectedVideos?.setOnClickListener {
-            when (btnDownloadAllSelectedVideos.isActive()) {
-                true -> {
-                    mPresenter?.downloadAllSelectedVideos()
-                }
-
-                false -> {
-                    MessageUtils.showSnackBar(btnDownloadAllSelectedVideos, R.string.cant_download_because_not_select_any_video, R.color.yellow)
-                }
-            }
-        }
     }
 
     private fun setupBtnSelectAll() {
@@ -238,7 +221,6 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View, IRouter
                     mPresenter?.getVideos()?.also { videos ->
                         if (videos.size > 0) {
                             btnSelectAll.text = getString(R.string.select_all)
-                            btnDownloadAllSelectedVideos?.deactivate()
                         }
                     }
                 }
@@ -249,7 +231,6 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View, IRouter
                     mPresenter?.getVideos()?.also { videos ->
                         if (videos.size > 0) {
                             btnSelectAll.text = getString(R.string.deselect_all)
-//                            btnDownloadAllSelectedVideos.active()
                         }
                     }
                 }
@@ -262,7 +243,6 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View, IRouter
     }
 
     private fun clickedBtnPlay() {
-        Log.d("LOG", this.javaClass.simpleName + " clickedBtnPlay()")
         when (mPresenter?.hasSelectedVideos()) {
             true -> {
                 activity?.let {
@@ -327,18 +307,12 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View, IRouter
     }
 
     private fun releaseViewPager() {
-//        resultViewPager?.adapter?.also {
-//            if (it is CustomPageAdapter) it.release()
-//        }
         resultViewPager?.adapter = null
 
     }
 
     override fun onDestroy() {
-        unregisterRouterChangedListener()
         mPresenter?.onDestroy()
-        mPresenter = null
-
         super.onDestroy()
     }
 
@@ -368,7 +342,6 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View, IRouter
                 //SearchResultDisplayHelper.processShowData(searchList, it, mPresenter)
                 it.setParentPrenter(getPresenter())
                 resultViewPager.adapter = it
-                //(resultViewPager.adapter as CustomPageAdapter).notifyDataSetChanged()
             }
 
             // display top title
@@ -383,20 +356,19 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View, IRouter
                     txtSwipeRightForMoreOptions?.visibility = View.VISIBLE
                 }
             }
-
-            //resultViewPager?.addOnPageChangeListener(mViewPagerListener)
         }
+
     }
 
 
     override fun openPlayingVideosScreen(data: ArrayList<MMVideo>) {
-        Log.d("LOG", this.javaClass.simpleName + " openPlayingVideosScreen() | videos number: ${data.size}")
+//        Log.d("LOG", this.javaClass.simpleName + " openPlayingVideosScreen() | videos number: ${data.size}")
         activity?.also { activity ->
             val passData = ArrayList<MMVideo>()
             passData.addAll(data)
 
             if ((activity as MainActivity).isPresentationAvailable()) {
-                Log.d("LOG", this.javaClass.simpleName + " openPlayingVideosScreen() | play on TV")
+//                Log.d("LOG", this.javaClass.simpleName + " openPlayingVideosScreen() | play on TV")
                 isPlayNewList = true
                 PreferenceHelper.getInstance(activity).putLong(ConstantPreference.LAST_PLAYED_VIDEO_POSITION, 0L)
 
@@ -423,7 +395,7 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View, IRouter
                         //showMessage(R.string.videos_will_be_showned_in_tv_screen, R.color.white)
                     }
                 }
-                // return
+
             } else {
                 NowPlayingVideoSetupHelper.openNowPlayingPlayVideoSearched(fragmentManager = activity.supportFragmentManager, videos = passData)
             }
@@ -464,35 +436,12 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View, IRouter
             loadingProgressBar.visibility = View.GONE
     }
 
-    // disconnect to TV
-    override fun onMediaRouterDisconnected() {
-
-    }
-
-    private fun registerRouterChangedListener() {
-        activity?.also {
-            if (it is MainActivity) it.addRouterChangedListener(this)
-        }
-    }
-
-    private fun unregisterRouterChangedListener() {
-        activity?.also {
-            if (it is MainActivity) it.removeRouterChangedListener(this)
-        }
-    }
-
     override fun onAnyVideoSelected(isAnyVideoNotDownloaded: Boolean) {
         btnPlayInSearchResult?.enableButton()
-        when (isAnyVideoNotDownloaded) {
-            true -> btnDownloadAllSelectedVideos?.active()
-
-            false -> btnDownloadAllSelectedVideos?.deactivate()
-        }
     }
 
     override fun onNoVideoSelected() {
         btnPlayInSearchResult?.disableButton()
-        btnDownloadAllSelectedVideos?.deactivate()
     }
 
     override fun onAllVideosSelected() {
@@ -501,10 +450,6 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View, IRouter
 
     override fun onNoAllVideosSelected() {
         btnSelectAll?.text = getString(R.string.select_all)
-    }
-
-    override fun addAllVideosForPlay() {
-
     }
 
     override fun onShowPlayingVideoDialog(data: MMVideo) {

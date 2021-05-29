@@ -12,8 +12,7 @@ class SearchBrandsAdapter(listener: ISearchBrandsContract.Presenter?, items: Arr
         BaseSearchVideosAdapter<SearchBrandVH, ISearchBrandsContract.Presenter, MMBrand>(listener, items) {
 
     override fun onBindViewHolder(holder: SearchBrandVH, position: Int) {
-        holder.bind(list.get(position), position)
-
+        holder.bind(list.get(position))
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchBrandVH {

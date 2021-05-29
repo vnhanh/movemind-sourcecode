@@ -17,7 +17,7 @@ import player.wellnesssolutions.com.ui.fragment_search_instructors.SearchInstruc
 import player.wellnesssolutions.fontsizelibrary.TypefaceUtil
 
 class InstructorDialogFragment : androidx.fragment.app.DialogFragment() {
-    private lateinit var data: MMInstructor
+    private var data: MMInstructor? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view: View = LayoutInflater.from(context).inflate(R.layout.fragment_dialog_instructor, container, false)
@@ -102,9 +102,11 @@ class InstructorDialogFragment : androidx.fragment.app.DialogFragment() {
 
         btnShowVideosByPresenter?.setOnClickListener {
             dialog?.dismiss()
-            parentFragment?.also {
-                if (it is SearchInstructorsFragment) {
-                    it.onClickedShowVideosByInstructor(data)
+            parentFragment?.also { parentFragment ->
+                data?.also { data ->
+                    if (parentFragment is SearchInstructorsFragment) {
+                        parentFragment.onClickedShowVideosByInstructor(data)
+                    }
                 }
             }
         }

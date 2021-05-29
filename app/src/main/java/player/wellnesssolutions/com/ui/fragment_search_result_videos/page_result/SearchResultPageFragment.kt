@@ -69,7 +69,6 @@ class SearchResultPageFragment : Fragment(), ISearchResultPageContract.View {
 
     override fun onResume() {
         super.onResume()
-//        progressBar.visibility = View.VISIBLE
         attachPresenter()
     }
 

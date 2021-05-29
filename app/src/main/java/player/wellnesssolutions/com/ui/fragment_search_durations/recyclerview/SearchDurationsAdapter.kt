@@ -12,11 +12,18 @@ class SearchDurationsAdapter(listener: ISearchDurationContract.Presenter?, list:
     : BaseSearchVideosAdapter<SearchDurationVH, ISearchDurationContract.Presenter, MMDuration>(listener, list) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchDurationVH {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.viewholder_search_video_duration, parent, false)
+        val view = LayoutInflater.from(parent.context)
+                        .inflate(R.layout.viewholder_search_video_duration, parent, false)
 
         setupLayoutForItemView(view, view.viewWrapper)
 
-        val vh = SearchDurationVH(view = view, listener = listener, itemWidth = itemWidth, itemHeight = itemHeight, itemCountInRow = countItemInRow)
+        val vh = SearchDurationVH(
+            view = view,
+            listener = listener,
+            itemWidth = itemWidth,
+            itemHeight = itemHeight,
+            itemCountInRow = countItemInRow
+        )
         mHolders?.add(vh)
 
         return vh

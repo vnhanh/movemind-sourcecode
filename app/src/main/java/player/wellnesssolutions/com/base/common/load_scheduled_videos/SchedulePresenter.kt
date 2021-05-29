@@ -42,7 +42,6 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
     private var isLoadScheduleOnStart = false
     private var isUpdatingNewSchedule = false
     private var isPerformNextScheduleOnAttachView = false
-//    private var isPerformingNextScheduleVideo = false
     private var isLoading = false
 
     private var cacheVideoScheduleCalculated = DataCachedVideoScheduleCalculated()
@@ -366,10 +365,9 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
     override fun onDestroy() {
         context = null
         try {
-            handler.removeCallbacks(runnable)
-            handler.removeCallbacks(runnableHanldeTimeForSchedule)
-            handlerScheduleTime.release()
             disposable.clear()
+            handler.removeCallbacksAndMessages(null)
+            handlerScheduleTime.release()
         } catch (e: Exception) {
             e.printStackTrace()
             FirebaseCrashlytics.getInstance().recordException(e)

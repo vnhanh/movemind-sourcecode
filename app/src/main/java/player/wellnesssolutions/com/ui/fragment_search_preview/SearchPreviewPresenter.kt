@@ -1,6 +1,5 @@
 package player.wellnesssolutions.com.ui.fragment_search_preview
 
-import android.util.Log
 import io.reactivex.Observable
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
@@ -155,7 +154,6 @@ class SearchPreviewPresenter : BaseResponseObserver<MMSearchPreviewResponse>(), 
     }
 
     private fun onRequestFailed() {
-//        val msg = message?:mView?.getViewContext()?.getString(R.string.request_failed)?: Constant.MSG_REQUEST_FAILED
         mView?.onRequestFailed(mView?.getViewContext()?.getString(R.string.request_failed)
                 ?: MSG_REQUEST_FAILED)
     }
@@ -172,19 +170,10 @@ class SearchPreviewPresenter : BaseResponseObserver<MMSearchPreviewResponse>(), 
 
     override fun onStop() {
         mIsRendered = false
-//        mAdapters?.also { adapters ->
-//            while (adapters.size > 0) {
-//                adapters[0].release()
-//                adapters.removeAt(0)
-//            }
-//        }
     }
 
 
     override fun onDestroy() {
-//        mDisplayData?.clear()
-//        mChosenOptions?.clear()
-//        mData?.clear()
         disposable.clear()
     }
 

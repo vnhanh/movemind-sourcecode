@@ -50,12 +50,10 @@ class SearchBrandVH(view: View, var imageSize: Int, private var presenter: ISear
         itemView.tvBrandDesc?.typeface = StringUtil.getTypefaceMadeEvolveSans(itemView.context)
     }
 
-    fun bind(data: MMBrand, position: Int) {
+    override fun bind(data: MMBrand) {
         super.bind(data)
 
         itemView.tvBrandName?.text = data.helperText
-//        itemView.tvBrandDesc.text = data.helperText
-
 
         data.id?.also { brandId ->
             renderBgColor(brandId)

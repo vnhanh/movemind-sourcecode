@@ -94,7 +94,7 @@ class HelpMeChooseFragment : BaseFragment(), IHelpMeChooseContract.View {
             mPresenter?.onReshowUI(this)
             mIsJustBeDestroyed = false
         } else {
-            view?.postDelayed(Runnable {
+            handler.postDelayed(Runnable {
                 mPresenter?.onAttach(this)
             }, 300L)
         }

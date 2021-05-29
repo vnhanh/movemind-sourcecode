@@ -88,7 +88,6 @@ class SplashFragment : BaseFragment(), ISplashContract.View, View.OnClickListene
 
     override fun onDestroy() {
         super.onDestroy()
-        handler.removeCallbacks(runnableLoading)
         dialog?.dismiss()
         mPresenter?.onDestroy()
     }

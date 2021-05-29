@@ -1,6 +1,5 @@
 package player.wellnesssolutions.com.ui.fragment_search_result_videos
 
-import android.content.Context
 import android.util.Log
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
@@ -24,7 +23,7 @@ import player.wellnesssolutions.com.ui.fragment_search_result_videos.helpers.Sea
 import player.wellnesssolutions.com.ui.fragment_search_result_videos.page_result.recyclerview.ISearchResultItemListener
 import player.wellnesssolutions.database.manager.DownloadDBManager
 
-class SearchResultPresenter(private var context: Context?) : BaseResponseObserver<ArrayList<MMVideo>>(), ISearchResultContract.Presenter {
+class SearchResultPresenter() : BaseResponseObserver<ArrayList<MMVideo>>(), ISearchResultContract.Presenter {
 
     private var mView: ISearchResultContract.View? = null
     private var mSearchResultApi = SearchResultApi()
@@ -306,7 +305,7 @@ class SearchResultPresenter(private var context: Context?) : BaseResponseObserve
     }
 
     override fun onPlaySearchedVideos() {
-        Log.d("LOG", this.javaClass.simpleName + " onPlaySearchedVideos()")
+//        Log.d("LOG", this.javaClass.simpleName + " onPlaySearchedVideos()")
         val data: ArrayList<MMVideo> = mVideosToPlay
 
         when (data.size == 0) {
@@ -321,17 +320,6 @@ class SearchResultPresenter(private var context: Context?) : BaseResponseObserve
                 mView?.openPlayingVideosScreen(data)
             }
         }
-    }
-
-    private fun isVideosForPresentationNew(): Boolean {
-        if (mLatestVideosForPlay.size != mVideosToPlay.size) return true
-        val size: Int = mLatestVideosForPlay.size
-        for (i: Int in 0 until size) {
-            val video1 = mLatestVideosForPlay[i]
-            val video2 = mVideosToPlay[i]
-            if (video1.id != video2.id) return true
-        }
-        return false
     }
 
     override fun onExpired(error: String) {
@@ -376,16 +364,6 @@ class SearchResultPresenter(private var context: Context?) : BaseResponseObserve
 
     override fun addItemListener(listener: ISearchResultItemListener) {
         mItemListeners.add(listener)
-    }
-
-    override fun downloadAllSelectedVideos() {
-        for (listener: ISearchResultItemListener in mItemListeners) {
-            listener.getVideo()?.also { video ->
-                if (mVideosToPlay.contains(video)) {
-                    listener.download()
-                }
-            }
-        }
     }
 
     override fun isVideoSelected(video: MMVideo?): Boolean = mVideosToPlay.contains(video)

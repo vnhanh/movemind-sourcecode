@@ -3,7 +3,6 @@ package player.wellnesssolutions.com.ui.fragment_search_preview
 
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,7 +36,6 @@ class SearchPreviewFragment : BaseFragment(), ISearchPreviewContract.View {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("LOG", this.javaClass.simpleName + " onCreate() | savedInstanceState: ${savedInstanceState}")
         mPresenter = SearchPreviewPresenter()
         savedInstanceState?.also { bundle ->
             try {
@@ -60,7 +58,7 @@ class SearchPreviewFragment : BaseFragment(), ISearchPreviewContract.View {
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                Log.d("LOG", this.javaClass.simpleName + " onCreate() | savedInstanceState | error: ${e.message}")
+//                Log.d("LOG", this.javaClass.simpleName + " onCreate() | savedInstanceState | error: ${e.message}")
             }
         }
         readArguments()
@@ -80,16 +78,6 @@ class SearchPreviewFragment : BaseFragment(), ISearchPreviewContract.View {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-        arguments?.also { bundle ->
-            try {
-                Log.d("LOG", this.javaClass.simpleName + " onCreateView() | savedInstanceState | is contains data for search: ${bundle.containsKey(KEY_DATA_FOR_SEARCH)} | " +
-                        "is contains BUNDLE_SAVE_STATE: ${bundle.containsKey(Constant.BUNDLE_SAVE_STATE)}")
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Log.d("LOG", this.javaClass.simpleName + " onCreateView() | savedInstanceState | error: ${e.message}")
-            }
-        }
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_search_preview, container, false)
     }
 
@@ -155,7 +143,7 @@ class SearchPreviewFragment : BaseFragment(), ISearchPreviewContract.View {
     }
 
     private fun clickedShowResult(isUseOptions: Boolean = false) {
-        Log.d("LOG", this.javaClass.simpleName + " requestResultVideos() | mPresenter is not null: ${mPresenter != null}")
+//        Log.d("LOG", this.javaClass.simpleName + " requestResultVideos() | mPresenter is not null: ${mPresenter != null}")
         mPresenter?.requestResultVideos(isUseOptions)
     }
 
@@ -181,7 +169,7 @@ class SearchPreviewFragment : BaseFragment(), ISearchPreviewContract.View {
             mPresenter?.onReshowUI(this)
             mIsJustBeDestroyed = false
         } else {
-            view?.postDelayed(Runnable {
+            handler.postDelayed(Runnable {
                 mPresenter?.onAttach(this@SearchPreviewFragment)
             }, 300L)
         }
@@ -205,7 +193,7 @@ class SearchPreviewFragment : BaseFragment(), ISearchPreviewContract.View {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        Log.d("LOG", this.javaClass.simpleName + " onSaveInstanceState() | data: ${mPresenter?.getDataForSearch()}")
+//        Log.d("LOG", this.javaClass.simpleName + " onSaveInstanceState() | data: ${mPresenter?.getDataForSearch()}")
         val gson = Gson()
         try {
             mPresenter?.getDataForSearch()?.also { data: SPSearchedOption ->
@@ -218,9 +206,8 @@ class SearchPreviewFragment : BaseFragment(), ISearchPreviewContract.View {
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.d("LOG", this.javaClass.simpleName + " can not save state before this fragment destroyed | " +
-                    "error: ${e.message}")
-
+//            Log.d("LOG", this.javaClass.simpleName + " can not save state before this fragment destroyed | " +
+//                    "error: ${e.message}")
         }
     }
 
@@ -280,7 +267,6 @@ class SearchPreviewFragment : BaseFragment(), ISearchPreviewContract.View {
     override fun openSearchResultScreen(selectedOptions: SPSearchedOption) {
         parentFragment?.also { parent ->
             parent.childFragmentManager.also { fm ->
-                //                var nextFragment : SearchResultFragment = SearchResultFragment.getInstanceBySearchedOptions(selectedOptions)
                 val tag = SearchResultFragment.TAG
                 var nextFragment = fm.findFragmentByTag(tag)
 

@@ -108,7 +108,6 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View, IRouterChanged 
     override fun onDestroyView() {
         super.onDestroyView()
         try {
-            handler.removeCallbacks(null)
             unregisterRouterChangedListener()
         } catch (e: Exception) {
             e.printStackTrace()

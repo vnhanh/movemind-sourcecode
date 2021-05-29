@@ -86,7 +86,6 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
     private var mNowVideo: MMVideo? = null
     private var mNowVideoLength = 0L
     private var mComingUpVideos: ArrayList<MMVideo>? = null
-//    private var mIsStop = true
 
     private var mCallback: Callback? = null
 

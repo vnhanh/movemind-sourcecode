@@ -27,7 +27,6 @@ class SearchInstructorVH(view: View, private var listener: ISearchInstructorCont
     init {
         ViewUtil.setupOnClicked(itemView.tvName, this)
         ViewUtil.setupOnClicked(itemView.imgAvatar, this)
-//        ViewUtil.setupOnClicked(itemView.imageCover, this)
         ViewUtil.setupOnClicked(itemView.btnShowInfoItemSearchInstructor, this)
 
         val size = itemView.resources?.getDimensionPixelSize(R.dimen.vh_search_presenter_avatar_size)

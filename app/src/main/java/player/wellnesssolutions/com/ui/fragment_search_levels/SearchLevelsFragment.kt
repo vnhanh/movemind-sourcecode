@@ -43,7 +43,6 @@ class SearchLevelsFragment : BaseFragment(), ISearchLevelsContract.View {
             return
         }
         mPrensenter?.setChosenBrand(brand)
-//        arguments?.clear()
     }
 
 
@@ -101,7 +100,7 @@ class SearchLevelsFragment : BaseFragment(), ISearchLevelsContract.View {
             mPrensenter?.onReshowUI(this)
             mIsJustBeDestroyed = false
         } else {
-            tvTitle?.postDelayed(Runnable {
+            handler.postDelayed(Runnable {
                 mPrensenter?.onAttach(this@SearchLevelsFragment)
             }, 400L)
         }
@@ -223,7 +222,6 @@ class SearchLevelsFragment : BaseFragment(), ISearchLevelsContract.View {
 
         }
 
-
     }
 
     private fun showSwipeText() {
@@ -258,7 +256,6 @@ class SearchLevelsFragment : BaseFragment(), ISearchLevelsContract.View {
     override fun onRequestFailed(message: String) {
         hideLoadingProgress()
         ViewUtil.showRefreshView(icRefresh, tvRetry)
-//        MessageUtils.showToast(context, message, R.color.red)
         context?.also { context ->
             mDialog?.dismiss()
             mDialog = DialogUtil.createDialogOnlyOneButton(

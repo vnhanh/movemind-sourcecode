@@ -11,7 +11,6 @@ import androidx.mediarouter.media.MediaRouter
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import player.wellnesssolutions.com.common.media_router.models.PlaylistItem
 import java.io.IOException
-import java.lang.RuntimeException
 
 abstract class MMLocalPlayer(protected val context: Context) : MMPlayer(),
         MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,

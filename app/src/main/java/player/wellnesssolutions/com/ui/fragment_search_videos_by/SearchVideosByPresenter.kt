@@ -36,8 +36,10 @@ class SearchVideosByPresenter : ISearchVideosByContract.Presenter {
         mView?.also { view ->
             mBrand?.also { brand ->
                 view.getFragment().context?.also { context ->
-                    val list: ArrayList<SearchByOption> = SearchVideosByHelper.getSearchByOptions(context, brand.hasLevel
-                        ?: 1)
+                    val list: ArrayList<SearchByOption> =
+                        SearchVideosByHelper.getSearchByOptions(
+                            context, hasLevel = brand.hasLevel ?: 1
+                        )
                     view.showUI(list)
                 }
             }

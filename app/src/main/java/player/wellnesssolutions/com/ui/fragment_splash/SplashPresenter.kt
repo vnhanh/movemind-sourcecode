@@ -38,31 +38,35 @@ class SplashPresenter : BaseResponseObserver<MMConfigData>(), ISplashContract.Pr
     override fun loadApi() {
         if (isLoading) return
 
-        mView?.getViewContext()?.also {
-            val headerData: HeaderData? = CheckHeaderApiUtil.checkData(
-                sharedPref = PreferenceHelper.getInstance(it),
-                fragment = mView!!.getFragment()
-            ) ?: null
+        mView?.also { view ->
+            view.getViewContext()?.also {
+                val headerData: HeaderData? = CheckHeaderApiUtil.checkData(
+                    sharedPref = PreferenceHelper.getInstance(it),
+                    fragment = view.getFragment()
+                )
 
-            when {
-                headerData == null -> {
-                    mView?.backToScanQRCode()
-                }
-
-                else -> {
-                    when (mLoadedData == null) {
-                        true -> {
-                            mView?.onStartLoadApi()
-                            loadApi(headerData.token, headerData.deviceId)
-                        }
-                        false -> {
-                            mView?.navigateToHomeScreen()
-                        }
+                when {
+                    headerData == null -> {
+                        view.backToScanQRCode()
                     }
 
-                }
+                    else -> {
+                        when (mLoadedData == null) {
+                            true -> {
+                                view.onStartLoadApi()
+                                loadApi(headerData.token, headerData.deviceId)
+                            }
+                            false -> {
+                                view.navigateToHomeScreen()
+                            }
+                        }
+
+                    }
+                } // end when
+
             }
         }
+
     }
 
     private fun loadApi(token: String, deviceId: String) {

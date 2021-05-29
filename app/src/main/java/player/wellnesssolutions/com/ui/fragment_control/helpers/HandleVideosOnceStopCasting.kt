@@ -2,7 +2,6 @@ package player.wellnesssolutions.com.ui.fragment_control.helpers
 
 import android.app.Activity
 import android.os.Handler
-import android.util.Log
 import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
 import player.wellnesssolutions.com.common.constant.Constant
 import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference

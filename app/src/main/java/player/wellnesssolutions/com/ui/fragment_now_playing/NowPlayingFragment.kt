@@ -4,7 +4,6 @@ import android.content.DialogInterface
 import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -150,15 +149,6 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
 
         unregisterNetworkConnecting()
 
-        try {
-            handler.removeCallbacks(null)
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-        //releaseDownloadButtonManager()
-
         releaseExtraViews()
 
         videoPlayer?.setControllerVisibilityListener(null)
@@ -292,10 +282,6 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         }
     }
 
-//    private fun setupButtonDownload() {
-//        mMainDownloadButtonManager = DownloadButtonManager(parentView.btnDownload, groupViewsComingUpNext.btnDownloadPlaying)
-//    }
-
     private fun setupVideoPlayerOnMode() {
         view?.also { parentView ->
 
@@ -352,7 +338,6 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         context?.also { context ->
             val message = context.getString(R.string.do_you_wan_to_reload_schedule)
             val okButtonListener = DialogInterface.OnClickListener { _, _ ->
-                Log.d("LOG", "NowPlayingFragment | clicked button logo")
                 presenter?.stopCountdown()
                 mCheckVideoPositionRunnable?.stopTask()
                 loadSchedule(true)
@@ -539,7 +524,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
                 presenter?.stopCountdown()
                 SearchResultFragment.mVideosToPlay.clear()
                 it.showDialogBackToHome()
-                Handler().postDelayed({
+                handler.postDelayed({
                     it.hideDialogBackToHome()
                     NowPlayingVideoSetupHelper.openHomeFragmentWithLoadSchedule(fm = it.supportFragmentManager)
                 }, 3000)
@@ -556,7 +541,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
                 SearchResultFragment.mVideosToPlay.clear()
                 it.showDialogBackToHome()
                 if (it.appVisible) {
-                    Handler().postDelayed({
+                    handler.postDelayed({
                         NowPlayingVideoSetupHelper.openHomeFragmentWithLoadSchedule(fm = it.supportFragmentManager)
                     }, 3000)
                 }
@@ -577,7 +562,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
                 SearchResultFragment.mVideosToPlay.clear()
                 it.showDialogBackToHome()
                 it.getApiConfigData()
-                Handler().postDelayed({
+                handler.postDelayed({
                     //it.hideDialogBackToHome()
                     NowPlayingVideoSetupHelper.openHomeFragmentWithLoadSchedule(fm = it.supportFragmentManager)
                 }, 3000)
@@ -716,7 +701,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
     }
 
     override fun onLoadingVideoDelay(playedPosition: Long) {
-        view?.postDelayed({
+        handler.postDelayed({
             presenter?.onHaveNowPlayingVideo(0L)
         }, playedPosition)
     }

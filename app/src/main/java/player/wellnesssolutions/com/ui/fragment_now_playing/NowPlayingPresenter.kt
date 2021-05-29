@@ -3,7 +3,6 @@ package player.wellnesssolutions.com.ui.fragment_now_playing
 import android.content.Context
 import android.os.CountDownTimer
 import android.os.Handler
-import android.util.Log
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -304,7 +303,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
             mPlayerState = PlayerState.COUNTDOWN
         } catch (e: RuntimeException) {
             e.printStackTrace()
-            Log.e("CountDownTimer", this.javaClass.simpleName + " runCountDownTimer - error: ${e.message}")
+//            Log.e("CountDownTimer", this.javaClass.simpleName + " runCountDownTimer - error: ${e.message}")
             Observable.timer(200, TimeUnit.MILLISECONDS)
                     .subscribeOn(Schedulers.single())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -314,7 +313,7 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
                             mPlayerState = PlayerState.COUNTDOWN
                         } catch (e: RuntimeException) {
                             e.printStackTrace()
-                            Log.e("CountDownTimer", this.javaClass.simpleName + " runCountDownTimer again - error: ${e.message}")
+//                            Log.e("CountDownTimer", this.javaClass.simpleName + " runCountDownTimer again - error: ${e.message}")
                             mView?.showMessage(R.string.can_not_show_count_down, R.color.yellow)
                         }
                     }
@@ -639,12 +638,9 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
     }
 
     override fun onDestroy() {
-//        if (mPlayerManager.getCurrentPosition() > 0 && !isPlayNewList) {
-//            PresentationDataHelper.save(context = context, mode = playedMode, videos = videos)
-//        }
         context = null
         try {
-            handler.removeCallbacks(null)
+            handler.removeCallbacksAndMessages(null)
             PreferenceHelper.getInstance()?.putBoolean(Constant.IS_PLAYING_VIDEO, false)
             mPlayerManager.onDestroy()
         } catch (e: Exception) {

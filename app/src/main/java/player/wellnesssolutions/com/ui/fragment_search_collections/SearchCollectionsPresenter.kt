@@ -90,7 +90,6 @@ class SearchCollectionsPresenter : BaseResponseObserver<ArrayList<MMCollection>>
     }
 
     private fun onShowRequestApiFailed(message: String?) {
-//        val msg = message?:mView?.getViewContext()?.getString(R.string.request_failed)?: Constant.MSG_REQUEST_FAILED
         mView?.onRequestFailed(mView?.getViewContext()?.getString(R.string.request_failed)
                 ?: MSG_REQUEST_FAILED)
         mIsLoading = false
@@ -159,8 +158,4 @@ class SearchCollectionsPresenter : BaseResponseObserver<ArrayList<MMCollection>>
                 it.onExpiredUnAuth(error)
         }
     }
-
-    /**
-     * ------------------------
-     */
 }

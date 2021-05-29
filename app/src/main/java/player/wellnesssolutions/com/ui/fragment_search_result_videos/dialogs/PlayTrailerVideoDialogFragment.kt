@@ -188,8 +188,10 @@ class PlayTrailerVideoDialogFragment : DialogFragment(), IPlayVideoContract.Mana
     private fun setupFullscreenDialog() {
         val width = ViewGroup.LayoutParams.MATCH_PARENT
         val height = ViewGroup.LayoutParams.MATCH_PARENT
-        dialog?.window?.setLayout(width, height)
-        dialog?.window?.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+        dialog?.window?.also { window ->
+            window.setLayout(width, height)
+            window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+        }
     }
 
     private fun setupNormalDimensDialog() {
@@ -197,25 +199,21 @@ class PlayTrailerVideoDialogFragment : DialogFragment(), IPlayVideoContract.Mana
                 ?: 1
         val height = context?.resources?.getDimensionPixelSize(R.dimen.height_normal_screen_playing_video_search_result)
                 ?: 1
-        dialog?.window?.setLayout(width, height)
-        dialog?.window?.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+        dialog?.window?.also { window ->
+            window.setLayout(width, height)
+            window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+        }
     }
 
     override fun onStart() {
         super.onStart()
         // playedVideoPosition = -1L: play video from playing position itself
-        when (videoPlayer?.player != null) {
-            true -> {
-                // do nothing
-            }
-
-            false -> mPlayerManager?.onInitialize(playedVideoPosition = -1L, typeVideo = EnumTypeViewVideo.NORMAL)
+        if(videoPlayer?.player == null){
+            mPlayerManager?.onInitialize(playedVideoPosition = -1L, typeVideo = EnumTypeViewVideo.NORMAL)
         }
-
     }
 
     override fun onPause() {
-//        mPlayerManager?.onReleasePlayer(isKeepPosition = true, keepPlayWhenReady = false)
         mPlayerManager?.onPause()
         super.onPause()
     }
@@ -340,7 +338,6 @@ class PlayTrailerVideoDialogFragment : DialogFragment(), IPlayVideoContract.Mana
             }
         }
     }
-
 
     /**
      * --------------

@@ -28,7 +28,12 @@ import player.wellnesssolutions.com.ui.fragment_search_result_videos.page_result
 import player.wellnesssolutions.fontsizelibrary.TypefaceUtil
 
 
-class VideosSearchResultPageVH(view: View, val mItemWidth: Int, val mItemHeight: Int, private var presenter: ISearchResultPageContract.Presenter?) :
+class VideosSearchResultPageVH(
+    view: View,
+    val mItemWidth: Int,
+    val mItemHeight: Int,
+    private var presenter: ISearchResultPageContract.Presenter?
+) :
         RecyclerView.ViewHolder(view), View.OnClickListener, ISearchResultItemListener {
 
     companion object {
@@ -333,16 +338,6 @@ class VideosSearchResultPageVH(view: View, val mItemWidth: Int, val mItemHeight:
         mIsSelected = true
         toggleSelectVideo()
     }
-
-    override fun download() {
-//        itemView.btnDownload?.also { downloadBtn ->
-//            if(!mDownloadButtonManager.isDownloaded()){
-//                downloadBtn.performClick()
-//            }
-//        }
-    }
-
-    override fun isDownloaded(): Boolean = false
 
     override fun getVideo(): MMVideo? = mVideo
 }
