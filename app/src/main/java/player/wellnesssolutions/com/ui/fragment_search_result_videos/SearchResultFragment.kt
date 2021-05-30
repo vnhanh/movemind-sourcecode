@@ -337,7 +337,6 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View {
             resultViewPager.onFlingListener = null
             val snapHelper = PagerSnapHelper()
             snapHelper.attachToRecyclerView(resultViewPager)
-            //resultViewPager.setRowCount(1)
 
             mVPAdapter = SearchResultRootAdapter(SearchResultDisplayHelper.processShowData(searchList)).also {
                 //SearchResultDisplayHelper.processShowData(searchList, it, mPresenter)
@@ -364,6 +363,9 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View {
 
     override fun openPlayingVideosScreen(data: ArrayList<MMVideo>) {
 //        Log.d("LOG", this.javaClass.simpleName + " openPlayingVideosScreen() | videos number: ${data.size}")
+        val videosNumber = data.size
+        FirebaseCrashlytics.getInstance().recordException(RuntimeException("call method"))
+        FirebaseCrashlytics.getInstance().log("openPlayingVideosScreen() ${videosNumber}")
         activity?.also { activity ->
             val passData = ArrayList<MMVideo>()
             passData.addAll(data)
@@ -399,7 +401,7 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View {
 
             } else {
                 FirebaseCrashlytics.getInstance().recordException(RuntimeException("open playing video screen"))
-                FirebaseCrashlytics.getInstance().log("open playing video screen")
+                FirebaseCrashlytics.getInstance().log("video screen ${videosNumber}")
                 NowPlayingVideoSetupHelper.openNowPlayingPlayVideoSearched(fragmentManager = activity.supportFragmentManager, videos = passData)
             }
         }

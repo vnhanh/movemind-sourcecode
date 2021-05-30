@@ -20,14 +20,6 @@ class SearchResultPagePresenter(pageIndex: Int) : ISearchResultPageContract.Pres
         if (!mIsShown) mIsShown = true
     }
 
-    private fun displayUI(view: ISearchResultPageContract.View) {
-        val beginIndex: Int = mPageIndex * SearchResultPageFragment.VIDEO_SEARCH_RESULT_COUNT_IN_ONE_PAGE
-        mParentPresenter?.getVideosFromRange(beginIndex, SearchResultPageFragment.VIDEO_SEARCH_RESULT_COUNT_IN_ONE_PAGE)?.also { videos ->
-            view.showUI(videos)
-        }
-
-    }
-
     override fun onDetach() {
         this.mView = null
     }
