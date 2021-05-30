@@ -205,10 +205,10 @@ class NowPlayingPresenter(private var context: Context?, playMode: PlayMode) :
 
     override fun setVideos(videos: ArrayList<MMVideo>, playMode: PlayMode) {
 //        Log.d("LOG", this.javaClass.simpleName + " setVideos() | videos number: ${videos.size}")
-        this.isOnCountDown = false
+        isOnCountDown = false
         try {
-            this.mCountDownTimerPlayVideo?.cancel()
-        } catch (e: RuntimeException) {
+            mCountDownTimerPlayVideo?.cancel()
+        } catch (e: Exception) {
             e.printStackTrace()
             FirebaseCrashlytics.getInstance().recordException(e)
             FirebaseCrashlytics.getInstance().log("NowPlayingPresenter - countdown error")

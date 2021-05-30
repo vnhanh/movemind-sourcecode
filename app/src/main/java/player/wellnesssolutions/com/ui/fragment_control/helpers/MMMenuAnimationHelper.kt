@@ -15,7 +15,7 @@ class MMMenuAnimationHelper : ValueAnimator.AnimatorUpdateListener {
         private const val HALF_CIRCLE = 180
     }
 
-    private lateinit var mAnimator: ValueAnimator
+    private var mAnimator: ValueAnimator? = null
 
     private var mWillShowButton: ImageView? = null
     private var mWillHideButton: ImageView? = null
@@ -28,16 +28,17 @@ class MMMenuAnimationHelper : ValueAnimator.AnimatorUpdateListener {
     private var mIsStateTransfered = false
 
     init {
-        init()
+        initConfig()
     }
 
-    fun init() {
-        mAnimator = ValueAnimator.ofInt(0, WHOLE_CRICLE).setDuration(DURATION)
-        mAnimator.addUpdateListener(this)
+    fun initConfig() {
+        mAnimator = ValueAnimator.ofInt(0, WHOLE_CRICLE).setDuration(DURATION).also {
+            it.addUpdateListener(this)
+        }
     }
 
     fun restart() {
-        init()
+        initConfig()
         mIsAnimating = false
     }
 
@@ -106,7 +107,8 @@ class MMMenuAnimationHelper : ValueAnimator.AnimatorUpdateListener {
     }
 
     fun release() {
-        mAnimator.removeUpdateListener(this)
+        mAnimator?.removeUpdateListener(this)
+        mAnimator = null
         mWillShowButton = null
         mWillHideButton = null
         mFloatMenu = null
@@ -143,7 +145,7 @@ class MMMenuAnimationHelper : ValueAnimator.AnimatorUpdateListener {
         }
 
         mIsStateTransfered = false
-        mAnimator.start()
+        mAnimator?.start()
 
         return true
     }

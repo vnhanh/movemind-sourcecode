@@ -1,6 +1,5 @@
 package player.wellnesssolutions.com.ui.fragment_search_brands.module
 
-import android.util.Log
 import androidx.annotation.StringRes
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil

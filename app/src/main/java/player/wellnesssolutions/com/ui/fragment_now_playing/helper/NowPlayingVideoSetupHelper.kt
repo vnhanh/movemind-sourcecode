@@ -18,6 +18,7 @@ import androidx.fragment.app.FragmentManager
 import com.bumptech.glide.Glide
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerView
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.android.synthetic.main.custom_controller_player_screen_now_playing.view.*
 import kotlinx.android.synthetic.main.fragment_now_playing.view.*
 import kotlinx.android.synthetic.main.merge_layout_bottom_bar_screen_now_playing.view.*
@@ -395,23 +396,17 @@ object NowPlayingVideoSetupHelper {
     fun openNowPlayingPlayVideoSearched(fragmentManager: FragmentManager?, videos: ArrayList<MMVideo>) {
         fragmentManager?.also { fm ->
             val tag = NowPlayingFragment.TAG
-            var fragment = fm.findFragmentByTag(tag)
-            fragment =
-                    when (fragment != null && fragment is NowPlayingFragment) {
-                        true -> {
-                            fragment.apply {
-                                arguments = NowPlayingFragment.getBundleBySearchedVideos(videos)
-                            }
-                        }
-
-                        false -> {
-                            NowPlayingFragment.getInstanceForSearchedVideos(videos)
-                        }
-                    }
+            val fragment = fm.findFragmentByTag(tag)
+            if(fragment != null && fragment is NowPlayingFragment){
+                FirebaseCrashlytics.getInstance().recordException(RuntimeException("remove old NowPlayingFragment"))
+                FirebaseCrashlytics.getInstance().log("remove old NowPlayingFragment")
+                fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
+            }
+            val newFragment = NowPlayingFragment.getInstanceForSearchedVideos(videos)
 
             FragmentUtil.replaceFragment(
                     fm = fm,
-                    newFragment = fragment,
+                    newFragment = newFragment,
                     newFragmentTag = tag,
                     frameId = R.id.frameLayoutHome,
                     isAddToBackStack = true

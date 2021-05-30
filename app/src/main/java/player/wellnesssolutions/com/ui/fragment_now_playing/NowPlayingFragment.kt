@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.custom_controller_player_screen_now_playing.*
 import kotlinx.android.synthetic.main.custom_controller_player_screen_now_playing.view.*
@@ -104,7 +105,12 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
+        arguments?.also { bundle ->
+            if(bundle.containsKey(BUNDLE_VIDEO_SEARCHED)){
+                FirebaseCrashlytics.getInstance().recordException(RuntimeException("onActivityCreated()| screen play video"))
+                FirebaseCrashlytics.getInstance().log("video search onActivityCreated()")
+            }
+        }
         // create the animation handler (@mAnimHelper) and reset all flags to make the menu animations run smoothly
         // once fragment is created or be backed from another screen
         mMenuSetupHelper.onInit()
@@ -112,12 +118,6 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         registerMediaRouterConnected()
         registerNetworkConnecting()
         setupUI()
-
-//        mNowVideo?.also { video ->
-//            mComingUpVideos?.also { comingUpVideos ->
-//                showUI(video, comingUpVideos)
-//            }
-//        }
     }
 
     override fun onResume() {
@@ -202,6 +202,8 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
                 }
 
                 extras.containsKey(BUNDLE_VIDEO_SEARCHED) -> {
+                    FirebaseCrashlytics.getInstance().recordException(RuntimeException("screen play video search"))
+                    FirebaseCrashlytics.getInstance().log("play video readArguments()")
                     val videos: ArrayList<MMVideo> = VideoDBUtil.getVideosFromDB(Constant.MM_VIDEO_SEARCHED, false)
 //                    Log.d("LOG", this.javaClass.simpleName + " readArguments() | PLAY VIDEO SEARCHED | videos number: ${videos.size}")
                     when {
@@ -217,11 +219,6 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
             }
         }
     }
-
-    //    private fun releaseDownloadButtonManager() {
-//        mMainDownloadButtonManager?.release()
-//        mMainDownloadButtonManager = null
-//    }
 
     private fun releaseExtraViews() {
         mExtraMainCollectionViews?.clear()

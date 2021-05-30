@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.android.synthetic.main.fragment_search_result.*
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.utils.FragmentUtil
@@ -397,6 +398,8 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View {
                 }
 
             } else {
+                FirebaseCrashlytics.getInstance().recordException(RuntimeException("open playing video screen"))
+                FirebaseCrashlytics.getInstance().log("open playing video screen")
                 NowPlayingVideoSetupHelper.openNowPlayingPlayVideoSearched(fragmentManager = activity.supportFragmentManager, videos = passData)
             }
         }
