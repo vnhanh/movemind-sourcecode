@@ -122,6 +122,10 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
 
     override fun onResume() {
         super.onResume()
+        if(arguments?.containsKey(BUNDLE_VIDEO_SEARCHED) == true){
+            FirebaseCrashlytics.getInstance().recordException(RuntimeException("onResume()| screen play video"))
+            FirebaseCrashlytics.getInstance().log("video search onResume()")
+        }
         PreferenceHelper.getInstance()?.putBoolean(ConstantPreference.IS_IN_BACKGROUND, false)
 
         attachPresenter()
@@ -145,6 +149,9 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
     }
 
     override fun onDestroyView() {
+        FirebaseCrashlytics.getInstance().recordException(RuntimeException("onDestroyView() screen play video"))
+        FirebaseCrashlytics.getInstance().log("NowPlayingFragment onDestroyView()")
+
         unRegisterMediaRouterConnected()
 
         unregisterNetworkConnecting()
@@ -170,6 +177,9 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
     }
 
     override fun onDestroy() {
+        FirebaseCrashlytics.getInstance().recordException(RuntimeException("onDestroy() screen play video"))
+        FirebaseCrashlytics.getInstance().log("NowPlayingFragment onDestroy()")
+
         if (!isCasting) {
             VideoDBUtil.deleteVideosFromDB(Constant.MM_VIDEO_SEARCHED)
         }
@@ -733,35 +743,14 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
 
             PlayMode.ON_DEMAND -> {
                 dialog?.dismiss()
-                if (isLoadScheduleManually) {
-                    context?.also { context ->
-                        dialog = DialogUtil.createDialogTwoButtons(context, context.getString(R.string.confirm_stop_video_and_navigate_to_screen_get_started), R.string.cancel,
-                                object : DialogInterface.OnClickListener {
-                                    override fun onClick(dialogInterface: DialogInterface?, p1: Int) {
-                                        dialogInterface?.dismiss()
-                                        hideLoadingProgress()
-                                        presenter?.resumeOrReplay()
-                                    }
-
-                                }, R.string.btn_ok, object : DialogInterface.OnClickListener {
-                            override fun onClick(dialogInterface: DialogInterface?, p1: Int) {
-                                dialogInterface?.dismiss()
-                                backToHomeScreenWithNotLoadSchedule()
-
-                            }
-
-                        }).apply {
-                            setCancelable(false)
-                            show()
-                        }
-                    }
-                }
 
                 activity?.let { ac ->
                     if (ac is MainActivity) {
                         ac.getApiConfigData()
                     }
                 }
+
+                backToHomeScreenWithNotLoadSchedule()
             }
         }
 
@@ -1089,6 +1078,7 @@ class NowPlayingFragment : BaseScheduleFragment(), INowPlayingConstruct.View, IR
         }
 
         fun updateAlreadyInstanceWithSchedule(fragment: NowPlayingFragment): Fragment = fragment.apply {
+            arguments?.clear()
             arguments = Bundle().also {
                 it.putBoolean(Constant.BUNDLE_SCHEDULE, true)
                 it.putBoolean(Constant.BUNDLE_NOT_SETUP_NOW_SCHEDULE, true)

@@ -173,16 +173,10 @@
     <string name="not_get_videos_data">Not get videos list data !</string>
 
     <!--FRAGMENT NOW PLAYING-->
-    <string name="confirm_want_to_stop_video_play_and_back_to_HMC">Stop this video and back to Screen Home ?</string>
     <string name="tv_title_now_playing">NOW PLAYING</string>
-    <string name="error_passed_data">Error pass data !</string>
-    <string name="err_not_get_anwers">Pass answers failed !</string>
     <string name="cant_load_videos_cause_wrong_data">Can not load videos because wrong data !</string>
-    <!--<string name="confirm_want_to_turn_back_screen_no_class_search">Do you wan to turn back Screen Home ?</string>-->
     <string name="no_searched_videos">No searched videos !</string>
     <string name="msg_request_scheduler_failed">Requesting class failed !</string>
-    <string name="confirm_stop_video_and_navigate_to_screen_get_started">Do you want to stop this video and navigate to the get started screen ?</string>
-    <string name="confirm_stop_video_and_open_current_class">Do you want to stop this video and watch the current class?</string>
     <string name="screen_search_videos_by_choose_a_filter">Please choose from below</string>
     <string name="screen_svb_item_time">Time</string>
     <string name="screen_svb_item_level">Level</string>
@@ -193,8 +187,6 @@
     <string name="level">Level</string>
     <string name="time">Time</string>
     <string name="this_item_has_not_video_of_this_brand">This %1$s %2$s has no videos in this %3$s Brand</string>
-    <string name="erro_no_trailer_url">No trailer url !</string>
-    <string name="erro_no_video_url">No video url !</string>
     <string name="msg_loading_scheduler">Loading class &#8230;</string>
     <string name="content_desc_no_class">The background image of No Class Search</string>
     <string name="content_desc_search_videos_by">The Search Videos By background image</string>
@@ -208,14 +200,10 @@
     <string name="msg_this_video_downloaded">This video has been downloaded !</string>
     <string name="msg_downloading_video">Downloading video ....</string>
     <string name="no_download_video_url">No downloaded video link !</string>
-    <string name="download_temp_file_no_longer">Tempt downloaded file no longer exist !</string>
-    <string name="write_download_file_failed">Copying tempt download file failed !</string>
     <string name="title_dialog_download">DOWNLOAD</string>
-    <string name="confirm_overwrite_downloaded_file">\nThe %1$s file existed ! \n\nDo you want to overwrite it ?</string>
     <string name="no_permissions_needed_for_download">No permissions for downloading !</string>
     <string name="msg_rationale_no_download_permission">\nNo permissions for downloading.\n\nTo grant download permission, please:\n\nSelect PERMISSIONS \-\-> STORAGE !</string>
     <string name="press_download_button_more_to_download">Press download button to start downloading video !</string>
-    <string name="download_task_exist">Download task has been added !</string>
     <string name="network_disconnect_for_downloading">Network disconnected ! Please connect to download vidoes !</string>
 
     <string name="cookie_expired">The cookie has been expired. Please scan the QR code again to login !</string>

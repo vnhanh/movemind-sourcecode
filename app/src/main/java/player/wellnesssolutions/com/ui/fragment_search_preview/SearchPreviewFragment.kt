@@ -274,6 +274,7 @@ class SearchPreviewFragment : BaseFragment(), ISearchPreviewContract.View {
                         when (nextFragment != null && nextFragment is SearchResultFragment) {
                             true -> {
                                 nextFragment.apply {
+                                    arguments?.clear()
                                     arguments = SearchResultFragment.getBundleBySearchedOptions(selectedOptions)
                                 }
                             }

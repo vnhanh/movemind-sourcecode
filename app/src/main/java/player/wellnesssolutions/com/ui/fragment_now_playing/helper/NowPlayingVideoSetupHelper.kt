@@ -5,6 +5,7 @@ import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
@@ -319,14 +320,21 @@ object NowPlayingVideoSetupHelper {
 //        Log.d("LOG", this.javaClass.simpleName + " openHomeFragmentWithLoadSchedule()")
         fm?.also { _fm ->
             val tag = HomeFragment.TAG
-            val fragment = _fm.findFragmentByTag(tag)
-            if (fragment != null && fragment is HomeFragment) {
-                fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
-            }
-            val newFragment = HomeFragment.getInstanceWithLoadSchedule()
+            var fragment = _fm.findFragmentByTag(tag)
+//            if (fragment != null && fragment is HomeFragment) {
+//                fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
+//            }
+//            val newFragment = HomeFragment.getInstanceWithLoadSchedule()
+            fragment =
+                    when (fragment != null && fragment is HomeFragment) {
+                        true -> {
+                            HomeFragment.updateAlreadyInstanceWithLoadSchedule(fragment)
+                        }
+                        false -> HomeFragment.getInstanceWithLoadSchedule()
+                    }
             FragmentUtil.replaceFragment(
                 fm = _fm,
-                newFragment = newFragment,
+                newFragment = fragment,
                 newFragmentTag = tag,
                 frameId = R.id.frameLayoutHome,
                 isAddToBackStack = false
@@ -338,15 +346,21 @@ object NowPlayingVideoSetupHelper {
         fm?.also { _fm ->
 //            Log.d("LOG", this.javaClass.simpleName + " openHomeFragmentWithNotLoadSchedule()")
             val tag = HomeFragment.TAG
-            val fragment = _fm.findFragmentByTag(tag)
-            if (fragment != null && fragment is HomeFragment) {
-                fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
-            }
-            val newFragment = HomeFragment.getInstanceNotLoadSchedule()
-
+            var fragment = _fm.findFragmentByTag(tag)
+//            if (fragment != null && fragment is HomeFragment) {
+//                fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
+//            }
+//            val newFragment = HomeFragment.getInstanceNotLoadSchedule()
+            fragment =
+                    when (fragment != null && fragment is HomeFragment) {
+                        true -> {
+                            HomeFragment.updateAlreadyInstanceWithNotLoadSchedule(fragment)
+                        }
+                        false -> HomeFragment.getInstanceNotLoadSchedule()
+                    }
             FragmentUtil.replaceFragment(
                 fm = _fm,
-                newFragment = newFragment,
+                newFragment = fragment,
                 newFragmentTag = tag,
                 frameId = R.id.frameLayoutHome,
                 isAddToBackStack = false
@@ -358,15 +372,21 @@ object NowPlayingVideoSetupHelper {
         fm?.also { _fm ->
 //            Log.d("LOG", this.javaClass.simpleName + " openHomeFragmentWithNotLoadSchedule()")
             val tag = HomeFragment.TAG
-            val fragment = _fm.findFragmentByTag(tag)
-            if (fragment != null && fragment is HomeFragment) {
-                fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
-            }
-            val newFragment = HomeFragment.getInstanceNotLoadScheduleAndShowSnackbar(message)
-
+            var fragment = _fm.findFragmentByTag(tag)
+//            if (fragment != null && fragment is HomeFragment) {
+//                fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
+//            }
+//            val newFragment = HomeFragment.getInstanceNotLoadScheduleAndShowSnackbar(message)
+            fragment =
+                    when (fragment != null && fragment is HomeFragment) {
+                        true -> {
+                            HomeFragment.updateAlreadyInstanceWithNotLoadScheduleAndShowSnackbar(fragment, message)
+                        }
+                        false -> HomeFragment.getInstanceNotLoadScheduleAndShowSnackbar(message)
+                    }
             FragmentUtil.replaceFragment(
                 fm = _fm,
-                newFragment = newFragment,
+                newFragment = fragment,
                 newFragmentTag = tag,
                 frameId = R.id.frameLayoutHome,
                 isAddToBackStack = false
@@ -378,14 +398,23 @@ object NowPlayingVideoSetupHelper {
 //        Log.d("LOG", this.javaClass.simpleName + " openNowPlayingWithSchedule()")
         fm?.also { _fm ->
             val tag = NowPlayingFragment.TAG
-            val fragment = _fm.findFragmentByTag(tag)
-            if(fragment != null && fragment is NowPlayingFragment){
-                _fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
-            }
-            val newFragment = NowPlayingFragment.getInstancePlaySchedule()
+            var fragment = _fm.findFragmentByTag(tag)
+//            if(fragment != null && fragment is NowPlayingFragment){
+//                FirebaseCrashlytics.getInstance().recordException(RuntimeException("remove old NowPlayingFragment"))
+//                FirebaseCrashlytics.getInstance().log("remove old NowPlayingFragment home")
+//                _fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
+//            }
+//            val newFragment = NowPlayingFragment.getInstancePlaySchedule()
+            fragment =
+                    when (fragment != null && fragment is NowPlayingFragment) {
+                        true -> {
+                            NowPlayingFragment.updateAlreadyInstanceWithSchedule(fragment)
+                        }
+                        false -> NowPlayingFragment.getInstancePlaySchedule()
+                    }
             FragmentUtil.replaceFragment(
                 fm = _fm,
-                newFragment = newFragment,
+                newFragment = fragment,
                 newFragmentTag = tag,
                 frameId = R.id.frameLayoutHome,
                 isAddToBackStack = true
@@ -396,17 +425,26 @@ object NowPlayingVideoSetupHelper {
     fun openNowPlayingPlayVideoSearched(fragmentManager: FragmentManager?, videos: ArrayList<MMVideo>) {
         fragmentManager?.also { fm ->
             val tag = NowPlayingFragment.TAG
-            val fragment = fm.findFragmentByTag(tag)
-            if(fragment != null && fragment is NowPlayingFragment){
-                FirebaseCrashlytics.getInstance().recordException(RuntimeException("remove old NowPlayingFragment"))
-                FirebaseCrashlytics.getInstance().log("remove old NowPlayingFragment")
-                fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
-            }
-            val newFragment = NowPlayingFragment.getInstanceForSearchedVideos(videos)
+            var fragment = fm.findFragmentByTag(tag)
+            fragment =
+                when (fragment != null && fragment is NowPlayingFragment) {
+                    true -> {
+                        fragment.apply {
+                            FirebaseCrashlytics.getInstance().recordException(RuntimeException("found old NowPlayingFragment"))
+                            FirebaseCrashlytics.getInstance().log("update old NowPlayingFragment searchResult")
+                            arguments?.clear()
+                            arguments = NowPlayingFragment.getBundleBySearchedVideos(videos)
+                        }
+                    }
+
+                    false -> {
+                        NowPlayingFragment.getInstanceForSearchedVideos(videos)
+                    }
+                }
 
             FragmentUtil.replaceFragment(
                     fm = fm,
-                    newFragment = newFragment,
+                    newFragment = fragment,
                     newFragmentTag = tag,
                     frameId = R.id.frameLayoutHome,
                     isAddToBackStack = true

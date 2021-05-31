@@ -2,7 +2,6 @@ package player.wellnesssolutions.com.ui.fragment_search_result_videos
 
 import android.content.DialogInterface
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,7 +26,6 @@ import player.wellnesssolutions.com.network.datasource.videos.PlayMode
 import player.wellnesssolutions.com.network.models.help_me_choose.MMHelpMeChooseAnswer
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
 import player.wellnesssolutions.com.network.models.screen_search.MMInstructor
-import player.wellnesssolutions.com.ui.activity_main.IRouterChanged
 import player.wellnesssolutions.com.ui.activity_main.MainActivity
 import player.wellnesssolutions.com.ui.fragment_help_me_choose.helpers.HMCDataHelper
 import player.wellnesssolutions.com.ui.fragment_now_playing.helper.NowPlayingVideoSetupHelper
@@ -133,7 +131,7 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-        // Inflate the layout for this fragment
+
         return inflater.inflate(R.layout.fragment_search_result, container, false)
     }
 
@@ -196,7 +194,6 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View {
     }
 
     private fun readSearchByArguments() {
-//        val searchByData : SPSearchedOption = SPDBUtil.readFromDB(getTagOfSearchByData())
         val chosenOptions: SPSearchedOption = SPDBUtil.readFromDB(getTagOfChosen())
 
         mPresenter?.inputData(chosenOptions = chosenOptions)
@@ -246,12 +243,14 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View {
     private fun clickedBtnPlay() {
         when (mPresenter?.hasSelectedVideos()) {
             true -> {
+                FirebaseCrashlytics.getInstance().recordException(RuntimeException("click PLAY button"))
+                FirebaseCrashlytics.getInstance().log("click PLAY button")
                 activity?.let {
                     PreferenceHelper.getInstance(it).delete(ConstantPreference.LAST_TIME_COUNT_DOWN)
                     PreferenceHelper.getInstance(it).delete(ConstantPreference.LAST_PLAYED_VIDEO_POSITION)
                 }
-                mPresenter?.onPlaySearchedVideos()
                 isClickToNowPlaying = true
+                mPresenter?.onPlaySearchedVideos()
             }
 
             else -> {
@@ -303,16 +302,20 @@ class SearchResultFragment : BaseFragment(), ISearchResultContract.View {
     }
 
     override fun onDestroyView() {
+        FirebaseCrashlytics.getInstance().recordException(RuntimeException("onDestroyView()"))
+        FirebaseCrashlytics.getInstance().log("SearchResultFrag onDestroyView()")
         mDialog?.dismiss()
         super.onDestroyView()
     }
 
     private fun releaseViewPager() {
         resultViewPager?.adapter = null
-
     }
 
     override fun onDestroy() {
+        FirebaseCrashlytics.getInstance().recordException(RuntimeException("onDestroy()"))
+        FirebaseCrashlytics.getInstance().log("SearchResultFrag onDestroy()")
+
         mPresenter?.onDestroy()
         super.onDestroy()
     }

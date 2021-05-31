@@ -1,6 +1,5 @@
 package player.wellnesssolutions.com.ui.fragment_search_result_videos
 
-import android.util.Log
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
 import player.wellnesssolutions.com.base.view.BaseFragment

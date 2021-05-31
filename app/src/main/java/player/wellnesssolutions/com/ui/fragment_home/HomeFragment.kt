@@ -433,12 +433,20 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View, IRouterChanged 
         }
 
         fun updateAlreadyInstanceWithLoadSchedule(fragment: HomeFragment): HomeFragment = fragment.apply {
+            arguments?.clear()
             arguments = Bundle().apply {
                 putString(Constant.BUNDLE_SOURCE_SCHEDULE, SOURCE_LOAD_SCHEDULE.REMOTE.name)
             }
         }
 
         fun getInstanceNotLoadSchedule(): HomeFragment = HomeFragment().apply {
+            arguments = Bundle().apply {
+                putString(Constant.BUNDLE_SOURCE_SCHEDULE, SOURCE_LOAD_SCHEDULE.LOCAL.name)
+            }
+        }
+
+        fun updateAlreadyInstanceWithNotLoadSchedule(fragment: HomeFragment): Fragment = fragment.apply {
+            arguments?.clear()
             arguments = Bundle().apply {
                 putString(Constant.BUNDLE_SOURCE_SCHEDULE, SOURCE_LOAD_SCHEDULE.LOCAL.name)
             }
@@ -451,15 +459,11 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View, IRouterChanged 
             }
         }
 
-        fun updateAlreadyInstanceWithNoSchedule(fragment: HomeFragment): Fragment = fragment.apply {
+        fun updateAlreadyInstanceWithNotLoadScheduleAndShowSnackbar(fragment: HomeFragment, message: String): HomeFragment = fragment.apply {
+            arguments?.clear()
             arguments = Bundle().apply {
                 putString(Constant.BUNDLE_SOURCE_SCHEDULE, SOURCE_LOAD_SCHEDULE.LOCAL.name)
-            }
-        }
-
-        fun updateAlreadyInstanceWithNotLoadSchedule(fragment: HomeFragment): Fragment = fragment.apply {
-            arguments = Bundle().apply {
-                putString(Constant.BUNDLE_SOURCE_SCHEDULE, SOURCE_LOAD_SCHEDULE.LOCAL.name)
+                putString(Constant.BUNDLE_SHOW_SNACKBAR, message)
             }
         }
 

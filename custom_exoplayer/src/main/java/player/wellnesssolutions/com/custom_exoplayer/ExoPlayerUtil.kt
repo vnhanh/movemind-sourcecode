@@ -72,14 +72,6 @@ object ExoPlayerUtil {
         val videoTrackSelectionFactory: TrackSelection.Factory = AdaptiveTrackSelection.Factory()
         val trackSelector = DefaultTrackSelector(videoTrackSelectionFactory)
 
-//        val defaultParameter = trackSelector.buildUponParameters()
-//                .setMaxVideoBitrate(BITRATE_1080)
-//                .setForceHighestSupportedBitrate(true)
-//                .build()
-//
-//        trackSelector.parameters = defaultParameter
-
-
         val player = ExoPlayerFactory.newSimpleInstance(context, trackSelector)
 
         val dataSourceFactory = DefaultHttpDataSourceFactory(
@@ -89,7 +81,7 @@ object ExoPlayerUtil {
 
         val endIndex = mediaUrl.lastIndexOf(EXT_M3U8) + 5
         val s = mediaUrl.substring(0, endIndex)
-//        Log.d("LOG", this.javaClass.simpleName + " initStreamPlayer() | url: $s")
+
         val mediaSource: MediaSource?
 
         mediaSource = if (isPlayOffline) {
@@ -97,7 +89,7 @@ object ExoPlayerUtil {
                 .setMp4ExtractorFlags(Mp4Extractor.FLAG_WORKAROUND_IGNORE_EDIT_LISTS)
             val defaultFactory = DefaultDataSourceFactory(context, Util.getUserAgent(context, appName))
             val factory = EncryptedDefaultDataSourceFactory("vovanhoan1234567", context, defaultFactory)
-//            Toast.makeText(context, "Play offline mode", Toast.LENGTH_SHORT).show()
+
             ProgressiveMediaSource.Factory(factory, extractorsFactory).createMediaSource(fileDataSource.uri)
         } else {
             HlsMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(s))

@@ -311,8 +311,8 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        FirebaseCrashlytics.getInstance().recordException(RuntimeException(String.format("screen: onCreate() | %s", Date().time)))
-        FirebaseCrashlytics.getInstance().log("screen: onCreate()")
+//        FirebaseCrashlytics.getInstance().recordException(RuntimeException(String.format("screen: onCreate() | %s", Date().time)))
+//        FirebaseCrashlytics.getInstance().log("screen: onCreate()")
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         val flags = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -488,9 +488,8 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
 
     override fun onResume() {
         super.onResume()
-        FirebaseCrashlytics.getInstance().recordException(RuntimeException(String.format("screen: onResume() | %s", Date().time)))
-        FirebaseCrashlytics.getInstance().log("screen: onResume()")
-//        Log.d("LOG", this.javaClass.simpleName + " onResume() | current thread: ${Thread.currentThread()} | isMediaProviderChangedInBackground: $isMediaProviderChangedInBackground")
+//        FirebaseCrashlytics.getInstance().recordException(RuntimeException(String.format("screen: onResume() | %s", Date().time)))
+//        FirebaseCrashlytics.getInstance().log("screen: onResume()")
         PreferenceHelper.getInstance(this).putBoolean(ConstantPreference.IS_IN_BACKGROUND, false)
         mIsVisble = true
         appVisible = true
@@ -805,6 +804,9 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
                     return
                 }
             }
+
+            FirebaseCrashlytics.getInstance().recordException(RuntimeException("back screen"))
+            FirebaseCrashlytics.getInstance().log("back screen")
 
             if (supportFragmentManager.backStackEntryCount > 0) {
                 supportFragmentManager.popBackStack()

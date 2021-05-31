@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -149,19 +150,8 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
                         it.getApiConfigData()
                     }
                 }
-                activity?.supportFragmentManager?.also { fm ->
-                    val tag: String = HomeFragment.TAG
-                    var fragment: Fragment? = fm.findFragmentByTag(tag) // find the earlier fragment if existed
-                    fragment =
-                            when (fragment != null && fragment is HomeFragment) {
-                                true -> HomeFragment.updateAlreadyInstanceWithNoSchedule(fragment)                    // use old instance
-                                false -> HomeFragment.getInstanceNotLoadSchedule() // create new instance if it has been not created yet
-                            }
-                    FragmentUtil.replaceFragment(fm = fm,
-                            newFragment = fragment, newFragmentTag = tag,
-                            frameId = R.id.frameLayoutHome, isAddToBackStack = false)
-                }
 
+                backHomeScreenNotLoadSchedule()
             }
 
             else -> {
@@ -173,14 +163,31 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
                     }
                 }
 
-                val messageLowerCase = message.toLowerCase()
+                val messageLowerCase = message.lowercase()
                 if (messageLowerCase.contains("request failed")) {
                     MessageUtils.showSnackBar(btnLogoBottom, message, R.color.yellow)
                 }
+
+                backHomeScreenNotLoadSchedule()
             }
         }
 
         btnLogoBottom?.isEnabled = true
+    }
+
+    private fun backHomeScreenNotLoadSchedule(){
+        activity?.supportFragmentManager?.also { fm ->
+            val tag: String = HomeFragment.TAG
+            var fragment: Fragment? = fm.findFragmentByTag(tag) // find the earlier fragment if existed
+            fragment =
+                when (fragment != null && fragment is HomeFragment) {
+                    true -> HomeFragment.updateAlreadyInstanceWithNotLoadSchedule(fragment)                    // use old instance
+                    false -> HomeFragment.getInstanceNotLoadSchedule() // create new instance if it has been not created yet
+                }
+            FragmentUtil.replaceFragment(fm = fm,
+                newFragment = fragment, newFragmentTag = tag,
+                frameId = R.id.frameLayoutHome, isAddToBackStack = false)
+        }
     }
 
     override fun onHaveClassVideos(scheduleVideos: ArrayList<MMVideo>, isClickedFromBtnBottom: Boolean) {
@@ -422,28 +429,9 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
 
     private fun onClickedButtonLogo() {
         btnLogoBottom?.isEnabled = false
-
-        activity?.also { act ->
-            if ((act as MainActivity).isPresentationAvailable()) {
-                val isPlayingSearchVideos: Boolean = act.isPlayingSearchedVideos()
-                if (isPlayingSearchVideos) {
-                    val message: String = act.getString(player.wellnesssolutions.com.R.string.confirm_stop_video_and_navigate_to_screen_get_started)
-
-                    val yesBtnListener = DialogInterface.OnClickListener { _, _ ->
-                        loadSchedule(true)
-                        btnLogoBottom.isEnabled = true
-                        mVideosToPlay.clear()
-                    }
-                    DialogUtil.createDialogTwoButtons(context = act, message = message, titleLeftButton = player.wellnesssolutions.com.R.string.btn_no,
-                            leftButtonClickListener = null, titleRightButton = player.wellnesssolutions.com.R.string.btn_yes, rightButtonClickListener = yesBtnListener).show()
-                    return
-                }
-            } else {
-                mVideosToPlay.clear()
-            }
-        }
+        mVideosToPlay.clear()
         loadSchedule(true)
-
+        btnLogoBottom.isEnabled = true
     }
 
     private fun setupButtonFloatMenu() {
@@ -637,12 +625,12 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
 
     // disconnect TV
     override fun onMediaRouterDisconnected() {
-//        Log.d("LOG", this.javaClass.simpleName + " onMediaRouterDisconnected()")
         PreferenceHelper.getInstance()?.getBoolean(ConstantPreference.IS_IN_BACKGROUND, false)?.also { isInBackground ->
+            Log.d("LOG", this.javaClass.simpleName + " onMediaRouterDisconnected() | isInBackground: $isInBackground")
             if(isInBackground){
                 isCastDisconnectedInBackground = true
             }else{
-//                Log.d("LOG", this.javaClass.simpleName + " onMediaRouterDisconnected() - hide casting views and open new screen")
+                Log.d("LOG", this.javaClass.simpleName + " onMediaRouterDisconnected() - hide casting views and open new screen")
                 onClearVideos()
                 HandleVideosOnceStopCasting.handlePlayingVideos(activity = activity, handler = handler)
             }
@@ -665,7 +653,7 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     }
 
     private fun showPresentationPlaylist() {
-//        Log.d("LOG", this.javaClass.simpleName + " showPresentationPlaylist()")
+//        Log.d("LOG", this.javaClass.simpleName + " showPres:entationPlaylist()")
         constraintArrowUp?.let {
             it.visibility = View.INVISIBLE
         }

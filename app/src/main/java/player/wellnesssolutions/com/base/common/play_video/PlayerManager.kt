@@ -169,11 +169,8 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
 
         val externalFolder: File
         val internalFolder: File
-        var dataSpec: DataSpec
-        if (FileUtil.isExternalStorageAvailable() && !FileUtil.isExternalStorageReadOnly() && FileUtil.isSDCardAvailable(
-                context
-            )
-        ) {
+        val dataSpec: DataSpec
+        if (FileUtil.isExternalStorageAvailable() && !FileUtil.isExternalStorageReadOnly() && FileUtil.isSDCardAvailable(context)) {
             val externalUrl = context?.getExternalFilesDirs(null)
             if (externalUrl?.get(1) != null) {
                 externalFolder = File(
@@ -210,8 +207,10 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
         }
 
         val fileDataSource = FileDataSource()
+        var isOpenedVideoDataSource = false
         try {
             fileDataSource.open(dataSpec)
+            isOpenedVideoDataSource = true
         } catch (e: Exception) {
             e.printStackTrace()
             FirebaseCrashlytics.getInstance().recordException(RuntimeException("open video file error ${e.message}"))
@@ -222,19 +221,19 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
             context = _context, cookieValue = mCookieValue,
             url = url, subtitleLink = subtitleLink,
             languageCode = languageCode, volume = volume, typeVideo = typeVideo,
-            isPlayOffline = when (isUpdateViewNumber) {
-                true -> {
-                    if (VideoDBUtil.checkVideoDownloaded(
-                            data = video,
-                            tag = Constant.TAG_VIDEO_DOWNLOAD
-                        )
-                    ) {
+            isPlayOffline = when {
+                isOpenedVideoDataSource && isUpdateViewNumber-> {
+                    if (VideoDBUtil.checkVideoDownloaded(data = video, tag = Constant.TAG_VIDEO_DOWNLOAD)) {
+                        FirebaseCrashlytics.getInstance().recordException(RuntimeException("init playing video online ${video.id}"))
+                        FirebaseCrashlytics.getInstance().log("init video online ${video.id}")
                         checkIfFileExist(String.format("%s%s",video.id.toString(), ".mp4"))
                     } else {
+                        FirebaseCrashlytics.getInstance().recordException(RuntimeException("init playing video offline ${video.id}"))
+                        FirebaseCrashlytics.getInstance().log("init video offline ${video.id}")
                         false
                     }
                 }
-                false -> false
+                else -> false
             }, fileDataSource = fileDataSource
         ).also {
             for (listener: Player.EventListener in mListeners) {
@@ -248,10 +247,7 @@ class PlayerManager(callback: IPlayVideoContract.Manager.Callback, private var c
 
     private fun checkIfFileExist(fileName: String): Boolean {
         context?.also { context ->
-            if (FileUtil.isExternalStorageAvailable() && !FileUtil.isExternalStorageReadOnly() && FileUtil.isSDCardAvailable(
-                    context
-                )
-            ) {
+            if (FileUtil.isExternalStorageAvailable() && !FileUtil.isExternalStorageReadOnly() && FileUtil.isSDCardAvailable(context)) {
                 val externalUrl = context.getExternalFilesDirs(null)
                 if (externalUrl?.get(1) != null) {
                     if (File(

@@ -28,24 +28,19 @@ androidExtensions {
 }
 
 ext {
-    retrofitVersion = '2.6.0'
+    retrofitVersion = '2.6.2'
 }
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     //retrofit 2
     api "com.squareup.retrofit2:retrofit:$retrofitVersion"
-    api 'com.google.code.gson:gson:2.8.5'
+    api 'com.google.code.gson:gson:2.8.6'
     api "com.squareup.retrofit2:converter-gson:$retrofitVersion"
     //rxjava 2 and retrofit for rxjava
     api 'io.reactivex.rxjava2:rxjava:2.1.12'
     api 'io.reactivex.rxjava2:rxandroid:2.0.2'
     api 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
-    //Fix proguard issue: Retrofit with Kotlin Coroutines
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.1.1"
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1"
-
 
     implementation 'commons-net:commons-net:3.3'
 
