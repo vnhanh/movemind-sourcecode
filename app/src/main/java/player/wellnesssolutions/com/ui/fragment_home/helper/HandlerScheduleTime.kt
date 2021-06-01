@@ -1,7 +1,6 @@
 package player.wellnesssolutions.com.ui.fragment_home.helper
 
 import android.content.Context
-import android.util.Log
 import player.wellnesssolutions.com.base.common.load_scheduled_videos.ICallBackNextScheduleVideo
 import player.wellnesssolutions.com.base.utils.ParameterUtils
 import player.wellnesssolutions.com.network.datasource.time_network.IRequestTimeNetworkListener

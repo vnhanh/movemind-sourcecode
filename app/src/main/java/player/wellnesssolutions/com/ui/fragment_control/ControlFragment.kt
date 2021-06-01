@@ -1,11 +1,9 @@
 package player.wellnesssolutions.com.ui.fragment_control
 
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,7 +31,6 @@ import player.wellnesssolutions.com.common.constant.SOURCE_LOAD_SCHEDULE
 import player.wellnesssolutions.com.common.customize_views.MMTextView
 import player.wellnesssolutions.com.common.sharedpreferences.ConstantPreference
 import player.wellnesssolutions.com.common.sharedpreferences.PreferenceHelper
-import player.wellnesssolutions.com.common.utils.DialogUtil
 import player.wellnesssolutions.com.common.utils.FileUtil
 import player.wellnesssolutions.com.common.utils.MessageUtils
 import player.wellnesssolutions.com.common.utils.StrUtil
@@ -626,11 +623,11 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
     // disconnect TV
     override fun onMediaRouterDisconnected() {
         PreferenceHelper.getInstance()?.getBoolean(ConstantPreference.IS_IN_BACKGROUND, false)?.also { isInBackground ->
-            Log.d("LOG", this.javaClass.simpleName + " onMediaRouterDisconnected() | isInBackground: $isInBackground")
+//            Log.d("LOG", this.javaClass.simpleName + " onMediaRouterDisconnected() | isInBackground: $isInBackground")
             if(isInBackground){
                 isCastDisconnectedInBackground = true
             }else{
-                Log.d("LOG", this.javaClass.simpleName + " onMediaRouterDisconnected() - hide casting views and open new screen")
+//                Log.d("LOG", this.javaClass.simpleName + " onMediaRouterDisconnected() - hide casting views and open new screen")
                 onClearVideos()
                 HandleVideosOnceStopCasting.handlePlayingVideos(activity = activity, handler = handler)
             }

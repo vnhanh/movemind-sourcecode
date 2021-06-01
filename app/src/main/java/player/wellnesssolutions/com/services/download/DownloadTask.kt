@@ -3,7 +3,6 @@ package player.wellnesssolutions.com.services.download
 import android.content.Context
 import android.net.Uri
 import android.os.AsyncTask
-import android.util.Log
 import com.google.android.exoplayer2.upstream.DataSink
 import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.crypto.AesCipherDataSink
@@ -306,16 +305,16 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
             }
         } catch (oom: OutOfMemoryError) {
             oom.printStackTrace()
-            Log.d("LOG", this.javaClass.simpleName + " saveFileExternal() - OOM | error: ${oom.message}")
-            Log.e("LOG", this.javaClass.simpleName + " saveFileExternal() - OOM | error: ${oom.message}")
+//            Log.d("LOG", this.javaClass.simpleName + " saveFileExternal() - OOM | error: ${oom.message}")
+//            Log.e("LOG", this.javaClass.simpleName + " saveFileExternal() - OOM | error: ${oom.message}")
             isEncounteredOOM = true
             mReason = Constant.ERROR_OUT_OF_MEMORY
             return CODE_FAILED
 
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.d("LOG", this.javaClass.simpleName + " saveFileExternal() | error: ${e.message}")
-            Log.e("LOG", this.javaClass.simpleName + " saveFileExternal() | error: ${e.message}")
+//            Log.d("LOG", this.javaClass.simpleName + " saveFileExternal() | error: ${e.message}")
+//            Log.e("LOG", this.javaClass.simpleName + " saveFileExternal() | error: ${e.message}")
             if (!isEncounteredOOM) {
                 mReason =
                         when (isNetworkDisconnected()) {

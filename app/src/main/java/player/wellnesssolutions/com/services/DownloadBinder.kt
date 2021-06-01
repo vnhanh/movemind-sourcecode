@@ -3,7 +3,6 @@ package player.wellnesssolutions.com.services
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Binder
-import android.util.Log
 import android.webkit.MimeTypeMap
 import player.wellnesssolutions.com.base.common.download.DownloadVideoHelper
 import player.wellnesssolutions.com.base.utils.video.VideoDBUtil

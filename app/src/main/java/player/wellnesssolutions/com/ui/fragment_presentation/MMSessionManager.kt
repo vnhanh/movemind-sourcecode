@@ -2,9 +2,6 @@ package player.wellnesssolutions.com.ui.fragment_presentation
 
 import android.app.PendingIntent
 import android.net.Uri
-import android.util.Log
-import androidx.mediarouter.media.MediaItemStatus
-import androidx.mediarouter.media.MediaSessionStatus
 import player.wellnesssolutions.com.common.media_router.models.PlaylistItem
 import player.wellnesssolutions.com.network.datasource.videos.PlayMode
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo
@@ -113,16 +110,10 @@ class MMSessionManager(private val mName: String) : MMPlayer.Callback {
     }
 
     fun pause() {
-        if (DEBUG) {
-            log("pause")
-        }
         mPaused = true
     }
 
     fun resume() {
-        if (DEBUG) {
-            log("resume")
-        }
         mPaused = false
     }
 
@@ -161,10 +152,6 @@ class MMSessionManager(private val mName: String) : MMPlayer.Callback {
     override fun onPlaylistReady() {
         // Notify activity to update Ui
         mCallback?.onStatusChanged()
-    }
-
-    private fun log(message: String) {
-        Log.d("LOG", "$mName: $message")
     }
 
     private fun checkPlayer() {
@@ -225,9 +212,5 @@ class MMSessionManager(private val mName: String) : MMPlayer.Callback {
 
         fun onUpdateVideos(nowPlayVideo: MMVideo, comingUpVideos: ArrayList<MMVideo>)
         fun onClearVideos()
-    }
-
-    companion object {
-        private val DEBUG = true//Log.isLoggable(TAG, Log.DEBUG)
     }
 }

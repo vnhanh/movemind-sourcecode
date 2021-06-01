@@ -1,10 +1,7 @@
 package player.wellnesssolutions.com.network.datasource.now_playing
 
-import android.util.Log
-import com.google.gson.Gson
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import player.wellnesssolutions.com.network.ApiUtil
 import player.wellnesssolutions.com.network.datasource.RequestUtil
 import player.wellnesssolutions.com.network.models.now_playing.MMVideo

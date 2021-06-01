@@ -2,7 +2,6 @@ package player.wellnesssolutions.com.custom_exoplayer
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.Format

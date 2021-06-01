@@ -3,7 +3,6 @@
 package player.wellnesssolutions.com.common.utils
 
 import android.content.Context
-import android.util.Log
 import androidx.annotation.StringRes
 import java.text.SimpleDateFormat
 import java.util.*
@@ -89,7 +88,7 @@ object StrUtil {
             }
         }catch (e: Exception){
             e.printStackTrace()
-            Log.e("ParseTime", "encountered parsing date time string from the input $date")
+//            Log.e("ParseTime", "encountered parsing date time string from the input $date")
             return "###"
         }
 

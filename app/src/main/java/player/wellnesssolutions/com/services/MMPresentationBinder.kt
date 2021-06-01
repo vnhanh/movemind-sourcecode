@@ -8,7 +8,6 @@ import android.content.IntentFilter
 import android.graphics.PixelFormat
 import android.os.Binder
 import android.os.Build
-import android.util.Log
 import android.util.TypedValue
 import android.view.*
 import android.widget.ImageView
@@ -288,7 +287,6 @@ class MMPresentationBinder(var listener: BinderListener) : Binder(), MMPreInterf
     }
 
     fun showNextVideo() {
-        Log.d("LOG", this.javaClass.simpleName + " showNextVideo()")
         mPresenter?.hideClosedCaptionView()
         when (mPresenter?.getAllVideos()?.size ?: 0 > 0) {
             true -> btnComingUpNext.performClick()

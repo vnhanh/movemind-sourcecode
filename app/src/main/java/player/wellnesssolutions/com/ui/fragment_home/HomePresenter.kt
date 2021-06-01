@@ -1,6 +1,5 @@
 package player.wellnesssolutions.com.ui.fragment_home
 
-import android.util.Log
 import com.google.gson.Gson
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil
 import player.wellnesssolutions.com.base.view.BaseFragment
@@ -42,7 +41,7 @@ class HomePresenter : BaseResponseObserver<MMConfigData>(), IHomeContract.Presen
             messagePopUpOnStart = ""
         }
 
-        Log.d("LOG", this.javaClass.simpleName + " onAttach() | messageSnackbarOnResume: $messageSnackbarOnResume")
+//        Log.d("LOG", this.javaClass.simpleName + " onAttach() | messageSnackbarOnResume: $messageSnackbarOnResume")
         if (messageSnackbarOnResume.isNotBlank()) {
             val message = messageSnackbarOnResume
             view.showSnackbar(message)
@@ -54,9 +53,9 @@ class HomePresenter : BaseResponseObserver<MMConfigData>(), IHomeContract.Presen
         val view = mView
         if (view == null) {
             messageSnackbarOnResume = message
-            Log.d("LOG", this.javaClass.simpleName + " setupShowSnackbarOnStartScreen() | view is null | set snackbar message: $messageSnackbarOnResume")
+//            Log.d("LOG", this.javaClass.simpleName + " setupShowSnackbarOnStartScreen() | view is null | set snackbar message: $messageSnackbarOnResume")
         } else {
-            Log.d("LOG", this.javaClass.simpleName + " setupShowSnackbarOnStartScreen() | view is not null | show snackbar message: $messageSnackbarOnResume")
+//            Log.d("LOG", this.javaClass.simpleName + " setupShowSnackbarOnStartScreen() | view is not null | show snackbar message: $messageSnackbarOnResume")
             view.showSnackbar(message)
             messageSnackbarOnResume = ""
         }

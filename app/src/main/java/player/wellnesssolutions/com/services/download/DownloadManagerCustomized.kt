@@ -2,7 +2,6 @@ package player.wellnesssolutions.com.services.download
 
 import android.content.Context
 import android.os.AsyncTask
-import android.util.Log
 import android.webkit.MimeTypeMap
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import io.reactivex.Observable

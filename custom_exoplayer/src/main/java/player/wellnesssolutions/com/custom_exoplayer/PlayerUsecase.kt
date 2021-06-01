@@ -1,10 +1,7 @@
 package player.wellnesssolutions.com.custom_exoplayer
 
 import android.content.Context
-import android.media.MediaCodecInfo
-import android.media.MediaCodecList
 import android.net.Uri
-import android.util.Log
 import android.webkit.MimeTypeMap
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory

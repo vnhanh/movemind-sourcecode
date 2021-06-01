@@ -3,7 +3,6 @@ package player.wellnesssolutions.com.ui.activity_main
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 
 /**
  * This BroadcastReceiver helps to transfer the data and actions between the Casting TV Service and the UI

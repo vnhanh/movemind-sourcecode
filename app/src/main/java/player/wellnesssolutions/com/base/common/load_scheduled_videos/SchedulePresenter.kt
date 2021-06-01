@@ -2,7 +2,6 @@ package player.wellnesssolutions.com.base.common.load_scheduled_videos
 
 import android.content.Context
 import android.os.Handler
-import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.utils.check_header_api_util.CheckHeaderApiUtil

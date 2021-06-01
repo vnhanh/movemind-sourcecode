@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.IBinder
-import android.util.Log
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import player.wellnesssolutions.com.base.common.download.DownloadVideoHelper
@@ -94,7 +93,7 @@ class DownloadService : Service(), IProgressListener, DownloadBinder.BinderDownl
 
     override fun onCreate() {
         super.onCreate()
-        Log.e("onCreate", "Download start......")
+//        Log.e("onCreate", "Download start......")
         try {
             registerReceive()
             DownloadManagerCustomized.getInstance(this).addListener(DownloadDBManager.getInstance())
@@ -106,7 +105,7 @@ class DownloadService : Service(), IProgressListener, DownloadBinder.BinderDownl
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.e("onDestroy", "Destroy download....")
+//        Log.e("onDestroy", "Destroy download....")
         try {
             unregisterReceiver(mBroadcast)
             mBinder.cancelNotifyWhenServiceKilled(this)

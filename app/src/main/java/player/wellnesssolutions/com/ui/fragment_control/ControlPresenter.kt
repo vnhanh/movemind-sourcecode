@@ -1,7 +1,6 @@
 package player.wellnesssolutions.com.ui.fragment_control
 
 import android.content.Context
-import android.util.Log
 import com.google.gson.Gson
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
