@@ -889,6 +889,7 @@ class MainActivity : AppCompatActivity(), NetworkReceiver.IStateListener, Castin
                     MessageUtils.showToast(this, R.string.no_permissions_needed_for_download, R.color.yellow)?.show()
                 }
             }
+            else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
     }
 

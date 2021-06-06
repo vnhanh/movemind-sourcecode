@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -219,6 +220,7 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View, IRouterChanged 
     }
 
     private fun getAllVideosForDownload(context: Context) {
+        Log.d("LOG", "HomeFragment - getAllVideosForDownload()")
         val tokenAu: String = PreferenceHelper.getInstance(context).getString(ConstantPreference.TOKEN, "")
         val deviceId = PreferenceHelper.getInstance(context).getString(ConstantPreference.DEVICE_ID, "")
         if (deviceId.isNotEmpty() && tokenAu.isNotEmpty()) {
@@ -230,7 +232,7 @@ class HomeFragment : BaseScheduleFragment(), IHomeContract.View, IRouterChanged 
 
                         override fun onResponseSuccess(data: ResponseValue<ArrayList<MMVideo>>?) {
                             super.onResponseSuccess(data)
-//                            Log.d("LOG", "HomeFragment - getAllVideosForDownload() | response success: ${data?.data?.size?:0}")
+                            Log.d("LOG", "HomeFragment - getAllVideosForDownload() | response success: ${data?.data?.size?:0}")
                             VideoDBUtil.saveDVideosToDB(data = data?.data?: arrayListOf<MMVideo>(), tag = Constant.TAG_VIDEO_DOWNLOAD)
                             if (data == null || data.data.size == 0) return
                             PreferenceHelper.getInstance(context).putBoolean(ConstantPreference.IS_STARTED_DOWNLOADING, true)

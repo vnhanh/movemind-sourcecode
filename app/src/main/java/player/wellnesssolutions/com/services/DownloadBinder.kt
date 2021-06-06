@@ -3,6 +3,7 @@ package player.wellnesssolutions.com.services
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Binder
+import android.util.Log
 import android.webkit.MimeTypeMap
 import player.wellnesssolutions.com.base.common.download.DownloadVideoHelper
 import player.wellnesssolutions.com.base.utils.video.VideoDBUtil
@@ -29,52 +30,46 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
     private var mService: DownloadService = listener.onGetService()
 
     fun getListDoesNotDownloaded(context: Context, isCalledComeFromUI: Boolean) {
-//        Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | current thread: ${Thread.currentThread()} | name: ${Thread.currentThread().name}")
+        Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | current thread: ${Thread.currentThread()} | name: ${Thread.currentThread().name}")
         mListDownload = VideoDBUtil.readDVideosFromDB(tag = Constant.TAG_VIDEO_DOWNLOAD)
         mListDownloadFailure = VideoDBUtil.readDVideosFailureFromDB(tag = Constant.TAG_VIDEO_DOWNLOAD)
-//        Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | downloaded video number: ${mListDownload.size} | list download failed size: ${mListDownloadFailure.size}")
+        Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | downloaded video number: ${mListDownload.size} | list download failed size: ${mListDownloadFailure.size}")
         if (mListDownload.isEmpty()) {
             if (mListDownloadFailure.isEmpty()) {
-//                Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | downloaded list is empty | failed downloaded list is also empty")
+                Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | downloaded list is empty | failed downloaded list is also empty")
                 PreferenceHelper.getInstance()?.putBoolean(ConstantPreference.IS_DOWNLOAD_COMPLETELY, true)
                 mService.onDownloadEnd()
-                return
             } else {
                 if (isCalledComeFromUI) {
+                    Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | queue tasks type 1")
                     for (v: MMVideo in mListDownloadFailure) {
-                        if (v.id == null || v.downloadUrl.isNullOrEmpty()) {
-                            return
-                        }
-//                        Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | mListDownloadFailure is not empty: ${mListDownloadFailure.size}")
-
-                        DownloadManagerCustomized.getInstance(context).queueTask(
+                        if (v.id != null && !v.downloadUrl.isNullOrEmpty()) {
+                            DownloadManagerCustomized.getInstance(context).queueTask(
                                 videoId = v.id!!.toInt(),
                                 url = v.downloadUrl,
                                 name = v.videoName,
                                 folder = Constant.FOLDER_DOWNLOADED_VIDEOS,
                                 hasPermission = true)
+                        }
 
                     }
                 }
-                return
             }
-        }
+        } else {
+            Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | queue tasks type 2")
+            for (v: MMVideo in mListDownload) {
+                if (v.id != null && !v.downloadUrl.isNullOrBlank()) {
+                    DownloadManagerCustomized.getInstance(context).queueTask(
+                        videoId = v.id!!.toInt(),
+                        url = v.downloadUrl,
+                        name = v.videoName,
+                        folder = Constant.FOLDER_DOWNLOADED_VIDEOS,
+                        hasPermission = true)
+                }
 
-//        Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | listDownloadNow size: ${mListDownload.size}")
-        for (v: MMVideo in mListDownload) {
-            if (v.id == null || v.downloadUrl.isNullOrEmpty()) {
-                return
             }
-            DownloadManagerCustomized.getInstance(context).queueTask(
-                    videoId = v.id!!.toInt(),
-                    url = v.downloadUrl,
-                    name = v.videoName,
-                    folder = Constant.FOLDER_DOWNLOADED_VIDEOS,
-                    hasPermission = true)
-
+            DownloadVideoHelper.sendDownloadStatusToServer(context, Constant.DOWNLOAD_DOWNLOADING)
         }
-        DownloadVideoHelper.sendDownloadStatusToServer(context, Constant.DOWNLOAD_DOWNLOADING)
-        //mService.onDownloadStart()
     }
 
     fun removeVideoWithId(data: IntArray) {
@@ -159,7 +154,6 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
         getAllVideosForDownloadWithId(mService.applicationContext, data)
     }
 
-
     private fun getAllVideosForDownloadWithId(context: Context, dataInt: IntArray) {
         val tokenAu: String = PreferenceHelper.getInstance(context).getString(ConstantPreference.TOKEN, "")
         val deviceId = PreferenceHelper.getInstance(context).getString(ConstantPreference.DEVICE_ID, "")
@@ -201,7 +195,7 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
 //        Log.d("LOG", this.javaClass.simpleName + " downloadWhenChangeSubs() | current thread: ${Thread.currentThread()}")
         DownloadManagerCustomized.getInstance(context).cancelDownloadService()
         DownloadManagerCustomized.getInstance(context).stopNotify()
-        DownloadManagerCustomized.getInstance(context).clearQueue()
+        DownloadManagerCustomized.getInstance(context).clearDownloadingData()
         val nMgr = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
         nMgr!!.cancelAll()
         getListDoesNotDownloaded(mService.applicationContext, false)
@@ -243,8 +237,6 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
     fun cancelDownloadByScanBarcode(context: Context) {
         DownloadManagerCustomized.getInstance(context).cancelDownloadService()
         DownloadManagerCustomized.getInstance(context).stopNotify()
-        DownloadManagerCustomized.getInstance(context).clearQueue()
+        DownloadManagerCustomized.getInstance(context).clearDownloadingData()
     }
-
-
 }

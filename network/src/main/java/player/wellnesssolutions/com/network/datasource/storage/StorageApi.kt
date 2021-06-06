@@ -16,7 +16,7 @@ class StorageApi {
 
 //        Log.d("LOG", this.javaClass.simpleName + " sendStorageStatusToServer() | tokenHeader: $tokenHeader")
         return mService.sendStorageStatus(contentType = RequestUtil.APP_JSON, acceptData = RequestUtil.APP_JSON, authoTokenHeader = tokenHeader, deviceId = deviceId, params = params)
-                .observeOn(Schedulers.io())
+                .observeOn(Schedulers.single())
 
     }
 }
