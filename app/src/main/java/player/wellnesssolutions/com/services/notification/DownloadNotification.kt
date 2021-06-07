@@ -5,7 +5,6 @@ import android.app.NotificationManager
 import android.content.Context
 import android.graphics.Color
 import android.os.Build
-import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -22,10 +21,13 @@ class DownloadNotification(private var context: Context?) : DownloadTask.Callbac
     private var mLayout: RemoteViews? = null
     private val NOTI_ID = 10
     private var mBuilder: NotificationCompat.Builder? = null
-    private var isBuildingView = false
 
     init {
         createNotificationChannel()
+    }
+
+    override fun onDownloadStarted(id: Int?, name: String?) {
+        create(0, name)
     }
 
     override fun onInsufficientSpace(videoId: Int?, name: String?, availableSpace: Long, fileSize: Long) {
@@ -33,24 +35,19 @@ class DownloadNotification(private var context: Context?) : DownloadTask.Callbac
     }
 
     override fun onDownloadUpdate(id: Int?, name: String?, progress: Int) {
+        //create(progress, name)
         try {
-            val layout = mLayout
-            if(layout == null){
-                create(progress, name)
-            } else {
+            mLayout?.let {
                 context?.also { context ->
-                    layout.setTextViewText(R.id.tvProgress, context.getString(R.string.progress, progress))
-                    if (mBuilder == null){
-                        create(progress, name)
-                    } else {
-                        mNotiManager?.notify(NOTI_ID, mBuilder!!.build())
-                    }
+                    it.setTextViewText(R.id.tvProgress, context.getString(R.string.progress, progress))
+                    if (mBuilder == null) return
+                    mNotiManager?.notify(NOTI_ID, mBuilder!!.build())
                 }
             }
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        Log.d("LOG", "onDownloadUpdate() " + progress.toString())
+        //Log.e("onDownloadUpdate", "onDownloadUpdate" + progress.toString())
     }
 
     override fun onDownloadFailed(id: Int?, name: String?, reason: String, url: String?) {
@@ -64,8 +61,6 @@ class DownloadNotification(private var context: Context?) : DownloadTask.Callbac
 
     private fun cancelNoti() {
         mNotiManager?.cancel(NOTI_ID)
-        mLayout = null
-        mBuilder = null
     }
 
 
@@ -94,8 +89,6 @@ class DownloadNotification(private var context: Context?) : DownloadTask.Callbac
     }
 
     fun create(progress: Int, name: String?) {
-        if(isBuildingView) return
-        isBuildingView = true
         context?.also { context ->
             if (mLayout == null) {
                 mLayout = RemoteViews(context.packageName, R.layout.noti_download)
@@ -109,15 +102,15 @@ class DownloadNotification(private var context: Context?) : DownloadTask.Callbac
             if (mNotiManager == null) mNotiManager = NotificationManagerCompat.from(context)
 
             mBuilder = NotificationCompat.Builder(context, CHANNEL_ID)
-                    .setPriority(NotificationCompat.PRIORITY_LOW)
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .setContentTitle(name ?: "The downloaded file")
-                    .setContentText(context.getString(R.string.progress, progress))
-                    .setCustomContentView(mLayout)
-                    .setSound(null)
-                    .setVibrate(null)
-                    .setAutoCancel(false)
-                    .setOngoing(true)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(name ?: "The downloaded file")
+                .setContentText(context.getString(R.string.progress, progress))
+                .setCustomContentView(mLayout)
+                .setSound(null)
+                .setVibrate(null)
+                .setAutoCancel(false)
+                .setOngoing(true)
 
             try {
 
@@ -126,14 +119,14 @@ class DownloadNotification(private var context: Context?) : DownloadTask.Callbac
             } catch (e: Exception) {
                 e.printStackTrace()
                 mBuilder = NotificationCompat.Builder(context, CHANNEL_ID)
-                        .setPriority(NotificationCompat.PRIORITY_LOW)
-                        .setContentTitle(name ?: "The downloaded file")
-                        .setContentText(context.getString(R.string.progress, progress))
-                        .setCustomContentView(mLayout)
-                        .setSound(null)
-                        .setVibrate(null)
-                        .setAutoCancel(false)
-                        .setOngoing(true)
+                    .setPriority(NotificationCompat.PRIORITY_LOW)
+                    .setContentTitle(name ?: "The downloaded file")
+                    .setContentText(context.getString(R.string.progress, progress))
+                    .setCustomContentView(mLayout)
+                    .setSound(null)
+                    .setVibrate(null)
+                    .setAutoCancel(false)
+                    .setOngoing(true)
                 try {
                     if (mBuilder == null) return
                     mNotiManager?.notify(NOTI_ID, mBuilder!!.build())
@@ -142,7 +135,6 @@ class DownloadNotification(private var context: Context?) : DownloadTask.Callbac
                 }
             }
         }
-        isBuildingView = false
     }
 
     fun stop() {

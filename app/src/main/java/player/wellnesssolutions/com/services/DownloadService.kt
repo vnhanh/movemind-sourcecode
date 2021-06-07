@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.IBinder
 import io.reactivex.Observable
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import player.wellnesssolutions.com.base.common.download.DownloadVideoHelper
 import player.wellnesssolutions.com.common.constant.Constant
@@ -30,7 +29,6 @@ class DownloadService : Service(), IProgressListener, DownloadBinder.BinderDownl
 
 
     private val mBinder: DownloadBinder = DownloadBinder(this)
-    private val disposable = CompositeDisposable()
 
     private val mBroadcast: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -58,10 +56,10 @@ class DownloadService : Service(), IProgressListener, DownloadBinder.BinderDownl
         val data = intent.getIntArrayExtra(DATA_VIDEOS)
         mBinder.updateDataDVideos(data)
         DownloadVideoHelper.senStorageStatusToServer(this,
-                FileUtil.getAvailableInternalMemorySize(),
-                FileUtil.getTotalInternalMemorySize(),
-                FileUtil.getAvailableExternalMemorySize(this),
-                FileUtil.getTotalExternalMemorySize(this))
+            FileUtil.getAvailableInternalMemorySize(),
+            FileUtil.getTotalInternalMemorySize(),
+            FileUtil.getAvailableExternalMemorySize(this),
+            FileUtil.getTotalExternalMemorySize(this))
     }
 
     @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
@@ -69,10 +67,10 @@ class DownloadService : Service(), IProgressListener, DownloadBinder.BinderDownl
         val data = intent.getIntArrayExtra(DATA_VIDEOS)
         mBinder.removeVideoWithId(data)
         DownloadVideoHelper.senStorageStatusToServer(this,
-                FileUtil.getAvailableInternalMemorySize(),
-                FileUtil.getTotalInternalMemorySize(),
-                FileUtil.getAvailableExternalMemorySize(this),
-                FileUtil.getTotalExternalMemorySize(this))
+            FileUtil.getAvailableInternalMemorySize(),
+            FileUtil.getTotalInternalMemorySize(),
+            FileUtil.getAvailableExternalMemorySize(this),
+            FileUtil.getTotalExternalMemorySize(this))
 
     }
 
@@ -81,10 +79,10 @@ class DownloadService : Service(), IProgressListener, DownloadBinder.BinderDownl
         clearAllDataDownload()
         mBinder.getAllVideosForDownloadChangeSubs(this)
         DownloadVideoHelper.senStorageStatusToServer(this,
-                FileUtil.getAvailableInternalMemorySize(),
-                FileUtil.getTotalInternalMemorySize(),
-                FileUtil.getAvailableExternalMemorySize(this),
-                FileUtil.getTotalExternalMemorySize(this))
+            FileUtil.getAvailableInternalMemorySize(),
+            FileUtil.getTotalInternalMemorySize(),
+            FileUtil.getAvailableExternalMemorySize(this),
+            FileUtil.getTotalExternalMemorySize(this))
     }
 
     private fun clearAllDataDownload() {
@@ -106,15 +104,14 @@ class DownloadService : Service(), IProgressListener, DownloadBinder.BinderDownl
     }
 
     override fun onDestroy() {
-        disposable.dispose()
+        super.onDestroy()
+//        Log.e("onDestroy", "Destroy download....")
         try {
             unregisterReceiver(mBroadcast)
             mBinder.cancelNotifyWhenServiceKilled(this)
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        super.onDestroy()
-//        Log.e("onDestroy", "Destroy download....")
     }
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -142,13 +139,11 @@ class DownloadService : Service(), IProgressListener, DownloadBinder.BinderDownl
     private fun startDownload() {
 //        Log.d("LOG", this.javaClass.simpleName + " startDownload()")
         if(!PreferenceHelper.getInstance(this).getBoolean(ConstantPreference.IS_DOWNLOAD_COMPLETELY, false)){
-            val d =
-                Observable.fromCallable { }.subscribeOn(Schedulers.single())
-                    .observeOn(Schedulers.trampoline())
-                    .subscribe {
-                        mBinder.getListDoesNotDownloaded(this, true)
-                    }
-            disposable.add(d)
+            Observable.fromCallable { }.subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.trampoline())
+                .subscribe {
+                    mBinder.getListDoesNotDownloaded(this, true)
+                }
         }
     }
 
