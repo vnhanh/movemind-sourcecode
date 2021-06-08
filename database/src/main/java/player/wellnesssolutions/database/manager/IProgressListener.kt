@@ -2,7 +2,7 @@ package player.wellnesssolutions.database.manager
 
 interface IProgressListener {
 
-    fun onDownloadStarted(videoId: Int)
+    fun onDownloadStarted(videoId: Int) {}
 
     fun onDownloadCompleted(videoId: Int, fileName: String?, isSuccess: Boolean, message: String)
 
