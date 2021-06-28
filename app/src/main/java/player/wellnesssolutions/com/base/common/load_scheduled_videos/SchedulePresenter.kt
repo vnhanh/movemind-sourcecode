@@ -226,18 +226,6 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
             setupNextScheduleOnCaseCasting()
         } else {
             if (scheduleVideos.size > 0) {
-//                val view = mView
-//                when {
-//                    view == null -> {
-                        // TODO: will have to perform the case view is null setup for now schedule
-//                        if (isPerformingNextScheduleVideo) isPerformNextScheduleOnAttachView = true
-
-//                    }
-//
-//                    else -> {
-//
-//                    }
-//                }
 
                 mView?.also { view ->
                     view.hideLoadingProgress()
@@ -273,10 +261,7 @@ class SchedulePresenter(private var context: Context?) : BaseResponseObserver<Ar
     override fun onDontHaveNowPlayingVideo(isClickedButtonHome: Boolean?) {
 //        Log.d("LOG", this.javaClass.simpleName + " onDontHaveNowPlayingVideo() | isClickedButtonHome: $isClickedButtonHome |0" +
 //                " videos number: ${scheduleVideos.size}")
-//        val activity: MainActivity? = mView?.getFragment()?.activity as? MainActivity
-//        if (activity?.isPresentationAvailable() == true) {
-//            activity.playVideo(PlayMode.SCHEDULE, scheduleVideos)
-//        }
+
         navigateToNoClass()
     }
 

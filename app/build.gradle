@@ -13,7 +13,7 @@ android {
         applicationId "player.wellnesssolutions.com.au"
         minSdkVersion min_sdk_version
         targetSdkVersion target_sdk_version
-        versionCode 19
+        versionCode 20
         versionName "2.7"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true

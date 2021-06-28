@@ -16,26 +16,28 @@ class NetworkReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         isConnected = checkConnectState(context)
-
+//        Log.d("LOG", "onReceive() | isConnected: $isConnected")
         if(isFirst && isConnected) {
             isFirst = false
             return
         }
-        isFirst = false
-
         for (listener : IStateListener in listeners) {
             listener.onChangedState(isConnected)
         }
     }
 
     @Suppress("DEPRECATION")
-    fun checkConnectState(context:Context) : Boolean{
+    fun checkConnectState(context:Context?) : Boolean{
+//        Log.d("LOG", this.javaClass.simpleName + " checkConnectState() | sdk version: ${Build.VERSION.SDK_INT}")
+        if(context == null) return false
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val nw      = connectivityManager.activeNetwork ?: return false
             val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return false
             return when {
-                actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> {
+                    true
+                }
                 actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
                 //for other device how are able to connect with Ethernet
                 actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
@@ -52,6 +54,7 @@ class NetworkReceiver : BroadcastReceiver() {
     fun isNetworkConnected() :Boolean = isConnected
 
     fun addListener(listener: IStateListener) {
+        if(listeners.contains(listener)) return
         listeners.add(listener)
     }
 

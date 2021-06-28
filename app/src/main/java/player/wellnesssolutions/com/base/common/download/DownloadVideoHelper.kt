@@ -1,7 +1,6 @@
 package player.wellnesssolutions.com.base.common.download
 
 import android.content.Context
-import android.util.Log
 import player.wellnesssolutions.com.R
 import player.wellnesssolutions.com.base.view.BaseResponseObserver
 import player.wellnesssolutions.com.common.constant.Constant
@@ -57,7 +56,7 @@ object DownloadVideoHelper {
                     })
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.e("DOWNLOAD", "catched error uploading downloaded video status to server: ${e.message}")
+//            Log.e("DOWNLOAD", "catched error uploading downloaded video status to server: ${e.message}")
         }
     }
 
@@ -77,7 +76,7 @@ object DownloadVideoHelper {
                     })
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.e("DOWNLOAD", "catched error uploading storage status to server: ${e.message}")
+//            Log.e("DOWNLOAD", "catched error uploading storage status to server: ${e.message}")
         }
     }
 

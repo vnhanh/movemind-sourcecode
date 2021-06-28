@@ -29,7 +29,7 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
     private var mService: DownloadService = listener.onGetService()
 
     fun getListDoesNotDownloaded(context: Context, isCalledComeFromUI: Boolean) {
-//        Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | current thread: ${Thread.currentThread()} | name: ${Thread.currentThread().name}")
+//        Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | current thread: ${Thread.currentThread()}")
         mListDownload = VideoDBUtil.readDVideosFromDB(tag = Constant.TAG_VIDEO_DOWNLOAD)
         mListDownloadFailure = VideoDBUtil.readDVideosFailureFromDB(tag = Constant.TAG_VIDEO_DOWNLOAD)
 //        Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | downloaded video number: ${mListDownload.size} | list download failed size: ${mListDownloadFailure.size}")
@@ -62,19 +62,18 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
 
 //        Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | listDownloadNow size: ${mListDownload.size}")
         for (v: MMVideo in mListDownload) {
-            if (v.id == null || v.downloadUrl.isNullOrEmpty()) {
-                return
-            }
-            DownloadManagerCustomized.getInstance(context).queueTask(
-                    videoId = v.id!!.toInt(),
+            val videoId = v.id
+            if (videoId != null && !v.downloadUrl.isNullOrBlank()) {
+                DownloadManagerCustomized.getInstance(context).queueTask(
+                    videoId = videoId,
                     url = v.downloadUrl,
                     name = v.videoName,
                     folder = Constant.FOLDER_DOWNLOADED_VIDEOS,
                     hasPermission = true)
+            }
 
         }
         DownloadVideoHelper.sendDownloadStatusToServer(context, Constant.DOWNLOAD_DOWNLOADING)
-        //mService.onDownloadStart()
     }
 
     fun removeVideoWithId(data: IntArray) {
@@ -245,6 +244,4 @@ class DownloadBinder(var listener: BinderDownloadListener) : Binder() {
         DownloadManagerCustomized.getInstance(context).stopNotify()
         DownloadManagerCustomized.getInstance(context).clearQueue()
     }
-
-
 }

@@ -1,6 +1,5 @@
 package player.wellnesssolutions.com.base.utils
 
-import android.util.Log
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -28,7 +27,7 @@ fun String.convertToStrDateFormat12hrs(): String {
         }
     } catch (e: Exception) {
         e.printStackTrace()
-        Log.e("ParseTime", "encountered parsing date time string from the input $this")
+//        Log.e("ParseTime", "encountered parsing date time string from the input $this")
         return "###"
     }
 }

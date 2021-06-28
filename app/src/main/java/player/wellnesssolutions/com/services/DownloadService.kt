@@ -121,8 +121,8 @@ class DownloadService : Service(), IProgressListener, DownloadBinder.BinderDownl
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
+//        Log.d("LOG", this.javaClass.simpleName + " onTaskRemoved()")
         DownloadManagerCustomized.getInstance(this).release()
-        //stopSelf()
     }
 
     override fun onGetService(): DownloadService {
