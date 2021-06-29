@@ -5,7 +5,7 @@ buildscript {
         kotlin_version = '1.5.10'
         compile_sdk_version = 29
         min_sdk_version = 21
-        target_sdk_version = 30
+        target_sdk_version = 29
         build_tools_version = '28.0.3'
         dynamicanimation_version = '1.0.0'
 
