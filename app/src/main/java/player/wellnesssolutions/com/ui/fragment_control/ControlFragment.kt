@@ -133,15 +133,14 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
      * Implement Schedule
      */
     // process in case no class videos (no schedule) after loading schedule
-    override fun onNoClassVideosForNow(scheduleVideos: ArrayList<MMVideo>, message: String, @ColorRes msgColor: Int, isLoadScheduleManually: Boolean) {
+    override fun onNoClassVideosForNow(videos: ArrayList<MMVideo>, message: String, @ColorRes msgColor: Int, isLoadScheduleManually: Boolean) {
 //        Log.d("LOG", this.javaClass.simpleName + " onNoClassVideoForNow() | message: $message | schedule videos number: ${scheduleVideos.size}")
         btnLogoBottom?.isEnabled = true
 
-        val isCasted = playVideoPresentationable(scheduleVideos)
+        val isCasted = playVideoPresentationable(videos)
 
-        when {
-            !isCasted -> {
-
+        when(isCasted) {
+            false -> {
                 activity?.let {
                     if (it is MainActivity) {
                         it.getApiConfigData()
@@ -151,19 +150,14 @@ class ControlFragment : BaseScheduleFragment(), IControlContract.View, ISchedule
                 backHomeScreenNotLoadSchedule()
             }
 
-            else -> {
-                activity?.also { act ->
-                    if (act is MainActivity && act.isPresentationAvailable() && ParameterUtils.isClearVideoOnPresentation) {
-                        act.clearPresentationVideos()
-                    } else {
+            true -> {
+//                activity?.also { act ->
+//                    if (videos.size > 0 && act is MainActivity && act.isPresentationAvailable() && ParameterUtils.isClearVideoOnPresentation) {
+//                        act.clearPresentationVideos()
+//                    } else {
                         ParameterUtils.isClearVideoOnPresentation = true
-                    }
-                }
-
-                val messageLowerCase = message.lowercase()
-                if (messageLowerCase.contains("request failed")) {
-                    MessageUtils.showSnackBar(btnLogoBottom, message, R.color.yellow)
-                }
+//                    }
+//                }
 
                 backHomeScreenNotLoadSchedule()
             }

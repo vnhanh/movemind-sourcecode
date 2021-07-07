@@ -21,8 +21,8 @@ class MoveMindApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        FirebaseCrashlytics.getInstance().setUserId("12345")
 //        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(false)
+        FirebaseCrashlytics.getInstance().setUserId("888888")
         setupDB()
         setupDefaultFont()
     }

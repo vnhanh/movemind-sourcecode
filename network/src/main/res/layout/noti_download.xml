@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
+    android:gravity="center_vertical"
     android:paddingStart="6dp"
     android:paddingTop="8dp"
     android:paddingEnd="6dp"
@@ -12,6 +13,7 @@
         android:layout_width="28dp"
         android:layout_height="28dp"
         android:layout_marginStart="10dp"
+        android:contentDescription="@string/download_failed_format"
         android:src="@mipmap/ic_launcher" />
 
     <LinearLayout

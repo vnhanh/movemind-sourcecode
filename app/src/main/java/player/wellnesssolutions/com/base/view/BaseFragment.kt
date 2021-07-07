@@ -89,7 +89,10 @@ abstract class BaseFragment : Fragment(), ILifeCycle.View {
         activity?.also { activity ->
             if (activity is MainActivity && activity.isPresentationAvailable() == true) {
 //                Log.d("LOG", this.javaClass.simpleName + " playVideoPresentationable() | casting...")
-                activity.playVideo(PlayMode.SCHEDULE, scheduleVideos)
+                // cast new list videos even new list is empty if the app is not casting searched video
+                if(scheduleVideos.size > 0 || activity.getPresentationPlayMode() == PlayMode.SCHEDULE){
+                    activity.playVideo(PlayMode.SCHEDULE, scheduleVideos)
+                }
                 return true
             }
         }

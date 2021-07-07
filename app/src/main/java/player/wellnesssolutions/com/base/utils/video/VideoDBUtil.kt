@@ -1,5 +1,6 @@
 package player.wellnesssolutions.com.base.utils.video
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import io.realm.Realm
 import io.realm.RealmList
 import player.wellnesssolutions.com.base.utils.video.mapper.DVideosToRealmObjectsMapper
@@ -218,14 +219,22 @@ object VideoDBUtil {
         try {
             realm.beginTransaction()
             sizeDownloaded = realm.where(RealmDVideo::class.java)
-                    .equalTo("tag", tag)
-                    .equalTo("isDownloaded", true).findAll().size
+                .equalTo("tag", tag)
+                .equalTo("isDownloaded", true).findAll().size
             size = realm.where(RealmDVideo::class.java)
-                    .equalTo("tag", tag)
-                    .equalTo("isDownloaded", false).findAll().size
+                .equalTo("tag", tag)
+                .equalTo("isDownloaded", false).findAll().size
             realm.commitTransaction()
+        } catch (e: IllegalStateException){
+            e.printStackTrace()
+//            Log.d("LOG", this.javaClass.simpleName + " countRecordInTable() | illeagle state error: ${e.message}")
+            FirebaseCrashlytics.getInstance().recordException(e)
+            FirebaseCrashlytics.getInstance().log("Realm-download info illegal state exception")
         } catch (e: Exception) {
             e.printStackTrace()
+//            Log.d("LOG", this.javaClass.simpleName + " countRecordInTable() | error: ${e.message}")
+            FirebaseCrashlytics.getInstance().recordException(e)
+            FirebaseCrashlytics.getInstance().log("Database - count download info error")
         } finally {
             realm.close()
         }

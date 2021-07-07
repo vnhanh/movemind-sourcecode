@@ -5,8 +5,7 @@ import android.os.AsyncTask
 import android.webkit.MimeTypeMap
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import io.reactivex.Observable
-import io.reactivex.Observer
-import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import player.wellnesssolutions.com.base.common.download.DownloadVideoHelper
 import player.wellnesssolutions.com.base.utils.ParameterUtils
@@ -19,7 +18,6 @@ import player.wellnesssolutions.com.network.network_connect.NetworkReceiver
 import player.wellnesssolutions.com.services.notification.DownloadNotification
 import player.wellnesssolutions.database.manager.IProgressListener
 import java.io.File
-import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -47,15 +45,17 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
     private var mCookieValue = PreferenceHelper.getInstance()?.getString(ConstantPreference.SP_COOKIE, "").orEmpty()
     private var mDownloadTask: DownloadTask? = null
 
-    private val mQueue = ArrayList<DownloadData>()
-    private val mQueueMap: HashMap<Int, Boolean> = HashMap()
+    //    private val mQueue = ArrayList<DownloadData>()
+    private var downloadingData: DownloadData? = null
 
     private val mListeners: ArrayList<IProgressListener> = ArrayList()
 
-    private var mIsDownloading = false
+    //    private var mIsDownloading = false
     private var mapNotifiedNotEnoughSpace = ArrayList<IProgressListener>()
 
     private val mNotiManager = DownloadNotification(context?.applicationContext)
+    private val disposable = CompositeDisposable()
+    private var isConnecting: Boolean = NetworkReceiver.getInstance().isNetworkConnected()
 
     init {
         NetworkReceiver.getInstance().addListener(this)
@@ -63,12 +63,15 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
 
     fun cancelDownloadService() {
         mDownloadTask?.cancel(true)
-        mIsDownloading = false
+        mDownloadTask?.release()
+        downloadingData = null
     }
 
     override fun onChangedState(isConnected: Boolean) {
+        if(isConnecting == isConnected) return
+        isConnecting = isConnected
 //        Log.d("LOG", this.javaClass.simpleName + " onChangedState() | isConnected: ${isConnected}")
-        when (isConnected && ParameterUtils.isGoToMainActivity) {
+        when (isConnected) {
             true -> {
                 reDownloadAfterReconnect()
             }
@@ -76,16 +79,30 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
             false -> {
 //                Log.d("LOG", this.javaClass.simpleName + " onChangedState() | set data")
                 ParameterUtils.isGoToMainActivity = true
+                handleOnDisconnectNetwork()
             }
         }
     }
 
     private fun reDownloadAfterReconnect() {
-        if (mQueue.size > 0 && !mIsDownloading) {
-            startDownload()
-        } else {
-            addTaskFromQueueInit()
+//        Log.d("LOG", this.javaClass.simpleName + " onChangedState() | is downloading: ${downloadingData != null}")
+        clearDownloadTask()
+        addTaskFromQueueInit()
+    }
+
+    private fun handleOnDisconnectNetwork() {
+//        Log.d("LOG", this.javaClass.simpleName + " handleOnDisconnectNetwork()")
+    }
+
+    private fun clearDownloadTask() {
+//        Log.d("LOG", this.javaClass.simpleName + " clearDownloadTask()")
+        mDownloadTask?.also { task ->
+            if(task.status != AsyncTask.Status.FINISHED){
+                task.cancel(true)
+                task.release()
+            }
         }
+        resetDataNotDeleteFile()
     }
 
     override fun onDownloadStarted(id: Int?, name: String?) {
@@ -101,24 +118,26 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
     }
 
     override fun onInsufficientSpace(videoId: Int?, name: String?, availableSpace: Long, fileSize: Long) {
+//        Log.d("LOG", this.javaClass.simpleName + " onDownloadFailed()")
         mDownloadTask?.release()
         for (listener: IProgressListener in mListeners) {
             listener.onDoesNotEnoughMemory()
         }
+        release()
     }
 
     override fun onDownloadFailed(id: Int?, name: String?, reason: String, url: String?) {
-//        Log.d("LOG", this.javaClass.simpleName + " onDownloadFailed() | fileName: ${name} | reason: $reason")
-        if (id == null) return
-        mDownloadTask?.release()
-        when (reason) {
-            DownloadTask.ERR_NETWORK_DISCONNECTED -> {
-                mIsDownloading = false
+//        Log.d("LOG", this.javaClass.simpleName + " onDownloadFailed() | fileName: ${name} | reason: $reason | isConnecting: $isConnecting")
+        when {
+            !NetworkReceiver.getInstance().checkConnectState(context) || reason == DownloadTask.ERR_NETWORK_DISCONNECTED -> {
+//                Log.d("LOG", this.javaClass.simpleName + " onDownloadFailed() | recoveryDownload()")
+                recoveryDownload()
             }
 
             else -> {
-                getDownloadDataByVideoId(id)?.also { data ->
-                    resetData()
+                mDownloadTask?.cancel(true)
+                mDownloadTask?.release()
+                downloadingData?.also { data ->
                     for (listener: IProgressListener in mListeners) {
                         listener.updateVideoIdWhenDownloadFailed(videoId = data.videoId)
                         listener.deleteVideoIdWhenDownloadFailed(
@@ -130,13 +149,12 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
                         DownloadVideoHelper.sendDownloadStatusToServer(it, Constant.DOWNLOAD_FAILIED)
                     }
                 }
+                recoveryDownload()
 
                 for (listener: IProgressListener in mListeners) {
 //                    Log.d("LOG", this.javaClass.simpleName + " onDownloadFailed() | listener: $listener")
                     listener.onDownloaded()
                 }
-
-                mIsDownloading = false
 
                 addTaskFromQueueInit()
             }
@@ -144,40 +162,59 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
     }
 
     override fun onDownloadCompleted(id: Int?, name: String?) {
-//        Log.d("LOG", this.javaClass.simpleName + " onDownloadCompleted() | fileName: ${name} | id: $id")
-        mDownloadTask?.release()
-        if (id != null) {
-            getDownloadDataByVideoId(id)?.also { data ->
-                resetDataNotDeleteFile()
-                for (listener: IProgressListener in mListeners) {
-                    listener.onDownloadCompleted(
-                        videoId = data.videoId,
-                        fileName = data.name,
-                        isSuccess = true,
-                        message = "")
-                }
-//                Log.d("LOG", this.javaClass.simpleName + " onDownloadCompleted() | context: $context")
-                context?.let {
-//                    Log.d("LOG", this.javaClass.simpleName + " onDownloadCompleted() | send storage info to server")
-                    DownloadVideoHelper.senStorageStatusToServer(it,
-                        FileUtil.getAvailableInternalMemorySize(),
-                        FileUtil.getTotalInternalMemorySize(),
-                        FileUtil.getAvailableExternalMemorySize(it),
-                        FileUtil.getTotalExternalMemorySize(it))
-                }
-            }
-            VideoDBUtil.updateTabledVideoDownloadedState(id)
-        }
-        for (listener: IProgressListener in mListeners) {
+//        Log.d("LOG", this.javaClass.simpleName + " onDownloadCompleted() | context: $context |" +
+//                " fileName: ${name} | id: $id")
+        val d =
+            Observable.just(id)
+                .subscribeOn(Schedulers.single())
+                .subscribe({ videoId ->
+//                    Log.d("LOG", this.javaClass.simpleName + " onDownloadCompleted() | subscriber")
+                    if (videoId != null) {
+                        downloadingData?.also { data ->
+                            for (listener: IProgressListener in mListeners) {
+                                listener.onDownloadCompleted(
+                                    videoId = data.videoId,
+                                    fileName = data.name,
+                                    isSuccess = true,
+                                    message = "")
+                            }
+                            context?.let {
+//                        Log.d("LOG", this.javaClass.simpleName + " onDownloadCompleted() | send storage info to server |" +
+//                            "is download completely: ${PreferenceHelper.getInstance()?.getBoolean(ConstantPreference.IS_DOWNLOAD_COMPLETELY, false)}")
+                                DownloadVideoHelper.senStorageStatusToServer(it,
+                                    FileUtil.getAvailableInternalMemorySize(),
+                                    FileUtil.getTotalInternalMemorySize(),
+                                    FileUtil.getAvailableExternalMemorySize(it),
+                                    FileUtil.getTotalExternalMemorySize(it))
+                            }
+                        }
+                        VideoDBUtil.updateTabledVideoDownloadedState(videoId)
+                    }
+                    resetDataNotDeleteFile()
+                    for (listener: IProgressListener in mListeners) {
 //            Log.d("LOG", this.javaClass.simpleName + " onDownloadCompleted() | listener: $listener")
-            listener.onDownloaded()
-        }
-        mIsDownloading = false
-        if(PreferenceHelper.getInstance()?.getBoolean(ConstantPreference.IS_DOWNLOAD_COMPLETELY, false) == true){
-            release()
-        } else {
-            addTaskFromQueueInit()
-        }
+                        listener.onDownloaded()
+                    }
+                    if(PreferenceHelper.getInstance()?.getBoolean(ConstantPreference.IS_DOWNLOAD_COMPLETELY, false) == true){
+                        release()
+                    } else {
+                        addTaskFromQueueInit()
+                    }
+                }, {
+                    it.printStackTrace()
+//                    Log.d("LOG", "DownloadManagerCustomized onDownloadCompleted() | subscribe error: ${it.message}")
+                    FirebaseCrashlytics.getInstance().recordException(it)
+                    resetDataNotDeleteFile()
+                    for (listener: IProgressListener in mListeners) {
+                        listener.onDownloaded()
+                    }
+                    if(PreferenceHelper.getInstance()?.getBoolean(ConstantPreference.IS_DOWNLOAD_COMPLETELY, false) == true){
+                        release()
+                    } else {
+                        addTaskFromQueueInit()
+                    }
+                })
+        disposable.add(d)
     }
 
     /**
@@ -191,9 +228,10 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
         mListeners.remove(listener)
     }
 
-    fun isDownloading(videoId: Int?): Boolean = mQueueMap[videoId] ?: false
+    fun isDownloading(videoId: Int?): Boolean = downloadingData?.id == videoId?.toLong()
 
     fun release() {
+//        Log.d("LOG", this.javaClass.simpleName + " release()")
         try{
             mapNotifiedNotEnoughSpace.clear()
             mListeners.clear()
@@ -202,12 +240,12 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
             FirebaseCrashlytics.getInstance().recordException(e)
             FirebaseCrashlytics.getInstance().log("download manager release")
         }
+        disposable.dispose()
         mNotiManager.stop()
         mNotiManager.release()
         mDownloadTask?.release()
         queueInit.clear()
-        mQueue.clear()
-        mQueueMap.clear()
+        downloadingData = null
         INSTANCE = null
     }
 
@@ -225,10 +263,7 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
 
     fun queueTask(videoId: Int, url: String?, name: String?, folder: String, hasPermission: Boolean = true) {
 //        Log.d("LOG", this.javaClass.simpleName + " queueTask() | url: $url | name: $name | videoId: $videoId")
-//        FirebaseCrashlytics.getInstance().recordException(RuntimeException("Queue download task $name"))
-//        FirebaseCrashlytics.getInstance().setCustomKey("download", "queueTask()")
-//        FirebaseCrashlytics.getInstance().log("download: queue task $name")
-        if (url.isNullOrEmpty() || name.isNullOrEmpty()) {
+        if (url.isNullOrBlank() || name.isNullOrBlank()) {
             return
         }
 
@@ -241,7 +276,7 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
         if (queueInit.size > 1) {
             return
         }
-
+//        Log.d("LOG", this.javaClass.simpleName + " queueTask() | continue")
         addTaskFromQueueInit()
     }
 
@@ -249,6 +284,7 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
 //        Log.d("LOG", this.javaClass.simpleName + " addTaskFromQueueInit() | queueInit size: ${queueInit.size}")
         if (queueInit.size == 0) {
             stopNotify()
+            release()
             return
         }
         val dataInit = queueInit[0]
@@ -257,87 +293,79 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
 
     private fun addTask(videoId: Int, url: String?, name: String?, folder: String, hasPermission: Boolean = true) {
 //        Log.d("LOG", this.javaClass.simpleName + " addTask() | url: $url | name: $name")
-        if (url.isNullOrEmpty() || name.isNullOrEmpty()) {
-            // TODO: will uncomment
+        if (url.isNullOrBlank() || name.isNullOrBlank()) {
             stopNotify()
+            resetDataNotDeleteFile()
+            addTaskFromQueueInit()
             return
         }
 
         // video downloading task exists
-        if (checkIfDownloadTaskIsDoing(videoId)) {
+        if (downloadingData?.id == videoId.toLong()) {
+//            Log.d("LOG", this.javaClass.simpleName + " addTask() | download task has been already existed | name: $name")
+            if(mDownloadTask == null || mDownloadTask?.isCancelled == true){
+                mDownloadTask?.release()
+                downloadingData = null
+                addTaskFromQueueInit()
+            }
             return
         }
-
-        //notifyOnDownloadStarted(videoId)
 
         val extension: String = MimeTypeMap.getFileExtensionFromUrl(url)
 
         val fileName: String = getSavedFileName(videoId.toString(), extension)
         val fileNameShowNotification: String = getSavedFileName(name, extension)
 
-        try {
-            deleteIfExist(fileName = fileName)
+        val d =
             Observable.fromCallable {
+                deleteIfExist(fileName = fileName)
 //                Log.d("LOG", this.javaClass.simpleName + " addTask() | current thread: ${Thread.currentThread()} | name: ${Thread.currentThread().name}")
                 val connection: HttpURLConnection = URL(url).openConnection() as HttpURLConnection
                 connection.setRequestProperty("Cookie", mCookieValue)
+                connection.connectTimeout = 60000
                 connection.contentLength.toLong()
             }.subscribeOn(Schedulers.single())
-                .observeOn(Schedulers.trampoline())
-                .subscribe(object : Observer<Long?> {
-                    override fun onComplete() {}
-
-                    override fun onSubscribe(d: Disposable) {}
-
-                    override fun onNext(fileLength: Long) {
-//                            Log.d("LOG", this.javaClass.simpleName + " addTask() | inited connection | current thread: ${Thread.currentThread()} | name: ${Thread.currentThread().name}")
-                        val availableSpaceExternal = FileUtil.getAvailableExternalMemorySize(context = context)
-//                    Log.d("LOG", this.javaClass.simpleName + " addTask() | start to calculate free space on device | fileLength: $fileLength | availableSpaceExternal: $availableSpaceExternal")
-                        when (fileLength < availableSpaceExternal) {
-                            true -> {
-//                                    Log.d("LOG", this.javaClass.simpleName + " addTask() | store new downloaded video on external storage | current thread: ${Thread.currentThread()}")
-                                createDownloadTask(videoId, url, folder, hasPermission, fileName, fileNameShowNotification)
-                            }
-                            false -> {
-                                val availableSpaceInternal: Long = FileUtil.getAvailableInternalMemorySize()
-//                                    Log.d("LOG", this.javaClass.simpleName + " addTask() | start to calculate free space on device | fileLength: $fileLength | " +
-//                                            "availableSpaceInternal: $availableSpaceInternal | current thread: ${Thread.currentThread()}")
-                                when (fileLength < availableSpaceInternal) {
-                                    true -> {
-//                                            Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | store new downloaded video on internal storage")
-                                        createDownloadTaskInternal(videoId, url, folder, hasPermission, fileName, fileNameShowNotification)
-                                    }
-                                    false -> {
-//                                            Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | not enough space | emit listeners")
-                                        for (listener: IProgressListener in mListeners) {
-                                            if (!mapNotifiedNotEnoughSpace.contains(listener)) {
-//                                                    Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | listener: ${listener}")
-                                                listener.onDoesNotEnoughMemory()
-                                                mapNotifiedNotEnoughSpace.add(listener)
-                                            }
+                .subscribe({ fileLength ->
+//                Log.d("LOG", this.javaClass.simpleName + " addTask() | inited connection")
+                    val availableSpaceExternal = FileUtil.getAvailableExternalMemorySize(context = context)
+//                Log.d("LOG", this.javaClass.simpleName + " addTask() | start to calculate free space on device | fileLength: $fileLength | availableSpaceExternal: $availableSpaceExternal")
+                    when (fileLength < availableSpaceExternal) {
+                        true -> {
+//                        Log.d("LOG", this.javaClass.simpleName + " addTask() | store new downloaded video on external storage | current thread: ${Thread.currentThread()}")
+                            createDownloadTask(videoId, url, folder, hasPermission, fileName, fileNameShowNotification)
+                        }
+                        false -> {
+                            val availableSpaceInternal: Long = FileUtil.getAvailableInternalMemorySize()
+//                        Log.d("LOG", this.javaClass.simpleName + " addTask() | start to calculate free space on device | fileLength: $fileLength | " +
+//                                "availableSpaceInternal: $availableSpaceInternal | current thread: ${Thread.currentThread()}")
+                            when (fileLength < availableSpaceInternal) {
+                                true -> {
+//                                Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | store new downloaded video on internal storage")
+                                    createDownloadTaskInternal(videoId, url, folder, hasPermission, fileName, fileNameShowNotification)
+                                }
+                                false -> {
+//                                Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | not enough space | emit listeners")
+                                    for (listener: IProgressListener in mListeners) {
+                                        if (!mapNotifiedNotEnoughSpace.contains(listener)) {
+                                            //                                                    Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | listener: ${listener}")
+                                            listener.onDoesNotEnoughMemory()
+                                            mapNotifiedNotEnoughSpace.add(listener)
                                         }
                                     }
+                                    release()
                                 }
                             }
                         }
-
                     }
-
-                    override fun onError(e: Throwable) {
-//                            Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | can not start downloading video | error: ${e.message}")
-                        notifyDownloadCannotStart(videoId)
-                    }
-
+                }, { e ->
+//                Log.d("LOG", this.javaClass.simpleName + " getListDoesNotDownloaded() | can not start downloading video | error: ${e} | ${e.message}")
+                    notifyDownloadCannotStart(videoId)
                 })
-        } catch (e: IOException) {
-            e.printStackTrace()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        disposable.add(d)
     }
 
     private fun notifyDownloadCannotStart(videoId: Int) {
-//        Log.d("LOG", this.javaClass.simpleName + " notifyDownloadCannotStart() | mQueue: ${mQueue.size} | videoId: $videoId | name: $fileName")
+//        Log.d("LOG", this.javaClass.simpleName + " notifyDownloadCannotStart() | videoId: $videoId")
         mNotiManager.stop()
         nextDownload(videoId)
     }
@@ -350,8 +378,8 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
         fileNameDownload: String,
         nameShowFile: String
     ) {
-//        Log.d("LOG", this.javaClass.simpleName + " createDownloadTask() | queue size: ${mQueue.size}")
-        val data: DownloadData = DownloadData(videoId = videoId, url = url).also {
+//        Log.d("LOG", this.javaClass.simpleName + " createDownloadTask()")
+        downloadingData = DownloadData(videoId = videoId, url = url).also {
             it.folder = folder
             it.name = nameShowFile
 
@@ -383,17 +411,13 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
                 fileNameDownload)).absolutePath
         }
 
-        mQueue.add(data)
-        mQueueMap[videoId] = true
-
-        if (hasPermission && mQueue.size == 1)
-            startDownload()
+        if (hasPermission) startDownload()
     }
 
     private fun createDownloadTaskInternal(videoId: Int, url: String, folder: String, hasPermission: Boolean = true,
                                            fileNameDownload: String, nameShowFile: String) {
-//        Log.d("LOG", this.javaClass.simpleName + " createDownloadTaskInternal() | queue size: ${mQueue.size} | ")
-        val data: DownloadData = DownloadData(videoId = videoId, url = url).also {
+//        Log.d("LOG", this.javaClass.simpleName + " createDownloadTaskInternal()")
+        downloadingData = DownloadData(videoId = videoId, url = url).also {
             it.folder = folder
             it.name = nameShowFile
 
@@ -407,10 +431,7 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
                 fileNameDownload)).absolutePath
         }
 
-        mQueue.add(data)
-        mQueueMap[videoId] = true
-
-        if (hasPermission && mQueue.size == 1)
+        if (hasPermission)
             startDownload()
     }
 
@@ -454,27 +475,19 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
         return false
     }
 
-    private fun checkIfDownloadTaskIsDoing(videoId: Int): Boolean {
-        if (mQueueMap.isNotEmpty() && mQueueMap.containsKey(videoId)) {
-            return true
-        }
-        return false
-    }
-
     private fun startDownload() {
-//        Log.d("LOG", this.javaClass.simpleName + " startDownloadIfIdle() | mIsDownloading: $mIsDownloading | queue size: ${mQueue.size} |  " +
+//        Log.d("LOG", this.javaClass.simpleName + " startDownloadIfIdle() | " +
 //                "queueInit size: ${queueInit.size}")
-        if (mQueue.size == 0 || context == null) {
+        if (context == null) {
 //            Log.d("LOG", this.javaClass.simpleName + " startDownload() | mQueue: ${mQueue.size} | context: $context")
             for (listener: IProgressListener in mListeners) {
                 listener.onDownloaded()
             }
             return
         }
-        if (mIsDownloading) return
-        val data: DownloadData = mQueue[0]
-//        Log.d("LOG", this.javaClass.simpleName + " startDownload()")
-        addDownloadTask(downloadData = data)
+        downloadingData?.also { data ->
+            addDownloadTask(downloadData = data)
+        }
     }
 
     private fun addDownloadTask(downloadData: DownloadData) {
@@ -485,58 +498,44 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
                     mDownloadTask?.release()
                     mDownloadTask = null
                 }
-                mDownloadTask = DownloadTask(context, this).apply {
+                mDownloadTask = DownloadTask(context, this, downloadData).apply {
                     mNotiManager.also {
                         addListener(it)
                     }
                     DownloadVideoHelper.sendDownloadStatusToServer(context, Constant.DOWNLOAD_DOWNLOADING)
                 }
 //                Log.d("LOG", this.javaClass.simpleName + " addDownloadTask() | status: ${mDownloadTask?.status}")
-                mIsDownloading = true
-                mDownloadTask?.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, downloadData)
+                mDownloadTask?.execute()
             }
         } catch (e: Exception) {
             e.printStackTrace()
+            FirebaseCrashlytics.getInstance().recordException(e)
+            FirebaseCrashlytics.getInstance().log("download-create task exception")
 //            Log.d("LOG", this.javaClass.simpleName + " addDownloadTask() | error: ${e.message}")
             mNotiManager.stop()
-            mIsDownloading = false
-            onDownloadFailed((downloadData.id
-                ?: 0L).toInt(), downloadData.name, e.message.orEmpty(), downloadData.url)
+            onDownloadFailed((downloadData.id ?: 0L).toInt(), downloadData.name, e.message.orEmpty(), downloadData.url)
         }
 
-    }
-
-    private fun getDownloadDataByVideoId(id: Int): DownloadData? {
-        for (data: DownloadData in mQueue) {
-            if (data.videoId == id) {
-                return data
-            }
-        }
-        return null
     }
 
     // reset all init data for starting download task
-    private fun resetData() {
-        resetDataNotDeleteFile()
+    private fun recoveryDownload() {
         deleteFileIfExist()
+        resetDataNotDeleteFile()
     }
 
     private fun resetDataNotDeleteFile() {
 //        Log.d("LOG", this.javaClass.simpleName + " resetDataNotDelete() | mQueue size: ${mQueue.size} | queueInit.size: ${queueInit.size} ")
-        if (mQueue.size > 0) {
-            mQueueMap.remove(key = mQueue[0].videoId)
-            mQueue.removeAt(0)
-        }
+
+        downloadingData = null
         if (queueInit.size > 0) {
             queueInit.removeAt(0)
         }
-        mIsDownloading = false
     }
 
     private fun deleteFileIfExist() {
-        if (mQueue.size == 0) return
-        val data = mQueue[0]
-        data.filePath?.also { path ->
+        if (downloadingData == null) return
+        downloadingData?.filePath?.also { path ->
             val file = File(path)
             if (!file.exists()) return
             file.delete()
@@ -549,15 +548,11 @@ class DownloadManagerCustomized(private var context: Context?) : DownloadTask.Ca
             listener.updateVideoIdWhenDownloadFailed(videoId = videoId)
             listener.onDownloaded()
         }
+        addTaskFromQueueInit()
     }
 
     fun clearQueue() {
-        if (mQueue.size > 0) {
-            mQueue.clear()
-        }
-        if (mQueueMap.size > 0) {
-            mQueueMap.clear()
-        }
+        downloadingData = null
     }
 
     // get stored file name by video id

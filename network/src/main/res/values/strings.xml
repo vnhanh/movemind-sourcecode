@@ -26,6 +26,7 @@
     <string name="error_unknown">Error unknown</string>
     <string name="error_url_illegal">The url is illegal !</string>
     <string name="error_enqueue_task_failed">Enqueue download task failed !</string>
+    <string name="description_icon_download">Download noti icon</string>
     <string name="download_failed_format">Download %1$s failed. %2$s</string>
     <string name="downloaded_file_exists">The downloaded file already exists in the app folder !</string>
     <string name="channel_download_name">Download channel</string>

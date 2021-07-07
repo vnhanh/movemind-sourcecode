@@ -18,9 +18,9 @@ import java.lang.ref.WeakReference
 import java.net.HttpURLConnection
 import java.net.URL
 
-class DownloadTask(private var context: Context?, callback: Callback) : AsyncTask<DownloadData, Int, Int>() {
+class DownloadTask(context: Context?, callback: Callback, private val downloadData: DownloadData) : AsyncTask<Void, Int, Int>() {
+    private val weakContext = WeakReference(context)
     private var mWeakCallbacks = mutableListOf(WeakReference(callback))
-    private var mDownloadData: DownloadData? = null
     private var mCookieValue = PreferenceHelper.getInstance()?.getString(ConstantPreference.SP_COOKIE, "").orEmpty()
     private var mReason = ""
     private var mFileLength = 0L
@@ -38,15 +38,11 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
         mWeakCallbacks.add(WeakReference(callback))
     }
 
-    override fun doInBackground(vararg params: DownloadData?): Int {
-        if (params.isEmpty()) {
-            mReason = ERR_NO_URL
-            return CODE_FAILED
-        }
-        val downloadData = params[0]
-        this.mDownloadData = downloadData
+    override fun doInBackground(vararg params: Void?): Int {
+//        Log.d("LOG", this.javaClass.simpleName + " doInBackground()")
+        val context = weakContext.get()
 
-        if (downloadData == null || downloadData.url.isEmpty()) {
+        if (context == null || downloadData.url.isEmpty()) {
             mReason = ERR_NO_URL
             return CODE_FAILED
         }
@@ -54,7 +50,7 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
         //save with external
         if (downloadData.filePathExternal != null) {
             savedFile = File(downloadData.filePathExternal.orEmpty())
-            return saveFileExternal(downloadData)
+            return saveFileExternal(context, downloadData)
         } else {
             savedFile = File(downloadData.filePath.orEmpty())
             return saveFileInternal(downloadData)
@@ -63,7 +59,7 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
 
     override fun onProgressUpdate(vararg values: Int?) {
         super.onProgressUpdate(*values)
-
+        if(isCancelled) return
         if (values.isEmpty()) return
         val progress = values[0] ?: return
         when (progress < 0) {
@@ -74,11 +70,11 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
                 if (isFirstDownloadTask) {
                     isFirstDownloadTask = false
                     for (weakCallback in mWeakCallbacks) {
-                        weakCallback.get()?.onDownloadStarted(mDownloadData?.videoId, mDownloadData?.name)
+                        weakCallback.get()?.onDownloadStarted(downloadData.videoId, downloadData.name)
                     }
                 }
                 for (weakCallback in mWeakCallbacks) {
-                    weakCallback.get()?.onDownloadUpdate(mDownloadData?.videoId, mDownloadData?.name, progress)
+                    weakCallback.get()?.onDownloadUpdate(downloadData.videoId, downloadData.name, progress)
                 }
             }
         }
@@ -86,25 +82,26 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
 
     override fun onPostExecute(result: Int?) {
         super.onPostExecute(result)
-        if (isNetworkDisconnected()) mReason = ERR_NETWORK_DISCONNECTED
+//        Log.d("LOG", this.javaClass.simpleName+ " onPostExecute() | context is not null: ${weakContext.get() != null} | " +
+//                "isCancelled: $isCancelled")
 
-        when (result) {
-            CODE_COMPLETED -> {
+        when {
+            result == CODE_COMPLETED -> {
                 for (weakCallback in mWeakCallbacks) {
-                    weakCallback.get()?.onDownloadCompleted(mDownloadData?.videoId, mDownloadData?.name)
+                    weakCallback.get()?.onDownloadCompleted(downloadData.videoId, downloadData.name)
                 }
             }
             else -> {
                 when (mReason) {
                     ERR_INSUFFICIENT_SPACE -> {
                         for (weakCallback in mWeakCallbacks) {
-                            weakCallback.get()?.onInsufficientSpace(mDownloadData?.videoId, mDownloadData?.name, mAvailableSpace / 1024 / 1024, mFileLength / 1024 / 1024)
+                            weakCallback.get()?.onInsufficientSpace(downloadData.videoId, downloadData.name, mAvailableSpace / 1024 / 1024, mFileLength / 1024 / 1024)
                         }
                     }
 
                     else -> {
                         for (weakCallback in mWeakCallbacks) {
-                            weakCallback.get()?.onDownloadFailed(mDownloadData?.videoId, mDownloadData?.name, mReason, mDownloadData?.url)
+                            weakCallback.get()?.onDownloadFailed(downloadData.videoId, downloadData.name, mReason, downloadData.url)
                         }
                     }
                 }
@@ -133,6 +130,7 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
             }
 
             connection.connect()
+//            Log.d("LOG", this.javaClass.simpleName + " saveFileExternal() | done connection.connect()")
 
             val inputStream = BufferedInputStream(connection.inputStream)
             input = inputStream
@@ -173,6 +171,7 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
 
             })
             aesCipherDataSink.open(DataSpec(Uri.parse(downloadData.url)))
+//            Log.d("LOG", this.javaClass.simpleName + " saveFileExternal() | done aesCipherDataSink.open()")
             var progress = 0
             while (count != -1) {
                 if (isCancelled) {
@@ -201,7 +200,6 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
 
 //            Log.d("LOG", this.javaClass.simpleName + " saveFileInternal() | error: ${exOOM.message}")
 //            Log.e("LOG", this.javaClass.simpleName + " saveFileInternal() | error: ${exOOM.message}")
-            isEncounteredOOM = true
             mReason = Constant.ERROR_OUT_OF_MEMORY
             return CODE_FAILED
         } catch (e: Exception) {
@@ -210,26 +208,24 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
             FirebaseCrashlytics.getInstance().log("download-save-error: ${e.message}")
 //            Log.d("LOG", this.javaClass.simpleName + " saveFileInternal() | error: ${e.message}")
 //            Log.e("LOG", this.javaClass.simpleName + " saveFileInternal() | error: ${e.message}")
-            if (!isEncounteredOOM) {
-                mReason =
-                    when (isNetworkDisconnected()) {
-                        true -> ERR_NETWORK_DISCONNECTED
-                        false -> e.message ?: ERR_UNKNOWN
-                    }
-                return CODE_FAILED
-            }
+            mReason =
+                when (isNetworkDisconnected()) {
+                    true -> ERR_NETWORK_DISCONNECTED
+                    false -> e.message ?: ERR_UNKNOWN
+                }
+            return CODE_FAILED
         } finally {
             closeAll()
         }
         return CODE_COMPLETED
     }
 
-    private fun saveFileExternal(downloadData: DownloadData): Int {
+    private fun saveFileExternal(context: Context, downloadData: DownloadData): Int {
         var isEncounteredOOM = false
         try {
             val httpURLConnection = URL(downloadData.url).openConnection() as HttpURLConnection
             connection = httpURLConnection
-            connection.connectTimeout = 3000
+            connection.connectTimeout = 10000
             connection.setRequestProperty("Cookie", mCookieValue)
 
             var total = 0L
@@ -244,6 +240,7 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
             }
 
             connection.connect()
+//            Log.d("LOG", this.javaClass.simpleName + " saveFileExternal() | create connection completely")
 
             val inputStream = BufferedInputStream(connection.inputStream)
             input = inputStream
@@ -259,7 +256,7 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
                 closeInAndConn()
                 saveFileInternal(downloadData)
             }
-
+//            Log.d("LOG", this.javaClass.simpleName + " saveFileExternal() | done get mAvailableSpace")
             val outputStream: OutputStream = FileOutputStream(downloadData.filePathExternal
                 ?: "/videos/video.mp4", isAppend)
             output = outputStream
@@ -283,6 +280,7 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
 
             })
             aesCipherDataSink.open(DataSpec(Uri.parse(downloadData.url)))
+//            Log.d("LOG", this.javaClass.simpleName + " saveFileExternal() | done aesCipherDataSink.open()")
             var progress = 0
             while (count != -1) {
                 if (isCancelled) {
@@ -330,6 +328,7 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
     }
 
     private fun closeAll() {
+//        Log.d("LOG", this.javaClass.simpleName + " closeAll()")
         if (::aesCipherDataSink.isInitialized) {
             aesCipherDataSink.close()
         }
@@ -351,14 +350,14 @@ class DownloadTask(private var context: Context?, callback: Callback) : AsyncTas
     }
 
     private fun isNetworkDisconnected(): Boolean {
-        context?.also { context ->
+        weakContext.get()?.also { context ->
             return !NetworkReceiver.getInstance().checkConnectState(context)
         }
         return false
     }
 
     fun release() {
-        context = null
+        weakContext.clear()
     }
 
     interface Callback {
