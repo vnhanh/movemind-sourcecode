@@ -13,8 +13,8 @@ android {
         applicationId "player.wellnesssolutions.com.au"
         minSdkVersion min_sdk_version
         targetSdkVersion target_sdk_version
-        versionCode 20
-        versionName "2.7"
+        versionCode 23
+        versionName "2.8"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -27,8 +27,8 @@ android {
 
         release {
             debuggable false
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
